@@ -95,10 +95,11 @@ void decodeSpyDataFifo (unsigned long word, int event)
       } else {
         decodeErrorFifo(word);
       }
+      std::cout << 1 << std::endl;
     } else if (chan > 0 && chan < 37) {
 
       int mycol=0;
-      if (convPXL((word &pxlmsk) >> 8) > 0) {
+      if (convPXL((word & pxlmsk) >> 8) > 0) {
         mycol = ((word & dclmsk) >> 16) * 2 + 1;
       } else {
         mycol = ((word & dclmsk) >> 16) * 2;
@@ -147,6 +148,7 @@ int main(int argc, char *argv[])
 
   for (int i = 0; i < 2000000000; i++) {
 
+    // Read a word
     in.read((char *) &n2, sizeof n2);
     in.read((char *) &n1, sizeof n1);
 
@@ -172,16 +174,21 @@ int main(int argc, char *argv[])
           break;
         }
       }
+
     } else {
       if (((n1 & 0xff000000) == 0x50000000) & (wrdcount == 1)) {
+        // Found the header
         wrdcount = 0;
         header = n1;
         bheader = true;
         stopit = 0;
         event = (n1 & 0xffffff);
         totevent++;
+        printf("Found header event:  %i\n", event);
       } else if ((n1 & 0xf0000000) == 0xa0000000) {
         bheader = false;
+        printf("nhits: %i\n", hitcount);
+        printf("Found trailer event: %i\n", event);
         if (stopit > 0) {
           string input;
           getline(cin, input);
