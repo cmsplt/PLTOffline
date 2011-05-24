@@ -69,7 +69,7 @@ int PLTHit::Column ()
   return fColumn;
 }
 
-float PLTHit::ADC ()
+int PLTHit::ADC ()
 {
   return fADC;
 }

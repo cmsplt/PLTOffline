@@ -20,6 +20,7 @@ class PLTPlane
     void   Clusterize ();
     TH2F*  DrawHits2D ();
     size_t NHits ();
+    PLTHit* Hit (size_t);
     int    ROC ();
 
   private:

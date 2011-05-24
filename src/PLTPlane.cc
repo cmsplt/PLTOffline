@@ -108,6 +108,11 @@ size_t PLTPlane::NHits ()
 }
 
 
+PLTHit* PLTPlane::Hit (size_t const i)
+{
+  return fHits[i];
+}
+
 int PLTPlane::ROC ()
 {
   return fROC;

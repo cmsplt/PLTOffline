@@ -30,7 +30,7 @@ class PLTHit
     int   ROC ();
     int   Row ();
     int   Column ();
-    float ADC ();
+    int   ADC ();
     float Charge ();
     float Event ();
 

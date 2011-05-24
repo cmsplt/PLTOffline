@@ -133,6 +133,8 @@ int PLTEvent::GetNextEvent ()
     }
   }
 
+  MakeEvent();
+
   return ret;
 }
   
