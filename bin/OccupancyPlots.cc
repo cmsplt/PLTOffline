@@ -2,75 +2,62 @@
 //
 // Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
 //
-// Created on: Mon Apr  4 11:17:28 CDT 2011
+// Created on: Tue May 24 09:54:58 CEST 2011
 //
 ////////////////////////////////////////////////////////////////////
 
 
 #include <iostream>
-#include <fstream>
-#include <map>
+#include <string>
 
-#include "TH2F.h"
-#include "TCanvas.h"
-#include "TString.h"
-#include "TStyle.h"
+#include "PLTEvent.h"
 
 
+// FUNCTION DEFINITIONS HERE
+int OccupancyPlots (std::string const);
 
 
-TH2F* GetNewHist2(int const ch, int const roc)
+
+
+
+
+
+
+
+// CODE BELOW
+
+
+
+
+
+
+int OccupancyPlots (std::string const DataFileName)
 {
-  char BUFF[200];
-  sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i", ch, roc);
+  std::cout << "DataFileName:    " << DataFileName << std::endl;
 
-  return new TH2F(BUFF, TString(BUFF)+";Column;Pixel", 35, 10, 45, 50, 35, 85);
-}
+  // Grab the plt event reader
+  PLTEvent Event(DataFileName);
 
+  // Loop over all events in file
+  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
 
+    // Loop over all planes with hits in event
+    for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
 
+      // THIS plane is
+      PLTPlane* Plane = Event.Plane(ip);
 
+      // Loop over all hits on this plane
+      for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
 
-int OccupancyPlots (TString const InFileName)
-{
-  gStyle->SetOptStat(11);
-  std::ifstream f(InFileName.Data());
-  if (!f) {
-    std::cerr << "ERROR: cannot open file: " << InFileName << std::endl;
-    exit(1);
-  }
+        // THIS hit is
+        PLTHit* Hit = Plane->Hit(ihit);
 
-  std::map<int, TH2F*> m2;
-
-  int ch, roc, col, pix, adc, ev;
-  std::map< std::pair<int, int>, int> m1;
-
-  for (int i = 0; f >> ch >> roc >> col >> pix >> adc >> ev; ++i) {
-    if (!m2[ch*10 + roc]) {
-      m2[ch*10 + roc] = GetNewHist2(ch, roc);
+        // Just print some example info
+        printf("Channel: %2i  ROC: %1i  col: %2i  row: %2i  adc: %3i\n", Plane->Channel(), Plane->ROC(), Hit->Column(), Hit->Row(), Hit->ADC());
+      }
     }
-    m2[ch*10 + roc]->Fill(col, pix);
-
-    ++m1[ std::make_pair(10*ch+roc, ev) ];
-
-
   }
-
-  for (std::map<int, TH2F*>::iterator it = m2.begin(); it != m2.end(); ++it) {
-    char BUFF[200];
-    sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i.eps", it->first/10, it->first % 10);
-    TCanvas c;
-    it->second->Draw("colz");
-    c.SaveAs(BUFF);
-  }
-
-  //for (std::map< std::pair<int, int>, int >::iterator it = m1.begin(); it != m1.end(); ++it) {
-  //  char BUFF[200];
-  //  sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i.eps", it->first.first/10, it->first.first % 10);
-  //  TCanvas c;
-  //  it->second->Draw();
-  //  c.SaveAs(BUFF);
-  //}
 
   return 0;
 }
@@ -79,13 +66,12 @@ int OccupancyPlots (TString const InFileName)
 int main (int argc, char* argv[])
 {
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << std::endl;
     return 1;
   }
 
-  TString const InFileName = argv[1];
-
-  OccupancyPlots(InFileName);
+  std::string const DataFileName = argv[1];
+  OccupancyPlots(DataFileName);
 
   return 0;
 }
