@@ -11,11 +11,11 @@ class PLTTelescope
     PLTTelescope ();
     ~PLTTelescope ();
 
-    void   AddPlane (PLTPlane*);
-    int    Channel ();
+    void      AddPlane (PLTPlane*);
+    int       Channel ();
     PLTPlane* Plane(size_t i);
-    void   Draw2D (int const, TString const);
-    size_t NPlanes ();
+    void      Draw2D (int const, TString const);
+    size_t    NPlanes ();
 
   private:
     std::vector<PLTPlane*> fPlanes;
