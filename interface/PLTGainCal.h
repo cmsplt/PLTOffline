@@ -3,23 +3,30 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <sstream>
 
 #include "TString.h"
 #include "TMath.h"
 
+#include "PLTHit.h"
+#include "PLTCluster.h"
+#include "PLTPlane.h"
+
 
 class PLTGainCal
 {
   public:
-    PLTGainCal (TString const GainCalFileName);
+    PLTGainCal ();
+    PLTGainCal (std::string const);
     ~PLTGainCal ();
 
 
     static int const DEBUGLEVEL = 0;
 
+    void  SetCharge (PLTHit&);
     float GetCharge(int const ch, int const roc, int const col, int const row, int adc);
-    void ReadGainCalFile (TString const GainCalFileName);
+    void  ReadGainCalFile (std::string const GainCalFileName);
 
     int RowIndex (int const);
     int ColIndex (int const);
@@ -28,9 +35,13 @@ class PLTGainCal
 
     float GetCoef(int const, int const, int const, int const, int const);
 
+    bool IsGood () { return fIsGood; }
+
 
 
   private:
+    bool fIsGood;
+
     static int const MAXCHNS =  48;
     static int const MAXROWS = 100;
     static int const MAXCOLS = 100;

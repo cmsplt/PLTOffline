@@ -81,7 +81,7 @@ void FindUltraBlacks (float const Baseline, float const BaselineErr, long unsign
       MinI = i;
       Min = Value[i];
       for ( ; Value[i] < Baseline - 4*BaselineErr; ++i) {
-        if (Value[i] < Min) {
+        if (Value[i] < (unsigned) Min) {
           MinI = i;
         }
       }
@@ -120,15 +120,15 @@ int UltraBlackFinder (int const N, TString const InFileName)
   printf("Baseline is: %12.2f +/- %12.4f\n", Baseline.first, Baseline.second);
   std::vector<int> MyUBs;
   FindUltraBlacks(Baseline.first, Baseline.second, Value, MyUBs);
-  for (int i = 0; i < MyUBs.size(); ++i) {
-    printf("UB:%3i %5u  %5u\n", i, MyUBs[i], Value[ MyUBs[i] ]);
+  for (size_t i = 0; i < MyUBs.size(); ++i) {
+    printf("UB:%3i %5u  %5lu\n", (int)i, MyUBs[i], Value[ MyUBs[i] ]);
   }
   int UBs[10];
   int nub;
 
   FindUltrablacks(Value, Baseline.first, Baseline.second, UBs, nub);
   for (int i = 0; i < nub; ++i) {
-    printf("ub:%3i %5u  %5u\n", i, UBs[i], Value[ UBs[i] ]);
+    printf("ub:%3i %5u  %5lu\n", i, UBs[i], Value[ UBs[i] ]);
   }
 
 

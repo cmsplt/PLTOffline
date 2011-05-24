@@ -8,10 +8,11 @@
 
 
 #include <iostream>
+#include <string>
 
 #include "PLTGainCal.h"
 
-int GetParamsFromFile (TString const GainCalFileName, int const ch, int const roc, int const col, int const row)
+int GetParamsFromFile (std::string const GainCalFileName, int const ch, int const roc, int const col, int const row)
 {
   PLTGainCal GainCal(GainCalFileName);
   printf("a/b/c: %f   %f   %f\n",
@@ -30,7 +31,7 @@ int main (int argc, char* argv[])
     return 1;
   }
 
-  TString const GainCalFileName = argv[1];
+  std::string const GainCalFileName = argv[1];
   int const ch  = atoi(argv[2]);
   int const roc = atoi(argv[3]);
   int const col = atoi(argv[4]);

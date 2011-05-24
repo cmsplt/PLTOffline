@@ -1,8 +1,15 @@
 #include "PLTGainCal.h"
 
 
-PLTGainCal::PLTGainCal (TString const GainCalFileName)
+
+PLTGainCal::PLTGainCal ()
 {
+  fIsGood = false;
+}
+
+PLTGainCal::PLTGainCal (std::string const GainCalFileName)
+{
+  fIsGood = false;
   ReadGainCalFile(GainCalFileName);
 }
 
@@ -50,6 +57,13 @@ float PLTGainCal::GetCoef(int const i, int const ch, int const roc, int const co
 }
 
 
+void PLTGainCal::SetCharge (PLTHit& Hit)
+{
+  Hit.SetCharge( GetCharge(Hit.Channel(), Hit.ROC(), Hit.Column(), Hit.Row(), Hit.ADC()) );
+  return;
+}
+
+
 
 float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int const row, int INadc)
 {
@@ -75,17 +89,17 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
   return charge;
 }
 
-void PLTGainCal::ReadGainCalFile (TString const GainCalFileName)
+void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 {
   int ch,row,col;
   int irow;
   int icol;
   int ich;
 
-  ifstream f(GainCalFileName.Data());
+  ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
-    exit(1);
+    throw;
   }
 
   for (int i = 0; i != NCHNS; ++i) {
@@ -100,13 +114,13 @@ void PLTGainCal::ReadGainCalFile (TString const GainCalFileName)
     }
   }
 
-  TString line;
-  line.ReadLine(f);
+  std::string line;
+  std::getline(f, line);
   std::istringstream ss;
 
-  for ( ; line.ReadLine(f); ) {
+  for ( ; std::getline(f, line); ) {
     ss.clear();
-    ss.str(line.Data());
+    ss.str(line.c_str());
     ch = row = col = 0;
     ss >> ch >> ch >> ch >> col >> row;
     ch = 22;
@@ -147,6 +161,10 @@ void PLTGainCal::ReadGainCalFile (TString const GainCalFileName)
     }
 
   }
+
+  // Apparently this file was read no problem...
+  fIsGood = true;
+
 
   return;
 }

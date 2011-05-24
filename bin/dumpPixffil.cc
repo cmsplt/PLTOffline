@@ -20,45 +20,20 @@ void decodeErrorFifo(unsigned long word)
   const unsigned long  trailError     = 0x3c00000;
   const unsigned long  fifoError      = 0x3800000;
 
-  const unsigned long  eventNumMask = 0x1fe000; // event number mask
-  const unsigned long  channelMask = 0xfc000000; // channel num mask
-  const unsigned long  tbmEventMask = 0xff;    // tbm event num mask
-  const unsigned long  overflowMask = 0x100;   // data overflow
-  const unsigned long  tbmStatusMask = 0xff;   //TBM trailer info
-  const unsigned long  BlkNumMask = 0x700;   //pointer to error fifo #
-  const unsigned long  FsmErrMask = 0x600;   //pointer to FSM errors
-  const unsigned long  RocErrMask = 0x800;   //pointer to #Roc errors 
-  const unsigned long  ChnFifMask = 0x1f;   //channel mask for fifo error 
-  const unsigned long  Fif2NFMask = 0x40;   //mask for fifo2 NF 
-  const unsigned long  TrigNFMask = 0x80;   //mask for trigger fifo NF 
-
-  const int offsets[8] = {0,4,9,13,18,22,27,31};
-
 
   if (word & 0xffffffff) {
     if ((word & errorMask) == timeOut) {
 
       // TIMEOUT - More than 1 channel within a group can have a timeout error
       unsigned long index = (word & 0x1F);  // index within a group of 4/5
-      unsigned long chip = (word & BlkNumMask) >> 8;
-      int offset = offsets[chip];
 
       for (int i = 0; i < 5; i++) {
-        if( (index & 0x1) != 0) {
-          int channel = offset + i + 1;
-        }
         index = index >> 1;
       }
     } else if ((word & errorMask) == eventNumError) {
 
-      // EVENT NUMBER ERROR
-      unsigned long channel = (word & channelMask) >> 26;
-      unsigned long tbm_event = (word & tbmEventMask);
-
     } else if (((word & errorMask) == trailError)) {
 
-      unsigned long channel = (word & channelMask) >> 26;
-      unsigned long tbm_status = (word & tbmStatusMask);
 
     } else if ((word & errorMask) == fifoError) {
     }
@@ -74,8 +49,6 @@ void decodeErrorFifo(unsigned long word)
 // 
 void decodeSpyDataFifo (unsigned long word, int event)
 {
-  const bool ignoreInvalidData = false;
-
   if (word & 0xfffffff) {
 
     const unsigned long int plsmsk = 0xff;
@@ -95,7 +68,6 @@ void decodeSpyDataFifo (unsigned long word, int event)
       } else {
         decodeErrorFifo(word);
       }
-      std::cout << 1 << std::endl;
     } else if (chan > 0 && chan < 37) {
 
       int mycol=0;
@@ -105,7 +77,7 @@ void decodeSpyDataFifo (unsigned long word, int event)
         mycol = ((word & dclmsk) >> 16) * 2;
       }
 
-      printf("%2i %1i %2i %2i %3i %i\n", chan, (word & rocmsk) >> 21, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event);
+      printf("%2lu %1lu %2i %2i %3lu %i\n", chan, (word & rocmsk) >> 21, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event);
 
     } else {
     }
@@ -131,11 +103,8 @@ int main(int argc, char *argv[])
   }
 
   unsigned long long totevent = 0;
-  unsigned long pickit = 0;
   unsigned long header = 0;
   unsigned long n1, n2;
-  unsigned long bxold = 0;
-  unsigned long long n;
   int wrdcount  =  0;
   int event = 0;
   int stopit = 0;

@@ -8,6 +8,7 @@
 
 
 #include <iostream>
+#include <string>
 
 #include "PLTGainCal.h"
 
@@ -15,7 +16,7 @@
 #include "TFile.h"
 #include "TCanvas.h"
 
-int TestGainCal (TString const GainCalFileName)
+int TestGainCal (std::string const GainCalFileName)
 {
   PLTGainCal GainCal(GainCalFileName);
 
@@ -65,7 +66,7 @@ int main (int argc, char* argv[])
     return 1;
   }
 
-  TString const GainCalFileName = argv[1];
+  std::string const GainCalFileName = argv[1];
 
   TestGainCal(GainCalFileName);
 
