@@ -2,19 +2,19 @@
 
 PLTTelescope::PLTTelescope ()
 {
+  // Con me
 }
 
 
 PLTTelescope::~PLTTelescope ()
 {
-  for (std::vector<PLTPlane*>::iterator it = fPlanes.begin(); it != fPlanes.end(); ++it) {
-    //delete *it;
-  }
+  // Byebye
 }
 
 
 void PLTTelescope::AddPlane (PLTPlane* Plane)
 {
+  // Add a plane
   fPlanes.push_back(Plane);
   fChannel = Plane->Channel();
   return;
@@ -23,17 +23,21 @@ void PLTTelescope::AddPlane (PLTPlane* Plane)
 
 int PLTTelescope::Channel ()
 {
+  // Get the channel
   return fChannel;
 }
 
 
-PLTPlane* PLTTelescope::Plane(size_t i) {
+PLTPlane* PLTTelescope::Plane(size_t i)
+{
+  // Get a specific plane
   return fPlanes[i];
 }
 
 
 void PLTTelescope::Draw2D (int const np, TString const Name)
 {
+  // This is to draw a telescope.  I'll get back to this later on
   std::vector<TH2F*> h;
   TCanvas c("TelescopeHits", "Telescope Hits", 400, 900);
   c.Divide(1,3);
@@ -58,6 +62,7 @@ void PLTTelescope::Draw2D (int const np, TString const Name)
 
 size_t PLTTelescope::NPlanes ()
 {
+  // Number of planes in this telescope with at least one hit
   return fPlanes.size();
 }
 

@@ -12,16 +12,16 @@ class PLTPlane
     PLTPlane ();
     ~PLTPlane ();
 
-    void   AddHit (PLTHit*);
-    float  Charge ();
-    int    Channel ();
-    bool   AddClusterFromSeed (PLTHit*);
-    bool   IsBiggestHitIn3x3 (PLTHit*);
-    void   Clusterize ();
-    TH2F*  DrawHits2D ();
-    size_t NHits ();
+    void    AddHit (PLTHit*);
+    float   Charge ();
+    int     Channel ();
+    bool    AddClusterFromSeed (PLTHit*);
+    bool    IsBiggestHitIn3x3 (PLTHit*);
+    void    Clusterize ();
+    TH2F*   DrawHits2D ();
+    size_t  NHits ();
     PLTHit* Hit (size_t);
-    int    ROC ();
+    int     ROC ();
 
   private:
     int fChannel;

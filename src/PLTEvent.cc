@@ -3,12 +3,14 @@
 
 PLTEvent::PLTEvent ()
 {
+  // Default constructor
   fRun = 0;
 }
 
 
 PLTEvent::PLTEvent (std::string const DataFileName)
 {
+  // Constructor, but you won't have the gaincal data..
   fBinFile.Open(DataFileName);
   fRun = 0;
 }
@@ -16,6 +18,7 @@ PLTEvent::PLTEvent (std::string const DataFileName)
 
 PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName)
 {
+  // Constructor, which will also give you access to the gaincal values
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   
@@ -25,6 +28,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
 
 PLTEvent::~PLTEvent ()
 {
+  // Destructor!!
   Clear();
 };
 
@@ -34,6 +38,7 @@ PLTEvent::~PLTEvent ()
 
 size_t PLTEvent::NPlanes ()
 {
+  // Number of planes in the event
   return fPlanes.size();
 }
 
@@ -41,6 +46,7 @@ size_t PLTEvent::NPlanes ()
 
 PLTPlane* PLTEvent::Plane(size_t i)
 {
+  // Get a specific plane
   return fPlanes[i];
 }
 
@@ -48,6 +54,7 @@ PLTPlane* PLTEvent::Plane(size_t i)
 
 size_t PLTEvent::NTelescopes ()
 {
+  // Number of telescopes with at least one hit
   return fTelescopes.size();
 }
 
@@ -55,6 +62,7 @@ size_t PLTEvent::NTelescopes ()
 
 PLTTelescope* PLTEvent::Telescope (size_t i)
 {
+  // get specific telescope
   return fTelescopes[i];
 }
 
@@ -62,16 +70,13 @@ PLTTelescope* PLTEvent::Telescope (size_t i)
 
 void PLTEvent::Clear ()
 {
-  // First delete anything we need to free memory
-  //for (size_t i = 0; i != fHits.size(); ++i) {
-  //  delete fHits[i];
-  //}
+  // clear up.  All memory is owned by the maps and fHits, so
+  // hopefully it is self managed and you don't have to delete anything.
   fTelescopeMap.clear();
   fPlaneMap.clear();
 
   // Clear vectors
   fHits.clear();
-  //fClusters.clear();
   fPlanes.clear();
   fTelescopes.clear();
 }
@@ -80,11 +85,16 @@ void PLTEvent::Clear ()
 
 void PLTEvent::AddHit (PLTHit Hit)
 {
+  // This method DOES do a copy, so if you want speed for very large number of
+  // hits this isn't your best choice.
+
+  // If we have the GC object let's fill the charge
   if (fGainCal.IsGood()) {
     fGainCal.SetCharge(Hit);
   }
+
+  // add the hit
   fHits.push_back(Hit);
-  fEvent = Hit.Event();
   return;
 }
 
@@ -121,18 +131,23 @@ void PLTEvent::MakeEvent ()
 
 int PLTEvent::GetNextEvent ()
 {
+  // First clear the event
   Clear();
+
+  // The number we'll return.. number of hits, or -1 for end
   int ret = fBinFile.ReadEventHits(fHits, fEvent);
   if (ret < 0) {
     return ret;
   }
 
+  // If the GC is good let's compute the charge
   if (fGainCal.IsGood()) {
     for (std::vector<PLTHit>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
       fGainCal.SetCharge(*it);
     }
   }
 
+  // Now make the event into some useful form
   MakeEvent();
 
   return ret;

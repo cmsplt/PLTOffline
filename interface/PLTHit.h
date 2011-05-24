@@ -20,7 +20,6 @@ class PLTHit
     int fColumn;
     int fRow;
     int fADC;
-    long unsigned fEvent;
     float fCharge;
 
   public:
@@ -32,7 +31,6 @@ class PLTHit
     int   Column ();
     int   ADC ();
     float Charge ();
-    float Event ();
 
 
 };
