@@ -24,12 +24,12 @@ int TrackTest (std::string const);
 // CODE BELOW
 
 
-int TrackTest (std::string const DataFileName)
+int TrackTest (std::string const DataFileName, std::string const GainCalFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName);
+  PLTEvent Event(DataFileName, GainCalFileName);
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -52,7 +52,7 @@ int TrackTest (std::string const DataFileName)
           PLTHit* Hit = Plane->Hit(ihit);
 
           // Just print some example info
-          printf("Channel: %2i  ROC: %1i  col: %2i  row: %2i  adc: %3i\n", Telescope->Channel(), Plane->ROC(), Hit->Column(), Hit->Row(), Hit->ADC());
+          printf("Channel: %2i  ROC: %1i  col: %2i  row: %2i  adc: %3i  Charge: %9.3E\n", Telescope->Channel(), Plane->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Hit->Charge());
         }
       }
     }
@@ -65,13 +65,14 @@ int TrackTest (std::string const DataFileName)
 int main (int argc, char* argv[])
 {
 
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << std::endl;
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " [DataFile.dat] [GainCal.dat]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
-  TrackTest(DataFileName);
+  std::string const GainCalFileName = argv[2];
+  TrackTest(DataFileName, GainCalFileName);
 
   return 0;
 }
