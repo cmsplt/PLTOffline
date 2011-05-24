@@ -29,8 +29,6 @@ int NaiveROCCharge (std::string const GainCalFileName, std::string const DataFil
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
 
-  unsigned long ievent = 0;
-
   PLTEvent Event(DataFileName, GainCalFileName);
 
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
