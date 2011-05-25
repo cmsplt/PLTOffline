@@ -134,6 +134,18 @@ PLTHit* PLTPlane::Hit (size_t const i)
   return fHits[i];
 }
 
+
+size_t PLTPlane::NClusters ()
+{
+  return fClusters.size();
+}
+
+
+PLTCluster* PLTPlane::Cluster (size_t const i)
+{
+  return fClusters[i];
+}
+
 int PLTPlane::ROC ()
 {
   // Which roc is this

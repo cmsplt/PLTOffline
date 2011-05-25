@@ -13,6 +13,8 @@ class PLTCluster
 
     void AddHit (PLTHit*);
     float Charge ();
+    size_t NHits ();
+    PLTHit* Hit (size_t const);
 
   private:
     std::vector<PLTHit*> fHits;

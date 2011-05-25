@@ -22,6 +22,8 @@ class PLTPlane
     size_t  NHits ();
     PLTHit* Hit (size_t);
     int     ROC ();
+    size_t  NClusters ();
+    PLTCluster* Cluster (size_t);
 
   private:
     int fChannel;

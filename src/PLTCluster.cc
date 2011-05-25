@@ -31,3 +31,15 @@ float PLTCluster::Charge ()
   }
   return Sum;
 }
+
+
+size_t PLTCluster::NHits ()
+{
+  return fHits.size();
+}
+
+
+PLTHit* PLTCluster::Hit (size_t const i)
+{
+  return fHits[i];
+}
