@@ -70,6 +70,7 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLT
         mycol = ((word & dclmsk) >> 16) * 2;
       }
 
+      roc -= 1; // The fed gives 123, and we use the convention 012
       PLTHit Hit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
       Hits.push_back(Hit);
 
