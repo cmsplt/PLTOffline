@@ -46,6 +46,7 @@ int OccupancyPlots (std::string const DataFileName)
   // Map for all ROC hists and canvas
   std::map<int, TH2F*> hMap;
   std::map<int, TCanvas*> cMap;
+  std::map<int, TCanvas*> cpMap;
 
   // char buffer for writing names
   char BUFF[200];
@@ -97,6 +98,10 @@ int OccupancyPlots (std::string const DataFileName)
             cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 300);
             cMap[Plane->Channel()]->Divide(3,1);
 
+            sprintf(BUFF, "Occupancy_Projection_Ch%02i", Plane->Channel());
+            cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 600);
+            cpMap[Plane->Channel()]->Divide(3,2);
+
           }
         }
 
@@ -124,6 +129,11 @@ int OccupancyPlots (std::string const DataFileName)
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC);
     it->second->Draw("colz");
+
+    cpMap[Channel]->cd(ROC);
+    it->second->ProjectionX()->Draw("hist");
+    cpMap[Channel]->cd(ROC+3);
+    it->second->ProjectionY()->Draw("hist");
   }
 
   // Loop over all canvas, save them, and delete them
@@ -131,6 +141,9 @@ int OccupancyPlots (std::string const DataFileName)
     sprintf(BUFF, "Occupancy_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
     delete it->second;
+
+    sprintf(BUFF, "Occupancy_Projection_Ch%02i.gif", it->first);
+    cpMap[it->first]->SaveAs(BUFF);
   }
 
 
