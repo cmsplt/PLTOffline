@@ -16,6 +16,7 @@ class PLTTelescope
     PLTPlane* Plane(size_t i);
     void      Draw2D (int const, TString const);
     size_t    NPlanes ();
+    int       HitPlaneBits ();
 
   private:
     std::vector<PLTPlane*> fPlanes;

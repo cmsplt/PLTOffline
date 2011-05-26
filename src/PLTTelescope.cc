@@ -67,3 +67,14 @@ size_t PLTTelescope::NPlanes ()
 }
 
 
+int PLTTelescope::HitPlaneBits ()
+{
+  // This function return a binary representation of hit planes
+  int HitPlanes = 0x0;
+
+  for (std::vector<PLTPlane*>::iterator it = fPlanes.begin(); it != fPlanes.end(); ++it) {
+    HitPlanes |= (0x1 << (*it)->ROC());
+  }
+
+  return HitPlanes;
+}

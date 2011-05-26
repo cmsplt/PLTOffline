@@ -58,8 +58,8 @@ int OccupancyPlots (std::string const DataFileName)
 
       // THIS plane is
       PLTPlane* Plane = Event.Plane(ip);
-      if (Plane->ROC() > 3) {
-        std::cerr << "WARNING: ROC > 3 found: " << Plane->ROC() << std::endl;
+      if (Plane->ROC() > 2) {
+        std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
         continue;
       }
       if (Plane->Channel() > 99) {
@@ -126,12 +126,12 @@ int OccupancyPlots (std::string const DataFileName)
     printf("Drawing hist for Channel %2i ROC %i\n", Channel, ROC);
 
     // change to correct pad on canvas and draw the hist
-    cMap[Channel]->cd(ROC);
+    cMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
 
-    cpMap[Channel]->cd(ROC);
+    cpMap[Channel]->cd(ROC+1);
     it->second->ProjectionX()->Draw("hist");
-    cpMap[Channel]->cd(ROC+3);
+    cpMap[Channel]->cd(ROC+1+3);
     it->second->ProjectionY()->Draw("hist");
   }
 
