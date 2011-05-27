@@ -101,7 +101,7 @@ int GainCalFastFits (TString const InFileName)
     Map[Id].push_back( std::make_pair(adc, vcal) );
 
     // Add ROC and VCal if not there already
-    ROCNames.insert(TString::Format("%1i%02i%02i%1i", mFec, mFecChannel, hubAddress, roc));
+    ROCNames.insert(TString::Format("%1i%1i%02i%1i", mFec, mFecChannel, hubAddress, roc));
     VCals.insert(vcal);
   }
 
@@ -135,7 +135,7 @@ int GainCalFastFits (TString const InFileName)
     UnPack(It->first.Data(), mFec, mFecChannel, hubAddress, roc, col, row);
 
     // This is ROC
-    sprintf(ROCId, "%1i%02i%02i", mFec, mFecChannel, hubAddress);
+    sprintf(ROCId, "%1i%1i%02i%1i", mFec, mFecChannel, hubAddress, roc);
 
     // Input for TGraph, define size, and fill them
     float X[It->second.size()];
@@ -168,7 +168,7 @@ int GainCalFastFits (TString const InFileName)
     // Do the fit
     int FitResult = g.Fit("FitFunc", "Q");
     if (FitResult != 0) {
-      printf("FitResult = %4i for %1i %2i %2i %2i %2i\n", FitResult, mFec, mFecChannel, hubAddress, col, row);
+      printf("FitResult = %4i for %1i %1i %2i %2i %2i\n", FitResult, mFec, mFecChannel, hubAddress, col, row);
     }
 
     // Polt the Chi2
@@ -186,7 +186,7 @@ int GainCalFastFits (TString const InFileName)
     g.Write();
 
     // Print the fit parameters to the output params file
-    fprintf(fOutFits, "%1i %2i %2i %1i %2i %2i %12E %12E %12E %12E %12E\n", mFec, mFecChannel, hubAddress, roc, col, row, Param[0], Param[1], Param[2], Param[3], Param[4]);
+    fprintf(fOutFits, "%1i %1i %2i %1i %2i %2i %12E %12E %12E %12E %12E\n", mFec, mFecChannel, hubAddress, roc, col, row, Param[0], Param[1], Param[2], Param[3], Param[4]);
 
     // Add saturation value to values
     ROCSaturationValues[ROCId].push_back(Param[0]);
