@@ -169,32 +169,32 @@ int OccupancyPlots (std::string const DataFileName)
     cMap[Channel]->cd(ROC+1+3);
     int count=0;
     float sum=0;
-    float neighbours[8];
     int cnt=0;
     for(int ic = 1; ic <= it->second->GetNbinsX(); ++ic) {
       for(int ir = 1; ir <= it->second->GetNbinsY(); ++ir){
         if (it->second->GetBinContent(ic, ir)==0.0) continue;
         count++;
         sum=sum+it->second->GetBinContent(ic, ir);
-        cnt=0;
-        for (int i=-1; i<=1; i++)
-        {
-          for (int j=-1; j<=1; j++)
-          {
-            if (i==0 && j==0) continue;
-            neighbours[cnt] = it->second->GetBinContent(ic+i, ir+j);
-            cnt++;
-          }
-        }
       }
     }
-    float pixnorm=TMath::Mean(8,neighbours);
     float norm=sum/count;
     for(int ic = 1; ic<=it->second->GetNbinsX();ic++) {
       for(int ir = 1; ir<=it->second->GetNbinsY();ir++) {
         int _ic  =it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir  =it->second->ProjectionY()->GetBinLowEdge(ir);
         if ((_ic >14 && _ic <37) && (_ir<79  && _ir>41)){
+			cnt=0;
+			float neighbours[8];
+			for (int i=-1; i<=1; i++)
+			{
+				for (int j=-1; j<=1; j++)
+				{
+					if (i==0 && j==0) continue;
+					neighbours[cnt] = it->second->GetBinContent(ic+i, ir+j);
+					cnt++;
+				}
+			}
+		  float pixnorm=TMath::Mean(8,neighbours);
           float iEff=it->second->GetBinContent(ic,ir)/norm;
           effMap[it->first]->SetBinContent(ic,ir, iEff);  
           if(pixnorm>0)iEff=it->second->GetBinContent(ic,ir)/pixnorm;
