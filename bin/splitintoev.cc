@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <math.h>
+#include <cstring>
+
 
 
 

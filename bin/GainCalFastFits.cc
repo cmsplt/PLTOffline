@@ -48,7 +48,7 @@ int GainCalFastFits (TString const InFileName)
   std::ifstream f(InFileName.Data());
   if (!f) {
     std::cerr << "ERROR; Cannot open file: " << InFileName << std::endl;
-    exit(1);
+    throw;
   }
 
   // Open the output root file

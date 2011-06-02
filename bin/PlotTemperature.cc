@@ -9,6 +9,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+
 
 #include "TString.h"
 #include "TGraph.h"
@@ -23,7 +25,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   std::ifstream f(FileName.Data());
   if (!f) {
     std::cerr << "ERROR: cannot open input file: " << FileName << std::endl;
-    exit(1);
+    throw;
   }
 
   unsigned long long NLinesTotal = 0;
@@ -80,7 +82,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
 
     if (nUsed >= NPOINTS) {
       std::cout << "HERE" << std::endl;
-      exit(0);
+      throw;
       break;
     }
 

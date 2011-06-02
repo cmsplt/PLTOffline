@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 #include "PLTHit.h"
 

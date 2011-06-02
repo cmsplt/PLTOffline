@@ -8,6 +8,8 @@
 
 
 #include <iostream>
+#include <cstdlib>
+
 
 #include "TCanvas.h"
 #include "TF1.h"

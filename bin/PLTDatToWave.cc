@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 #include "TString.h"
 #include "TGraph.h"
@@ -27,7 +28,7 @@ int PLTDatToWave (int const N, TString const InputFileName)
   std::ifstream InFile(InputFileName.Data());
   if (!InFile.is_open()) {
     std::cerr << "ERROR: cannot open file for reading: " << InputFileName << std::endl;
-    exit(1);
+    throw;
   }
 
   std::string line;

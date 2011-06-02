@@ -1,6 +1,8 @@
 #ifndef GUARD_PLTPlane_h
 #define GUARD_PLTPlane_h
 
+#include <cstdlib>
+
 #include "PLTCluster.h"
 
 #include "TH2F.h"
