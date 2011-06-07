@@ -16,6 +16,7 @@
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TStyle.h"
+#include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
 int OccupancyPlots (std::string const);
@@ -31,6 +32,12 @@ int OccupancyPlots (std::string const);
 
 int OccupancyPlots (std::string const DataFileName)
 {
+        gROOT->SetStyle("Plain");                  
+        gStyle->SetPalette(1);
+        gStyle->SetOptStat(11000010);
+        gStyle->SetPadLeftMargin (0.17);
+        gStyle->SetPadRightMargin (0.17);
+
   TH2F h1("OccupancyR1", "OccupancyR1", 50, 0, 50, 60, 30, 90);
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   
@@ -83,13 +90,22 @@ int OccupancyPlots (std::string const DataFileName)
           // Create new hist with the given name
           sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-          hMap[id] = new TH2F(BUFF, BUFF, 50, 0, 50, 60, 30, 90);
-          hMap[id]->SetXTitle("Column");
-          hMap[id]->SetYTitle("Row");
+          hMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
+//        hMap[id]->SetXTitle("Column");
+//        hMap[id]->SetYTitle("Row");
+	  hMap[id]->SetTitle("Column");
+          hMap[id]->GetYaxis()->SetTitle("Row");
+          hMap[id]->GetYaxis()->CenterTitle();
+          hMap[id]->GetXaxis()->SetTitle("column");
+          hMap[id]->GetXaxis()->CenterTitle();
+          hMap[id]->GetZaxis()->SetTitle("Number of Hits");
+          hMap[id]->GetZaxis()->CenterTitle();
+          hMap[id]->SetTitleOffset(1.5);
+          hMap[id]->SetFillColor(40);
 
           sprintf(BUFF, "Occupancy Efficiency_Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-          effMap[id] = new TH2F(BUFF, BUFF, 50, 0, 50, 60, 30, 90);
+          effMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           effMap[id]->SetXTitle("Column");
           effMap[id]->SetYTitle("Row");
           effMap[id]->GetZaxis()->SetRangeUser(0.,1.5);
@@ -97,7 +113,7 @@ int OccupancyPlots (std::string const DataFileName)
 
           sprintf(BUFF, "Occupancy Efficiency w.r.t 3x3 Neighbors _Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-          eff3Map[id] = new TH2F(BUFF, BUFF, 50, 0, 50, 60, 30, 90);
+          eff3Map[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           eff3Map[id]->SetXTitle("Column");
           eff3Map[id]->SetYTitle("Row");
           eff3Map[id]->GetZaxis()->SetRangeUser(0.,1.5);
@@ -114,7 +130,7 @@ int OccupancyPlots (std::string const DataFileName)
             cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 900);
             cpMap[Plane->Channel()]->Divide(3,3);
 
-            sprintf(BUFF, "Planes Hit_in_Ch%02i", Plane->Channel());
+            sprintf(BUFF, "Planes_Hit_in_Ch%02i", Plane->Channel());
             cphitsMap[Plane->Channel()]=new TCanvas(BUFF,BUFF, 900,900);
             phitsMap[Plane->Channel()]=new TH1F(BUFF, BUFF, 7, 0, 7);
           }
@@ -156,11 +172,11 @@ int OccupancyPlots (std::string const DataFileName)
     cMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
 
-    cpMap[Channel]->cd(ROC+1);
-    it->second->ProjectionX()->Draw("hist");
     cpMap[Channel]->cd(ROC+3+1);
-    it->second->ProjectionY()->Draw("hist");
+    it->second->ProjectionX()->Draw("hist");
     cpMap[Channel]->cd(ROC+6+1);
+    it->second->ProjectionY()->Draw("hist");
+    cpMap[Channel]->cd(ROC+1);
     gStyle->SetPalette(1);
     it->second->Draw("colz");
 
@@ -209,8 +225,20 @@ int OccupancyPlots (std::string const DataFileName)
     eff3Map[it->first]->Draw("colz");
   }
   for (std::map<int, TH1F*>::iterator it = phitsMap.begin(); it != phitsMap.end(); ++it) {
-    cphitsMap[it->first]->cd();
-    it->second->Draw("");
+    	  cphitsMap[it->first]->cd();
+
+	  const Int_t n=7;
+          char *bin[n]= {"ROC0","ROC1","ROC2","ROC0&1","ROC1&2","ROC0&2","All ROC Hit"};
+          it->second->SetBit(TH1::kCanRebin);
+          for (Int_t r = 0; r<=6; r++){
+            it->second->Fill(bin[r],1);
+          }
+          it->second->LabelsDeflate();
+          it->second->SetFillColor(40);
+          it->second->GetYaxis()->SetTitle("Number of Hits");
+          it->second->GetYaxis()->SetTitleOffset(1.9);
+          it->second->GetYaxis()->CenterTitle();
+          it->second->Draw("");
   }
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) 
