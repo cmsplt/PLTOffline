@@ -32,13 +32,12 @@ int OccupancyPlots (std::string const);
 
 int OccupancyPlots (std::string const DataFileName)
 {
-        gROOT->SetStyle("Plain");                  
-        gStyle->SetPalette(1);
-        gStyle->SetOptStat(11000010);
-        gStyle->SetPadLeftMargin (0.17);
-        gStyle->SetPadRightMargin (0.17);
+  gROOT->SetStyle("Plain");                  
+  gStyle->SetPalette(1);
+  gStyle->SetOptStat(11000010);
+  gStyle->SetPadLeftMargin (0.17);
+  gStyle->SetPadRightMargin (0.17);
 
-  TH2F h1("OccupancyR1", "OccupancyR1", 50, 0, 50, 60, 30, 90);
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   
   // Grab the plt event reader
@@ -91,9 +90,9 @@ int OccupancyPlots (std::string const DataFileName)
           sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
           hMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
-//        hMap[id]->SetXTitle("Column");
-//        hMap[id]->SetYTitle("Row");
-	  hMap[id]->SetTitle("Column");
+          hMap[id]->SetXTitle("Column");
+          hMap[id]->SetYTitle("Row");
+          //hMap[id]->SetTitle("Column");
           hMap[id]->GetYaxis()->SetTitle("Row");
           hMap[id]->GetYaxis()->CenterTitle();
           hMap[id]->GetXaxis()->SetTitle("column");
@@ -138,10 +137,6 @@ int OccupancyPlots (std::string const DataFileName)
 
         // Fill this histogram with the given id
         hMap[id]->Fill(Hit->Column(), Hit->Row());
-        // Just print some example info
-        //if (Plane->ROC() > 3) {
-        //  printf("Channel: %2i  ROC: %1i  col: %2i  row: %2i  adc: %3i\n", Plane->Channel(), Plane->ROC(), Hit->Column(), Hit->Row(), Hit->ADC());
-        //}
       }
     }    
     for (size_t ip = 0; ip != Event.NTelescopes(); ++ip)//loop over Telescopes
@@ -187,7 +182,7 @@ int OccupancyPlots (std::string const DataFileName)
     float sum=0;
     int cnt=0;
     for(int ic = 1; ic <= it->second->GetNbinsX(); ++ic) {
-      for(int ir = 1; ir <= it->second->GetNbinsY(); ++ir){
+      for(int ir = 1; ir <= it->second->GetNbinsY(); ++ir) {
         if (it->second->GetBinContent(ic, ir)==0.0) continue;
         count++;
         sum=sum+it->second->GetBinContent(ic, ir);
@@ -199,18 +194,18 @@ int OccupancyPlots (std::string const DataFileName)
         int _ic  =it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir  =it->second->ProjectionY()->GetBinLowEdge(ir);
         if ((_ic >14 && _ic <37) && (_ir<79  && _ir>41)){
-			cnt=0;
-			float neighbours[8];
-			for (int i=-1; i<=1; i++)
-			{
-				for (int j=-1; j<=1; j++)
-				{
-					if (i==0 && j==0) continue;
-					neighbours[cnt] = it->second->GetBinContent(ic+i, ir+j);
-					cnt++;
-				}
-			}
-		  float pixnorm=TMath::Mean(8,neighbours);
+          cnt=0;
+          float neighbours[8];
+          for (int i=-1; i<=1; i++)
+          {
+            for (int j=-1; j<=1; j++)
+            {
+              if (i==0 && j==0) continue;
+              neighbours[cnt] = it->second->GetBinContent(ic+i, ir+j);
+              cnt++;
+            }
+          }
+          float pixnorm=TMath::Mean(8,neighbours);
           float iEff=it->second->GetBinContent(ic,ir)/norm;
           effMap[it->first]->SetBinContent(ic,ir, iEff);  
           if(pixnorm>0)iEff=it->second->GetBinContent(ic,ir)/pixnorm;
@@ -224,28 +219,32 @@ int OccupancyPlots (std::string const DataFileName)
     cMap[Channel]->cd(ROC+6+1);
     eff3Map[it->first]->Draw("colz");
   }
-  for (std::map<int, TH1F*>::iterator it = phitsMap.begin(); it != phitsMap.end(); ++it) {
-    	  cphitsMap[it->first]->cd();
 
-	  const Int_t n=7;
-          char *bin[n]= {"ROC0","ROC1","ROC2","ROC0&1","ROC1&2","ROC0&2","All ROC Hit"};
-          it->second->SetBit(TH1::kCanRebin);
-          for (Int_t r = 0; r<=6; r++){
-            it->second->Fill(bin[r],1);
-          }
-          it->second->LabelsDeflate();
-          it->second->SetFillColor(40);
-          it->second->GetYaxis()->SetTitle("Number of Hits");
-          it->second->GetYaxis()->SetTitleOffset(1.9);
-          it->second->GetYaxis()->CenterTitle();
-          it->second->Draw("");
+
+
+  for (std::map<int, TH1F*>::iterator it = phitsMap.begin(); it != phitsMap.end(); ++it) {
+    cphitsMap[it->first]->cd();
+
+    const Int_t n=7;
+    char *bin[n]= {"ROC0","ROC1","ROC2","ROC0&1","ROC1&2","ROC0&2","All ROC Hit"};
+    it->second->SetBit(TH1::kCanRebin);
+    for (Int_t r = 0; r<=6; r++){
+      it->second->Fill(bin[r],1);
+    }
+    it->second->LabelsDeflate();
+    it->second->SetFillColor(40);
+    it->second->GetYaxis()->SetTitle("Number of Hits");
+    it->second->GetYaxis()->SetTitleOffset(1.9);
+    it->second->GetYaxis()->CenterTitle();
+    it->second->Draw("");
   }
+
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) 
   {
     sprintf(BUFF, "Occupancy_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
-    delete it->second;      
+    delete it->second;
     sprintf(BUFF, "Occupancy_Projection_Ch%02i.gif", it->first);
     cpMap[it->first]->SaveAs(BUFF);
   }
@@ -253,7 +252,7 @@ int OccupancyPlots (std::string const DataFileName)
   {
     sprintf(BUFF, "Occupancy_Coincidence_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
-   }
+  }
 
   return 0;
 }
