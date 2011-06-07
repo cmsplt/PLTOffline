@@ -22,7 +22,6 @@
 
 
 
-
 int NaiveROCCharge (std::string const GainCalFileName, std::string const DataFileName)
 {
   std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
