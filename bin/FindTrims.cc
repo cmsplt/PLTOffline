@@ -24,8 +24,9 @@ int const NROW = MAXROW - MINROW + 1;
 
 struct B
 {
-  int Eff[NCOL][NROW];
-  int Trim[NCOL][NROW];
+  float Eff[NCOL][NROW];
+  int   Trim[NCOL][NROW];
+  bool  Checked[NCOL][NROW];
 };
 
 
@@ -56,8 +57,8 @@ int FindTrims (std::string const InFileName)
            >> itrim
            >> NFired
            >> Efficiency;
-    printf("%2i %2i\n", Col, Row);
     ROCID = 10000 * mFec + 1000 * mFecChannel + 10 * hubAddress + ROC;
+    STrim[ROCID].Checked[Col - MINCOL][Row - MINROW] = true;
     if (fabs(0.5 - Efficiency) < fabs(0.5 - STrim[ROCID].Eff[Col][Row])) {
       STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]  = Efficiency;
       STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] = itrim;
@@ -90,8 +91,9 @@ int FindTrims (std::string const InFileName)
 
     for (int icol = 0; icol != NCOL; ++icol) {
       for (int irow = 0; irow != NROW; ++irow) {
-        printf("%2i  %2i\n", icol, irow);
-        fprintf(f, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow, It->second.Trim[icol][irow]);
+        fprintf(f, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,
+                It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 15);
+        printf("%2i %2i %2i %9.5f\n", MINCOL + icol, MINROW + irow, It->second.Trim[icol][irow], It->second.Eff[icol][irow]);
       }
     }
 
