@@ -71,6 +71,10 @@ int OccupancyPlots (std::string const DataFileName)
         std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
         continue;
       }
+      if (Plane->ROC() < 0) {
+        std::cerr << "WARNING: ROC < 0 found: " << Plane->ROC() << std::endl;
+        continue;
+      }
       if (Plane->Channel() > 99) {
         std::cerr << "WARNING: Channel > 99 found: " << Plane->Channel() << std::endl;
         continue;
