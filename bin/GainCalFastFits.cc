@@ -52,12 +52,16 @@ int GainCalFastFits (TString const InFileName)
   }
 
   // Open the output root file
-  TString const OutRootName = "Test.root";
+  TString const OutRootName = "GainCalFits.root";
   TFile fOutRoot(OutRootName, "recreate");
   if (!fOutRoot.IsOpen()) {
     std::cerr << "ERROR: Cannot open output root file: " << OutRootName << std::endl;
     throw;
   }
+
+  // Make a directory for good and bad fits
+  TDirectory* dGoodFits = fOutRoot.mkdir("Fits_Good");
+  TDirectory* dBadFits = fOutRoot.mkdir("Fits_Bad");
 
   // Open root file outout
   TString const OutFitsName = "TestOut.dat";
@@ -82,6 +86,7 @@ int GainCalFastFits (TString const InFileName)
   std::set<TString> ROCNames;
   std::set<int>     VCals;
 
+
   // Loop over all lines in the input data file
   for (std::string line; std::getline(f, line); ) {
     s.clear();
@@ -89,11 +94,12 @@ int GainCalFastFits (TString const InFileName)
     s >> mFec
       >> mFecChannel
       >> hubAddress
-      >> roc
       >> col
       >> row
+      >> roc
       >> adc
       >> vcal;
+
 
     // Get a simple string for the pixel and pair adc and vcal for this hit
     // which gets added to the map
@@ -106,7 +112,7 @@ int GainCalFastFits (TString const InFileName)
   }
 
   // Define the function we will fit for each pixel
-  TF1 FitFunc("FitFunc", "TMath::Exp( (x-[0]) / [1]  ) + [2]*x*x + [3]*x + [4] ", 150, 400);
+  TF1 FitFunc("FitFunc", "[0]*x*x + [1]*x + [2] + TMath::Exp( (x-[3]) / [4]  )", 150, 400);
 
   // Define Chi2 plot for all pixels
   TH1F FitChi2("FitChi2", "FitChi2", 200, 0, 1000);
@@ -148,8 +154,9 @@ int GainCalFastFits (TString const InFileName)
 
     // Actually make a TGraph
     TGraphErrors g(It->second.size(), X, Y);
-    g.SetName("Fit_"+It->first);
-    g.SetTitle("Fit_"+It->first);
+    TString const Name = TString::Format("Fit_mF%1i_mFC%1i_hub%2i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    g.SetName(Name);
+    g.SetTitle(Name);
 
     // Get the min and max point from the graph
     g.GetPoint(0, adcMin, vcalMin);
@@ -159,16 +166,21 @@ int GainCalFastFits (TString const InFileName)
     FitFunc.SetRange(120, 300);
 
     // Some default parameters to start off with
-    FitFunc.SetParameter(0, adcMax);
-    FitFunc.SetParameter(1, 60);
-    FitFunc.SetParameter(2, 0.1);
-    FitFunc.SetParameter(3, -30);
-    FitFunc.SetParameter(4, 2000);
+    FitFunc.SetParameter(0, 0.1);
+    FitFunc.SetParameter(1, -30);
+    FitFunc.SetParameter(2, 2000);
+    FitFunc.SetParameter(3, adcMax);
+    FitFunc.SetParameter(4, 60);
 
     // Do the fit
     int FitResult = g.Fit("FitFunc", "Q");
     if (FitResult != 0) {
+      dBadFits->cd();
+      g.Write();
       printf("FitResult = %4i for %1i %1i %2i %2i %2i\n", FitResult, mFec, mFecChannel, hubAddress, col, row);
+    } else {
+      dGoodFits->cd();
+      g.Write();
     }
 
     // Polt the Chi2
@@ -183,7 +195,6 @@ int GainCalFastFits (TString const InFileName)
 
     // Save the graph to output file
     fOutRoot.cd();
-    g.Write();
 
     // Print the fit parameters to the output params file
     fprintf(fOutFits, "%1i %1i %2i %1i %2i %2i %12E %12E %12E %12E %12E\n", mFec, mFecChannel, hubAddress, roc, col, row, Param[0], Param[1], Param[2], Param[3], Param[4]);
@@ -195,14 +206,25 @@ int GainCalFastFits (TString const InFileName)
   }
 
   // Plot the saturation values
-  for (std::map<TString, std::vector<float> >::iterator It = ROCSaturationValues.begin(); It != ROCSaturationValues.end(); ++It) {
+  for (std::map<TString, std::vector<float> >::iterator It = ROCChi2.begin(); It != ROCChi2.end(); ++It) {
+    UnPack(It->first.Data(), mFec, mFecChannel, hubAddress, roc, col, row);
+    TString Name = TString::Format("Chi2_mF%1i_mFC%1i_hub%2i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+
     fOutRoot.cd();
-    TH1F h( TString("Saturation_")+It->first, TString("Saturation_")+It->first, 100, 0, 400);
+    TH1F hC(Name, Name, 100, 0, 1200);
     for (size_t i = 0; i != It->second.size(); ++i) {
-      h.Fill(It->second[i]);
+      hC.Fill(It->second[i]);
     }
-    h.Write();
+    hC.Write();
+
+    Name = TString::Format("Saturation_mF%1i_mFC%1i_hub%2i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F hS(Name, Name, 100, 0, 0.5);
+    for (size_t i = 0; i != ROCSaturationValues[It->first].size(); ++i) {
+      hS.Fill(ROCSaturationValues[It->first][i]);
+    }
+    hS.Write();
   }
+
 
 
   // Write Chi2 plot
