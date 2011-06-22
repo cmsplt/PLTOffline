@@ -11,10 +11,13 @@
 
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TStyle.h"
+#include "TROOT.h"
 
 
 namespace PLTU
 {
+  void SetStyle ();
   TH1F* HistFrom2D(TH2F*, TString const NewName = "");
 }
 
