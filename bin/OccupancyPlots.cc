@@ -21,6 +21,7 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 #include "TLine.h"
+
 #include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
@@ -28,7 +29,7 @@ int OccupancyPlots (std::string const);
 
 
 // CONSTANTS HERE
-const double_t quantile = .97;
+const Double_t quantile = .97;
 
 
 // CODE BELOW
@@ -47,11 +48,16 @@ int OccupancyPlots (std::string const DataFileName)
   // Map for all ROC hists and canvas
   std::map<int, TH2F*> hMap;
   std::map<int, TH2F*> effMap;
+  std::map<int, TH2F*> qhMap;	
   std::map<int, TH2F*> eff3Map;
+  std::map<int, TH1F*> eff31dMap;
+  std::map<int, TH1F*> effMapP;
   std::map<int, TH1F*> phitsMap;
 
   std::map<int, TCanvas*> cMap;
   std::map<int, TCanvas*> cpMap;
+  std::map<int, TCanvas*> oMap;
+  std::map<int, TCanvas*> oProjMap;
   std::map<int, TCanvas*> cphitsMap;
   std::map<int, TCanvas*> ceffMap;
   
@@ -107,7 +113,7 @@ int OccupancyPlots (std::string const DataFileName)
           hMap[id]->SetStats(false);
 
           // 2 D Occupance efficiency plots
-          sprintf(BUFF, "Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
+          sprintf(BUFF, "Occupancy Normalized by Mean Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
           effMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           effMap[id]->SetXTitle("Column");
@@ -117,9 +123,24 @@ int OccupancyPlots (std::string const DataFileName)
           effMap[id]->GetYaxis()->CenterTitle();
           effMap[id]->GetZaxis()->CenterTitle();
           effMap[id]->SetTitleOffset(1.2, "z");
-          effMap[id]->GetZaxis()->SetRangeUser(0.,1.5);
+          //effMap[id]->GetZaxis()->SetRangeUser(0.,1.5);
           effMap[id]->SetStats(false);
 
+		  // 2 D Occupance efficiency plots
+		  sprintf(BUFF, "Occupancy Normalized by Quantiles Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
+		  std::cout << "Creating New Hist: " << BUFF << std::endl;
+		  qhMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
+		  qhMap[id]->SetXTitle("Column");
+		  qhMap[id]->SetYTitle("Row");
+		  qhMap[id]->SetZTitle("Efficiency");
+		  qhMap[id]->GetXaxis()->CenterTitle();
+		  qhMap[id]->GetYaxis()->CenterTitle();
+		  qhMap[id]->GetZaxis()->CenterTitle();
+		  qhMap[id]->SetTitleOffset(1.2, "z");
+		  //qhMap[id]->GetZaxis()->SetRangeUser(0.,);
+		  qhMap[id]->SetStats(false);	
+			
+			
           // 2D Occupancy efficiency plots wrt 3x3
           sprintf(BUFF, "3x3 Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
@@ -131,17 +152,20 @@ int OccupancyPlots (std::string const DataFileName)
           eff3Map[id]->GetYaxis()->CenterTitle();
           eff3Map[id]->GetZaxis()->CenterTitle();
           eff3Map[id]->SetTitleOffset(1.2, "z");
-          eff3Map[id]->GetZaxis()->SetRangeUser(0.,1.5);
+          eff3Map[id]->GetZaxis()->SetRangeUser(0.,3.0);
           eff3Map[id]->SetStats(false);
 
-          // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
+		  eff31dMap[id]=new TH1F(BUFF, BUFF, 50, 0, 3.0);
+
+          
+			// If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
           if (!cMap.count(Plane->Channel())) {
 
             // Create canvas with given name
-            sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
+            sprintf(BUFF, "Normalized Occupancy Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
-            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
-            cMap[Plane->Channel()]->Divide(3,3);
+            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
+            cMap[Plane->Channel()]->Divide(3,2);
 
             sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
@@ -152,7 +176,16 @@ int OccupancyPlots (std::string const DataFileName)
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
             cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
             cpMap[Plane->Channel()]->Divide(3,3);
+			 
+			sprintf(BUFF, "Occupancy Maps Ch%02i", Plane->Channel());
+			std::cout << "Creating New Canvas: " << BUFF << std::endl;
+			oMap[Plane->Channel()]= new TCanvas(BUFF, BUFF, 1200, 1200);
+			oMap[Plane->Channel()]->Divide(3,3);
 
+			sprintf(BUFF, "Full Occupancy Maps Ch%02i", Plane->Channel());
+			oProjMap[Plane->Channel()]=new TCanvas(BUFF, BUFF, 1200, 800);
+			oProjMap[Plane->Channel()]->Divide(3,2);
+  
             sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
             cphitsMap[Plane->Channel()] = new TCanvas(BUFF,BUFF, 400, 400);
@@ -230,7 +263,7 @@ int OccupancyPlots (std::string const DataFileName)
     delete hOccZ;
     */
     
-    cMap[Channel]->cd(ROC+6+1)->SetLogy(1);
+    cMap[Channel]->cd(ROC+3+1)->SetLogy(1);
     TH1F* hOccZ = PLTU::HistFrom2D(it->second);
     int nq = 1;
     Double_t xq[nq]; // Quantile positions in [0, 1]
@@ -238,16 +271,21 @@ int OccupancyPlots (std::string const DataFileName)
     xq[0] = quantile;
     hOccZ->GetQuantiles(nq, yq, xq);
     hOccZ->Draw("hist");
-    TLine* lQ = new TLine(yq[0], hOccZ->GetMaximum(), yq[0], .5);
-    lQ->Draw("SAME");
-    
+	  
+	TLine* lQ = new TLine(yq[0], hOccZ->GetMaximum(), yq[0], .5);
+	lQ->SetLineColor(2);
+	lQ->SetLineWidth(2);
+	lQ->Draw("SAME");
+	oProjMap[Channel]->cd(ROC+3+1);  hOccZ->Draw("hist"); lQ->Draw("SAME");
+	qhMap[it->first]=(TH2F*)it->second->Clone();
+	sprintf(BUFF, "Occupancy Normalized by Quantiles Ch%02i,ROC%1i", Channel, ROC );
+	qhMap[it->first]->SetTitle(BUFF);
     cMap[Channel]->cd(ROC+1);
     if(yq[0] > 1 && it->second->GetMaximum() > yq[0]) {
 		std::cerr << "WARNING: Z axis of Ch" << Channel << ",ROC=" << ROC << " Occupancy plot trimmed to " << yq[0] << ". Maximum was: " << it->second->GetMaximum() << std::endl;
-		it->second->SetMaximum(yq[0]);
+		qhMap[it->first]->SetMaximum(yq[0]);
 	}
-	it->second->Draw("colz");
-    
+	qhMap[it->first]->Draw("colz");
     // Draw on projection canvas
     
     cpMap[Channel]->cd(ROC+3+1);
@@ -269,7 +307,10 @@ int OccupancyPlots (std::string const DataFileName)
     gStyle->SetPalette(1);
     it->second->Draw("colz");
 
-
+	oProjMap[Channel]->cd(ROC+1);
+	gStyle->SetPalette(1);
+	it->second->Draw("colz"); 
+	
     // loop over Histograms and calculate Efficiency:
     int count = 0;
     float sum = 0;
@@ -289,7 +330,7 @@ int OccupancyPlots (std::string const DataFileName)
       for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
         int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir = it->second->ProjectionY()->GetBinLowEdge(ir);
-        if ((_ic > 14 && _ic < 37) && (_ir < 79  && _ir > 41)) {
+        if ((_ic > 14 && _ic < 38) && (_ir < 78  && _ir > 40)) {
           cnt = 0;
           float neighbours[8];
           for (int i = -1; i <= 1; i++) {
@@ -310,15 +351,27 @@ int OccupancyPlots (std::string const DataFileName)
           } else {
             iEff = 0;
           }
-          eff3Map[it->first]->SetBinContent(ic, ir, iEff);
-        }
+          if ((_ic > 14 && _ic < 38) && (_ir < 78 && _ir > 40))eff3Map[it->first]->SetBinContent(ic, ir, iEff);
+		 
+			if ((_ic > 14 && _ic < 38) && (_ir < 78 && _ir > 40))eff31dMap[it->first]->Fill(iEff);
+		  
+		}
       }
     }
 
     ceffMap[Channel]->cd(ROC+1);
-    effMap[it->first]->Draw("colz");
-    ceffMap[Channel]->cd(ROC+3+1);
     eff3Map[it->first]->Draw("colz");
+    ceffMap[Channel]->cd(ROC+3+1);
+	//effMapP[it->first]=PLTU::HistFrom2D(eff3Map[it->first], "Occupancy Efficiency w.r.t 3x3 Neighbors Projection");
+	//effMapP[it->first]->SetUserRange(0.0, 3.0);
+	eff31dMap[it->first]->Draw("");
+	
+	  oMap[Channel]->cd(ROC+1);
+	  it->second->Draw("colz");
+	  oMap[Channel]->cd(ROC+3+1);
+	  qhMap[it->first]->Draw("colz");
+	  oMap[Channel]->cd(ROC+6+1);
+	  effMap[it->first]->Draw("colz");
   }
 
 
@@ -360,7 +413,11 @@ int OccupancyPlots (std::string const DataFileName)
   for (std::map<int, TCanvas*>::iterator it = ceffMap.begin(); it != ceffMap.end(); ++it) {
     sprintf(BUFF, "Occupancy_Efficiency_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
-    delete it->second;      
+    delete it->second;
+	sprintf(BUFF, "Occupancy_all_Ch%02i.gif", it->first);
+	  oMap[it->first]->SaveAs(BUFF);
+	sprintf(BUFF, "Occupancy_allwQuantiles_Ch%02i.gif", it->first);
+	  oProjMap[it->first]->SaveAs(BUFF);
   }
 
   for (std::map<int, TCanvas*>::iterator it = cphitsMap.begin(); it != cphitsMap.end(); ++it) {
