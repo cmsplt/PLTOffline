@@ -20,16 +20,15 @@
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TStyle.h"
+#include "TGraph.h"
 #include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
 int OccupancyPlots (std::string const);
 
 
-
-
-
-
+// CONSTANTS HERE
+const int OccupancyCutoffFactor = 3;
 
 
 // CODE BELOW
@@ -94,62 +93,76 @@ int OccupancyPlots (std::string const DataFileName)
         if (hMap.count(id) == 0) {
 
           // Create new hist with the given name
-          sprintf(BUFF, "Occupancy_Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
+          sprintf(BUFF, "Occupancy Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
           hMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           hMap[id]->SetXTitle("Column");
           hMap[id]->SetYTitle("Row");
           hMap[id]->SetZTitle("Number of Hits");
           hMap[id]->GetXaxis()->CenterTitle();
-          hMap[id]->GetYaxis()->SetTitle("Row");
           hMap[id]->GetYaxis()->CenterTitle();
           hMap[id]->GetZaxis()->CenterTitle();
-          hMap[id]->SetTitleOffset(1.5);
-          hMap[id]->SetFillColor(40);
+          hMap[id]->SetTitleOffset(1.2, "y");
+          hMap[id]->SetTitleOffset(1.4, "z");
+          hMap[id]->SetStats(false);
 
           // 2 D Occupance efficiency plots
-          sprintf(BUFF, "Occupancy Efficiency_Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
+          sprintf(BUFF, "Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
           effMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           effMap[id]->SetXTitle("Column");
           effMap[id]->SetYTitle("Row");
+          effMap[id]->SetZTitle("Efficiency");
+          effMap[id]->GetXaxis()->CenterTitle();
+          effMap[id]->GetYaxis()->CenterTitle();
+          effMap[id]->GetZaxis()->CenterTitle();
+          effMap[id]->SetTitleOffset(1.2, "z");
           effMap[id]->GetZaxis()->SetRangeUser(0.,1.5);
+          effMap[id]->SetStats(false);
 
           // 2D Occupancy efficiency plots wrt 3x3
-          sprintf(BUFF, "Occupancy Efficiency w.r.t 3x3 Neighbors _Ch%02i_ROC%1i", Plane->Channel(), Plane->ROC());
+          sprintf(BUFF, "3x3 Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
           eff3Map[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
           eff3Map[id]->SetXTitle("Column");
           eff3Map[id]->SetYTitle("Row");
+          eff3Map[id]->SetZTitle("Efficiency (relative to neighbors)");
+          eff3Map[id]->GetXaxis()->CenterTitle();
+          eff3Map[id]->GetYaxis()->CenterTitle();
+          eff3Map[id]->GetZaxis()->CenterTitle();
+          eff3Map[id]->SetTitleOffset(1.2, "z");
           eff3Map[id]->GetZaxis()->SetRangeUser(0.,1.5);
+          eff3Map[id]->SetStats(false);
 
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
           if (!cMap.count(Plane->Channel())) {
 
             // Create canvas with given name
-            sprintf(BUFF, "Occupancy_Ch%02i", Plane->Channel());
+            sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
-            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 600);
+            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
             cMap[Plane->Channel()]->Divide(3,2);
 
-            sprintf(BUFF, "Occupancy_Efficiency_Ch%02i", Plane->Channel());
+            sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
-            ceffMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 600);
+            ceffMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
             ceffMap[Plane->Channel()]->Divide(3,2);
 
-            sprintf(BUFF, "Occupancy_Projection_Ch%02i", Plane->Channel());
-            cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 900);
+            sprintf(BUFF, "Occupancy Projection Ch%02i", Plane->Channel());
+            std::cout << "Creating New Canvas: " << BUFF << std::endl;
+            cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
             cpMap[Plane->Channel()]->Divide(3,3);
 
-            sprintf(BUFF, "Planes_Hit_in_Ch%02i", Plane->Channel());
-            cphitsMap[Plane->Channel()]=new TCanvas(BUFF,BUFF, 900,900);
-            phitsMap[Plane->Channel()]=new TH1F(BUFF, BUFF, 7, 0, 7);
+            sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
+            std::cout << "Creating New Canvas: " << BUFF << std::endl;
+            cphitsMap[Plane->Channel()] = new TCanvas(BUFF,BUFF, 400, 400);
+            phitsMap[Plane->Channel()] = new TH1F(BUFF, BUFF, 7, 0, 7);
           }
         }
 
         // Fill this histogram with the given id
-        hMap[id]->Fill(Hit->Column(), Hit->Row());
-        // Just print some example info
+		hMap[id]->Fill(Hit->Column(), Hit->Row());
+		// Just print some example info
         //if (Plane->ROC() > 3) {
         //  printf("Channel: %2i  ROC: %1i  col: %2i  row: %2i  adc: %3i\n", Plane->Channel(), Plane->ROC(), Hit->Column(), Hit->Row(), Hit->ADC());
         //}
@@ -179,14 +192,14 @@ int OccupancyPlots (std::string const DataFileName)
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   for (std::map<int, TH2F*>::iterator it = hMap.begin(); it != hMap.end(); ++it) {
 
-    // Dean just testing this
+    /*// Dean just testing this
     TString NewName = TString(it->second->GetName()) + "_NHits1D";
     TH1F* h = PLTU::HistFrom2D(it->second, NewName);
     TCanvas cc("cc", "cc");
     cc.cd();
     h->Draw("hist");
     cc.SaveAs( TString(h->GetName())+".gif");
-    delete h;
+    delete h;*/
 
     // Decode the ID
     int const Channel = it->first / 10;
@@ -194,17 +207,63 @@ int OccupancyPlots (std::string const DataFileName)
 
     printf("Drawing hist for Channel %2i ROC %i\n", Channel, ROC);
 
-    // change to correct pad on canvas and draw the hist
-    cMap[Channel]->cd(ROC+1);
-    it->second->Draw("colz");
+	// change to correct pad on canvas and draw the hist
+    /*
+     * This was for setting the maximum value for the occupancy plot to
+     * some value determined from a Poisson fit of the next histogram
+     * of Number of Hits vs. Number of Pixels with that many Hits.
+     * It turned out to have mess up the drawing of histograms, so we
+     * don't use it.
+    cMap[Channel]->cd(ROC+3+1)->SetLogy(0);
+    TF1* pois = new TF1("pois", PLTU::PoissonFit, 0, it->second->GetMaximum(), 2);
+    pois->SetParName(0, "Const");
+    pois->SetParName(1, "#mu");
+    pois->SetParameter(0, 10);
+    pois->SetParameter(1, it->second->GetMean() / 3);
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit(111);
+    TH1F* hOccZ = PLTU::HistFrom2D(it->second);
+    hOccZ->Fit("pois");
+    std::cerr << "ROC" << ROC << " Parameter 0: " << pois->GetParameter(0) << std::endl;
+    std::cerr << "ROC" << ROC << " Parameter 1: " << pois->GetParameter(1) << std::endl;
+    delete pois;
+    delete hOccZ;
+    */
+    
     cMap[Channel]->cd(ROC+3+1)->SetLogy(1);
-    PLTU::HistFrom2D(it->second)->Draw("hist");
-
+    TH1F* hOccZ = PLTU::HistFrom2D(it->second);
+    int nq = 1;
+    Double_t xq[nq]; // Quantile positions in [0, 1]
+    Double_t yq[nq]; // Quantile values
+    xq[0] = .97;
+    hOccZ->GetQuantiles(nq, yq, xq);
+    std::cerr << "Quantile (" << xq[0] << "): " << yq[0] << std::endl;
+    hOccZ->Draw("hist");
+    
+    cMap[Channel]->cd(ROC+1);
+    if(yq[0] > 1 && it->second->GetMaximum() > yq[0]) {
+		std::cerr << "WARNING: Z axis of Ch" << Channel << ",ROC=" << ROC << " Occupancy plot trimmed to " << yq[0] << ". Maximum was: " << it->second->GetMaximum() << std::endl;
+		it->second->SetMaximum(yq[0]);
+	}
+	it->second->Draw("colz");
+    
     // Draw on projection canvas
+    
     cpMap[Channel]->cd(ROC+3+1);
-    it->second->ProjectionX()->Draw("hist");
+    TH1D* hpX = it->second->ProjectionX();
+    hpX->SetFillColor(40);
+    hpX->SetYTitle("Number of Hits");
+    hpX->GetYaxis()->CenterTitle();
+    hpX->SetTitleOffset(2, "Y");
+    hpX->Draw("hist");
+    
     cpMap[Channel]->cd(ROC+6+1);
-    it->second->ProjectionY()->Draw("hist");
+    TH1D* hpY = it->second->ProjectionY();
+    hpY->SetYTitle("Number of Hits");
+    hpY->GetYaxis()->CenterTitle();
+    hpY->SetTitleOffset(2, "Y");
+    hpY->Draw("hist");
+    
     cpMap[Channel]->cd(ROC+1);
     gStyle->SetPalette(1);
     it->second->Draw("colz");
@@ -263,14 +322,21 @@ int OccupancyPlots (std::string const DataFileName)
 
 
   for (std::map<int, TH1F*>::iterator it = phitsMap.begin(); it != phitsMap.end(); ++it) {
-    	  cphitsMap[it->first]->cd();
+    cphitsMap[it->first]->cd();
 
     // Naming for coincidence map
-    char *bin[7] = {"ROC0", "ROC1", "ROC2", "ROC0&1", "ROC1&2", "ROC0&2", "All ROC Hit"};
+    char *bin[7] = { (char*)"ROC0"
+		, (char*)"ROC1"
+		, (char*)"ROC2"
+		, (char*)"ROC0&1"
+		, (char*)"ROC1&2"
+		, (char*)"ROC0&2"
+		, (char*)"All ROC Hit"
+	};
 
     it->second->SetBit(TH1::kCanRebin);
     for (int r = 0; r <= 6; r++) {
-      it->second->Fill(bin[r], 1);
+      it->second->Fill(bin[r], 0);
     }
     it->second->LabelsDeflate();
     it->second->SetFillColor(40);

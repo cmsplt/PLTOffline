@@ -17,6 +17,7 @@
 
 namespace PLTU
 {
+  Double_t PoissonFit(Double_t* x, Double_t* par);
   void SetStyle ();
   TH1F* HistFrom2D(TH2F*, TString const NewName = "");
 }
