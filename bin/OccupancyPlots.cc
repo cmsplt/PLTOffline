@@ -20,7 +20,7 @@
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TStyle.h"
-#include "TGraph.h"
+#include "TLine.h"
 #include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
@@ -28,7 +28,7 @@ int OccupancyPlots (std::string const);
 
 
 // CONSTANTS HERE
-const int OccupancyCutoffFactor = 3;
+const double_t quantile = .97;
 
 
 // CODE BELOW
@@ -140,8 +140,8 @@ int OccupancyPlots (std::string const DataFileName)
             // Create canvas with given name
             sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
-            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
-            cMap[Plane->Channel()]->Divide(3,2);
+            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
+            cMap[Plane->Channel()]->Divide(3,3);
 
             sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
@@ -212,8 +212,8 @@ int OccupancyPlots (std::string const DataFileName)
      * This was for setting the maximum value for the occupancy plot to
      * some value determined from a Poisson fit of the next histogram
      * of Number of Hits vs. Number of Pixels with that many Hits.
-     * It turned out to have mess up the drawing of histograms, so we
-     * don't use it.
+     * It turned out to mess up the drawing of histograms, so we don't
+     * use it.
     cMap[Channel]->cd(ROC+3+1)->SetLogy(0);
     TF1* pois = new TF1("pois", PLTU::PoissonFit, 0, it->second->GetMaximum(), 2);
     pois->SetParName(0, "Const");
@@ -230,15 +230,16 @@ int OccupancyPlots (std::string const DataFileName)
     delete hOccZ;
     */
     
-    cMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    cMap[Channel]->cd(ROC+6+1)->SetLogy(1);
     TH1F* hOccZ = PLTU::HistFrom2D(it->second);
     int nq = 1;
     Double_t xq[nq]; // Quantile positions in [0, 1]
     Double_t yq[nq]; // Quantile values
-    xq[0] = .97;
+    xq[0] = quantile;
     hOccZ->GetQuantiles(nq, yq, xq);
-    std::cerr << "Quantile (" << xq[0] << "): " << yq[0] << std::endl;
     hOccZ->Draw("hist");
+    TLine* lQ = new TLine(yq[0], hOccZ->GetMaximum(), yq[0], .5);
+    lQ->Draw("SAME");
     
     cMap[Channel]->cd(ROC+1);
     if(yq[0] > 1 && it->second->GetMaximum() > yq[0]) {
