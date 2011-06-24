@@ -29,9 +29,9 @@ int OccupancyPlots (std::string const);
 // CONSTANTS HERE
 const Double_t quantile = .97;
 const int colCutL = 1;	// Number of columns to skip at the lower edge (currently only used for quantile calculation)
-const int colCutU = 0;	// Number of columns to skip at the upper edge
+const int colCutU = 1;	// Number of columns to skip at the upper edge
 const int rowCutL = 3;	// Number of rows to skip at the lower edge
-const int rowCutU = 0;	// Number of rows to skip at the upper edge
+const int rowCutU = 1;	// Number of rows to skip at the upper edge
 
 
 // CODE BELOW
