@@ -5,10 +5,10 @@
 
 namespace PLTU
 {
+  const int colMin = 12;
+  const int colMax = 38;
   const int rowMin = 40;
   const int rowMax = 79;
-  const int colMin = 13;
-  const int colMax = 38;
 
   // From http://root.cern.ch/root/roottalk/roottalk03/0199.html
   Double_t PoissonFit(Double_t* x, Double_t* par) {
