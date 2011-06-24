@@ -16,7 +16,7 @@
 
 int const MINCOL = 13;
 int const MAXCOL = 39;
-int const MINROW = 39;
+int const MINROW = 40;
 int const MAXROW = 79;
 
 int const NCOL = MAXCOL - MINCOL + 1;
@@ -77,7 +77,7 @@ int FindTrims (std::string const InFileName)
     printf("mFec = %1i  mFecChannel = %1i  hubAddress = %2i  ROC = %1i\n", mFec, mFecChannel, hubAddress, ROC);
 
 
-    sprintf(BUFF, "trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix", mFec, mFecChannel, hubAddress, ROC);
+    sprintf(BUFF, "trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
     FILE* f = fopen(BUFF, "w");
     if (!f) {
       std::cerr << "ERROR: cannot open output file: " << BUFF << std::endl;
@@ -93,7 +93,7 @@ int FindTrims (std::string const InFileName)
       for (int irow = 0; irow != NROW; ++irow) {
         fprintf(f, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,
                 It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 15);
-        printf("%2i %2i %2i %9.5f\n", MINCOL + icol, MINROW + irow, It->second.Trim[icol][irow], It->second.Eff[icol][irow]);
+        //printf("%2i %2i %2i %9.5f\n", MINCOL + icol, MINROW + irow, It->second.Trim[icol][irow], It->second.Eff[icol][irow]);
       }
     }
 
