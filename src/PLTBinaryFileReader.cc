@@ -91,7 +91,7 @@ int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit>& Hits, unsigned long
 
 int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit>& Hits, unsigned long& Event)
 {
-  unsigned int n1, n2;
+  unsigned long n1, n2;
 
   int wordcount = 0;
   bool bheader = true;
@@ -104,6 +104,8 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
     if (InFile.eof()) {
       return -1;
     }
+
+    wordcount = 1;
 
     if ((n1 == 0x53333333) && (n2 == 0x53333333)) {
       //tdc buffer, special handling
@@ -130,7 +132,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         InFile.read((char *) &n2, sizeof n2);
         InFile.read((char *) &n1, sizeof n1);
 
-        if ((n1 & 0xf0000000) == 0xa0000000) {
+        if ((n1 & 0xf0000000) == 0xa0000000 || (n2 & 0xf0000000) == 0xa0000000) {
           bheader = false;
           //std::cout << "Found Event Trailer: " << Event << std::endl;
         } else {
@@ -138,6 +140,27 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           DecodeSpyDataFifo(n1, Hits);
         }
       }
+    } else if (((n2 & 0xff000000) == 0x50000000) && (wordcount == 1)) {
+      // Found the header
+      wordcount = 0;
+      bheader = true;
+      Event = (n2 & 0xffffff);
+      //std::cout << "Found Event Header: " << Event << std::endl;
+
+      while (bheader) {
+        InFile.read((char *) &n2, sizeof n2);
+        InFile.read((char *) &n1, sizeof n1);
+
+        if ((n2 & 0xf0000000) == 0xa0000000 || (n1 & 0xf0000000) == 0xa0000000  ) {
+          bheader = false;
+          //std::cout << "Found Event Trailer: " << Event << std::endl;
+        } else {
+          DecodeSpyDataFifo(n2, Hits);
+          DecodeSpyDataFifo(n1, Hits);
+        }
+      }
+    } else {
+      //wordcount = 0;
     }
   }
 
