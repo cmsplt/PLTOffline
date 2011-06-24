@@ -20,7 +20,8 @@
 int PLTDatToWave (int const N, TString const InputFileName)
 {
   //int const kNUMBER = 205;
-  int const kNUMBER = 70;
+  int const kBEGIN  =  30;
+  int const kNUMBER = 100;
 
   float Time[kNUMBER];
   float Value[kNUMBER];
@@ -36,9 +37,14 @@ int PLTDatToWave (int const N, TString const InputFileName)
     std::getline(InFile, line);
   }
 
-  for (int i = 0; i != kNUMBER; ++i) {
-    Time[i] = (float) i;
-    InFile >> Value[i];
+  for (int i = 0; !InFile.eof(); ++i) {
+    if (i < kBEGIN) {
+      continue;
+    } else if (i >= kBEGIN + kNUMBER) {
+      break;
+    }
+    Time[i - kBEGIN] = (float) i - kBEGIN;
+    InFile >> Value[i - kBEGIN];
   }
 
   TGraph gr(kNUMBER, Time, Value);
