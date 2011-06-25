@@ -71,8 +71,12 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLT
       }
 
       roc -= 1; // The fed gives 123, and we use the convention 012
-      PLTHit Hit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
-      Hits.push_back(Hit);
+      if (roc <= 2) {
+        PLTHit Hit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
+        Hits.push_back(Hit);
+      } else {
+        std::cerr << "WARNING: PLTBinaryFileReader found ROC with number: " << roc << std::endl;
+      }
 
       //printf("%2lu %1lu %2i %2i %3lu %i\n", chan, (word & rocmsk) >> 21, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), -1);
       return true;
