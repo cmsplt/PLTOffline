@@ -23,8 +23,6 @@
 #include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
-int OccupancyPlots (std::string const);
-
 
 // CONSTANTS HERE
 const Double_t quantile = .97;
@@ -33,14 +31,12 @@ const int colCutU = 1;	// Number of columns to skip at the upper edge
 const int rowCutL = 3;	// Number of rows to skip at the lower edge
 const int rowCutU = 1;	// Number of rows to skip at the upper edge
 
-
 // CODE BELOW
 
 int OccupancyPlots (std::string const DataFileName)
 {
   // Set some basic style
   PLTU::SetStyle();
-
   TH2F h1("OccupancyR1", "OccupancyR1", 50, 0, 50, 60, 30, 90);
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   
@@ -102,7 +98,7 @@ int OccupancyPlots (std::string const DataFileName)
           // Create new hist with the given name
           sprintf(BUFF, "Occupancy Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-          hMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
+			hMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
           hMap[id]->SetXTitle("Column");
           hMap[id]->SetYTitle("Row");
           hMap[id]->SetZTitle("Number of Hits");
@@ -117,7 +113,7 @@ int OccupancyPlots (std::string const DataFileName)
           // 2 D Occupancy efficiency plots (mean normalized)
           sprintf(BUFF, "Occupancy Normalized by Mean Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-          mhMap[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
+		  mhMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NCOL-1, PLTU::FIRSTROW, PLTU::LASTROW);
           mhMap[id]->SetXTitle("Column");
           mhMap[id]->SetYTitle("Row");
           mhMap[id]->SetZTitle("Relative number of hits");
@@ -129,8 +125,8 @@ int OccupancyPlots (std::string const DataFileName)
 
           // 2D Occupancy efficiency plots wrt 3x3
           sprintf(BUFF, "3x3 Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
-          std::cout << "Creating New Hist: " << BUFF << std::endl;
-          eff3Map[id] = new TH2F(BUFF, BUFF, 27, 12, 39, 40, 40, 80);
+			std::cout << "Creating New Hist: " << BUFF << std::endl;
+          eff3Map[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NCOL-1, PLTU::FIRSTROW, PLTU::LASTROW);
           eff3Map[id]->SetXTitle("Column");
           eff3Map[id]->SetYTitle("Row");
           eff3Map[id]->SetZTitle("Efficiency (relative to neighbors)");
@@ -251,18 +247,20 @@ int OccupancyPlots (std::string const DataFileName)
     hOccZ->GetYaxis()->CenterTitle();
     hOccZ->SetTitleOffset(1.4, "y");
     hOccZ->SetFillColor(40);
-    for(int ic = 1; ic <= it->second->GetNbinsX(); ic++) {
+  
+	for(int ic = 1; ic <= it->second->GetNbinsX(); ic++) {
       for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
         int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir = it->second->ProjectionY()->GetBinLowEdge(ir);
-        if(_ic >= PLTU::colMin + colCutL && _ic <= PLTU::colMax - colCutU
-          && _ir >= PLTU::rowMin + rowCutL && _ir <= PLTU::rowMax - rowCutU
+        if(_ic >= PLTU::FIRSTCOL + colCutL && _ic <= PLTU::LASTCOL - colCutU
+          && _ir >= PLTU::FIRSTROW + rowCutL && _ir <= PLTU::LASTROW - rowCutU
         ) {
           hOccZ->Fill(it->second->GetBinContent(ic, ir));
         }
       }
     }
-    int nq = 1;      // Number of quantiles to compute
+    
+   int nq = 1;      // Number of quantiles to compute
     Double_t xq[nq]; // Quantile positions in [0, 1]
     Double_t yq[nq]; // Quantile values
     xq[0] = quantile;
@@ -320,7 +318,11 @@ int OccupancyPlots (std::string const DataFileName)
         if (it->second->GetBinContent(ic, ir) == 0.0) {
           continue;
         }
-        count++;
+		  if(it->second->ProjectionX()->GetBinLowEdge(ic)==PLTU::FIRSTCOL 
+			 ||it->second->ProjectionX()->GetBinLowEdge(ic)==PLTU::LASTCOL)continue;
+		  if(it->second->ProjectionY()->GetBinLowEdge(ir)==PLTU::FIRSTROW
+			 ||it->second->ProjectionY()->GetBinLowEdge(ir)==PLTU::LASTROW)continue;
+		count++;
         sum=sum+it->second->GetBinContent(ic, ir);
       }
     }
@@ -330,31 +332,35 @@ int OccupancyPlots (std::string const DataFileName)
       for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
         int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir = it->second->ProjectionY()->GetBinLowEdge(ir);
+		 //std::cout<<"column, row "<<_ic<<", "<<_ir<<" Occupancy "<<it->second->GetBinContent(ic, ir)<<std::endl;
         // These numbers may be replaced in terms of PLTU::{cols,rows}{Min,Max} and {col,row}Cut{L,U} (see quantile calculation)
-        if ((_ic > 14 && _ic < 38) && (_ir < 78  && _ir > 40)) {
+       if ((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) {
           cnt = 0;
           float neighbours[8];
           for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-              if (i == 0 && j == 0) {
-                continue;
-              }
+              if (i == 0 && j == 0)continue;
               neighbours[cnt] = it->second->GetBinContent(ic + i, ir + j);
               cnt++;
             }
           }
-
           float pixnorm = TMath::Mean(8, neighbours);
           float iEff = it->second->GetBinContent(ic,ir) / norm;
-          mhMap[it->first]->SetBinContent(ic,ir, iEff);  
+		   //std::cout<<"Norm "<<norm<<" Pix Norm "<<pixnorm<<" Eff "<<iEff<<std::endl;
+		  //if ((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1))
+          mhMap[it->first]->SetBinContent(ic,ir, iEff);
+		  //std::cout<<"Col, Row "<< mhMap[it->first]->ProjectionX()->GetBinLowEdge(ic)<<", "<<mhMap[it->first]->ProjectionY()->GetBinLowEdge(ir)<<std::endl;
           if (pixnorm > 0) {
             iEff = it->second->GetBinContent(ic,ir) / pixnorm;
-          } else {
+          } 
+		  else {
             iEff = 0;
           }
           // These numbers may be replaced in terms of PLTU::{cols,rows}{Min,Max} and {col,row}Cut{L,U} (see quantile calculation)
-          if ((_ic > 14 && _ic < 38) && (_ir < 78 && _ir > 40)) eff3Map[it->first]->SetBinContent(ic, ir, iEff);
-          if ((_ic > 14 && _ic < 38) && (_ir < 78 && _ir > 40)) eff31dMap[it->first]->Fill(iEff);
+          //if((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) 
+			  eff3Map[it->first]->SetBinContent(ic, ir, iEff);           
+		//  if((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) 
+			  eff31dMap[it->first]->Fill(iEff);std::cout<<"iEff "<<iEff<<std::endl;
 		}
       }
     }
