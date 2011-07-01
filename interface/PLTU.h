@@ -17,11 +17,12 @@
 
 namespace PLTU
 {
-  extern const int colMin;
-  extern const int colMax;
-  extern const int rowMin;
-  extern const int rowMax;
-
+  extern const int FIRSTCOL;
+  extern const int LASTCOL;
+  extern const int FIRSTROW;
+  extern const int LASTROW;
+  extern const int NCOL;
+  extern const int NROW;
   Double_t PoissonFit(Double_t* x, Double_t* par);
   void SetStyle ();
 
