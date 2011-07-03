@@ -5,12 +5,6 @@
 
 namespace PLTU
 {
-  const int FIRSTCOL = 13;
-  const int LASTCOL = 38;
-  const int FIRSTROW = 40;
-  const int LASTROW = 79;
-  const int NCOL=LASTCOL-FIRSTCOL+1;
-  const int NROW=LASTROW-FIRSTROW+1;
 
 
   // From http://root.cern.ch/root/roottalk/roottalk03/0199.html
@@ -37,7 +31,7 @@ namespace PLTU
     return;
   }
 
-  TH1F* HistFrom2D(TH2F* hIN, TString const NewName)
+  TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins)
   {
     // This function returns a TH1F* and YOU are then the owner of
     // that memory.  please delete it when you are done!!!
@@ -49,7 +43,12 @@ namespace PLTU
 
     TString const hNAME = NewName == "" ? TString(hIN->GetName()) + "_1DZ" : NewName;
 
-    TH1F* h = new TH1F(hNAME, hNAME, (int) ZMax - ZMin + 1, ZMin, ZMax);
+    TH1F* h;
+    if (NBins > 0) {
+      h = new TH1F(hNAME, hNAME, NBins, ZMin, ZMax);
+    } else {
+      h = new TH1F(hNAME, hNAME, (int) ZMax - ZMin + 1, ZMin, ZMax);
+    }
     h->SetXTitle("Number of Hits");
     h->SetYTitle("Number of Pixels");
     h->GetXaxis()->CenterTitle();

@@ -17,16 +17,17 @@
 
 namespace PLTU
 {
-  extern const int FIRSTCOL;
-  extern const int LASTCOL;
-  extern const int FIRSTROW;
-  extern const int LASTROW;
-  extern const int NCOL;
-  extern const int NROW;
+  int const FIRSTCOL = 13;
+  int const LASTCOL  = 38;
+  int const FIRSTROW = 40;
+  int const LASTROW  = 79;
+  int const NCOL     = LASTCOL - FIRSTCOL + 1;
+  int const NROW     = LASTROW - FIRSTROW + 1;
+
   Double_t PoissonFit(Double_t* x, Double_t* par);
   void SetStyle ();
 
-  TH1F* HistFrom2D(TH2F*, TString const NewName = "");
+  TH1F* HistFrom2D(TH2F*, TString const NewName = "", int const NBins = -1);
 }
 
 

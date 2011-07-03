@@ -39,7 +39,7 @@ int OccupancyPlots (std::string const DataFileName)
   PLTU::SetStyle();
   TH2F h1("OccupancyR1", "OccupancyR1", 50, 0, 50, 60, 30, 90);
   std::cout << "DataFileName:    " << DataFileName << std::endl;
-  
+
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
 
@@ -57,10 +57,10 @@ int OccupancyPlots (std::string const DataFileName)
   std::map<int, TCanvas*> oProjMap;
   std::map<int, TCanvas*> cphitsMap;
   std::map<int, TCanvas*> cmhMap;
-  
+
   // char buffer for writing names
   char BUFF[200];
-  
+
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
 
@@ -88,9 +88,10 @@ int OccupancyPlots (std::string const DataFileName)
 
         // THIS hit is
         PLTHit* Hit = Plane->Hit(ihit);
+        //printf("Channel ROC Row Col ADC: %2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Row(), Hit->Column(), Hit->ADC(), Event.EventNumber());
 
         // ID the plane and roc by 3 digit number
-        int const id = 10*Plane->Channel() + Plane->ROC();
+        int const id = 10 * Plane->Channel() + Plane->ROC();
 
         // If the hist doesn't exist yet we have to make it
         if (hMap.count(id) == 0) {
@@ -98,7 +99,7 @@ int OccupancyPlots (std::string const DataFileName)
           // Create new hist with the given name
           sprintf(BUFF, "Occupancy Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-			hMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
+          hMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
           hMap[id]->SetXTitle("Column");
           hMap[id]->SetYTitle("Row");
           hMap[id]->SetZTitle("Number of Hits");
@@ -113,7 +114,7 @@ int OccupancyPlots (std::string const DataFileName)
           // 2 D Occupancy efficiency plots (mean normalized)
           sprintf(BUFF, "Occupancy Normalized by Mean Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
           std::cout << "Creating New Hist: " << BUFF << std::endl;
-		  mhMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NCOL-1, PLTU::FIRSTROW, PLTU::LASTROW);
+          mhMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NCOL-1, PLTU::FIRSTROW, PLTU::LASTROW);
           mhMap[id]->SetXTitle("Column");
           mhMap[id]->SetYTitle("Row");
           mhMap[id]->SetZTitle("Relative number of hits");
@@ -125,7 +126,7 @@ int OccupancyPlots (std::string const DataFileName)
 
           // 2D Occupancy efficiency plots wrt 3x3
           sprintf(BUFF, "3x3 Occupancy Efficiency Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
-			std::cout << "Creating New Hist: " << BUFF << std::endl;
+          std::cout << "Creating New Hist: " << BUFF << std::endl;
           eff3Map[id] = new TH2F(BUFF, BUFF, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NCOL-1, PLTU::FIRSTROW, PLTU::LASTROW);
           eff3Map[id]->SetXTitle("Column");
           eff3Map[id]->SetYTitle("Row");
@@ -138,7 +139,7 @@ int OccupancyPlots (std::string const DataFileName)
           eff3Map[id]->SetStats(false);
 
           sprintf(BUFF, "3x3 Efficiency Distribution Ch%02i,ROC%1i", Plane->Channel(), Plane->ROC());
-		  eff31dMap[id] = new TH1F(BUFF, BUFF, 50, 0, 3.0);
+          eff31dMap[id] = new TH1F(BUFF, BUFF, 50, 0, 3.0);
           eff31dMap[id]->SetXTitle("3x3 relative efficiency");
           eff31dMap[id]->SetYTitle("Number of pixels with this efficiency");
           eff31dMap[id]->GetXaxis()->CenterTitle();
@@ -163,16 +164,16 @@ int OccupancyPlots (std::string const DataFileName)
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
             cpMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
             cpMap[Plane->Channel()]->Divide(3,3);
-			 
-			sprintf(BUFF, "Occupancy Maps Ch%02i", Plane->Channel());
-			std::cout << "Creating New Canvas: " << BUFF << std::endl;
-			oMap[Plane->Channel()]= new TCanvas(BUFF, BUFF, 1200, 1200);
-			oMap[Plane->Channel()]->Divide(3,3);
 
-			sprintf(BUFF, "Full Occupancy Maps Ch%02i", Plane->Channel());
-			oProjMap[Plane->Channel()]=new TCanvas(BUFF, BUFF, 1200, 800);
-			oProjMap[Plane->Channel()]->Divide(3,2);
-  
+            sprintf(BUFF, "Occupancy Maps Ch%02i", Plane->Channel());
+            std::cout << "Creating New Canvas: " << BUFF << std::endl;
+            oMap[Plane->Channel()]= new TCanvas(BUFF, BUFF, 1200, 1200);
+            oMap[Plane->Channel()]->Divide(3,3);
+
+            sprintf(BUFF, "Full Occupancy Maps Ch%02i", Plane->Channel());
+            oProjMap[Plane->Channel()]=new TCanvas(BUFF, BUFF, 1200, 800);
+            oProjMap[Plane->Channel()]->Divide(3,2);
+
             sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
             cphitsMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 400, 400);
@@ -181,7 +182,7 @@ int OccupancyPlots (std::string const DataFileName)
         }
 
         // Fill this histogram with the given id
-		hMap[id]->Fill(Hit->Column(), Hit->Row());
+        hMap[id]->Fill(Hit->Column(), Hit->Row());
       }
     }
 
@@ -214,78 +215,38 @@ int OccupancyPlots (std::string const DataFileName)
 
     printf("Drawing hist for Channel %2i ROC %i\n", Channel, ROC);
 
-	// change to correct pad on canvas and draw the hist
-    /*
-     * This was for setting the maximum value for the occupancy plot to
-     * some value determined from a Poisson fit of the next histogram
-     * of Number of Hits vs. Number of Pixels with that many Hits.
-     * It turned out to mess up the drawing of histograms, so we don't
-     * use it.
-    cMap[Channel]->cd(ROC+3+1)->SetLogy(0);
-    TF1* pois = new TF1("pois", PLTU::PoissonFit, 0, it->second->GetMaximum(), 2);
-    pois->SetParName(0, "Const");
-    pois->SetParName(1, "#mu");
-    pois->SetParameter(0, 10);
-    pois->SetParameter(1, it->second->GetMean() / 3);
-    gStyle->SetOptStat(0);
-    gStyle->SetOptFit(111);
-    TH1F* hOccZ = PLTU::HistFrom2D(it->second);
-    hOccZ->Fit("pois");
-    std::cerr << "ROC" << ROC << " Parameter 0: " << pois->GetParameter(0) << std::endl;
-    std::cerr << "ROC" << ROC << " Parameter 1: " << pois->GetParameter(1) << std::endl;
-    delete pois;
-    delete hOccZ;
-    */
-    
-    cMap[Channel]->cd(ROC+3+1)->SetLogy(1);
-    
-    sprintf(BUFF, "Occupancy Ch%02i,ROC%1i_1DZ", Channel, ROC );
-	TH1F* hOccZ=new TH1F(BUFF, BUFF, 50, 0, 50);
-    hOccZ->SetXTitle("Number of Hits");
-    hOccZ->SetYTitle("Number of Pixels");
-    hOccZ->GetXaxis()->CenterTitle();
-    hOccZ->GetYaxis()->CenterTitle();
-    hOccZ->SetTitleOffset(1.4, "y");
-    hOccZ->SetFillColor(40);
-  
-	for(int ic = 1; ic <= it->second->GetNbinsX(); ic++) {
-      for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
-        int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
-        int _ir = it->second->ProjectionY()->GetBinLowEdge(ir);
-        if(_ic >= PLTU::FIRSTCOL + colCutL && _ic <= PLTU::LASTCOL - colCutU
-          && _ir >= PLTU::FIRSTROW + rowCutL && _ir <= PLTU::LASTROW - rowCutU
-        ) {
-          hOccZ->Fill(it->second->GetBinContent(ic, ir));
-        }
-      }
-    }
-    
-   int nq = 1;      // Number of quantiles to compute
+
+    TH1F* hOccZ = PLTU::HistFrom2D(it->second, "", 50);
+
+    int nq = 1;      // Number of quantiles to compute
     Double_t xq[nq]; // Quantile positions in [0, 1]
     Double_t yq[nq]; // Quantile values
     xq[0] = quantile;
 
-	hOccZ->GetQuantiles(nq, yq, xq);
+    hOccZ->GetQuantiles(nq, yq, xq);
+
+    cMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    hOccZ->SetMinimum(0.5);
     hOccZ->Draw("hist");
-	  
-	TLine* lQ = new TLine(yq[0], hOccZ->GetMaximum(), yq[0], .5);
-	lQ->SetLineColor(2);
-	lQ->SetLineWidth(2);
-	lQ->Draw("SAME");
-	
-	oProjMap[Channel]->cd(ROC+3+1);
-	hOccZ->Draw("hist");
-	lQ->Draw("SAME");
-	qhMap[it->first]=(TH2F*)it->second->Clone();
-	sprintf(BUFF, "Occupancy Normalized by Quantiles Ch%02i,ROC%1i", Channel, ROC );
-	qhMap[it->first]->SetTitle(BUFF);
+
+    TLine* lQ = new TLine(yq[0], hOccZ->GetMaximum(), yq[0], .5);
+    lQ->SetLineColor(2);
+    lQ->SetLineWidth(2);
+    lQ->Draw("SAME");
+
+    oProjMap[Channel]->cd(ROC+3+1);
+    hOccZ->Draw("hist");
+    lQ->Draw("SAME");
+    qhMap[it->first] = (TH2F*) it->second->Clone();
+    sprintf(BUFF, "Occupancy Normalized by Quantiles Ch%02i,ROC%1i", Channel, ROC );
+    qhMap[it->first]->SetTitle(BUFF);
     cMap[Channel]->cd(ROC+1);
     if(yq[0] > 1 && it->second->GetMaximum() > yq[0]) {
       std::cerr << "WARNING: Z axis of Ch" << Channel << ",ROC=" << ROC << " Occupancy plot trimmed to " << yq[0] << ". Maximum was: " << it->second->GetMaximum() << std::endl;
       qhMap[it->first]->SetMaximum(yq[0]);
-	}
-	qhMap[it->first]->Draw("colz");
-	
+    }
+    qhMap[it->first]->Draw("colz");
+
     // Draw on projection canvas
     cpMap[Channel]->cd(ROC+3+1);
     TH1D* hpX = it->second->ProjectionX();
@@ -293,22 +254,22 @@ int OccupancyPlots (std::string const DataFileName)
     hpX->GetYaxis()->CenterTitle();
     hpX->SetTitleOffset(2, "Y");
     hpX->Draw("hist");
-    
+
     cpMap[Channel]->cd(ROC+6+1);
     TH1D* hpY = it->second->ProjectionY();
     hpY->SetYTitle("Number of Hits");
     hpY->GetYaxis()->CenterTitle();
     hpY->SetTitleOffset(2, "Y");
     hpY->Draw("hist");
-    
+
     cpMap[Channel]->cd(ROC+1);
     gStyle->SetPalette(1);
     it->second->Draw("colz");
 
-	oProjMap[Channel]->cd(ROC+1);
-	gStyle->SetPalette(1);
-	it->second->Draw("colz"); 
-	
+    oProjMap[Channel]->cd(ROC+1);
+    gStyle->SetPalette(1);
+    it->second->Draw("colz"); 
+
     // loop over Histograms and calculate Efficiency:
     int count = 0;
     float sum = 0;
@@ -318,12 +279,14 @@ int OccupancyPlots (std::string const DataFileName)
         if (it->second->GetBinContent(ic, ir) == 0.0) {
           continue;
         }
-		  if(it->second->ProjectionX()->GetBinLowEdge(ic)==PLTU::FIRSTCOL 
-			 ||it->second->ProjectionX()->GetBinLowEdge(ic)==PLTU::LASTCOL)continue;
-		  if(it->second->ProjectionY()->GetBinLowEdge(ir)==PLTU::FIRSTROW
-			 ||it->second->ProjectionY()->GetBinLowEdge(ir)==PLTU::LASTROW)continue;
-		count++;
-        sum=sum+it->second->GetBinContent(ic, ir);
+        if(it->second->ProjectionX()->GetBinLowEdge(ic) == PLTU::FIRSTCOL || it->second->ProjectionX()->GetBinLowEdge(ic) == PLTU::LASTCOL) {
+          continue;
+        }
+        if(it->second->ProjectionY()->GetBinLowEdge(ir) == PLTU::FIRSTROW || it->second->ProjectionY()->GetBinLowEdge(ir) == PLTU::LASTROW) {
+          continue;
+        }
+        ++count;
+        sum += it->second->GetBinContent(ic, ir);
       }
     }
 
@@ -332,44 +295,45 @@ int OccupancyPlots (std::string const DataFileName)
       for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
         int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
         int _ir = it->second->ProjectionY()->GetBinLowEdge(ir);
-		 //std::cout<<"column, row "<<_ic<<", "<<_ir<<" Occupancy "<<it->second->GetBinContent(ic, ir)<<std::endl;
+        //std::cout<<"column, row "<<_ic<<", "<<_ir<<" Occupancy "<<it->second->GetBinContent(ic, ir)<<std::endl;
         // These numbers may be replaced in terms of PLTU::{cols,rows}{Min,Max} and {col,row}Cut{L,U} (see quantile calculation)
-       if ((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) {
+        if ((_ic > PLTU::FIRSTCOL + 1 && _ic < PLTU::LASTCOL - 1) && (_ir < PLTU::LASTROW - 1  && _ir > PLTU::FIRSTROW + 1)) {
           cnt = 0;
           float neighbours[8];
           for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-              if (i == 0 && j == 0)continue;
+              if (i == 0 && j == 0) {
+                continue;
+              }
               neighbours[cnt] = it->second->GetBinContent(ic + i, ir + j);
-              cnt++;
+              ++cnt;
             }
           }
           float pixnorm = TMath::Mean(8, neighbours);
           float iEff = it->second->GetBinContent(ic,ir) / norm;
-		   //std::cout<<"Norm "<<norm<<" Pix Norm "<<pixnorm<<" Eff "<<iEff<<std::endl;
-		  //if ((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1))
+          //std::cout<<"Norm "<<norm<<" Pix Norm "<<pixnorm<<" Eff "<<iEff<<std::endl;
+          //if ((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1))
           mhMap[it->first]->SetBinContent(ic,ir, iEff);
-		  //std::cout<<"Col, Row "<< mhMap[it->first]->ProjectionX()->GetBinLowEdge(ic)<<", "<<mhMap[it->first]->ProjectionY()->GetBinLowEdge(ir)<<std::endl;
+          //std::cout<<"Col, Row "<< mhMap[it->first]->ProjectionX()->GetBinLowEdge(ic)<<", "<<mhMap[it->first]->ProjectionY()->GetBinLowEdge(ir)<<std::endl;
           if (pixnorm > 0) {
             iEff = it->second->GetBinContent(ic,ir) / pixnorm;
-          } 
-		  else {
+          } else {
             iEff = 0;
           }
           // These numbers may be replaced in terms of PLTU::{cols,rows}{Min,Max} and {col,row}Cut{L,U} (see quantile calculation)
           //if((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) 
-			  eff3Map[it->first]->SetBinContent(ic, ir, iEff);           
-		//  if((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) 
-			  eff31dMap[it->first]->Fill(iEff);std::cout<<"iEff "<<iEff<<std::endl;
-		}
+          eff3Map[it->first]->SetBinContent(ic, ir, iEff);           
+          //  if((_ic > PLTU::FIRSTCOL+1 && _ic < PLTU::LASTCOL-1) && (_ir < PLTU::LASTROW-1  && _ir > PLTU::FIRSTROW+1)) 
+          eff31dMap[it->first]->Fill(iEff);
+        }
       }
     }
 
     cmhMap[Channel]->cd(ROC+1);
     eff3Map[it->first]->Draw("colz");
     cmhMap[Channel]->cd(ROC+3+1);
-	eff31dMap[it->first]->Draw("");
-	
+    eff31dMap[it->first]->Draw("");
+
     oMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
     oMap[Channel]->cd(ROC+3+1);
@@ -384,13 +348,13 @@ int OccupancyPlots (std::string const DataFileName)
 
     // Naming for coincidence map
     char *bin[7] = { (char*)"ROC0"
-		, (char*)"ROC1"
-		, (char*)"ROC2"
-		, (char*)"ROC0&1"
-		, (char*)"ROC1&2"
-		, (char*)"ROC0&2"
-		, (char*)"All ROC Hit"
-	};
+      , (char*)"ROC1"
+        , (char*)"ROC2"
+        , (char*)"ROC0&1"
+        , (char*)"ROC1&2"
+        , (char*)"ROC0&2"
+        , (char*)"All ROC Hit"
+    };
 
     it->second->SetBit(TH1::kCanRebin);
     for (int r = 0; r <= 6; r++) {
@@ -418,10 +382,10 @@ int OccupancyPlots (std::string const DataFileName)
     sprintf(BUFF, "Occupancy_Efficiency_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
     delete it->second;
-	sprintf(BUFF, "Occupancy_all_Ch%02i.gif", it->first);
-	oMap[it->first]->SaveAs(BUFF);
-	sprintf(BUFF, "Occupancy_allwQuantiles_Ch%02i.gif", it->first);
-	oProjMap[it->first]->SaveAs(BUFF);
+    sprintf(BUFF, "Occupancy_all_Ch%02i.gif", it->first);
+    oMap[it->first]->SaveAs(BUFF);
+    sprintf(BUFF, "Occupancy_allwQuantiles_Ch%02i.gif", it->first);
+    oProjMap[it->first]->SaveAs(BUFF);
   }
 
   for (std::map<int, TCanvas*>::iterator it = cphitsMap.begin(); it != cphitsMap.end(); ++it) {
