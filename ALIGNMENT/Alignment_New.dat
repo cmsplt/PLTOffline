@@ -1,0 +1,6 @@
+#channel   (-1 -> tele)  CWGRotation   GXTrans  GYTrans  GZTrans
+#channel   plane         CWLRotation   LXTrans  LYTrans
+22 -1    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00
+22  0    0.000000E+00    0.000000E+00    0.000000E+00
+22  1    0.000000E+00    0.000000E+00    0.000000E+00
+22  2    0.000000E+00    0.000000E+00    0.000000E+00
