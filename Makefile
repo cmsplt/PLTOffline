@@ -1,8 +1,8 @@
 CC = g++
 LD = g++
 CFLAGS = -Wall `root-config --cflags`
-LIBS = `root-config --libs` -Llib -lMinuit
-INCLUDE = -Iinterface -Idict -I../../
+LIBS = `root-config --libs` -Llib -lMinuit -lSpectrum
+INCLUDE = -Iinterface -Idict -I../../ -I/Users/dhidas/CernRoot/root_v5.27.06/root//math/mathmore/inc
 OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
 EXECS = $(patsubst bin/%.cc,%,$(wildcard bin/*.cc))
 SCRIPTS = $(patsubst scripts/%.cc,%,$(wildcard scripts/*.cc))

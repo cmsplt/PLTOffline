@@ -29,7 +29,7 @@ TString Pack (int const mFec, int const mFecChannel, int const hubAddress, int c
   // Just pack this into something easy to decode
   TString ret;
   char BUFF[10];
-  sprintf(BUFF, "%1i%1i%2i%1i%2i%2i", mFec, mFecChannel, hubAddress, roc, col, row);
+  sprintf(BUFF, "%1i%1i%02i%1i%2i%2i", mFec, mFecChannel, hubAddress, roc, col, row);
   ret = BUFF;
   return ret;
 }
@@ -142,6 +142,7 @@ int GainCalFastFits (TString const InFileName)
 
     // This is ROC
     sprintf(ROCId, "%1i%1i%02i%1i", mFec, mFecChannel, hubAddress, roc);
+    //printf("ROCId: %1i %1i %02i %1i   %s %s\n", mFec, mFecChannel, hubAddress, roc, ROCId, It->first.Data());
 
     // Input for TGraph, define size, and fill them
     float X[It->second.size()];
@@ -208,7 +209,7 @@ int GainCalFastFits (TString const InFileName)
   // Plot the saturation values
   for (std::map<TString, std::vector<float> >::iterator It = ROCChi2.begin(); It != ROCChi2.end(); ++It) {
     UnPack(It->first.Data(), mFec, mFecChannel, hubAddress, roc, col, row);
-    TString Name = TString::Format("Chi2_mF%1i_mFC%1i_hub%2i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TString Name = TString::Format("Chi2_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
 
     fOutRoot.cd();
     TH1F hC(Name, Name, 100, 0, 1200);
@@ -217,7 +218,7 @@ int GainCalFastFits (TString const InFileName)
     }
     hC.Write();
 
-    Name = TString::Format("Saturation_mF%1i_mFC%1i_hub%2i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    Name = TString::Format("Saturation_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
     TH1F hS(Name, Name, 100, 0, 0.5);
     for (size_t i = 0; i != ROCSaturationValues[It->first].size(); ++i) {
       hS.Fill(ROCSaturationValues[It->first][i]);

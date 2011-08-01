@@ -4,6 +4,7 @@
 #include "PLTBinaryFileReader.h"
 #include "PLTTelescope.h"
 #include "PLTGainCal.h"
+#include "PLTAlignment.h"
 
 
 #include <map>
@@ -15,12 +16,13 @@ class PLTEvent
     PLTEvent ();
     PLTEvent (std::string const);
     PLTEvent (std::string const, std::string const);
+    PLTEvent (std::string const, std::string const, std::string const);
     ~PLTEvent ();
 
 
     std::vector<PLTPlane*> fPlanes;
     std::vector<PLTTelescope*> fTelescopes;
-    std::vector<PLTHit> fHits;
+    std::vector<PLTHit*> fHits;
 
 
     size_t NPlanes ();
@@ -30,7 +32,8 @@ class PLTEvent
     PLTTelescope* Telescope (size_t);
 
     void Clear ();
-    void AddHit (PLTHit);
+    void AddHit (PLTHit&);
+    void AddHit (PLTHit*);
     void MakeEvent ();
     unsigned long EventNumber ()
     { 
@@ -43,6 +46,11 @@ class PLTEvent
 
     int GetNextEvent ();
 
+    PLTGainCal* GetGainCal ()
+    {
+      return &fGainCal;
+    }
+
   private:
     unsigned long fRun;
     unsigned long fRunSection;
@@ -50,6 +58,7 @@ class PLTEvent
 
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;
+    PLTAlignment fAlignment;
 
     std::map<int, PLTTelescope> fTelescopeMap;
     std::map<std::pair<int, int>, PLTPlane> fPlaneMap;

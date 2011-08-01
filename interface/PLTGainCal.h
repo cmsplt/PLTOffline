@@ -12,13 +12,14 @@
 #include "PLTHit.h"
 #include "PLTCluster.h"
 #include "PLTPlane.h"
+#include "PLTU.h"
 
 
 class PLTGainCal
 {
   public:
     PLTGainCal ();
-    PLTGainCal (std::string const);
+    PLTGainCal (std::string const, int const NParams = 5);
     ~PLTGainCal ();
 
 
@@ -26,7 +27,11 @@ class PLTGainCal
 
     void  SetCharge (PLTHit&);
     float GetCharge(int const ch, int const roc, int const col, int const row, int adc);
-    void  ReadGainCalFile (std::string const GainCalFileName);
+    void  ReadGainCalFile (std::string const GainCalFileName, int const NParams = 5);
+    void  ReadGainCalFile3 (std::string const GainCalFileName);
+    void  ReadGainCalFile5 (std::string const GainCalFileName);
+
+    void PrintGainCal5 ();
 
     int RowIndex (int const);
     int ColIndex (int const);
@@ -47,19 +52,19 @@ class PLTGainCal
     static int const MAXCOLS = 100;
     static int const MAXROCS =   3;
 
-    static int const NCHNS =  48;
+    static int const NCHNS =  36;
     static int const NROWS =  40;
     static int const NCOLS =  26;
     static int const NROCS =   3;
 
-    static int const IROWMIN = 40;
+    static int const IROWMIN = 39;
     static int const IROWMAX = 79;
     static int const ICOLMIN = 13;
     static int const ICOLMAX = 38;
 
     // ch,roc,col,row [3]
     //float GC[MAXCHNS][MAXROCS][MAXCOLS][MAXROWS][3];
-    float GC[NCHNS][NROCS][NCOLS][NROWS][3];
+    float GC[NCHNS][NROCS][NCOLS][NROWS][5];
 
 };
 

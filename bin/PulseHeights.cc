@@ -41,10 +41,14 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName);
+  //Event.GetGainCal()->PrintGainCal5();
+  //exit(0);
 
   // Map for all ROC hists and canvas
+  std::map<int, TH1F*>    hClusterSizeMap;
+  std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
-  std::map<int, TCanvas*> cMap;
+  std::map<int, TCanvas*>            cMap;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -53,36 +57,52 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       for (size_t iPlane = 0; iPlane != Telescope->NPlanes(); ++iPlane) {
         PLTPlane* Plane = Telescope->Plane(iPlane);
 
-        if (Plane->ROC() > 2) {
-          std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
+        int Channel = Plane->Channel();
+        int ROC = Plane->ROC();
+
+        if (ROC > 2) {
+          std::cerr << "WARNING: ROC > 2 found: " << ROC << std::endl;
           continue;
         }
-        if (Plane->Channel() > 99) {
-          std::cerr << "WARNING: Channel > 99 found: " << Plane->Channel() << std::endl;
+        if (Channel > 99) {
+          std::cerr << "WARNING: Channel > 99 found: " << Channel << std::endl;
           continue;
         }
 
         // ID the plane and roc by 3 digit number
-        int const id = 10*Plane->Channel() + Plane->ROC();
+        int const id = 10 * Channel + ROC;
 
         if (!hMap.count(id)) {
-          hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", (int) Plane->Channel(), (int) Plane->ROC()),
-                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", (int) Plane->Channel(), (int) Plane->ROC()), 100, 0, 65000) );
+          hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
+                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), 1000, 0, 65000) );
           for (size_t ih = 1; ih != 4; ++ih) {
-            hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", (int) Plane->Channel(), (int) Plane->ROC(), (int) ih),
-                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", (int) Plane->Channel(), (int) Plane->ROC(), (int) ih), 100, 0, 65000) );
+            hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
+                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), 1000, 0, 65000) );
           }
+
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
-          if (!cMap.count(Plane->Channel())) {
+          if (!cMap.count(Channel)) {
             // Create canvas with given name
             TString BUFF;
-            BUFF.Form("PulseHeight_Ch%02i",  (int) Plane->Channel());
+            BUFF.Form("PulseHeight_Ch%02i", Channel);
             std::cout << "Creating New Canvas: " << BUFF << std::endl;
-            cMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 900, 300);
-            cMap[Plane->Channel()]->Divide(3,1);
+            cMap[Channel] = new TCanvas(BUFF, BUFF, 900, 300);
+            cMap[Channel]->Divide(3, 1);
           }
 
 
+        }
+
+        // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
+        if (!hClusterSizeMap.count(id)) {
+          hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
+          hClusterSizeMap[id]->SetXTitle("Number of pixels in Cluster");
+
+          // One in three chance you'll need a new canvas for thnat =)
+          if (!cClusterSizeMap.count(Channel)) {
+            cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSize_Ch%02i", Channel), TString::Format("ClusterSize_Ch%02i", Channel), 900, 300);
+            cClusterSizeMap[Channel]->Divide(3, 1);
+          }
         }
 
 
@@ -90,7 +110,15 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         for (size_t iCluster = 0; iCluster != Plane->NClusters(); ++iCluster) {
           PLTCluster* Cluster = Plane->Cluster(iCluster);
 
+          // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
+
+          // Fill cluster size
+          hClusterSizeMap[id]->Fill(NHits);
+
+          //printf("Ch %2i  ROC %1i  col %2i  row %2i  adc %3i charge %12.1f\n",
+          //    Cluster->Channel(), Cluster->ROC(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row(), Cluster->SeedHit()->ADC(),
+          //    Cluster->Charge());
 
           hMap[id][0]->Fill( Cluster->Charge() );
           if (NHits == 1) {
@@ -139,6 +167,21 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
+    std::cout << it->second->GetName() << std::endl;
+    it->second->SaveAs( it->second->GetName()+TString(".gif") );
+    delete it->second;
+  }
+  for (std::map<int, TH1F*>::iterator it = hClusterSizeMap.begin(); it != hClusterSizeMap.end(); ++it) {
+    // Decode the ID
+    int const Channel = it->first / 10;
+    int const ROC     = it->first % 10;
+
+    cClusterSizeMap[Channel]->cd(ROC+1)->SetLogy(1);
+    it->second->Draw("hist");
+  }
+
+
+  for (std::map<int, TCanvas*>::iterator it = cClusterSizeMap.begin(); it != cClusterSizeMap.end(); ++it) {
     it->second->SaveAs( it->second->GetName()+TString(".gif") );
     delete it->second;
   }

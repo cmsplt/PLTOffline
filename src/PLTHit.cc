@@ -17,6 +17,11 @@ PLTHit::PLTHit (std::string& Line)
      >> fADC;
      //>> Event; // Was at end of line, but that's not what dean wants for breakfast
   fCharge = -1; // The gaincal is somewhere else now.. just deal
+
+
+  // Local X and Y defined from center of diamond
+  //fLX = fColumn - 26.5;
+  //fLY = fRow - 59.5;
 }
 
 
@@ -30,6 +35,12 @@ PLTHit::PLTHit (int channel, int roc, int col, int row, int adc)
   fColumn = col;
   fRow = row;
   fADC = adc;
+
+  fCharge = -1; // The gaincal is somewhere else now.. just deal
+
+  // Local X and Y defined from center of diamond
+  //fLX = fColumn - 26.5;
+  //fLY = fRow - 59.5;
 }
 
 
@@ -42,6 +53,32 @@ void PLTHit::SetCharge (float const in)
 {
   // Set the charge
   fCharge = in;
+  return;
+}
+
+
+void PLTHit::SetLXY (float const X, float const Y)
+{
+  fLX = X;
+  fLY = Y;
+  return;
+}
+
+
+void PLTHit::SetTXYZ (float const X, float const Y, float const Z)
+{
+  fTX = X;
+  fTY = Y;
+  fTZ = Z;
+  return;
+}
+
+
+void PLTHit::SetGXYZ (float const X, float const Y, float const Z)
+{
+  fGX = X;
+  fGY = Y;
+  fGZ = Z;
   return;
 }
 
@@ -93,7 +130,54 @@ float PLTHit::Charge ()
 
 
 
+float PLTHit::LX ()
+{
+  return fLX;
+}
 
+
+float PLTHit::LY()
+{
+  return fLY;
+}
+
+
+
+float PLTHit::TX ()
+{
+  return fTX;
+}
+
+
+float PLTHit::TY()
+{
+  return fTY;
+}
+
+
+float PLTHit::TZ()
+{
+  return fTZ;
+}
+
+
+
+float PLTHit::GX ()
+{
+  return fGX;
+}
+
+
+float PLTHit::GY()
+{
+  return fGY;
+}
+
+
+float PLTHit::GZ()
+{
+  return fGZ;
+}
 
 
 

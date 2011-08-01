@@ -7,6 +7,13 @@ PLTPlane::PLTPlane ()
 }
 
 
+PLTPlane::PLTPlane (int const Channel, int const ROC)
+{
+  // Con me
+  fChannel = Channel;
+}
+
+
 PLTPlane::~PLTPlane ()
 {
   // The Clusters belong to the Plane so we need to delete them
@@ -52,8 +59,16 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
   // Add a cluster from a seed using some very basic clustering.  Not perfect, but better one
   // on the way
 
+  // Clustering currently does not work so well.  This needs to be fixed.
+
   // New cluster
   PLTCluster* Cluster = new PLTCluster();
+
+  // Sanity check
+  if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), Hit) ) {
+    std::cerr << "ERROR: seed has already been used" << std::endl;
+    return false;
+  }
 
   // Add the seed
   Cluster->AddHit(Hit);
@@ -61,7 +76,10 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
   // Check all buddy hits within 3x3
   for (size_t i = 0; i != fHits.size(); ++i) {
     if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) == 1) {
-      Cluster->AddHit(fHits[i]);
+      if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) == 0 ) {
+        Cluster->AddHit(fHits[i]);
+        fClusterizedHits.push_back(fHits[i]);
+      }
     }
   }
 
@@ -70,7 +88,6 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
 
   return true;
 }
-
 
 
 bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit)
@@ -91,6 +108,22 @@ bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit)
 
 
 
+int PLTPlane::NNeighbors (PLTHit* Hit)
+{
+  int N = 0;
+  for (size_t i = 0; i != fHits.size(); ++i) {
+    if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) {
+      ++N;
+    } else if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1) {
+      ++N;
+    }
+  }
+
+  return N;
+}
+
+
+
 void PLTPlane::Clusterize ()
 {
   // Loop over hits and find biggest..then use as seeds..
@@ -101,6 +134,14 @@ void PLTPlane::Clusterize ()
   }
 
   return;
+}
+
+
+
+float PLTPlane::TZ ()
+{
+  // Get the z-coord of this plane in the telescope
+  return Cluster(0)->TZ();
 }
 
 
@@ -152,3 +193,16 @@ int PLTPlane::ROC ()
   return fROC;
 }
 
+
+void PLTPlane::SetChannel (int const in)
+{
+  fChannel = in;
+  return;
+}
+
+
+void PLTPlane::SetROC (int const in)
+{
+  fROC = in;
+  return;
+}

@@ -33,14 +33,14 @@ bool PLTBinaryFileReader::Open (std::string const DataFileName)
 
 
 
-int PLTBinaryFileReader::convPXL (int ROC)
+int PLTBinaryFileReader::convPXL (int IN)
 {
-  return ROC % 2 ? 80 - (ROC - 1) / 2 : (ROC - 1) / 2 - 80;
+  return IN % 2 == 1 ? 80 - (IN - 1) / 2 : (IN) / 2 - 80;
 }
 
 
 
-bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLTHit>& Hits)
+bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLTHit*>& Hits)
 {
   if (word & 0xfffffff) {
 
@@ -65,15 +65,19 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLT
       // Oh, NOW we have a hit!
       int mycol = 0;
       if (convPXL((word & pxlmsk) >> 8) > 0) {
+        // Odd
         mycol = ((word & dclmsk) >> 16) * 2 + 1;
+        //std::cout << "MYCOL A: " << mycol << std::endl;
       } else {
+        // Even
         mycol = ((word & dclmsk) >> 16) * 2;
+        //std::cout << "MYCOL B: " << mycol << std::endl;
       }
 
       roc -= 1; // The fed gives 123, and we use the convention 012
       if (roc <= 2) {
-        PLTHit Hit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
-        Hits.push_back(Hit);
+        //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
+        Hits.push_back(new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk)));
       } else {
         std::cerr << "WARNING: PLTBinaryFileReader found ROC with number: " << roc << std::endl;
       }
@@ -87,13 +91,13 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (unsigned long word, std::vector<PLT
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit>& Hits, unsigned long& Event)
+int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event)
 {
   return ReadEventHits(fInfile, Hits, Event);
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit>& Hits, unsigned long& Event)
+int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event)
 {
   unsigned long n1, n2;
 
@@ -109,8 +113,6 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
       return -1;
     }
 
-    wordcount = 1;
-
     if ((n1 == 0x53333333) && (n2 == 0x53333333)) {
       //tdc buffer, special handling
 
@@ -120,21 +122,22 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
         if ((n1 & 0xf0000000) == 0xa0000000) {
           InFile.read((char *) &n2, sizeof n1);
-          wordcount = 1;
           break;
         }
       }
 
-    } else if (((n1 & 0xff000000) == 0x50000000) && (wordcount == 1)) {
+    } else if ((n1 & 0xff000000) == 0x50000000 || (n2 & 0xff000000) == 0x50000000) {
       // Found the header
-      wordcount = 0;
+      wordcount = 1;
       bheader = true;
-      Event = (n1 & 0xffffff);
+      Event = (n1 & 0xff000000) == 0x50000000 ? n1 & 0xffffff : n2 & 0xffffff;
       //std::cout << "Found Event Header: " << Event << std::endl;
 
       while (bheader) {
         InFile.read((char *) &n2, sizeof n2);
         InFile.read((char *) &n1, sizeof n1);
+
+        ++wordcount;
 
         if ((n1 & 0xf0000000) == 0xa0000000 || (n2 & 0xf0000000) == 0xa0000000) {
           bheader = false;
@@ -144,27 +147,6 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           DecodeSpyDataFifo(n1, Hits);
         }
       }
-    } else if (((n2 & 0xff000000) == 0x50000000) && (wordcount == 1)) {
-      // Found the header
-      wordcount = 0;
-      bheader = true;
-      Event = (n2 & 0xffffff);
-      //std::cout << "Found Event Header: " << Event << std::endl;
-
-      while (bheader) {
-        InFile.read((char *) &n2, sizeof n2);
-        InFile.read((char *) &n1, sizeof n1);
-
-        if ((n2 & 0xf0000000) == 0xa0000000 || (n1 & 0xf0000000) == 0xa0000000  ) {
-          bheader = false;
-          //std::cout << "Found Event Trailer: " << Event << std::endl;
-        } else {
-          DecodeSpyDataFifo(n2, Hits);
-          DecodeSpyDataFifo(n1, Hits);
-        }
-      }
-    } else {
-      //wordcount = 0;
     }
   }
 

@@ -22,9 +22,9 @@ class PLTBinaryFileReader
 
     int  GetEvent ();
     int  convPXL (int);
-    bool DecodeSpyDataFifo (unsigned long, std::vector<PLTHit>&);
-    int  ReadEventHits (std::vector<PLTHit>&, unsigned long&);
-    int  ReadEventHits (std::ifstream&, std::vector<PLTHit>&, unsigned long&);
+    bool DecodeSpyDataFifo (unsigned long, std::vector<PLTHit*>&);
+    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&);
+    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
 
 
   private:

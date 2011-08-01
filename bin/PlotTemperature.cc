@@ -99,7 +99,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
 
 
   TGraph g(nUsed, X, Y);
-  g.SetTitle("Temperature (From Fiber Sensor)");
+  g.SetTitle("Temperature");
   g.GetXaxis()->SetTimeDisplay(1);
   g.GetXaxis()->SetTitle("Date");
   g.GetYaxis()->SetTitle("Temperature (#circC )");

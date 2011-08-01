@@ -2,8 +2,11 @@
 #define GUARD_PLTTelescope_h
 
 #include "PLTPlane.h"
+#include "PLTTrack.h"
 
 #include "TCanvas.h"
+#include "TLine.h"
+#include "TGraph.h"
 
 class PLTTelescope
 {
@@ -14,15 +17,24 @@ class PLTTelescope
     void      AddPlane (PLTPlane*);
     int       Channel ();
     PLTPlane* Plane(size_t i);
+    void      DrawTracksAndHits (std::string const);
     void      Draw2D (int const, TString const);
     size_t    NPlanes ();
+    size_t    NHits ();
+    size_t    NClusters ();
+    size_t    NTracks ();
     int       HitPlaneBits ();
+    void      AddTrack (PLTTrack*);
+    void      FillAndOrderTelescope ();
 
   private:
     std::vector<PLTPlane*> fPlanes;
+    std::vector<PLTTrack*>  fTracks;
     int fChannel;
 
+
 };
+
 
 
 

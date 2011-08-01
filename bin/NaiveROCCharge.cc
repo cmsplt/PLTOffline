@@ -33,7 +33,7 @@ int NaiveROCCharge (std::string const GainCalFileName, std::string const DataFil
 
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (Event.NHits() > 0) {
-      printf("Event: %12lu  Hits:%5i\n", Event.EventNumber(), (int) Event.NHits());
+      printf("Event: %12lu  Hits:%5i  PlaneBits:%i\n", Event.EventNumber(), (int) Event.NHits(), Event.Telescope(0)->HitPlaneBits());
     }
   }
 

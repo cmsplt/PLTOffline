@@ -26,6 +26,17 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
 }
 
 
+PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
+{
+  // Constructor, which will also give you access to the gaincal values
+  fBinFile.Open(DataFileName);
+  fGainCal.ReadGainCalFile(GainCalFileName);
+  fAlignment.ReadAlignmentFile(AlignmentFileName);
+  
+  fRun = 0;
+}
+
+
 PLTEvent::~PLTEvent ()
 {
   // Destructor!!
@@ -76,6 +87,12 @@ void PLTEvent::Clear ()
   fPlaneMap.clear();
 
   // Clear vectors
+  // You own the hits and need to delete them!!
+  for (std::vector<PLTHit*>::iterator i = fHits.begin(); i != fHits.end(); ++i) {
+    delete *i;
+  }
+
+
   fHits.clear();
   fPlanes.clear();
   fTelescopes.clear();
@@ -83,14 +100,33 @@ void PLTEvent::Clear ()
 
 
 
-void PLTEvent::AddHit (PLTHit Hit)
+void PLTEvent::AddHit (PLTHit& Hit)
 {
   // This method DOES do a copy, so if you want speed for very large number of
   // hits this isn't your best choice.
 
+  PLTHit* NewHit = new PLTHit(Hit);
+
   // If we have the GC object let's fill the charge
   if (fGainCal.IsGood()) {
-    fGainCal.SetCharge(Hit);
+    fGainCal.SetCharge(*NewHit);
+  }
+
+  // add the hit
+  fHits.push_back(NewHit);
+  return;
+}
+
+
+
+void PLTEvent::AddHit (PLTHit* Hit)
+{
+  // If you give it to me the I OWN it and I will delete it!!
+
+
+  // If we have the GC object let's fill the charge
+  if (fGainCal.IsGood()) {
+    fGainCal.SetCharge(*Hit);
   }
 
   // add the hit
@@ -105,11 +141,21 @@ void PLTEvent::MakeEvent ()
   // This function organizes the "hits" into Planes, clusters, and telescopes
 
   // Add hits to planes according to their channel-roc
-  for (std::vector<PLTHit>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
-    std::pair<int, int> ChannelRoc = std::make_pair<int, int>(it->Channel(), it->ROC());
-    fPlaneMap[ChannelRoc].AddHit( &(*it) );
+  for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
+    std::pair<int, int> ChannelRoc = std::make_pair<int, int>((*it)->Channel(), (*it)->ROC());
+    fPlaneMap[ChannelRoc].AddHit( *it );
   }
 
+  for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
+    int const Channel = it->first.first;
+    for (int i = 0; i != 3; ++i) {
+      std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, i);
+      if (!fPlaneMap.count(ChROC)) {
+        fPlaneMap[ ChROC ].SetChannel(Channel);
+        fPlaneMap[ ChROC ].SetROC(i);
+      }
+    }
+  }
   // Loop over all planes and clusterize each one, then add each plane to the correct telescope (by channel number
   for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
     it->second.Clusterize();
@@ -118,6 +164,8 @@ void PLTEvent::MakeEvent ()
 
   // Just to make it easier.. put them in a vector..
   for (std::map<int, PLTTelescope>::iterator it = fTelescopeMap.begin(); it != fTelescopeMap.end(); ++it) {
+    it->second.FillAndOrderTelescope();
+
     for (size_t i = 0; i != it->second.NPlanes(); ++i) {
       fPlanes.push_back( it->second.Plane(i));
     }
@@ -140,10 +188,20 @@ int PLTEvent::GetNextEvent ()
     return ret;
   }
 
+  static bool const DoLoop = fGainCal.IsGood() || fAlignment.IsGood();
+  static bool const DoAlignment = fAlignment.IsGood();
+  static bool const DoGainCal = fGainCal.IsGood();
+
   // If the GC is good let's compute the charge
-  if (fGainCal.IsGood()) {
-    for (std::vector<PLTHit>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
-      fGainCal.SetCharge(*it);
+  if (DoLoop) {
+    for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
+      if (DoGainCal) {
+        fGainCal.SetCharge(**it);
+        //std::cout << (*it)->Charge() << std::endl;
+      }
+      if (DoAlignment) {
+        fAlignment.AlignHit(**it);
+      }
     }
   }
 

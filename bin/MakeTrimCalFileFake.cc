@@ -17,7 +17,7 @@ int MakeTrimCalFileFake ()
   FILE* f = fopen("FakeTrimCalFast.dat", "w");
 
   for (int icol = 13; icol <= 39; ++icol) {
-    for (int irow = 39; irow <= 79; ++irow) {
+    for (int irow = 40; irow <= 79; ++irow) {
       for (int iroc = 0; iroc != 3; ++iroc) {
         for (int itrim = 0; itrim != 16; ++itrim) {
           fprintf(f, "%1i %1i %2i %2i %2i %1i %3i %2i %3i %9.4f\n",

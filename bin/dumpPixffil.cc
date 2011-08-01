@@ -155,11 +155,11 @@ int main(int argc, char *argv[])
         stopit = 0;
         event = (n1 & 0xffffff);
         totevent++;
-        printf("Found header event:  %i\n", event);
+        //printf("Found header event:  %i\n", event);
       } else if ((n1 & 0xf0000000) == 0xa0000000) {
         bheader = false;
-        printf("nhits: %i\n", hitcount);
-        printf("Found trailer event: %i\n", event);
+        //printf("nhits: %i\n", hitcount);
+        //printf("Found trailer event: %i\n", event);
         if (stopit > 0) {
           string input;
           getline(cin, input);
