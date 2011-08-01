@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -294,7 +295,7 @@ void decodeSpyDataFifo(unsigned long word,int event) {
     if(!ignoreInvalidData)cout<<" Possible Fifo-2 Begin of Event, data = "<<hex<<word<<dec<<endl;       
   }
 } // end
-int main(int argc, char **argv[])
+int main(int argc, char *argv[])
 {
   bool bheader=false;
   if(argc<2) {cout<<argc<< " usage: decodefil filename"<<endl; return 1;}

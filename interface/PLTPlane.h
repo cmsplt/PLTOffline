@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 
 #include "PLTCluster.h"
 
