@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <stdint.h>
 
 #include "PLTHit.h"
 
@@ -22,7 +23,7 @@ class PLTBinaryFileReader
 
     int  GetEvent ();
     int  convPXL (int);
-    bool DecodeSpyDataFifo (unsigned long, std::vector<PLTHit*>&);
+    bool DecodeSpyDataFifo (uint32_t unsigned, std::vector<PLTHit*>&);
     int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&);
     int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
 

@@ -179,8 +179,8 @@ int PLTMC ()
     throw;
   }
 
-  uint32_t n;
-  uint32_t n2;
+  uint64_t unsigned n;
+  uint64_t unsigned n2;
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
@@ -215,8 +215,8 @@ int PLTMC ()
     n2 = 0x0;
     n =  0x50000000;
     n |= ievent;
-    fout.write( (char*) &n2, sizeof(uint32_t) );
-    fout.write( (char*) &n, sizeof(uint32_t) );
+    fout.write( (char*) &n2, sizeof(uint64_t) );
+    fout.write( (char*) &n, sizeof(uint64_t) );
 
 
     for (size_t ihit = 0; ihit != Hits.size(); ++ihit) {
@@ -246,7 +246,7 @@ int PLTMC ()
       //  printf("WORD: %X\n", (n &  0x3e00000));
       //}
 
-      fout.write( (char*) &n, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint64_t) );
       delete Hits[ihit];
     }
 
@@ -255,16 +255,16 @@ int PLTMC ()
       n  = 0xa0000000;
       n2 = 0x00000000;
       n  |= (Hits.size() / 2 + 2);
-      fout.write( (char*) &n, sizeof(uint32_t) );
-      fout.write( (char*) &n2, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint64_t) );
+      fout.write( (char*) &n2, sizeof(uint64_t) );
     } else {
       // Print number of hits in 1x32 bit
       n  = 0x00000000;
-      fout.write( (char*) &n, sizeof(uint32_t) );
-      fout.write( (char*) &n, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint64_t) );
+      fout.write( (char*) &n, sizeof(uint64_t) );
       n  = 0xa0000000;
       n  |= (Hits.size() / 2 + 1);
-      fout.write( (char*) &n, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint64_t) );
     }
 
 
