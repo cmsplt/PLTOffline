@@ -60,10 +60,11 @@ int OccupancyPlots (std::string const DataFileName)
 
   // char buffer for writing names
   char BUFF[200];
-
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-
+    
+    //    std::cout << "Here!" << std::endl;
+    
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
 
@@ -208,7 +209,7 @@ int OccupancyPlots (std::string const DataFileName)
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   for (std::map<int, TH2F*>::iterator it = hMap.begin(); it != hMap.end(); ++it) {
-
+    //    std::cout << "Here again!" << std::endl;
     // Decode the ID
     int const Channel = it->first / 10;
     int const ROC     = it->first % 10;
@@ -245,6 +246,7 @@ int OccupancyPlots (std::string const DataFileName)
       std::cerr << "WARNING: Z axis of Ch" << Channel << ",ROC=" << ROC << " Occupancy plot trimmed to " << yq[0] << ". Maximum was: " << it->second->GetMaximum() << std::endl;
       qhMap[it->first]->SetMaximum(yq[0]);
     }
+
     qhMap[it->first]->Draw("colz");
 
     // Draw on projection canvas
@@ -291,6 +293,7 @@ int OccupancyPlots (std::string const DataFileName)
     }
 
     float norm = sum / count;
+   
     for(int ic = 1; ic <= it->second->GetNbinsX(); ic++) {
       for(int ir = 1; ir <= it->second->GetNbinsY(); ir++) {
         int _ic = it->second->ProjectionX()->GetBinLowEdge(ic);
@@ -370,26 +373,26 @@ int OccupancyPlots (std::string const DataFileName)
 
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
-    sprintf(BUFF, "Occupancy_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
     delete it->second;      
-    sprintf(BUFF, "Occupancy_Projection_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_Projection_Ch%02i.gif", it->first);
     cpMap[it->first]->SaveAs(BUFF);
   }
 
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cmhMap.begin(); it != cmhMap.end(); ++it) {
-    sprintf(BUFF, "Occupancy_Efficiency_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_Efficiency_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
     delete it->second;
-    sprintf(BUFF, "Occupancy_all_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_all_Ch%02i.gif", it->first);
     oMap[it->first]->SaveAs(BUFF);
-    sprintf(BUFF, "Occupancy_allwQuantiles_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_allwQuantiles_Ch%02i.gif", it->first);
     oProjMap[it->first]->SaveAs(BUFF);
   }
 
   for (std::map<int, TCanvas*>::iterator it = cphitsMap.begin(); it != cphitsMap.end(); ++it) {
-    sprintf(BUFF, "Occupancy_Coincidence_Ch%02i.gif", it->first);
+    sprintf(BUFF, "plots/Occupancy_Coincidence_Ch%02i.gif", it->first);
     it->second->SaveAs(BUFF);
   }
 

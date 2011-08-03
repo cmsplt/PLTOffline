@@ -66,7 +66,7 @@ int PlotFedTime (std::string const InFileName)
     Lines[i]->SetLineColor(2);
     Lines[i]->Draw("same");
   }
-  Can.SaveAs("Fedtime.gif");
+  Can.SaveAs("plots/Fedtime.gif");
 
 
   for (size_t i = 0; i != Graphs.size(); ++i) {

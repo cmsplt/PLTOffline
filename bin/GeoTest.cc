@@ -7,6 +7,10 @@
 ////////////////////////////////////////////////////////////////////
 
 
+// NOTE (kga): this needs a good look at 
+// http://root.cern.ch/root/html/tutorials/fit/line3Dfit.C.html
+// but maybe that exists somewhere else in this package...moving on.
+
 #include <iostream>
 
 #include "TGraph2D.h"
@@ -29,7 +33,7 @@ int GeoTest ()
   Line.SetLineColor(2);
   Line.SetLineWidth(2);
   Line.Draw("same");
-  C.SaveAs("Test.eps");
+  C.SaveAs("plots/GeoTestPlot.eps");
   return 0;
 }
 

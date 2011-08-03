@@ -51,7 +51,7 @@ int PLTDatToWave (int const N, TString const InputFileName)
   TCanvas Can;
   Can.cd();
   gr.Draw("ac");
-  Can.SaveAs("Wave.gif");
+  Can.SaveAs("plots/Wave.gif");
 
   return 0;
 }

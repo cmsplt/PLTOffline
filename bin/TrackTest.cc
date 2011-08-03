@@ -16,11 +16,6 @@
 int TrackTest (std::string const, std::string const, std::string const);
 
 
-
-
-
-
-
 // CODE BELOW
 
 
@@ -93,7 +88,8 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
         Telescope->AddTrack(&Tracks[0]);
         static int ievent = 0;
-        //Telescope->DrawTracksAndHits( TString::Format("Tracks_Ch%i_Ev%i.eps", Telescope->Channel(), ++ievent).Data() );
+        //comment
+	//Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.eps", Telescope->Channel(), ++ievent).Data() );
 
         // Let's see if tracks are fiducial to planes..
         for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {
@@ -143,13 +139,13 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
   for (std::map<int, std::vector< std::vector<TH2F*> > >::iterator It = ResidualMap.begin(); It != ResidualMap.end(); ++It) {
     TString CanNameAll  = TString::Format("CanResidual_All_Ch%i", It->first);
-    TString SaveNameAll = TString::Format("CanResidual_All_Ch%i.eps", It->first);
+    TString SaveNameAll = TString::Format("plots/CanResidual_All_Ch%i.eps", It->first);
     TString CanName  = TString::Format("CanResidual_Ch%i", It->first);
-    TString SaveName = TString::Format("CanResidual_Ch%i.eps", It->first);
+    TString SaveName = TString::Format("plots/CanResidual_Ch%i.eps", It->first);
     TString CanNameXY  = TString::Format("CanResidual_Ch%i_XY", It->first);
-    TString SaveNameXY = TString::Format("CanResidual_Ch%i_XY.eps", It->first);
+    TString SaveNameXY = TString::Format("plots/CanResidual_Ch%i_XY.eps", It->first);
     TString CanName3XY  = TString::Format("CanResidual_Ch%i_3XY", It->first);
-    TString SaveName3XY = TString::Format("CanResidual_Ch%i_3XY.eps", It->first);
+    TString SaveName3XY = TString::Format("plots/CanResidual_Ch%i_3XY.eps", It->first);
 
     TCanvas CanResidualAll(CanNameAll, CanNameAll, 1600, 1200);
     TCanvas CanResidual(CanName, CanName, 900, 600);

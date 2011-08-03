@@ -94,7 +94,7 @@ int BasicResiduals (std::string const DataFileName, std::string const GainCalFil
     hMap2[Channel]->ProjectionY()->Draw("hist");
 
 
-    cMap[Channel]->SaveAs( TString::Format("Residuals_Ch%02i.gif", Channel) );
+    cMap[Channel]->SaveAs( TString::Format("plots/Residuals_Ch%02i.gif", Channel) );
     delete hMap1[Channel];
     delete hMap2[Channel];
     delete cMap[Channel];

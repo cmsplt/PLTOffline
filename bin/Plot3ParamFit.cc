@@ -23,7 +23,7 @@ int Plot3ParamFit (float const a, float const b, float const c)
   TCanvas Can;
   Can.cd();
   f.Draw();
-  Can.SaveAs("Plot3ParamFit.eps");
+  Can.SaveAs("plots/Plot3ParamFit.eps");
 
   return 0;
 }
@@ -32,7 +32,7 @@ int Plot3ParamFit (float const a, float const b, float const c)
 int main (int argc, char* argv[])
 {
   if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " " << std::endl;
+    std::cerr << "Usage: " << argv[0] << " and three constants " << std::endl;
     return 1;
   }
 
