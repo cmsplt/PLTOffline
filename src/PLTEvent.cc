@@ -158,7 +158,7 @@ void PLTEvent::MakeEvent ()
   }
   // Loop over all planes and clusterize each one, then add each plane to the correct telescope (by channel number
   for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
-    it->second.Clusterize(fGainCal.IsGood());
+    it->second.Clusterize();
     fTelescopeMap[it->second.Channel()].AddPlane( &(it->second) );
   }
 
