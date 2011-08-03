@@ -64,7 +64,7 @@ int ShowGainCalPoints (std::string const InFileName, int const InmFec, int const
   TCanvas c;
   c.cd();
   g.Draw("a*");
-  c.SaveAs("GainCalPlot.eps");
+  c.SaveAs("plots/GainCalPlot.eps");
 
 
   return 0;

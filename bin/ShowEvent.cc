@@ -48,7 +48,7 @@ int ShowEvent (std::string const FileName, int const EventNumber)
         h->Draw("colz");
       }
       //C.SaveAs(Name+".eps");
-      C.SaveAs("Event.eps");
+      C.SaveAs("plots/Event.eps");
     }
 
     break;
