@@ -93,7 +93,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
         Telescope->AddTrack(&Tracks[0]);
         static int ievent = 0;
-        //Telescope->DrawTracksAndHits( TString::Format("Tracks_Ch%i_Ev%i.eps", Telescope->Channel(), ++ievent).Data() );a
+        //Telescope->DrawTracksAndHits( TString::Format("Tracks_Ch%i_Ev%i.eps", Telescope->Channel(), ++ievent).Data() );
 
         // Let's see if tracks are fiducial to planes..
         for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {

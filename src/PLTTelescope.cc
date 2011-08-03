@@ -122,6 +122,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
 
   //TVirtualPad* Pad = C.cd(3);
   //Pad->DrawFrame(-30, -30, 30, 30);
+  C.cd(3);
   TGraph gXY(NH, X, Y);
   gXY.SetTitle("");
   gXY.GetXaxis()->SetTitle("X");

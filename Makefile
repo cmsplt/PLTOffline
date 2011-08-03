@@ -37,3 +37,5 @@ dict/%_dict.cc : include/%.h dict/%_linkdef.h
 
 clean:
 	rm -f $(EXECS) $(SCRIPTS) lib/*.o dict/*_dict.cc dict/*_dict.h
+cleanimg:
+	rm -f *.eps *.gif *.jpg
