@@ -16,7 +16,7 @@ int TestAlignment (std::string const InFileName)
 {
   PLTAlignment A;
   A.ReadAlignmentFile(InFileName);
-  A.PrintAlignmentFile("Alignment_Test.dat");
+  A.PrintAlignmentFile("data/Alignment_Test.dat");
 
   return 0;
 }
