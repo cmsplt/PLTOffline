@@ -77,7 +77,7 @@ int FindTrims (std::string const InFileName)
     printf("mFec = %1i  mFecChannel = %1i  hubAddress = %2i  ROC = %1i\n", mFec, mFecChannel, hubAddress, ROC);
 
 
-    sprintf(BUFF, "trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
+    sprintf(BUFF, "data/trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
     FILE* f = fopen(BUFF, "w");
     if (!f) {
       std::cerr << "ERROR: cannot open output file: " << BUFF << std::endl;

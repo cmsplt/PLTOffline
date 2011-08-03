@@ -173,7 +173,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
 int PLTMC ()
 {
   // Open the output file
-  std::ofstream fout("PLTMC.dat", std::ios::binary);
+  std::ofstream fout("data/PLTMC.dat", std::ios::binary);
   if (!fout.is_open()) {
     std::cerr << "ERROR: cannot open output file" << std::endl;
     throw;
@@ -183,7 +183,7 @@ int PLTMC ()
   uint64_t unsigned n2;
 
   PLTAlignment Alignment;
-  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
+  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
 
   // Vector of hits for each event
