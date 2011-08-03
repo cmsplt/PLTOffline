@@ -21,9 +21,9 @@ class PLTPlane
     float   Charge ();
     int     Channel ();
     bool    AddClusterFromSeed (PLTHit*);
-    bool    IsBiggestHitIn3x3 (PLTHit*);
+    bool    IsBiggestHitIn3x3 (PLTHit*, bool const);
     int     NNeighbors (PLTHit*);
-    void    Clusterize ();
+    void    Clusterize (bool const);
     TH2F*   DrawHits2D ();
     size_t  NHits ();
     PLTHit* Hit (size_t);

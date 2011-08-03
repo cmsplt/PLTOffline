@@ -90,16 +90,29 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
 }
 
 
-bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit)
+bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit, bool const IsGainCalGood)
 {
   // Just check if a hit is the biggest in a 3x3 around itself
 
-  for (size_t i = 0; i != fHits.size(); ++i) {
-    if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
-      return false;
+  // If we have a gaincal do this by charge, otherwise do this by number of neighbors
+  if (IsGainCalGood) {
+    for (size_t i = 0; i != fHits.size(); ++i) {
+      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
+        return false;
+      }
+      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
+        return false;
+      }
     }
-    if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
-      return false;
+  } else {
+    // this has a flaw, and that is when there is a 3x4 or larger.. you get screwed
+    for (size_t i = 0; i != fHits.size(); ++i) {
+      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && NNeighbors(fHits[i]) >  NNeighbors(fHits[i])) {
+        return false;
+      }
+      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 &&  NNeighbors(fHits[i]) >  NNeighbors(fHits[i])) {
+        return false;
+      }
     }
   }
 
@@ -124,11 +137,11 @@ int PLTPlane::NNeighbors (PLTHit* Hit)
 
 
 
-void PLTPlane::Clusterize ()
+void PLTPlane::Clusterize (bool const IsGainCalGood)
 {
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (IsBiggestHitIn3x3(fHits[i])) {
+    if (IsBiggestHitIn3x3(fHits[i], IsGainCalGood)) {
       AddClusterFromSeed(fHits[i]);
     }
   }
