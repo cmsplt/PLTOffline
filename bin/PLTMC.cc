@@ -184,7 +184,7 @@ int PLTMC ()
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;

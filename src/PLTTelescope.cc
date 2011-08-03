@@ -212,7 +212,9 @@ int PLTTelescope::HitPlaneBits ()
   int HitPlanes = 0x0;
 
   for (std::vector<PLTPlane*>::iterator it = fPlanes.begin(); it != fPlanes.end(); ++it) {
-    HitPlanes |= (0x1 << (*it)->ROC());
+    if ((*it)->NHits() > 0) {
+      HitPlanes |= (0x1 << (*it)->ROC());
+    }
   }
 
   return HitPlanes;
