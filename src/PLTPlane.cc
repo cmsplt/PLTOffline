@@ -107,10 +107,10 @@ bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit, bool const IsGainCalGood)
   } else {
     // this has a flaw, and that is when there is a 3x4 or larger.. you get screwed
     for (size_t i = 0; i != fHits.size(); ++i) {
-      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && NNeighbors(fHits[i]) >  NNeighbors(fHits[i])) {
+      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && NNeighbors(fHits[i]) >  NNeighbors(Hit)) {
         return false;
       }
-      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 &&  NNeighbors(fHits[i]) >  NNeighbors(fHits[i])) {
+      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 &&  NNeighbors(fHits[i]) >  NNeighbors(Hit)) {
         return false;
       }
     }
