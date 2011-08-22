@@ -67,9 +67,6 @@ int FindTrims (std::string const InFileName)
       STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]  = Efficiency;
       STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] = itrim;
     }
-    if (ROCID > 82052) {
-      std::cout << ROCID << std::endl;
-    }
   }
 
 
