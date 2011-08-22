@@ -16,7 +16,7 @@
 
 int const MINCOL = 13;
 int const MAXCOL = 39;
-int const MINROW = 40;
+int const MINROW = 39;
 int const MAXROW = 79;
 
 int const NCOL = MAXCOL - MINCOL + 1;
@@ -42,7 +42,7 @@ int FindTrims (std::string const InFileName)
 
   std::map<int, B> STrim;
 
-  int mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, NFired;
+  int mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim;
   float Efficiency;
   int ROCID;
 
@@ -55,29 +55,36 @@ int FindTrims (std::string const InFileName)
            >> ROC
            >> VCal
            >> itrim
-           >> NFired
            >> Efficiency;
     ROCID = 10000 * mFec + 1000 * mFecChannel + 10 * hubAddress + ROC;
     STrim[ROCID].Checked[Col - MINCOL][Row - MINROW] = true;
     if (fabs(0.5 - Efficiency) < fabs(0.5 - STrim[ROCID].Eff[Col][Row])) {
+      if (Col - MINCOL < 0 || Row - MINROW < 0) {
+        std::cout << Col << "  " << Row << std::endl;
+        std::cerr << "ERROR!!" << std::endl;
+        exit(1);
+      }
       STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]  = Efficiency;
       STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] = itrim;
+    }
+    if (ROCID > 82052) {
+      std::cout << ROCID << std::endl;
     }
   }
 
 
   for (std::map<int, B>::iterator It = STrim.begin(); It != STrim.end(); ++It) {
     char BUFF[400];
-
     mFec        = It->first / 10000;
     mFecChannel = It->first % 10000 / 1000;
     hubAddress  = It->first % 1000 / 10;
     ROC         = It->first % 10;
 
-    printf("mFec = %1i  mFecChannel = %1i  hubAddress = %2i  ROC = %1i\n", mFec, mFecChannel, hubAddress, ROC);
+
+    printf("%i  mFec = %i  mFecChannel = %i  hubAddress = %i  ROC = %i\n", It->first, mFec, mFecChannel, hubAddress, ROC);
 
 
-    sprintf(BUFF, "data/trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
+    sprintf(BUFF, "trimming_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
     FILE* f = fopen(BUFF, "w");
     if (!f) {
       std::cerr << "ERROR: cannot open output file: " << BUFF << std::endl;
@@ -92,7 +99,7 @@ int FindTrims (std::string const InFileName)
     for (int icol = 0; icol != NCOL; ++icol) {
       for (int irow = 0; irow != NROW; ++irow) {
         fprintf(f, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,
-                It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 15);
+                It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 8);
         //printf("%2i %2i %2i %9.5f\n", MINCOL + icol, MINROW + irow, It->second.Trim[icol][irow], It->second.Eff[icol][irow]);
       }
     }
