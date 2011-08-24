@@ -42,10 +42,11 @@ int FindTrims (std::string const InFileName)
 
   std::map<int, B> STrim;
 
-  int mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim;
+  int mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, NFired, itrim;
   float Efficiency;
   int ROCID;
 
+  int i = 0;
   while (!InFile.eof()) {
     InFile >> mFec
            >> mFecChannel
@@ -55,10 +56,12 @@ int FindTrims (std::string const InFileName)
            >> ROC
            >> VCal
            >> itrim
+           >> NFired
            >> Efficiency;
+    //printf("%i %i %i %i %i %i %i %i %f\n" , mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, Efficiency);
     ROCID = 10000 * mFec + 1000 * mFecChannel + 10 * hubAddress + ROC;
     STrim[ROCID].Checked[Col - MINCOL][Row - MINROW] = true;
-    if (fabs(0.5 - Efficiency) < fabs(0.5 - STrim[ROCID].Eff[Col][Row])) {
+    if (fabs(0.5 - Efficiency) < fabs(0.5 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW])) {
       if (Col - MINCOL < 0 || Row - MINROW < 0) {
         std::cout << Col << "  " << Row << std::endl;
         std::cerr << "ERROR!!" << std::endl;
