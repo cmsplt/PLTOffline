@@ -46,7 +46,6 @@ int FindTrims (std::string const InFileName)
   float Efficiency;
   int ROCID;
 
-  int i = 0;
   while (!InFile.eof()) {
     InFile >> mFec
            >> mFecChannel
