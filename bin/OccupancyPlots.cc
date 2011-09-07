@@ -197,12 +197,13 @@ int OccupancyPlots (std::string const DataFileName)
       int phit = Tele->HitPlaneBits();
 
       // here we fill the Plot of Planes in Coincidence
-      if(phit==0x4) phitsMap[Tele->Channel()]->Fill(0); //only first plane hit
+      if(phit==0x1) phitsMap[Tele->Channel()]->Fill(0); //only first plane hit
       if(phit==0x2) phitsMap[Tele->Channel()]->Fill(1); //only 2nd plane hit
-      if(phit==0x1) phitsMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
-      if(phit==0x6) phitsMap[Tele->Channel()]->Fill(3); //Plane 0and1 in coincidence
-      if(phit==0x3) phitsMap[Tele->Channel()]->Fill(4); //Plane 1and2 in coincidence
-      if(phit==0x5) phitsMap[Tele->Channel()]->Fill(5); //Plane 1 and 3 in coincidence
+      if(phit==0x4) phitsMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
+
+      if(phit==0x3) phitsMap[Tele->Channel()]->Fill(3); //Plane 0 and 1 in coincidence
+      if(phit==0x6) phitsMap[Tele->Channel()]->Fill(4); //Plane 1 and 2 in coincidence
+      if(phit==0x5) phitsMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
       if(phit==0x7) phitsMap[Tele->Channel()]->Fill(6); //All planes in coincidence
     }
   }
