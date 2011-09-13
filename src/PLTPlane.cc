@@ -66,16 +66,21 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
 
   // Sanity check
   if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), Hit) ) {
-    std::cerr << "ERROR: seed has already been used" << std::endl;
+    //std::cerr << "ERROR: seed has already been used" << std::endl;
+    //std::cerr << Hit->Column() << " " << Hit->Row() << std::endl;
     return false;
   }
 
   // Add the seed
   Cluster->AddHit(Hit);
+  fClusterizedHits.push_back(Hit);
 
   // Check all buddy hits within 3x3
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) == 1) {
+    if (
+        (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) ||
+        (abs(fHits[i]->Row() - Hit->Row()) <= 1 && abs(fHits[i]->Column() - Hit->Column()) == 1)
+        ) {
       if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) == 0 ) {
         Cluster->AddHit(fHits[i]);
         fClusterizedHits.push_back(fHits[i]);
