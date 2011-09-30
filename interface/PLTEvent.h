@@ -24,6 +24,7 @@ class PLTEvent
     std::vector<PLTTelescope*> fTelescopes;
     std::vector<PLTHit*> fHits;
 
+    void SetDefaults ();
 
     size_t NPlanes ();
     PLTPlane* Plane(size_t);
@@ -35,6 +36,9 @@ class PLTEvent
     void AddHit (PLTHit&);
     void AddHit (PLTHit*);
     void MakeEvent ();
+    void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
+    void SetPlaneClustering (PLTPlane::Clustering);
+
     unsigned long EventNumber ()
     { 
       return fEvent;
@@ -59,6 +63,8 @@ class PLTEvent
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;
     PLTAlignment fAlignment;
+
+    PLTPlane::Clustering fClustering;
 
     std::map<int, PLTTelescope> fTelescopeMap;
     std::map<std::pair<int, int>, PLTPlane> fPlaneMap;

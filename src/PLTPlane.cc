@@ -54,15 +54,12 @@ int PLTPlane::Channel ()
 
 
 
-bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
+bool PLTPlane::AddClusterFromSeedNxN (PLTHit* Hit, int const mCol, int const mRow)
 {
   // Add a cluster from a seed using some very basic clustering.  Not perfect, but better one
   // on the way
 
   // Clustering currently does not work so well.  This needs to be fixed.
-
-  // New cluster
-  PLTCluster* Cluster = new PLTCluster();
 
   // Sanity check
   if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), Hit) ) {
@@ -71,16 +68,19 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
     return false;
   }
 
+  // New cluster
+  PLTCluster* Cluster = new PLTCluster();
+
   // Add the seed
   Cluster->AddHit(Hit);
   fClusterizedHits.push_back(Hit);
 
-  // Check all buddy hits within 3x3
+  // Which clustering do you want?
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (
-        (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) ||
-        (abs(fHits[i]->Row() - Hit->Row()) <= 1 && abs(fHits[i]->Column() - Hit->Column()) == 1)
-        ) {
+    if (fHits[i]->Row() == Hit->Row() && fHits[i]->Column() == Hit->Column()) {
+      continue;
+    }
+    if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol) {
       if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) == 0 ) {
         Cluster->AddHit(fHits[i]);
         fClusterizedHits.push_back(fHits[i]);
@@ -95,29 +95,17 @@ bool PLTPlane::AddClusterFromSeed (PLTHit* Hit)
 }
 
 
-bool PLTPlane::IsBiggestHitIn3x3(PLTHit* Hit, bool const IsGainCalGood)
+bool PLTPlane::IsBiggestHitInNxN(PLTHit* Hit, int const mRow, int const mCol)
 {
   // Just check if a hit is the biggest in a 3x3 around itself
 
   // If we have a gaincal do this by charge, otherwise do this by number of neighbors
-  if (IsGainCalGood) {
-    for (size_t i = 0; i != fHits.size(); ++i) {
-      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
-        return false;
-      }
-      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 && fHits[i]->Charge() > Hit->Charge()) {
-        return false;
-      }
+  for (size_t i = 0; i != fHits.size(); ++i) {
+    if (fHits[i]->Row() == Hit->Row() && fHits[i]->Column() == Hit->Column()) {
+      continue;
     }
-  } else {
-    // this has a flaw, and that is when there is a 3x4 or larger.. you get screwed
-    for (size_t i = 0; i != fHits.size(); ++i) {
-      if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1 && NNeighbors(fHits[i]) >  NNeighbors(Hit)) {
-        return false;
-      }
-      if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1 &&  NNeighbors(fHits[i]) >  NNeighbors(Hit)) {
-        return false;
-      }
+    if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol && fHits[i]->Charge() > Hit->Charge()) {
+      return false;
     }
   }
 
@@ -130,9 +118,10 @@ int PLTPlane::NNeighbors (PLTHit* Hit)
 {
   int N = 0;
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (abs(fHits[i]->Row() - Hit->Row()) == 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) {
-      ++N;
-    } else if (abs(fHits[i]->Column() - Hit->Column()) == 1 && abs(fHits[i]->Row() - Hit->Row()) <= 1) {
+    if (fHits[i]->Row() == Hit->Row() && fHits[i]->Column() == Hit->Column()) {
+      continue;
+    }
+    if (abs(fHits[i]->Row() - Hit->Row()) <= 2 && abs(fHits[i]->Column() - Hit->Column()) <= 2) {
       ++N;
     }
   }
@@ -142,13 +131,88 @@ int PLTPlane::NNeighbors (PLTHit* Hit)
 
 
 
-void PLTPlane::Clusterize (bool const IsGainCalGood)
+void PLTPlane::Clusterize (Clustering const Clust)
+{
+  // Cluster hits given one of the methods.
+  // I sort hits here so that the largest charge hits are picked up first.
+  // Use that if you want, otherwise unsorted..
+
+  switch (Clust) {
+    case kClustering_Seed_3x3:
+      std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
+      ClusterizeFromSeedNxN(1, 1);
+      break;
+    case kClustering_Seed_5x5:
+      std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
+      ClusterizeFromSeedNxN(2, 2);
+      break;
+    case kClustering_NNeighbors:
+      //ClusterizeNNeighbors();
+      std::cerr << "PLTPlane::ClusterizeNNeighbors not written yet" << std::endl;
+      throw;
+      break;
+    case kClustering_AllTouching:
+      ClusterizeAllTouching();
+      break;
+    case kClustering_NoClustering:
+      // Dont to any clustering
+      break;
+    default:
+      std::cerr << "ERROR in PLTPlane::Clusterize: no such clustering alg exists" << std::endl;
+      return;
+  }
+
+  return;
+}
+
+
+
+void PLTPlane::ClusterizeFromSeedNxN (int const mCol, int const mRow)
+{
+
+  // Loop over hits and find biggest..then use as seeds..
+  for (size_t i = 0; i != fHits.size(); ++i) {
+    if (IsBiggestHitInNxN(fHits[i], mCol, mRow)) {
+      AddClusterFromSeedNxN(fHits[i], mCol, mRow);
+    }
+  }
+}
+
+
+
+void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit)
+{
+  for (size_t i = 0; i != fHits.size(); ++i) {
+    if (std::find(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) != fClusterizedHits.end()) {
+      continue;
+    }
+    if (fHits[i] == Hit) {
+      continue;
+    }
+
+    if ( abs(fHits[i]->Row() - Hit->Row()) <= 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) {
+      Cluster->AddHit(fHits[i]);
+      fClusterizedHits.push_back(fHits[i]);
+      AddAllHitsTouching(Cluster, fHits[i]);
+    }
+  }
+
+  return;
+}
+
+
+void PLTPlane::ClusterizeAllTouching ()
 {
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (IsBiggestHitIn3x3(fHits[i], IsGainCalGood)) {
-      AddClusterFromSeed(fHits[i]);
+    if (std::find(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) != fClusterizedHits.end()) {
+      continue;
     }
+    PLTCluster* Cluster = new PLTCluster();
+    Cluster->AddHit(fHits[i]);
+    fClusterizedHits.push_back(fHits[i]);
+    AddAllHitsTouching(Cluster, fHits[i]);
+    fClusters.push_back(Cluster);
   }
 
   return;
@@ -160,6 +224,44 @@ float PLTPlane::TZ ()
 {
   // Get the z-coord of this plane in the telescope
   return Cluster(0)->TZ();
+}
+
+
+
+bool PLTPlane::CompareChargeReverse (PLTHit* a, PLTHit* b)
+{
+  return a->Charge() > b->Charge();
+}
+
+
+
+bool PLTPlane::IsFiducial (FiducialRegion const FidR, PLTHit* Hit)
+{
+  switch (FidR) {
+    case kFiducialRegion_All:
+      return true;
+      break;
+    case kFiducialRegion_Diamond:
+      if (Hit->Row() >= PLTU::FIRSTROW &&
+          Hit->Row() <= PLTU::LASTROW &&
+          Hit->Column() >= PLTU::FIRSTCOL &&
+          Hit->Column() <= PLTU::LASTCOL) {
+        return true;
+      }
+      break;
+    case kFiducialRegion_m2_m2:
+      if (Hit->Row() >= PLTU::FIRSTROW + 2 &&
+          Hit->Row() <= PLTU::LASTROW - 2 &&
+          Hit->Column() >= PLTU::FIRSTCOL + 2 &&
+          Hit->Column() <= PLTU::LASTCOL - 2) {
+        return true;
+      }
+      break;
+    default:
+      std::cerr << "ERROR in PLTPlane::IsFiducial" << std::endl;
+      return false;
+  };
+  return false;
 }
 
 

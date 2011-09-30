@@ -4,7 +4,7 @@
 PLTEvent::PLTEvent ()
 {
   // Default constructor
-  fRun = 0;
+  SetDefaults();
 }
 
 
@@ -12,7 +12,7 @@ PLTEvent::PLTEvent (std::string const DataFileName)
 {
   // Constructor, but you won't have the gaincal data..
   fBinFile.Open(DataFileName);
-  fRun = 0;
+  SetDefaults();
 }
 
 
@@ -22,7 +22,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   
-  fRun = 0;
+  SetDefaults();
 }
 
 
@@ -33,7 +33,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
   fGainCal.ReadGainCalFile(GainCalFileName);
   fAlignment.ReadAlignmentFile(AlignmentFileName);
   
-  fRun = 0;
+  SetDefaults();
 }
 
 
@@ -46,6 +46,20 @@ PLTEvent::~PLTEvent ()
 
 
 
+
+void PLTEvent::SetDefaults ()
+{
+  if (fGainCal.IsGood()) {
+    SetPlaneClustering(PLTPlane::kClustering_Seed_5x5);
+  } else {
+    std::cerr << "WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering" << std::endl;
+    SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+  }
+
+  fRun = 0;
+
+  return;
+}
 
 size_t PLTEvent::NPlanes ()
 {
@@ -158,7 +172,7 @@ void PLTEvent::MakeEvent ()
   }
   // Loop over all planes and clusterize each one, then add each plane to the correct telescope (by channel number
   for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
-    it->second.Clusterize(fGainCal.IsGood());
+    it->second.Clusterize(fClustering);
     fTelescopeMap[it->second.Channel()].AddPlane( &(it->second) );
   }
 
@@ -175,6 +189,21 @@ void PLTEvent::MakeEvent ()
   return;
 }
 
+
+
+void PLTEvent::SetPlaneFiducialRegion (PLTPlane::FiducialRegion in)
+{
+  fBinFile.SetPlaneFiducialRegion(in);
+  return;
+}
+
+
+
+void PLTEvent::SetPlaneClustering (PLTPlane::Clustering in)
+{
+  std::cout << "PLTEvent::SetPlaneClustering setting clustering to " << in << std::endl;
+  fClustering = in;
+}
 
 
 int PLTEvent::GetNextEvent ()
@@ -197,7 +226,6 @@ int PLTEvent::GetNextEvent ()
     for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
       if (DoGainCal) {
         fGainCal.SetCharge(**it);
-        //std::cout << (*it)->Charge() << std::endl;
       }
       if (DoAlignment) {
         fAlignment.AlignHit(**it);

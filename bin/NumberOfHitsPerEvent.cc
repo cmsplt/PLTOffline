@@ -38,11 +38,16 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
   // Map for all ROC hists and canvas
   std::map<int, TH1F*> hMap;
   std::map<int, TH1F*> hClMap;
+  std::map<int, TH1F*> hHPCMap;
 
   std::map<int, TCanvas*> cMap;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    if (ientry % 10000 == 0) {
+      std::cout << "Processing event: " << ientry << std::endl;
+    }
+    if (ientry == 200000) break;
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
@@ -68,16 +73,21 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
         hClMap[ID] = new TH1F(Name, Name, 50, 0, 50);
         Name = TString::Format("NHitsPerEvent_Ch%02i_ROC%1i",  Plane->Channel(), Plane->ROC());
         hMap[ID] = new TH1F(Name, Name, 50, 0, 50);
+        Name = TString::Format("NHitsPerCluster_Ch%02i_ROC%1i",  Plane->Channel(), Plane->ROC());
+        hHPCMap[ID] = new TH1F(Name, Name, 25, 0, 25);
 
         Name = TString::Format("NHitsPerEvent_Ch%02i",  Plane->Channel());
         if (!cMap.count(Plane->Channel())) {
-          cMap[Plane->Channel()] = new TCanvas(Name, Name, 900, 600);
-          cMap[Plane->Channel()]->Divide(3,2);
+          cMap[Plane->Channel()] = new TCanvas(Name, Name, 900, 900);
+          cMap[Plane->Channel()]->Divide(3,3);
         }
       }
 
       hMap[ID]->Fill(Plane->NHits());
       hClMap[ID]->Fill(Plane->NClusters());
+      for (size_t ic = 0; ic != Plane->NClusters(); ++ic) {
+        hHPCMap[ID]->Fill( Plane->Cluster(ic)->NHits() );
+      }
 
 
     }
@@ -93,10 +103,12 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
 
     printf("Drawing hist for Channel %2i ROC %i\n", Channel, ROC);
 
-    cMap[Channel]->cd(ROC+1);
+    cMap[Channel]->cd(ROC+1)->SetLogy(1);
     hMap[it->first]->Draw();
-    cMap[Channel]->cd(ROC+1+3);
+    cMap[Channel]->cd(ROC+1+3)->SetLogy(1);
     hClMap[it->first]->Draw();
+    cMap[Channel]->cd(ROC+1+6)->SetLogy(1);
+    hHPCMap[it->first]->Draw();
   }
 
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {

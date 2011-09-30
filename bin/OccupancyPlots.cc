@@ -42,6 +42,7 @@ int OccupancyPlots (std::string const DataFileName)
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
+  //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
 
   // Map for all ROC hists and canvas
   std::map<int, TH2F*> hMap;
@@ -62,6 +63,11 @@ int OccupancyPlots (std::string const DataFileName)
   char BUFF[200];
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    if (ientry % 10000 == 0) {
+      std::cout << "Processing event: " << ientry << std::endl;
+    }
+    //if (ientry  < 170000) continue;
+    if (ientry == 200000) break;
     
     //    std::cout << "Here!" << std::endl;
     

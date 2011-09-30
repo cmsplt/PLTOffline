@@ -25,6 +25,48 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits)
 
 
 
+void GetSpecificClusters (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // This function to generate events hitting telescopes head on
+
+  int const NTelescopes = 1;
+  for (int i = 1; i <= NTelescopes; ++i) {
+
+    // pick a starting point.  +/- 10 should cover shifts in alignment
+    int const StartCol = gRandom->Integer(10) + PLTU::FIRSTCOL + 5;
+    int const StartRow = gRandom->Integer(10) + PLTU::FIRSTROW + 5;
+
+
+    for (int r = 0; r != 3; ++r) {
+      //PLTAlignment::CP* C = Alignment.GetCP(i, r);
+
+      // make straight track, see where that hits a plane if it's shifted..
+      // Optionally give it some fuzz..
+
+      // Use L coord system:
+      // THINK ABOUT THIS FOR ROTATIONS...
+      float const LX = Alignment.PXtoLX(StartCol);
+      float const LY = Alignment.PYtoLY(StartRow);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+
+      int const PX = Alignment.PXfromLX(LXY.first);
+      int const PY = Alignment.PYfromLY(LXY.second);
+
+
+      //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it
+      Hits.push_back( new PLTHit(i, r, PX, PY, adc) );
+      Hits.push_back( new PLTHit(i, r, PX+1, PY, adc) );
+    }
+  }
+  return;
+}
+
 void GetTracksParallelGaus (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 {
   // This function to generate events hitting telescopes head on
@@ -195,7 +237,7 @@ int PLTMC ()
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (3) {
+    switch (4) {
       case 0:
         GetTracksCollisions(Hits);
         break;
@@ -207,6 +249,9 @@ int PLTMC ()
         break;
       case 3:
         GetTracksParallelGaus(Hits, Alignment);
+        break;
+      case 4:
+        GetSpecificClusters(Hits, Alignment);
         break;
     }
 

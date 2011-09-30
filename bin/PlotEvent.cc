@@ -39,29 +39,38 @@ int PlotEvent (std::string const DataFileName, int const Channel, int const ROC,
         Can.cd();
         TH2F h2D(Name, Name+";Column;Row", PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL);
         // Loop over all hits on this plane
-        for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
-
-          // THIS hit is
-          PLTHit* Hit = Plane->Hit(ihit);
-          h2D.Fill(Hit->Row(), Hit->Column());
-          std::cout << Hit->ADC() << std::endl;
+        if (ientry == 198) {
+          for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
+            printf("%3i: %2i  %2i\n", ihit, Plane->Hit(ihit)->Column(), Plane->Hit(ihit)->Row());
+          }
+          exit(0);
         }
-        h2D.Draw("colz");
-        TPaveLabel Label;
-        Label.SetLabel(TString::Format("Hits: %i  Clusters: %i", (int) Plane->NHits(), (int) Plane->NClusters()));
-        Label.SetX1NDC(0.51);
-        Label.SetX2NDC(0.70);
-        Label.SetY1NDC(0.918);
-        Label.SetY2NDC(0.956);
-        Label.SetFillColor(0);
-        //Label.SetTextSize();
-        Label.SetTextSize(1.31);
-        Label.Draw("same");
+
+        for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
+          PLTCluster* Cluster = Plane->Cluster(icluster);
+          for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+
+            // THIS hit is
+            PLTHit* Hit = Plane->Hit(ihit);
+            h2D.Fill(Hit->Row(), Hit->Column(), icluster+1);
+          }
+          h2D.Draw("colz");
+          TPaveLabel Label;
+          Label.SetLabel(TString::Format("Hits: %i  Clusters: %i", (int) Plane->NHits(), (int) Plane->NClusters()));
+          Label.SetX1NDC(0.51);
+          Label.SetX2NDC(0.70);
+          Label.SetY1NDC(0.918);
+          Label.SetY2NDC(0.956);
+          Label.SetFillColor(0);
+          //Label.SetTextSize();
+          Label.SetTextSize(1.31);
+          Label.Draw("same");
 
 
-        Can.SaveAs(Name+".eps");
-        //std::cout << Name << "  " << Plane->NHits() << " " << Plane->NClusters() << std::endl;
+          Can.SaveAs(Name+".eps");
+          //std::cout << Name << "  " << Plane->NHits() << " " << Plane->NClusters() << std::endl;
 
+        }
       }
     }
 

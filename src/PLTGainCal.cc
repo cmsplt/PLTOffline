@@ -104,6 +104,11 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
 
 void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName, int const NParams)
 {
+  if (GainCalFileName == "") {
+    fIsGood = false;
+    return;
+  }
+
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
   } else if (NParams == 3) {
@@ -153,13 +158,13 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
     if (hubAddress == 5) {
-      ch = 23;
-    } else if (hubAddress == 13) {
       ch = 22;
+    } else if (hubAddress == 13) {
+      ch = 23;
     } else if (hubAddress == 21) {
-      ch = 20;
+      ch = 21;
     } else if (hubAddress == 29) {
-      ch = 19;
+      ch = 20;
     } else {
       std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
       continue;
@@ -204,6 +209,28 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   fIsGood = true;
 
 
+  return;
+}
+
+
+void PLTGainCal::CheckGainCalFile(std::string const GainCalFileName, int const Channel)
+{
+  ReadGainCalFile5(GainCalFileName);
+
+  for (int j = 0; j != NROCS; ++j) {
+    for (int k = 0; k != PLTU::NCOL; ++k) {
+      for (int m = 0; m != PLTU::NROW; ++m) {
+        if (
+          GC[Channel][j][k][m][0] == 0 &&
+          GC[Channel][j][k][m][1] == 0 &&
+          GC[Channel][j][k][m][2] == 0 &&
+          GC[Channel][j][k][m][3] == 0 &&
+          GC[Channel][j][k][m][4] == 0) {
+          printf("Missing Coefs: Ch %2i  Roc %1i  Col %2i  Row %2i\n", Channel, j, k, m);
+        }
+      }
+    }
+  }
   return;
 }
 

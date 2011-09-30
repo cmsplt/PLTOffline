@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include "PLTHit.h"
+#include "PLTPlane.h"
 
 
 
@@ -27,6 +28,9 @@ class PLTBinaryFileReader
     int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&);
     int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
 
+    void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
+
+    PLTPlane::FiducialRegion fPlaneFiducialRegion;
 
   private:
     std::string fFileName;

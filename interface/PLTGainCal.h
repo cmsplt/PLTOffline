@@ -31,6 +31,8 @@ class PLTGainCal
     void  ReadGainCalFile3 (std::string const GainCalFileName);
     void  ReadGainCalFile5 (std::string const GainCalFileName);
 
+    void CheckGainCalFile (std::string const GainCalFileName, int const Channel);
+
     void PrintGainCal5 ();
 
     int RowIndex (int const);

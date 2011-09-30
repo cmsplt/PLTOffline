@@ -4,12 +4,14 @@
 
 PLTBinaryFileReader::PLTBinaryFileReader ()
 {
+  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
 }
 
 
 PLTBinaryFileReader::PLTBinaryFileReader (std::string const in)
 {
   Open(in);
+  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
 }
 
 
@@ -77,9 +79,14 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
       roc -= 1; // The fed gives 123, and we use the convention 012
       if (roc <= 2) {
         //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
-        Hits.push_back(new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk)));
+        PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
+        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
+          Hits.push_back(Hit);
+        } else {
+          delete Hit;
+        }
       } else {
-        std::cerr << "WARNING: PLTBinaryFileReader found ROC with number: " << roc << std::endl;
+        //std::cerr << "WARNING: PLTBinaryFileReader found ROC with number and chan: " << roc << "  " << chan << std::endl;
       }
 
       //printf("%2lu %1lu %2i %2i %3lu %i\n", chan, (word & rocmsk) >> 21, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), -1);
@@ -153,3 +160,10 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
   return Hits.size();
 }
 
+
+void PLTBinaryFileReader::SetPlaneFiducialRegion (PLTPlane::FiducialRegion in)
+{
+  std::cout << "PLTBinaryFileReader::SetPlaneFiducialRegion setting region: " << in << std::endl;
+  fPlaneFiducialRegion = in;
+  return;
+}
