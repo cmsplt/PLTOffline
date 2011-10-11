@@ -33,6 +33,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -43,6 +45,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+
+    if (ientry == 100000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -100,9 +104,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
               ++NFiducialAndHit[2];
             }
           }
-          std::cout << "HELL YA" << std::endl;
         } else {
-          std::cout << "HELL NO" << std::endl;
         }
       }
 

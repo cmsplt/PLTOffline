@@ -158,7 +158,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
     if (hubAddress == 5) {
-      ch = 22;
+      ch = 24;
     } else if (hubAddress == 13) {
       ch = 23;
     } else if (hubAddress == 21) {

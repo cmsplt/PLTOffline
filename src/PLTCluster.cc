@@ -44,7 +44,6 @@ PLTHit* PLTCluster::Hit (size_t const i)
   return fHits[i];
 }
 
-
 PLTHit* PLTCluster::SeedHit ()
 {
   return fHits[0];

@@ -31,7 +31,7 @@ namespace PLTU
     return;
   }
 
-  TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins)
+  TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins, bool const SkipZeroBins)
   {
     // This function returns a TH1F* and YOU are then the owner of
     // that memory.  please delete it when you are done!!!
@@ -58,7 +58,9 @@ namespace PLTU
 
     for (int ix = 1; ix <= NBinsX; ++ix) {
       for (int iy = 1; iy <= NBinsY; ++iy) {
-        h->Fill( hIN->GetBinContent(ix, iy) );
+        if (!SkipZeroBins || hIN->GetBinContent(ix, iy) != 0) {
+          h->Fill( hIN->GetBinContent(ix, iy) );
+        }
       }
     }
 

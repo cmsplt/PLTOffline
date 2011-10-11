@@ -75,6 +75,8 @@ class PLTAlignment
     std::map< std::pair<int, int>, CP > fConstantMap;
     bool fIsGood;
 
+    static bool const DEBUG = false;
+
 };
 
 

@@ -150,9 +150,11 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
   TY += C->LY;
   // TZ = TZ =)
 
-  printf("TtoL - L XY DIFF %12.3f %12.3f\n",
-      TtoLX(TX, TY, Hit.Channel(), Hit.ROC()) - LX,
-      TtoLY(TX, TY, Hit.Channel(), Hit.ROC()) - LY);
+  if (DEBUG) {
+    printf("TtoL - L XY DIFF %12.3f %12.3f\n",
+        TtoLX(TX, TY, Hit.Channel(), Hit.ROC()) - LX,
+        TtoLY(TX, TY, Hit.Channel(), Hit.ROC()) - LY);
+  }
 
 
   // Global rotation
@@ -175,8 +177,10 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
 
   std::vector<float> TV;
   GtoTXYZ(TV, GX, GY, GZ, Hit.Channel(), Hit.ROC());
-  printf("GtoT - T XYZ DIFF %12.3f %12.3f %12.3f\n",
-      TV[0] - TX, TV[1] - TY, TV[2] - TZ);
+  if (DEBUG) {
+    printf("GtoT - T XYZ DIFF %12.3f %12.3f %12.3f\n",
+        TV[0] - TX, TV[1] - TY, TV[2] - TZ);
+  }
 
   return;
 }

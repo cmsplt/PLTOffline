@@ -50,6 +50,8 @@ class PLTTrack
     float fLResidualX[3];
     float fLResidualY[3];
 
+    static bool const DEBUG = false;
+
 };
 
 

@@ -25,6 +25,8 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -59,7 +61,11 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
       }
 
       // Look for three planes in a telescope each having 1 cluster
-      if (Telescope->NPlanes() == 3 && Telescope->NClusters() == Telescope->NPlanes()) {
+      if (Telescope->NPlanes() == 3 && 
+          Telescope->Plane(0)->NClusters() == 1 &&
+          Telescope->Plane(1)->NClusters() == 1 &&
+          Telescope->Plane(2)->NClusters() == 1
+          ) {
 
         PLTTrack Tracks[4];
         Tracks[0].AddCluster(Telescope->Plane(0)->Cluster(0));
@@ -89,7 +95,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
         Telescope->AddTrack(&Tracks[0]);
         static int ievent = 0;
         //comment
-	//Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.eps", Telescope->Channel(), ++ievent).Data() );
+	      //Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
 
         // Let's see if tracks are fiducial to planes..
         for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {

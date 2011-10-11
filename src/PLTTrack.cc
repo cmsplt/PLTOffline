@@ -60,7 +60,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     VY = VY / VZ;
     VZ = VZ / VZ;
 
-    printf("2P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
+    if (DEBUG) {
+      printf("2P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
+    }
 
     // Compute the points in telescope coords where line passes each plane
     //for (int ip = 0; ip != 3; ++ip) {
@@ -117,7 +119,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     VY = VY / VZ;
     VZ = VZ / VZ;
 
-    printf("3P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
+    if (DEBUG) {
+      printf("3P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
+    }
 
     float const AvgX = (fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX()) / 3.0;
     float const AvgY = (fClusters[0]->TY() + fClusters[1]->TY() + fClusters[2]->TY()) / 3.0;
@@ -168,7 +172,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     fLResidualX[ROC] = XL[ROC] - Cluster->LX();
     fLResidualY[ROC] = YL[ROC] - Cluster->LY();
 
-    printf("TESTLT: TX TY  LX LY: %1i  %1i  %12.3f %12.3f  %12.3f %12.3f\n", (int) NClusters(), ROC, XT[ROC], YT[ROC], XL[ROC], YL[ROC]);
+    if (DEBUG) {
+      printf("TESTLT: TX TY  LX LY: %1i  %1i  %12.3f %12.3f  %12.3f %12.3f\n", (int) NClusters(), ROC, XT[ROC], YT[ROC], XL[ROC], YL[ROC]);
+    }
   }
 
 
