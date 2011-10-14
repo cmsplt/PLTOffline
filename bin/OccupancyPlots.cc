@@ -67,9 +67,7 @@ int OccupancyPlots (std::string const DataFileName)
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-    
-    //    std::cout << "Here!" << std::endl;
-    
+
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
 

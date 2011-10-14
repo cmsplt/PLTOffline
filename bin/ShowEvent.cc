@@ -11,9 +11,13 @@
 #include <string>
 
 #include "PLTEvent.h"
+#include "PLTU.h"
 
 int ShowEvent (std::string const FileName, int const EventNumber)
 {
+  // Setup style
+  PLTU::SetStyle();
+
   // Setup PLTEvent object
   PLTEvent Event(FileName);
 
