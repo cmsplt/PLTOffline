@@ -45,8 +45,10 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    if (ientry % 10000 == 0) {
+      std::cout << "Processing entry: " << ientry << std::endl;
+    }
 
-    if (ientry == 100000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -98,13 +100,34 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           ++NFiducial[2];
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
-            std::cout << "MYRES: " << ResXY.first << std::endl;
-            printf("TrackRESXX %f %f\n", Tracks[1].LResidualX(2),  Tracks[1].LResidualY(2));
+            //std::cout << "MYRES: " << ResXY.first << std::endl;
+            //printf("TrackRESXX %f %f\n", Tracks[1].LResidualX(2),  Tracks[1].LResidualY(2));
             if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
               ++NFiducialAndHit[2];
             }
           }
-        } else {
+        }
+      }
+      if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
+        if (Tracks[2].IsFiducial(Channel, 1, Alignment)) {
+          ++NFiducial[1];
+          if (Plane[1]->NClusters() > 0) {
+            std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
+            if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
+              ++NFiducialAndHit[1];
+            }
+          }
+        }
+      }
+      if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
+        if (Tracks[3].IsFiducial(Channel, 0, Alignment)) {
+          ++NFiducial[0];
+          if (Plane[0]->NClusters() > 0) {
+            std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
+            if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
+              ++NFiducialAndHit[0];
+            }
+          }
         }
       }
 

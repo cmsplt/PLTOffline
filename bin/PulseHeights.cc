@@ -53,6 +53,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
   // Map for all ROC hists and canvas
@@ -309,7 +310,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       // Grab hist
       TH1F* Hist = hClEnTimeMap[id][ih];
 
-      Hist->SetMaximum(30000);
+      Hist->SetMaximum(60000);
       Hist->SetMinimum(0);
       Hist->SetLineColor(HistColors[ih]);
       if (ih == 1) {
