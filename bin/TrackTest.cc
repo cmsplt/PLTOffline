@@ -87,15 +87,16 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int j = 0; j != 3; ++j) {
             PLTCluster* Cluster = Telescope->Plane(j)->Cluster(0);
             std::pair<float, float> RXY = Tracks[i].LResiduals(*Cluster, Alignment);
-            printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %9.3f %9.3f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
+            //printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %9.3f %9.3f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
             ResidualMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(RXY.first, RXY.second);
           }
         }
-
         Telescope->AddTrack(&Tracks[0]);
-        static int ievent = 0;
-        //comment
-	      //Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
+
+        if (ientry < 25) {
+          static int ievent = 0;
+	        //Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
+        }
 
         // Let's see if tracks are fiducial to planes..
         for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {
