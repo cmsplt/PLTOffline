@@ -70,11 +70,12 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   float const XMax  = 50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000;
+  int const TimeWidth = 100;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   // Loop over all events in file
-  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+  int ientry = 0;
+  for ( ; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
@@ -162,7 +163,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         // Loop over all clusters on this plane
         for (size_t iCluster = 0; iCluster != Plane->NClusters(); ++iCluster) {
           PLTCluster* Cluster = Plane->Cluster(iCluster);
-          if (iCluster == 1) break;
+	  //       if (iCluster == 1) break;
 
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
@@ -217,6 +218,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 
   }
+  std::cout << "Events read: " << ientry+1 << std::endl;
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad for ClEnTime
   for (std::map<int, std::vector< std::vector<float> > >::iterator it = vClEnTimeMap.begin(); it != vClEnTimeMap.end(); ++it) {
@@ -246,7 +248,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       for (size_t ib = 0; ib != vClEnTimeMap[id][ih].size(); ++ib) {
         hClEnTimeMap[id][ih]->SetBinContent(ib, vClEnTimeMap[id][ih][ib]);
       }
-      while (hClEnTimeMap[id][ih]->GetNbinsX() > 50) {
+      while (hClEnTimeMap[id][ih]->GetNbinsX() > 200) {
         if (hClEnTimeMap[id][ih]->GetNbinsX() % 2 == 1) {
           hClEnTimeMap[id][ih]->SetBins(hClEnTimeMap[id][ih]->GetNbinsX()+1, 0, hClEnTimeMap[id][ih]->GetXaxis()->GetXmax());
         }
@@ -264,6 +266,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       TH1F* Hist = hClEnTimeMap[id][ih];
 
       Hist->SetLineColor(HistColors[ih]);
+      Hist->Rebin(8);
+      Hist->Scale(1./8.);
       Hist->Draw("hist");
     }
 
@@ -292,6 +296,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       TH1F* Hist = it->second[ih];
       Hist->SetStats(false);
 
+      Hist->SetNdivisions(5);
       Hist->SetLineColor(HistColors[ih]);
       if (ih == 0) {
         Hist->SetTitle( TString::Format("PulseHeight Ch%02i ROC%1i", Channel, ROC) );
@@ -310,6 +315,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       // Grab hist
       TH1F* Hist = hClEnTimeMap[id][ih];
 
+      Hist->SetNdivisions(5);
       Hist->SetMaximum(60000);
       Hist->SetMinimum(0);
       Hist->SetLineColor(HistColors[ih]);
