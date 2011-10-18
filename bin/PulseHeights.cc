@@ -79,8 +79,6 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-    //if (ientry  < 190000) continue;
-    //if (ientry == 90000) break;
 
     int const TimeBinNumber = ientry / TimeWidth;
     if (ientry % TimeWidth == 0) {
@@ -258,24 +256,19 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     }
 
     for (size_t ih = 1; ih != 4; ++ih) {
-      // change to correct pad on canvas and draw the hist
-      cClEnTimeMap[id]->cd(ih);
-
-
       // Grab hist
       TH1F* Hist = hClEnTimeMap[id][ih];
 
       Hist->SetLineColor(HistColors[ih]);
-      Hist->Rebin(8);
-      Hist->Scale(1./8.);
-      Hist->Draw("hist");
+      Hist->Rebin(4);
+      Hist->Scale(1./4.);
     }
 
   }
 
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cClEnTimeMap.begin(); it != cClEnTimeMap.end(); ++it) {
-    it->second->SaveAs( it->second->GetName()+TString(".gif") );
+    //it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
     //delete it->second;
   }
 
@@ -320,6 +313,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       Hist->SetMinimum(0);
       Hist->SetLineColor(HistColors[ih]);
       if (ih == 1) {
+        Hist->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
         Hist->Draw("hist");
       } else {
         Hist->Draw("histsame");
@@ -329,7 +323,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Save Cluster Size canvases
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
-    it->second->SaveAs( it->second->GetName()+TString(".gif") );
+    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
     delete it->second;
   }
 
@@ -346,7 +340,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Save Cluster Size canvases
   for (std::map<int, TCanvas*>::iterator it = cClusterSizeMap.begin(); it != cClusterSizeMap.end(); ++it) {
-    it->second->SaveAs( it->second->GetName()+TString(".gif") );
+    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
     delete it->second;
   }
 

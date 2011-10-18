@@ -23,13 +23,25 @@ namespace PLTU
     // Set some basic style for output plots
     gROOT->SetStyle("Plain");                  
     gStyle->SetPalette(1);
-//    gStyle->SetOptStat(11000010);
+    //gStyle->SetOptStat(11000010);
     gStyle->SetOptStat("e");
-    gStyle->SetPadLeftMargin (0.17);
-    gStyle->SetPadRightMargin (0.17);
+    gStyle->SetPadLeftMargin(0.17);
+    gStyle->SetPadRightMargin(0.17);
+    gStyle->SetTitleBorderSize(0);
+    gStyle->SetTitleX(0.1);
+    gStyle->SetTitleY(1.0);
+    gStyle->SetTitleH(0.09);
+    gStyle->SetTitleW(0.7);
+    //gStyle->SetTitleBorderSize(0);
+    gStyle->SetStatY(0.88);
+    gStyle->SetStatH(0.25);
+    gStyle->SetCanvasBorderMode(0);
+
 
     return;
   }
+
+
 
   TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins, bool const SkipZeroBins)
   {

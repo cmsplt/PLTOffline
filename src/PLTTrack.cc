@@ -105,7 +105,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 
     float const MySlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
     float const MySlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
-    printf("SlopeDiff XY: %12.6E  %12.6E\n", MySlopeX - SlopeX, MySlopeY - SlopeY);
+    //printf("SlopeDiff XY: %12.6E  %12.6E\n", MySlopeX - SlopeX, MySlopeY - SlopeY);
 
     VX = SlopeX;
     VY = SlopeY;
