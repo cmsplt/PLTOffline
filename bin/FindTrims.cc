@@ -12,6 +12,7 @@
 #include <string>
 #include <map>
 #include <cmath>
+#include <cstdlib>
 
 
 int const MINCOL = 13;
