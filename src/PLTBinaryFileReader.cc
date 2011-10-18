@@ -131,6 +131,9 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           InFile.read((char *) &n2, sizeof n1);
           break;
         }
+        if (InFile.eof()) {
+          return -1;
+        }
       }
 
     } else if ((n1 & 0xff000000) == 0x50000000 || (n2 & 0xff000000) == 0x50000000) {
@@ -143,6 +146,9 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
       while (bheader) {
         InFile.read((char *) &n2, sizeof n2);
         InFile.read((char *) &n1, sizeof n1);
+        if (InFile.eof()) {
+          return -1;
+        }
 
         ++wordcount;
 
