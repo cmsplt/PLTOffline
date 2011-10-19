@@ -13,7 +13,6 @@
 
 #include "TString.h"
 #include "TMath.h"
-#include "Math/Interpolator.h"
 
 
 float MidPoint (std::vector<float> const& xs, std::vector<float> const& ys, float const X)

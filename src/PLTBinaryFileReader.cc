@@ -128,7 +128,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         InFile.read((char *) &n1, sizeof n1);
 
         if ((n1 & 0xf0000000) == 0xa0000000) {
-          InFile.read((char *) &n2, sizeof n1);
+          InFile.read((char *) &n2, sizeof n2);
           break;
         }
         if (InFile.eof()) {

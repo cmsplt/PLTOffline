@@ -222,6 +222,22 @@ int PLTTelescope::HitPlaneBits ()
 
 
 
+int PLTTelescope::NHitPlanes ()
+{
+  // This function return a binary representation of hit planes
+  int HitPlanes = 0;
+
+  for (std::vector<PLTPlane*>::iterator it = fPlanes.begin(); it != fPlanes.end(); ++it) {
+    if ((*it)->NHits() > 0) {
+      ++HitPlanes;
+    }
+  }
+
+  return HitPlanes;
+}
+
+
+
 void PLTTelescope::AddTrack (PLTTrack* T)
 {
   fTracks.push_back(T);

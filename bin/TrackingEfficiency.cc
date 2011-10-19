@@ -14,6 +14,25 @@
 
 
 
+class HitCounter
+{
+  public:
+    HitCounter () {
+      NFiducial[0] = 0;
+      NFiducial[1] = 0;
+      NFiducial[2] = 0;
+      NFiducialAndHit[0] = 0;
+      NFiducialAndHit[1] = 0;
+      NFiducialAndHit[2] = 0;
+    }
+    ~HitCounter () {}
+
+    int NFiducial[3];
+    int NFiducialAndHit[3];
+};
+
+
+
 // FUNCTION DEFINITIONS HERE
 int TrackingEfficiency (std::string const, std::string const, std::string const);
 
@@ -33,15 +52,16 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_Diamond);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
 
-  // Number of tracks that are fiducial to [ROC] and number of times hit =)
-  int NFiducial[3] = {0, 0, 0};
-  int NFiducialAndHit[3] = {0, 0, 0};
+  // Map for tracking efficiency
+  std::map<int, HitCounter> HC;
+
+  int const PixelDist = 2;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -57,15 +77,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       int    const Channel = Telescope->Channel();
       size_t const NPlanes = Telescope->NPlanes();
 
-      // Only consider telescopes with 2 or more planes
-      if (NPlanes < 2) {
+      // make them clean events
+      if (Telescope->NHitPlanes() < 2 || Telescope->NHitPlanes() != Telescope->NClusters()) {
         continue;
       }
 
-      // make them clean events
-      if (Telescope->NClusters() != NPlanes) {
-        continue;
-      }
 
       PLTPlane* Plane[3] = {0x0, 0x0, 0x0};
       for (size_t ip = 0; ip != NPlanes; ++ip) {
@@ -97,47 +113,51 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         if (Tracks[1].IsFiducial(Channel, 2, Alignment)) {
-          ++NFiducial[2];
+          ++HC[Channel].NFiducial[2];
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             //std::cout << "MYRES: " << ResXY.first << std::endl;
             //printf("TrackRESXX %f %f\n", Tracks[1].LResidualX(2),  Tracks[1].LResidualY(2));
-            if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
-              ++NFiducialAndHit[2];
+            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+              ++HC[Channel].NFiducialAndHit[2];
             }
           }
         }
       }
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[2].IsFiducial(Channel, 1, Alignment)) {
-          ++NFiducial[1];
+          ++HC[Channel].NFiducial[1];
           if (Plane[1]->NClusters() > 0) {
-            std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
-            if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
-              ++NFiducialAndHit[1];
+            std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
+            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+              ++HC[Channel].NFiducialAndHit[1];
             }
           }
         }
       }
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[3].IsFiducial(Channel, 0, Alignment)) {
-          ++NFiducial[0];
+          ++HC[Channel].NFiducial[0];
           if (Plane[0]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
-            if (abs(ResXY.first) <= 5 && abs(ResXY.second) <= 5) {
-              ++NFiducialAndHit[0];
+            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+              ++HC[Channel].NFiducialAndHit[0];
             }
           }
         }
       }
 
+      //printf("%9i %9i %9i\n", HC[Channel].NFiducialAndHit[0], HC[Channel].NFiducialAndHit[1], HC[Channel].NFiducialAndHit[2]);
+
     }
   }
 
 
-  printf("Efficiencies:\n");
-  for (int i = 0; i != 3; ++i) {
-    printf("ROC %1i  NFiducial: %10i  NFiducialAndHit: %10i  Efficiency: %12.9f\n", i, NFiducial[i], NFiducialAndHit[i], float(NFiducialAndHit[i]) / float(NFiducial[i]) );
+  for (std::map<int, HitCounter>::iterator it = HC.begin(); it != HC.end(); ++it) {
+    printf("Efficiencies for Channel %2i:\n", it->first);
+    for (int i = 0; i != 3; ++i) {
+      printf("ROC %1i  NFiducial: %10i  NFiducialAndHit: %10i  Efficiency: %12.9f\n", i, it->second.NFiducial[i], it->second.NFiducialAndHit[i], float(it->second.NFiducialAndHit[i]) / float(it->second.NFiducial[i]) );
+    }
   }
 
   return 0;

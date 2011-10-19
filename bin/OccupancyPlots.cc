@@ -247,7 +247,6 @@ int OccupancyPlots (std::string const DataFileName)
     qhMap[it->first]->SetTitle(BUFF);
     cMap[Channel]->cd(ROC+1);
     if(yq[0] > 1 && it->second->GetMaximum() > yq[0]) {
-      std::cerr << "WARNING: Z axis of Ch" << Channel << ",ROC=" << ROC << " Occupancy plot trimmed to " << yq[0] << ". Maximum was: " << it->second->GetMaximum() << std::endl;
       qhMap[it->first]->SetMaximum(yq[0]);
     }
 

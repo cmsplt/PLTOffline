@@ -25,6 +25,114 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits)
 
 
 
+void GetRandTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment, float const Eff0, float const Eff1, float const Eff2)
+{
+  // This function to generate events hitting telescopes head on
+
+  float const Eff[3] = { Eff0, Eff1, Eff2 };
+
+  int const NTelescopes = 36;
+  //std::cout << "Event" << std::endl;
+  for (int i = 1; i <= NTelescopes; ++i) {
+
+    // pick a starting point.  +/- 10 should cover shifts in alignment
+    int const StartCol = gRandom->Integer(PLTU::NCOL + 20) + PLTU::FIRSTCOL - 10;
+    int const StartRow = gRandom->Integer(PLTU::NROW + 20) + PLTU::FIRSTROW - 10;
+
+    float const SlopeX = 3.0 * (gRandom->Rndm() - 0.5);
+    float const SlopeY = 3.0 * (gRandom->Rndm() - 0.5);
+
+
+    for (int r = 0; r != 3; ++r) {
+      //PLTAlignment::CP* C = Alignment.GetCP(i, r);
+
+      // make straight track, see where that hits a plane if it's shifted..
+      // Optionally give it some fuzz..
+
+      // Use L coord system:
+      // THINK ABOUT THIS FOR ROTATIONS...
+      float const LZ = Alignment.LZ(i, r);
+      float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
+      float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+
+      int const PX = Alignment.PXfromLX(LXY.first);
+      int const PY = Alignment.PYfromLY(LXY.second);
+
+
+      //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it as a hit if it's in the range of the diamond
+      if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+        //printf("Ch ROC PX PY %2i %1i %3i %3i\n", i, r, PX, PY);
+        if (gRandom->Rndm() < Eff[r]) {
+          Hits.push_back( new PLTHit(i, r, PX, PY, adc) );
+        }
+      } else {
+        //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
+      }
+    }
+  }
+  return;
+}
+
+
+
+void GetTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment, float const Eff0, float const Eff1, float const Eff2)
+{
+  // This function to generate events hitting telescopes head on
+
+  float const Eff[3] = { Eff0, Eff1, Eff2 };
+
+  int const NTelescopes = 1;
+  for (int i = 1; i <= NTelescopes; ++i) {
+
+    // pick a starting point.  +/- 10 should cover shifts in alignment
+    int const StartCol = gRandom->Integer(PLTU::NCOL - 20) + PLTU::FIRSTCOL + 10;
+    int const StartRow = gRandom->Integer(PLTU::NROW - 20) + PLTU::FIRSTROW + 10;
+
+
+    for (int r = 0; r != 3; ++r) {
+      //PLTAlignment::CP* C = Alignment.GetCP(i, r);
+
+      // make straight track, see where that hits a plane if it's shifted..
+      // Optionally give it some fuzz..
+
+      // Use L coord system:
+      // THINK ABOUT THIS FOR ROTATIONS...
+      float const LX = Alignment.PXtoLX(StartCol);
+      float const LY = Alignment.PYtoLY(StartRow);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+
+      int const PX = Alignment.PXfromLX(LXY.first);
+      int const PY = Alignment.PYfromLY(LXY.second);
+
+
+      //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it as a hit if it's in the range of the diamond
+      if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+        if (gRandom->Rndm() < Eff[r]) {
+          Hits.push_back( new PLTHit(i, r, PX, PY, adc) );
+        }
+      } else {
+        //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
+      }
+    }
+  }
+  return;
+}
+
+
+
 void GetSpecificClusters (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 {
   // This function to generate events hitting telescopes head on
@@ -221,8 +329,8 @@ int PLTMC ()
     throw;
   }
 
-  uint64_t unsigned n;
-  uint64_t unsigned n2;
+  uint32_t unsigned n;
+  uint32_t unsigned n2;
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
@@ -230,14 +338,14 @@ int PLTMC ()
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 100000;
+  int const NEvents = 10000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (4) {
+    switch (6) {
       case 0:
         GetTracksCollisions(Hits);
         break;
@@ -253,6 +361,12 @@ int PLTMC ()
       case 4:
         GetSpecificClusters(Hits, Alignment);
         break;
+      case 5:
+        GetTracksROCEfficiencies(Hits, Alignment, 0.70, 0.80, 0.90);
+        break;
+      case 6:
+        GetRandTracksROCEfficiencies(Hits, Alignment, 0.70, 0.80, 0.90);
+        break;
     }
 
 
@@ -260,8 +374,8 @@ int PLTMC ()
     n2 = 0x0;
     n =  0x50000000;
     n |= ievent;
-    fout.write( (char*) &n2, sizeof(uint64_t) );
-    fout.write( (char*) &n, sizeof(uint64_t) );
+    fout.write( (char*) &n2, sizeof(uint32_t) );
+    fout.write( (char*) &n, sizeof(uint32_t) );
 
 
     for (size_t ihit = 0; ihit != Hits.size(); ++ihit) {
@@ -291,7 +405,7 @@ int PLTMC ()
       //  printf("WORD: %X\n", (n &  0x3e00000));
       //}
 
-      fout.write( (char*) &n, sizeof(uint64_t) );
+      fout.write( (char*) &n, sizeof(uint32_t) );
       delete Hits[ihit];
     }
 
@@ -300,16 +414,16 @@ int PLTMC ()
       n  = 0xa0000000;
       n2 = 0x00000000;
       n  |= (Hits.size() / 2 + 2);
-      fout.write( (char*) &n, sizeof(uint64_t) );
-      fout.write( (char*) &n2, sizeof(uint64_t) );
+      fout.write( (char*) &n2, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint32_t) );
     } else {
       // Print number of hits in 1x32 bit
       n  = 0x00000000;
-      fout.write( (char*) &n, sizeof(uint64_t) );
-      fout.write( (char*) &n, sizeof(uint64_t) );
+      fout.write( (char*) &n, sizeof(uint32_t) );
+      fout.write( (char*) &n, sizeof(uint32_t) );
       n  = 0xa0000000;
       n  |= (Hits.size() / 2 + 1);
-      fout.write( (char*) &n, sizeof(uint64_t) );
+      fout.write( (char*) &n, sizeof(uint32_t) );
     }
 
 

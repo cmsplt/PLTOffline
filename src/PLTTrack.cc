@@ -75,9 +75,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 
       PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
 
-      XT[ROC] = (2.5 * ROC + C->LZ - fClusters[0]->TZ()) * VX + fClusters[0]->TX();
-      YT[ROC] = (2.5 * ROC + C->LZ - fClusters[0]->TZ()) * VY + fClusters[0]->TY();
-      ZT[ROC] =  2.5 * ROC + C->LZ;
+      XT[ROC] = (C->LZ - fClusters[0]->TZ()) * VX + fClusters[0]->TX();
+      YT[ROC] = (C->LZ - fClusters[0]->TZ()) * VY + fClusters[0]->TY();
+      ZT[ROC] =  C->LZ;
     }
 
   } else if (NClusters() < 2) {
@@ -139,9 +139,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
       PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
 
 
-      XT[ROC] = (2.5 * ROC + C->LZ - AvgZ) * VX + AvgX;
-      YT[ROC] = (2.5 * ROC + C->LZ - AvgZ) * VY + AvgY;
-      ZT[ROC] =  2.5 * ROC + C->LZ;
+      XT[ROC] = (C->LZ - AvgZ) * VX + AvgX;
+      YT[ROC] = (C->LZ - AvgZ) * VY + AvgY;
+      ZT[ROC] =  C->LZ;
     }
 
 
@@ -187,7 +187,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 std::pair<float, float> PLTTrack::LResiduals (PLTCluster& Cluster, PLTAlignment& Alignment)
 {
 
-  float TZ = 2.5 * Cluster.ROC();
+  float TZ = Alignment.GetCP(Cluster.Channel(), Cluster.ROC())->LZ;
   float TX = fTVX * TZ + fTOX;
   float TY = fTVY * TZ + fTOY;
   std::pair<float, float> LPXY = Alignment.TtoLXY(TX, TY, Cluster.Channel(), Cluster.ROC());
@@ -222,7 +222,7 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
   int const PX = Alignment.PXfromLX(LXY.first);
   int const PY = Alignment.PYfromLY(LXY.second);
 
-  //printf("IsFiducial: ROC  LX LY  PX PY  %1i  %12.3f %12.3f  %2i %2i\n", Plane->ROC(), LXY.first, LXY.second, PX, PY);
+  //printf("IsFiducial: ROC  LX LY  PX PY  %1i  %12.3f %12.3f  %2i %2i\n", ROC, LXY.first, LXY.second, PX, PY);
 
   // If either row or col are outside of the diamond return false
   if (PX > PLTU::LASTCOL || PX < PLTU::FIRSTCOL || PY > PLTU::LASTROW || PY < PLTU::FIRSTROW) {
@@ -230,9 +230,6 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
   }
 
   // else we must be inside the diamond...
-  return true;
-
-
   return true;
 }
 

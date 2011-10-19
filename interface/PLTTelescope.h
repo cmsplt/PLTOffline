@@ -24,6 +24,7 @@ class PLTTelescope
     size_t    NClusters ();
     size_t    NTracks ();
     int       HitPlaneBits ();
+    int       NHitPlanes ();
     void      AddTrack (PLTTrack*);
     void      FillAndOrderTelescope ();
 

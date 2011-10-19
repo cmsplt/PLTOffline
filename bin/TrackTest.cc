@@ -95,15 +95,15 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
         if (ientry < 25) {
           static int ievent = 0;
-	        //Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
+	        Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
         }
 
         // Let's see if tracks are fiducial to planes..
-        for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {
-          if (!Tracks[3].IsFiducial(Telescope->Plane(ip), Alignment)) {
-            printf("IsFiducial: NOT FIDUCIAL: ROC: %1i\n", Telescope->Plane(ip)->ROC());
-          }
-        }
+        //for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {
+        //  if (!Tracks[3].IsFiducial(Telescope->Plane(ip), Alignment)) {
+        //    printf("IsFiducial: NOT FIDUCIAL: ROC: %1i\n", Telescope->Plane(ip)->ROC());
+        //  }
+        //}
 
       }
 

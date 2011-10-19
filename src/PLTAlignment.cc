@@ -131,12 +131,11 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
 
   int const PX = Hit.Column();
   int const PY = Hit.Row();
-  int const PZ = Hit.ROC();
 
   // set w.r.t. center of diamond
   float LX = PXtoLX(PX);
   float LY = PYtoLY(PY);
-  float LZ = PZ * 2.5 + C->LZ;
+  float LZ = C->LZ;
 
   // Start with local rotation
   float const cl = cos(C->LR);
@@ -295,6 +294,12 @@ float PLTAlignment::LX (int const ch, int const roc)
 float PLTAlignment::LY (int const ch, int const roc)
 {
   return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY;
+}
+
+
+float PLTAlignment::LZ (int const ch, int const roc)
+{
+  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ;
 }
 
 

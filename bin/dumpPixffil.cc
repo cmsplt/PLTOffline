@@ -79,7 +79,7 @@ void decodeSpyDataFifo (unsigned long word, int event)
         mycol = ((word & dclmsk) >> 16) * 2;
       }
 
-      printf("%2lu %1lu %2i %2i %3lu %i\n", chan, roc - 1, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event);
+      printf("%2lu %1i %2i %2i %3lu %i\n", chan,(int) roc - 1, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event);
 
     } else {
     }
