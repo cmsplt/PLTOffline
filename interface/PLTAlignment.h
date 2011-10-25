@@ -11,6 +11,7 @@
 
 #include "PLTHit.h"
 #include "PLTCluster.h"
+#include "PLTU.h"
 
 class PLTAlignment
 {
@@ -69,6 +70,12 @@ class PLTAlignment
     };
 
     CP* GetCP (int const, int const);
+
+    // Mini struct to be used only in reading alignment file
+    struct TelescopeAlignmentStruct {
+      float GR, GX, GY, GZ;
+    };
+
 
 
   private:

@@ -1,5 +1,7 @@
 #include "PLTAlignment.h"
 
+#include <map>
+
 
 PLTAlignment::PLTAlignment ()
 {
@@ -16,6 +18,10 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
 {
   // So far so good..
   fIsGood = true;
+
+
+  std::map<int, TelescopeAlignmentStruct> TeleMap;
+
 
   // Open file
   std::ifstream InFile(InFileName.c_str());
@@ -42,20 +48,45 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
     LineStream >> Channel >> ROC;
     std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
 
-    CP C;
-    LineStream >> C.LR
-               >> C.LX
-               >> C.LY
-               >> C.LZ
-               >> C.GR
-               >> C.GX
-               >> C.GY
-               >> C.GZ;
+    // read one line at a time
+    float R, X, Y, Z;
+    LineStream >> R
+               >> X
+               >> Y
+               >> Z;
 
-    fConstantMap[CHROC] = C;
+    // If the ROC is -1 it is telescope coords, 0,1,2 are ROCs, anything else is bad.
+    if (ROC == -1) {
+      TeleMap[Channel].GR = R;
+      TeleMap[Channel].GX = X;
+      TeleMap[Channel].GY = Y;
+      TeleMap[Channel].GZ = Z;
+    } else if (ROC == 0 || ROC == 1 || ROC == 2) {
+      if (TeleMap.count(Channel) == 0) {
+        std::cerr << "ERROR: Telescope coords not defined which must be defined before ROCs in alignment file" << std::endl;
+        throw;
+      }
+
+      // Construct the alignment obj
+      CP C;
+      C.LR = R;
+      C.LX = X;
+      C.LY = Y;
+      C.LZ = Z;
+      C.GR = TeleMap[Channel].GR;
+      C.GX = TeleMap[Channel].GX;
+      C.GY = TeleMap[Channel].GY;
+      C.GZ = TeleMap[Channel].GZ;
+
+      // Save this to alignment map
+      fConstantMap[CHROC] = C;
+    } else {
+      std::cerr << "WARNING: Alignment file contains things I do not recognize: " << InLine << std::endl;
+    }
 
   }
 
+  // Close input file
   InFile.close();
 
   return;
@@ -101,22 +132,22 @@ bool PLTAlignment::IsGood ()
 
 float PLTAlignment::PXtoLX (int const px)
 {
-  return ((float) px) - 25.5;
+  return PLTU::PIXELWIDTH * (((float) px) - 25.5);
 }
 
 float PLTAlignment::PYtoLY (int const py)
 {
-  return ((float) py) - 59.5;
+  return PLTU::PIXELHEIGHT * (((float) py) - 59.5);
 }
 
 int PLTAlignment::PXfromLX (float const lx)
 {
-  return (int) (lx + 25.5);
+  return (int) (lx / PLTU::PIXELWIDTH + 25.5);
 }
 
 int PLTAlignment::PYfromLY (float const ly)
 {
-  return (int) (ly + 59.5);
+  return (int) (ly /  PLTU::PIXELHEIGHT + 59.5);
 }
 
 
@@ -169,10 +200,12 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
   GZ += C->GZ;
 
 
-  // Set the hit global and local coords
+  // Set the local, telescope, and global hit coords
   Hit.SetLXY(LX, LY);
   Hit.SetTXYZ(TX, TY, TZ);
   Hit.SetGXYZ(GX, GY, GZ);
+
+  //printf("%12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E\n", LX, LY, TX, TY, TZ, GX, GY, GZ);
 
   std::vector<float> TV;
   GtoTXYZ(TV, GX, GY, GZ, Hit.Channel(), Hit.ROC());

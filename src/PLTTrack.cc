@@ -100,8 +100,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
                       + fClusters[1]->TY() * fClusters[1]->TZ()
                       + fClusters[2]->TY() * fClusters[2]->TZ();
 
-    float const SlopeX = (3 * SumXZ - SumX*SumZ) / (3 * SumZ2 - SumZ * SumZ);
-    float const SlopeY = (3 * SumYZ - SumY*SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    float const SlopeX = (3 * SumXZ - SumX * SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    float const SlopeY = (3 * SumYZ - SumY * SumZ) / (3 * SumZ2 - SumZ * SumZ);
 
     float const MySlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
     float const MySlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());

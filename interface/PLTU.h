@@ -24,6 +24,10 @@ namespace PLTU
   int const NCOL     = LASTCOL - FIRSTCOL + 1;
   int const NROW     = LASTROW - FIRSTROW + 1;
 
+  // Width and height in centimeters
+  float const PIXELWIDTH  = 0.0150;
+  float const PIXELHEIGHT = 0.0100;
+
   Double_t PoissonFit(Double_t* x, Double_t* par);
   void SetStyle ();
 

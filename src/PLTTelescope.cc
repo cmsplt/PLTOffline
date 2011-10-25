@@ -95,12 +95,16 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   C.cd(1);
   TGraph gXZ(NH, Z, X);
   gXZ.SetTitle("");
-  gXZ.GetXaxis()->SetTitle("Z");
-  gXZ.GetYaxis()->SetTitle("X");
+  gXZ.GetXaxis()->SetTitle("Z (cm)");
+  gXZ.GetYaxis()->SetTitle("X (cm)");
+  gXZ.GetXaxis()->SetTitleSize(0.08);
+  gXZ.GetYaxis()->SetTitleSize(0.08);
+  gXZ.GetXaxis()->SetTitleOffset(0.7);
+  gXZ.GetYaxis()->SetTitleOffset(0.5);
   gXZ.SetMarkerColor(2);
   gXZ.GetXaxis()->SetLimits(-0.5, 5.5);
-  gXZ.SetMinimum(-30);
-  gXZ.SetMaximum(30);
+  gXZ.SetMinimum(-0.3);
+  gXZ.SetMaximum( 0.3);
   gXZ.Draw("A*");
   for (int i = 0; i != NT; ++i) {
     Line[0][i].Draw();
@@ -109,12 +113,16 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   C.cd(2);
   TGraph gYZ(NH, Z, Y);
   gYZ.SetTitle("");
-  gYZ.GetXaxis()->SetTitle("Z");
-  gYZ.GetYaxis()->SetTitle("Y");
+  gYZ.GetXaxis()->SetTitle("Z (cm)");
+  gYZ.GetYaxis()->SetTitle("Y (cm)");
+  gYZ.GetXaxis()->SetTitleSize(0.08);
+  gYZ.GetYaxis()->SetTitleSize(0.08);
+  gYZ.GetXaxis()->SetTitleOffset(0.7);
+  gYZ.GetYaxis()->SetTitleOffset(0.5);
   gYZ.SetMarkerColor(2);
   gYZ.GetXaxis()->SetLimits(-0.5, 5.5);
-  gYZ.SetMinimum(-30);
-  gYZ.SetMaximum(30);
+  gYZ.SetMinimum(-0.3);
+  gYZ.SetMaximum( 0.3);
   gYZ.Draw("A*");
   for (int i = 0; i != NT; ++i) {
     Line[1][i].Draw();
@@ -125,12 +133,16 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   C.cd(3);
   TGraph gXY(NH, X, Y);
   gXY.SetTitle("");
-  gXY.GetXaxis()->SetTitle("X");
-  gXY.GetYaxis()->SetTitle("Y");
+  gXY.GetXaxis()->SetTitle("X (cm)");
+  gXY.GetYaxis()->SetTitle("Y (cm)");
+  gXY.GetXaxis()->SetTitleSize(0.08);
+  gXY.GetYaxis()->SetTitleSize(0.08);
+  gXY.GetXaxis()->SetTitleOffset(0.7);
+  gXY.GetYaxis()->SetTitleOffset(0.5);
   gXY.SetMarkerColor(2);
-  gXY.GetXaxis()->SetLimits(-30, 30);
-  gXY.SetMinimum(-30);
-  gXY.SetMaximum(30);
+  gXY.GetXaxis()->SetLimits(-0.3, 0.3);
+  gXY.SetMinimum(-0.3);
+  gXY.SetMaximum( 0.3);
   gXY.Draw("A*");
   for (int i = 0; i != NT; ++i) {
     Line[2][i].Draw();
