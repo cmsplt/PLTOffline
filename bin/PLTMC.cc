@@ -39,8 +39,8 @@ void GetRandTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Ali
     int const StartCol = gRandom->Integer(PLTU::NCOL + 20) + PLTU::FIRSTCOL - 10;
     int const StartRow = gRandom->Integer(PLTU::NROW + 20) + PLTU::FIRSTROW - 10;
 
-    float const SlopeX = 3.0 * (gRandom->Rndm() - 0.5);
-    float const SlopeY = 3.0 * (gRandom->Rndm() - 0.5);
+    float const SlopeX = 9.0 * (gRandom->Rndm() - 0.5);
+    float const SlopeY = 9.0 * (gRandom->Rndm() - 0.5);
 
 
     for (int r = 0; r != 3; ++r) {
@@ -362,10 +362,10 @@ int PLTMC ()
         GetSpecificClusters(Hits, Alignment);
         break;
       case 5:
-        GetTracksROCEfficiencies(Hits, Alignment, 0.70, 0.80, 0.90);
+        GetTracksROCEfficiencies(Hits, Alignment, 0.20, 0.80, 0.90);
         break;
       case 6:
-        GetRandTracksROCEfficiencies(Hits, Alignment, 0.70, 0.80, 0.90);
+        GetRandTracksROCEfficiencies(Hits, Alignment, 0.20, 0.80, 0.90);
         break;
     }
 

@@ -61,7 +61,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   // Map for tracking efficiency
   std::map<int, HitCounter> HC;
 
-  int const PixelDist = 2;
+  int const PixelDist = 20;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {

@@ -70,7 +70,7 @@ int PLTCluster::PZ ()
 
 std::pair<int, int> PLTCluster::PCenter ()
 {
-  return std::make_pair<int, int>(SeedHit()->Row(), SeedHit()->Column());
+  return std::make_pair<int, int>(SeedHit()->Column(), SeedHit()->Row());
 }
 
 
