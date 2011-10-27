@@ -333,19 +333,19 @@ int PLTMC ()
   uint32_t unsigned n2;
 
   PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 10000;
+  int const NEvents = 100000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (6) {
+    switch (2) {
       case 0:
         GetTracksCollisions(Hits);
         break;

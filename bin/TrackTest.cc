@@ -25,7 +25,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_Diamond);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
 
   PLTAlignment Alignment;
@@ -38,7 +38,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
   std::map<int, std::vector< std::vector<TH2F*> > > ResidualMap;
 
   // Row residual as a function of column
-  std::map<int, std::vector< std::vector<TH2F*> > > RowResByColMap;
+  std::map<int, std::vector< std::vector<float> > > RowResByCol;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -58,24 +58,17 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int ir = 0; ir != 3; ++ir) {
             std::vector<TH2F*> Vec;
             TString R = TString::Format("%i", ir);
-            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  30, -15, 15, 30, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
             Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R, Name+"_12Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
+            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
+            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
+            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  30, -15, 15, 30, -15, 15 ));
             ResidualMap[Telescope->Channel()].push_back(Vec);
         }
       }
-      if (RowResByColMap.count(Telescope->Channel()) == 0) {
-        TString Name = TString::Format("RowResByCol_Ch%i", Telescope->Channel());
-          for (int ir = 0; ir != 3; ++ir) {
-            std::vector<TH2F*> Vec;
-            TString R = TString::Format("%i", ir);
-            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,   Name+"_3Plane_ROC"+R,   26,  13, 39, 100, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R,  Name+"_01Plane_ROC"+R,  26,  13, 39, 100, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R,  Name+"_02Plane_ROC"+R,  26,  13, 39, 100, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R,  Name+"_12Plane_ROC"+R,  26,  13, 39, 100, -15, 15 ));
-            RowResByColMap[Telescope->Channel()].push_back(Vec);
-        }
+      if (RowResByCol.count(Telescope->Channel()) * 10 == 0) {
+        RowResByCol[Telescope->Channel() * 10 + 0].resize(PLTU::LASTCOL - PLTU::FIRSTCOL + 1);
+        RowResByCol[Telescope->Channel() * 10 + 1].resize(PLTU::LASTCOL - PLTU::FIRSTCOL + 1);
+        RowResByCol[Telescope->Channel() * 10 + 2].resize(PLTU::LASTCOL - PLTU::FIRSTCOL + 1);
       }
 
       // Look for three planes in a telescope each having 1 cluster
@@ -86,18 +79,18 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           ) {
 
         PLTTrack Tracks[4];
-        Tracks[0].AddCluster(Telescope->Plane(0)->Cluster(0));
-        Tracks[0].AddCluster(Telescope->Plane(1)->Cluster(0));
-        Tracks[0].AddCluster(Telescope->Plane(2)->Cluster(0));
-
-        Tracks[1].AddCluster(Telescope->Plane(0)->Cluster(0));
-        Tracks[1].AddCluster(Telescope->Plane(1)->Cluster(0));
-
-        Tracks[2].AddCluster(Telescope->Plane(0)->Cluster(0));
-        Tracks[2].AddCluster(Telescope->Plane(2)->Cluster(0));
-
+        Tracks[3].AddCluster(Telescope->Plane(0)->Cluster(0));
         Tracks[3].AddCluster(Telescope->Plane(1)->Cluster(0));
         Tracks[3].AddCluster(Telescope->Plane(2)->Cluster(0));
+
+        Tracks[2].AddCluster(Telescope->Plane(0)->Cluster(0));
+        Tracks[2].AddCluster(Telescope->Plane(1)->Cluster(0));
+
+        Tracks[1].AddCluster(Telescope->Plane(0)->Cluster(0));
+        Tracks[1].AddCluster(Telescope->Plane(2)->Cluster(0));
+
+        Tracks[0].AddCluster(Telescope->Plane(1)->Cluster(0));
+        Tracks[0].AddCluster(Telescope->Plane(2)->Cluster(0));
 
         for (int i = 0; i != 4; ++i) {
           Tracks[i].MakeTrack(Alignment);
@@ -107,8 +100,10 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
             std::pair<float, float> RXY = Tracks[i].LResiduals(*Cluster, Alignment);
             //printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %9.3f %9.3f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
             ResidualMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(RXY.first, RXY.second);
-            RowResByColMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(Cluster->PX(), RXY.second);
-            //printf("%2i %12.3E\n", Cluster->PX(), RXY.second);
+
+            if (i == j && i <= 2) {
+              RowResByCol[Telescope->Channel() * 10 + j][Cluster->PX() - PLTU::FIRSTCOL].push_back(RXY.second);
+            }
           }
         }
         Telescope->AddTrack(&Tracks[0]);
@@ -163,6 +158,18 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
   }
 
 
+  std::map<int, TH1F*> hRowByColMap;
+  for (std::map<int, std::vector< std::vector<float> > >::iterator It = RowResByCol.begin(); It != RowResByCol.end(); ++It) {
+    TString const Name = TString::Format("RowByCol_Ch%i_ROC%i", It->first / 10, It->first % 10);
+    hRowByColMap[It->first] = new TH1F( Name, Name, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL);
+    for (size_t i = 0; i != It->second.size(); ++i) {
+      if (It->second[i].size() != 0) {
+        hRowByColMap[It->first]->SetBinContent(i, PLTU::KahanSummation(It->second[i].begin(), It->second[i].end()) / (float) It->second[i].size());
+      }
+    }
+
+  }
+
 
   for (std::map<int, std::vector< std::vector<TH2F*> > >::iterator It = ResidualMap.begin(); It != ResidualMap.end(); ++It) {
     TString CanNameAll  = TString::Format("CanResidual_All_Ch%i", It->first);
@@ -173,15 +180,19 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
     TString SaveNameXY = TString::Format("plots/CanResidual_Ch%i_XY.gif", It->first);
     TString CanName3XY  = TString::Format("CanResidual_Ch%i_3XY", It->first);
     TString SaveName3XY = TString::Format("plots/CanResidual_Ch%i_3XY.gif", It->first);
+    TString CanNameTwist  = TString::Format("CanResidualTwist_Ch%i_3XY", It->first);
+    TString SaveNameTwist = TString::Format("plots/CanResidualTwist_Ch%i_3XY.gif", It->first);
 
     TCanvas CanResidualAll(CanNameAll, CanNameAll, 1600, 1200);
     TCanvas CanResidual(CanName, CanName, 900, 600);
     TCanvas CanResidualXY(CanNameXY, CanNameXY, 900, 900);
     TCanvas CanResidual3XY(CanName3XY, CanName3XY, 900, 900);
+    TCanvas CanResidualTwist(CanNameTwist, CanNameTwist, 900, 600);
     CanResidual.Divide(3, 2);
     CanResidualXY.Divide(3, 3);
     CanResidual3XY.Divide(3, 3);
     CanResidualAll.Divide(3, 4);
+    CanResidualTwist.Divide(3, 2);
     int iPad = 0;
     int iPadAll = 0;
     for (size_t itrack = 0; itrack != 4; ++itrack) {
@@ -190,11 +201,17 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
         It->second[iroc][itrack]->SetXTitle("X");
         It->second[iroc][itrack]->SetYTitle("Y");
         It->second[iroc][itrack]->Draw("colz");
-        if (itrack == 0 || (itrack == 1 && iroc == 2) || (itrack == 2 && iroc == 1) || (itrack == 3 && iroc == 0)) {
+        if (itrack == iroc || itrack == 3) {
           CanResidual.cd(++iPad);
           It->second[iroc][itrack]->Draw("colz");
         }
-        if ((itrack == 1 && iroc == 2) || (itrack == 2 && iroc == 1) || (itrack == 3 && iroc == 0)) {
+        if (itrack == iroc) {
+          CanResidualTwist.cd(iroc+1);
+          It->second[iroc][itrack]->Draw("colz");
+          CanResidualTwist.cd(iroc+1+3);
+          hRowByColMap[It->first * 10 + iroc]->Draw();
+        }
+        if (itrack == iroc) {
           CanResidualXY.cd(iroc+1);
           It->second[iroc][itrack]->Draw("colz");
           CanResidualXY.cd(iroc+1+3);
@@ -202,7 +219,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           CanResidualXY.cd(iroc+1+6);
           It->second[iroc][itrack]->ProjectionY()->Draw("hist");
         }
-        if (itrack == 0) {
+        if (itrack == 3) {
           CanResidual3XY.cd(iroc+1);
           It->second[iroc][itrack]->Draw("colz");
           CanResidual3XY.cd(iroc+1+3);
@@ -216,69 +233,9 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
     CanResidualXY.SaveAs(SaveNameXY);
     CanResidual3XY.SaveAs(SaveName3XY);
     CanResidualAll.SaveAs(SaveNameAll);
+    CanResidualTwist.SaveAs(SaveNameTwist);
   }
 
-
-
-
-  for (std::map<int, std::vector< std::vector<TH2F*> > >::iterator It = RowResByColMap.begin(); It != RowResByColMap.end(); ++It) {
-    TString CanNameAll  = TString::Format("TCanResidual_All_Ch%i", It->first);
-    TString SaveNameAll = TString::Format("plots/TCanResidual_All_Ch%i.eps", It->first);
-    TString CanName     = TString::Format("TCanResidual_Ch%i", It->first);
-    TString SaveName    = TString::Format("plots/TCanResidual_Ch%i.eps", It->first);
-    TString CanNameXY   = TString::Format("TCanResidual_Ch%i_XY", It->first);
-    TString SaveNameXY  = TString::Format("plots/TCanResidual_Ch%i_XY.eps", It->first);
-    TString CanName3XY  = TString::Format("TCanResidual_Ch%i_3XY", It->first);
-    TString SaveName3XY = TString::Format("plots/TCanResidual_Ch%i_3XY.eps", It->first);
-
-    TCanvas CanResidualAll(CanNameAll, CanNameAll, 1600, 1200);
-    TCanvas CanResidual(CanName, CanName, 900, 600);
-    TCanvas CanResidualXY(CanNameXY, CanNameXY, 900, 900);
-    TCanvas CanResidual3XY(CanName3XY, CanName3XY, 900, 900);
-    CanResidual.Divide(3, 2);
-    CanResidualXY.Divide(3, 3);
-    CanResidual3XY.Divide(3, 3);
-    CanResidualAll.Divide(3, 4);
-    int iPad = 0;
-    int iPadAll = 0;
-    for (size_t itrack = 0; itrack != 4; ++itrack) {
-      for (size_t iroc = 0; iroc != 3; ++iroc) {
-        CanResidualAll.cd(++iPadAll);
-        It->second[iroc][itrack]->SetXTitle("X");
-        It->second[iroc][itrack]->SetYTitle("Y");
-        It->second[iroc][itrack]->Draw("colz");
-
-        // Dean test
-        for (int ibinx = 1; ibinx != It->second[iroc][itrack]->GetNbinsX(); ++ibinx) {
-          std::cout <<  It->second[iroc][itrack]->GetName() << "  " << It->second[iroc][itrack]->ProjectionY("asd", ibinx, ibinx+1)->GetMean() << std::endl;
-        }
-        if (itrack == 0 || (itrack == 1 && iroc == 2) || (itrack == 2 && iroc == 1) || (itrack == 3 && iroc == 0)) {
-          CanResidual.cd(++iPad);
-          It->second[iroc][itrack]->Draw("colz");
-        }
-        if ((itrack == 1 && iroc == 2) || (itrack == 2 && iroc == 1) || (itrack == 3 && iroc == 0)) {
-          CanResidualXY.cd(iroc+1);
-          It->second[iroc][itrack]->Draw("colz");
-          CanResidualXY.cd(iroc+1+3);
-          It->second[iroc][itrack]->ProjectionX()->Draw("hist");
-          CanResidualXY.cd(iroc+1+6);
-          It->second[iroc][itrack]->ProjectionY()->Draw("hist");
-        }
-        if (itrack == 0) {
-          CanResidual3XY.cd(iroc+1);
-          It->second[iroc][itrack]->Draw("colz");
-          CanResidual3XY.cd(iroc+1+3);
-          It->second[iroc][itrack]->ProjectionX()->Draw("hist");
-          CanResidual3XY.cd(iroc+1+6);
-          It->second[iroc][itrack]->ProjectionY()->Draw("hist");
-        }
-      }
-    }
-    CanResidual.SaveAs(SaveName);
-    CanResidualXY.SaveAs(SaveNameXY);
-    CanResidual3XY.SaveAs(SaveName3XY);
-    CanResidualAll.SaveAs(SaveNameAll);
-  }
 
 
 

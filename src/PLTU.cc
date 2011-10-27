@@ -80,4 +80,35 @@ namespace PLTU
   }
 
 
+  float Average (std::vector<float>& V)
+  {
+    double Sum = 0.0;
+
+    size_t i = 0;
+    for ( ; i != V.size(); ++i) {
+      Sum += V[i];
+    }
+    return Sum / (double) i;
+  }
+
+
+  float KahanSummation (std::vector<float>::iterator begin, std::vector<float>::iterator end)
+  {
+    // You should be careful how you sum a lot of things...
+
+    double result = 0.0;
+
+    double c = 0.0;
+    double y, t;
+    for ( ; begin != end; ++begin) {
+      y = *begin - c;
+      t = result + y;
+      c = (t - result) - y;
+      result = t;
+    }
+    return result;
+  }
+
+
+
 }
