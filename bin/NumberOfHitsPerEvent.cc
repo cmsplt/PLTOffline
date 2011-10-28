@@ -43,7 +43,8 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
   std::map<int, TCanvas*> cMap;
 
   // Loop over all events in file
-  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+  int ientry = 0;
+  for ( ; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
@@ -93,6 +94,7 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
     }
 
   }
+  std::cout << "Number of events: " << ientry << std::endl;
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   for (std::map<int, TH1F*>::iterator it = hMap.begin(); it != hMap.end(); ++it) {
