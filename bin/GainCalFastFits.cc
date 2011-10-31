@@ -52,7 +52,7 @@ int GainCalFastFits (TString const InFileName)
   }
 
   // Open the output root file
-  TString const OutRootName = "GainCalFits.root";
+  TString const OutRootName = "plots/GainCalFits.root";
   TFile fOutRoot(OutRootName, "recreate");
   if (!fOutRoot.IsOpen()) {
     std::cerr << "ERROR: Cannot open output root file: " << OutRootName << std::endl;
@@ -64,7 +64,7 @@ int GainCalFastFits (TString const InFileName)
   TDirectory* dBadFits = fOutRoot.mkdir("Fits_Bad");
 
   // Open root file outout
-  TString const OutFitsName = "GainCalFits.dat";
+  TString const OutFitsName = "plots/GainCalFits.dat";
   FILE* fOutFits = fopen(OutFitsName.Data(), "w");
   if (!fOutFits) {
     std::cerr << "ERROR: cannot open out data file: " << OutFitsName << std::endl;
