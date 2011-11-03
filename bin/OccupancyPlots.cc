@@ -42,7 +42,8 @@ int OccupancyPlots (std::string const DataFileName)
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
+  //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
   // Map for all ROC hists and canvas
@@ -67,6 +68,12 @@ int OccupancyPlots (std::string const DataFileName)
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
+
+    // Hack for plotting only tracks
+    //if (Event.NTelescopes() == 1 && Event.Telescope(0)->HitPlaneBits() == 0x7 &&  Event.Telescope(0)->NClusters() == 3) {
+    //} else {
+    //  continue;
+    //}
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {

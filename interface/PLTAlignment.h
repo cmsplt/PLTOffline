@@ -36,6 +36,8 @@ class PLTAlignment
 
     int PXfromLX (float const);
     int PYfromLY (float const);
+    std::pair<int, int> PXYfromLXY (std::pair<float, float> const&);
+    std::pair<float, float> PXYDistFromLXYDist (std::pair<float, float> const&);
 
 
     // GtoT

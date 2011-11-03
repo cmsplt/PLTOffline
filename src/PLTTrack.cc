@@ -191,6 +191,7 @@ std::pair<float, float> PLTTrack::LResiduals (PLTCluster& Cluster, PLTAlignment&
   float TX = fTVX * TZ + fTOX;
   float TY = fTVY * TZ + fTOY;
   std::pair<float, float> LPXY = Alignment.TtoLXY(TX, TY, Cluster.Channel(), Cluster.ROC());
+  //printf("LResiduals Cluster.LX %12.3E   LPXY.first %12.3E\n", Cluster.LX(), LPXY.first);
   return std::make_pair( LPXY.first - Cluster.LX(), LPXY.second - Cluster.LY() );
 
 }

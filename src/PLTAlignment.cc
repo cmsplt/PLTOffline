@@ -150,6 +150,16 @@ int PLTAlignment::PYfromLY (float const ly)
   return (int) (ly /  PLTU::PIXELHEIGHT + 59.5);
 }
 
+std::pair<int, int> PLTAlignment::PXYfromLXY (std::pair<float, float> const& LXY)
+{
+  return std::make_pair<int, int>( PXfromLX(LXY.first), PYfromLY(LXY.second));
+}
+
+std::pair<float, float> PLTAlignment::PXYDistFromLXYDist (std::pair<float, float> const& LXYDist)
+{
+  return std::make_pair<float, float>( LXYDist.first / (float)  PLTU::PIXELWIDTH, LXYDist.second / (float)  PLTU::PIXELHEIGHT);
+}
+
 
 void PLTAlignment::AlignHit (PLTHit& Hit)
 {

@@ -110,7 +110,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
         static int ievent = 0;
         if (ievent < 50) {
-	        Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
+	        //Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ++ievent).Data() );
         }
 
         // Let's see if tracks are fiducial to planes..
@@ -209,6 +209,8 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           CanResidualTwist.cd(iroc+1);
           It->second[iroc][itrack]->Draw("colz");
           CanResidualTwist.cd(iroc+1+3);
+          hRowByColMap[It->first * 10 + iroc]->SetXTitle("Column");
+          hRowByColMap[It->first * 10 + iroc]->SetYTitle("Average Row Residual");
           hRowByColMap[It->first * 10 + iroc]->Draw();
         }
         if (itrack == iroc) {

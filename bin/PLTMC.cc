@@ -338,7 +338,7 @@ int PLTMC ()
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 100000;
+  int const NEvents = 1000000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {

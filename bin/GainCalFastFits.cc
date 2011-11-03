@@ -64,7 +64,7 @@ int GainCalFastFits (TString const InFileName)
   TDirectory* dBadFits = fOutRoot.mkdir("Fits_Bad");
 
   // Open root file outout
-  TString const OutFitsName = "plots/GainCalFits.dat";
+  TString const OutFitsName = "GainCalFits.dat";
   FILE* fOutFits = fopen(OutFitsName.Data(), "w");
   if (!fOutFits) {
     std::cerr << "ERROR: cannot open out data file: " << OutFitsName << std::endl;
