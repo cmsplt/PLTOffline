@@ -42,7 +42,10 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   for (TString Line; Line.ReadLine(f); ++NLinesTotal) {
   }
   f.close();
+  f.clear();
   f.open(FileName.Data());
+
+
 
 
   // Begin and end dates
@@ -56,19 +59,27 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   float Temp;
   double DateFrac;
 
-  sscanf(BeginDate.Data(), "%4i%2i%2i.%2i%2i%2i", &Year, &Month, &Day, &Hour, &Min, &Sec);
-  printf("BeginDate: %4i%2i%2i.%2i%2i%2i\n", Year, Month, Day, Hour, Min, Sec);
-  if (BeginDate == "") {
+  Month = 1;
+  Day = 1;
+  Hour = 0;
+  Min = 0;
+  Sec = 0;
+
+  if (BeginDate != "") {
+    sscanf(BeginDate.Data(), "%4i%2i%2i.%2i%2i%2i", &Year, &Month, &Day, &Hour, &Min, &Sec);
+  } else {
     Year = 1995;
   }
+  printf("BeginDate: %4i%02i%02i.%02i%02i%02i\n", Year, Month, Day, Hour, Min, Sec);
   TDatime bDT(Year, Month, Day, Hour, Min, Sec);
 
 
-  sscanf(EndDate.Data(), "%4i%2i%2i.%2i%2i%2i", &Year, &Month, &Day, &Hour, &Min, &Sec);
-  printf("EndDate:   %4i%2i%2i.%2i%2i%2i\n", Year, Month, Day, Hour, Min, Sec);
-  if (EndDate == "") {
-    Year = 2333;
+  if (EndDate != "") {
+    sscanf(EndDate.Data(), "%4i%2i%2i.%2i%2i%2i", &Year, &Month, &Day, &Hour, &Min, &Sec);
+  } else {
+    Year = 2133;
   }
+  printf("EndDate:   %4i%02i%02i.%02i%02i%02i\n", Year, Month, Day, Hour, Min, Sec);
   TDatime eDT(Year, Month, Day, Hour, Min, Sec);
 
   if (bDT > eDT) {
@@ -84,11 +95,12 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   int Sampling = 100 * NLinesTotal / (unsigned long long) NPOINTS;
   printf("NPOINTS=%i  NLinesTotal=%i  Sampling=%i\n", NPOINTS, (int) NLinesTotal, Sampling);
 
+
   // Read each line
   int nLines = 0;
   int nUsed  = 0;
   for (TString Line; Line.ReadLine(f); ++nLines) {
-    if (100*nLines % Sampling != 0) {
+    if (Sampling != 0 && 100*nLines % Sampling != 0) {
       continue;
     }
 
