@@ -249,12 +249,15 @@ void GetTracksHeadOn (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
       // THINK ABOUT THIS FOR ROTATIONS...
       float const LX = Alignment.PXtoLX(StartCol);
       float const LY = Alignment.PYtoLY(StartRow);
+      //printf("LY  %.13E\n", LY);
 
       std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+      //printf("LXY %.13E\n", LXY.second);
 
       int const PX = Alignment.PXfromLX(LXY.first);
       int const PY = Alignment.PYfromLY(LXY.second);
 
+      //std::cout << "PY " << PY << std::endl;
 
       //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
 
@@ -338,7 +341,7 @@ int PLTMC ()
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 1000000;
+  int const NEvents = 10000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {

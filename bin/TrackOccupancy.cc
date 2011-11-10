@@ -11,15 +11,19 @@
 #include <string>
 
 #include "PLTEvent.h"
+#include "PLTU.h"
 
 
 int TrackOccupancy (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
+  // Set some basic style
+  PLTU::SetStyle();
+
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_Diamond);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
 
   PLTAlignment Alignment;
@@ -110,7 +114,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
 
           // If this is the plane we're extrapolating to plot it..
           if (i == j && i <= 2) {
-            if (RPXY.first < 3 || RPXY.second < 3) {
+            if (RPXY.first < 1 || RPXY.second < 1) {
               int const NHits = Cluster->NHits();
 
               // Fill pulse height for cluster
@@ -149,7 +153,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
     TCanvas Can(Name, Name, 400, 400);
     Can.cd();
     it->second->Draw("zcol");
-    Can.SaveAs(Name + ".eps");
+    Can.SaveAs(Name + ".gif");
     delete it->second;
   }
 
@@ -183,7 +187,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
       }
     }
 
-    Can.SaveAs(Name + ".eps");
+    Can.SaveAs(Name + ".gif");
 
 
     // change to correct pad on canvas and draw the hist
