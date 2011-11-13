@@ -82,7 +82,8 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   printf("EndDate:   %4i%02i%02i.%02i%02i%02i\n", Year, Month, Day, Hour, Min, Sec);
   TDatime eDT(Year, Month, Day, Hour, Min, Sec);
 
-  if (bDT > eDT) {
+  if (bDT < eDT) {
+    // You're probably thinking the same thing I am... this is totally backwards..
     std::cerr << "ERROR: Begin is after ending?  You're crazy." << std::endl;
     throw;
   }
@@ -158,7 +159,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
     g.GetXaxis()->SetTimeFormat("%d/%m");
     g.GetXaxis()->SetTitle("Day/Month");
   } else if (TimeDiff > 60*60) {
-    g.GetXaxis()->SetTimeFormat("%h:%m");
+    g.GetXaxis()->SetTimeFormat("%H:%M");
     g.GetXaxis()->SetTitle("Hour:Minute");
   } else if (TimeDiff > 60) {
     g.GetXaxis()->SetTimeFormat("%m:%s");
@@ -177,7 +178,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   g.GetYaxis()->SetNdivisions(6);
   g.GetXaxis()->SetNdivisions(-6);
   g.SetMarkerStyle(7);
-  g.Draw("ac");
+  g.Draw("al");
   c.SaveAs("Temperature.gif");
 
   return 0;
