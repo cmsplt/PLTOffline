@@ -37,7 +37,9 @@ class PLTPlane
     enum FiducialRegion {
       kFiducialRegion_All,
       kFiducialRegion_Diamond,
-      kFiducialRegion_m2_m2
+      kFiducialRegion_m1_m1,
+      kFiducialRegion_m2_m2,
+      kFiducialRegion_m3_m3
     };
 
     void    AddHit (PLTHit*);

@@ -242,18 +242,34 @@ bool PLTPlane::IsFiducial (FiducialRegion const FidR, PLTHit* Hit)
       return true;
       break;
     case kFiducialRegion_Diamond:
-      if (Hit->Row() >= PLTU::FIRSTROW &&
-          Hit->Row() <= PLTU::LASTROW &&
+      if (Hit->Row()    >= PLTU::FIRSTROW &&
+          Hit->Row()    <  PLTU::LASTROW &&
           Hit->Column() >= PLTU::FIRSTCOL &&
-          Hit->Column() <= PLTU::LASTCOL) {
+          Hit->Column() <  PLTU::LASTCOL) {
+        return true;
+      }
+      break;
+    case kFiducialRegion_m1_m1:
+      if (Hit->Row()    >= PLTU::FIRSTROW + 1 &&
+          Hit->Row()    <  PLTU::LASTROW  - 1 &&
+          Hit->Column() >= PLTU::FIRSTCOL + 1 &&
+          Hit->Column() <  PLTU::LASTCOL  - 1) {
         return true;
       }
       break;
     case kFiducialRegion_m2_m2:
-      if (Hit->Row() >= PLTU::FIRSTROW + 2 &&
-          Hit->Row() <= PLTU::LASTROW - 2 &&
+      if (Hit->Row()    >= PLTU::FIRSTROW + 2 &&
+          Hit->Row()    <  PLTU::LASTROW  - 2 &&
           Hit->Column() >= PLTU::FIRSTCOL + 2 &&
-          Hit->Column() <= PLTU::LASTCOL - 2) {
+          Hit->Column() <  PLTU::LASTCOL  - 2) {
+        return true;
+      }
+      break;
+    case kFiducialRegion_m3_m3:
+      if (Hit->Row()    >= PLTU::FIRSTROW + 3 &&
+          Hit->Row()    <  PLTU::LASTROW  - 3 &&
+          Hit->Column() >= PLTU::FIRSTCOL + 3 &&
+          Hit->Column() <  PLTU::LASTCOL  - 3) {
         return true;
       }
       break;

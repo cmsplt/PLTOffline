@@ -11,6 +11,7 @@
 #include <string>
 
 #include "PLTEvent.h"
+#include "PLTU.h"
 
 // FUNCTION DEFINITIONS HERE
 int TrackTest (std::string const, std::string const, std::string const);
@@ -22,6 +23,9 @@ int TrackTest (std::string const, std::string const, std::string const);
 int TrackTest (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
+
+  // Set some basic style
+  PLTU::SetStyle();
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
@@ -58,10 +62,10 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int ir = 0; ir != 3; ++ir) {
             std::vector<TH2F*> Vec;
             TString R = TString::Format("%i", ir);
-            Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R, Name+"_12Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 30, -15, 15, 30, -15, 15 ));
-            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  30, -15, 15, 30, -15, 15 ));
+            Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R, Name+"_12Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
+            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
+            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
+            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  30, -0.3, 0.3, 30, -0.3, 0.3 ));
             ResidualMap[Telescope->Channel()].push_back(Vec);
         }
       }
@@ -73,9 +77,9 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
 
       // Look for three planes in a telescope each having 1 cluster
       if (Telescope->NPlanes() == 3 && 
-          Telescope->Plane(0)->NClusters() == 1 &&
-          Telescope->Plane(1)->NClusters() == 1 &&
-          Telescope->Plane(2)->NClusters() == 1
+          Telescope->Plane(0)->NHits() == 1 &&
+          Telescope->Plane(1)->NHits() == 1 &&
+          Telescope->Plane(2)->NHits() == 1
           ) {
 
         PLTTrack Tracks[4];
@@ -98,7 +102,9 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int j = 0; j != 3; ++j) {
             PLTCluster* Cluster = Telescope->Plane(j)->Cluster(0);
             std::pair<float, float> RXY = Tracks[i].LResiduals(*Cluster, Alignment);
-            //printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %9.3f %9.3f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
+            if (Telescope->Channel() == 23 && i == 1 && j == 1) {
+              printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %12.6f %12.6f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
+            }
             ResidualMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(RXY.first, RXY.second);
 
             if (i == j && i <= 2) {
@@ -180,38 +186,39 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
     TString SaveNameXY = TString::Format("plots/CanResidual_Ch%i_XY.gif", It->first);
     TString CanName3XY  = TString::Format("CanResidual_Ch%i_3XY", It->first);
     TString SaveName3XY = TString::Format("plots/CanResidual_Ch%i_3XY.gif", It->first);
-    TString CanNameTwist  = TString::Format("CanResidualTwist_Ch%i_3XY", It->first);
-    TString SaveNameTwist = TString::Format("plots/CanResidualTwist_Ch%i_3XY.gif", It->first);
+    //TString CanNameTwist  = TString::Format("CanResidualTwist_Ch%i_3XY", It->first);
+    //TString SaveNameTwist = TString::Format("plots/CanResidualTwist_Ch%i_3XY.gif", It->first);
 
     TCanvas CanResidualAll(CanNameAll, CanNameAll, 1600, 1200);
     TCanvas CanResidual(CanName, CanName, 900, 600);
     TCanvas CanResidualXY(CanNameXY, CanNameXY, 900, 900);
     TCanvas CanResidual3XY(CanName3XY, CanName3XY, 900, 900);
-    TCanvas CanResidualTwist(CanNameTwist, CanNameTwist, 900, 600);
+    //TCanvas CanResidualTwist(CanNameTwist, CanNameTwist, 900, 600);
     CanResidual.Divide(3, 2);
     CanResidualXY.Divide(3, 3);
     CanResidual3XY.Divide(3, 3);
     CanResidualAll.Divide(3, 4);
-    CanResidualTwist.Divide(3, 2);
+    //CanResidualTwist.Divide(3, 2);
     int iPad = 0;
     int iPadAll = 0;
     for (size_t itrack = 0; itrack != 4; ++itrack) {
       for (size_t iroc = 0; iroc != 3; ++iroc) {
         CanResidualAll.cd(++iPadAll);
-        It->second[iroc][itrack]->SetXTitle("X");
-        It->second[iroc][itrack]->SetYTitle("Y");
+        It->second[iroc][itrack]->SetXTitle("X (cm)");
+        It->second[iroc][itrack]->SetYTitle("Y (cm)");
+        It->second[iroc][itrack]->SetStats(0);
         It->second[iroc][itrack]->Draw("colz");
         if (itrack == iroc || itrack == 3) {
           CanResidual.cd(++iPad);
           It->second[iroc][itrack]->Draw("colz");
         }
         if (itrack == iroc) {
-          CanResidualTwist.cd(iroc+1);
-          It->second[iroc][itrack]->Draw("colz");
-          CanResidualTwist.cd(iroc+1+3);
-          hRowByColMap[It->first * 10 + iroc]->SetXTitle("Column");
-          hRowByColMap[It->first * 10 + iroc]->SetYTitle("Average Row Residual");
-          hRowByColMap[It->first * 10 + iroc]->Draw();
+          //CanResidualTwist.cd(iroc+1);
+          //It->second[iroc][itrack]->Draw("colz");
+          //CanResidualTwist.cd(iroc+1+3);
+          //hRowByColMap[It->first * 10 + iroc]->SetXTitle("Column");
+          //hRowByColMap[It->first * 10 + iroc]->SetYTitle("Average Row Residual");
+          //hRowByColMap[It->first * 10 + iroc]->Draw();
         }
         if (itrack == iroc) {
           CanResidualXY.cd(iroc+1);
@@ -235,7 +242,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
     CanResidualXY.SaveAs(SaveNameXY);
     CanResidual3XY.SaveAs(SaveName3XY);
     CanResidualAll.SaveAs(SaveNameAll);
-    CanResidualTwist.SaveAs(SaveNameTwist);
+    //CanResidualTwist.SaveAs(SaveNameTwist);
   }
 
 

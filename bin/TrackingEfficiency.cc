@@ -11,6 +11,7 @@
 #include <string>
 
 #include "PLTEvent.h"
+#include "PLTU.h"
 
 
 
@@ -49,6 +50,9 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+
+  // Set some basic style for plots
+  PLTU::SetStyle();
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
@@ -197,10 +201,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     //it->second->Rebin2D();
 
     hEffMapN[id]->SetTitle(Name);
-    hEffMapN[id]->SetMinimum(0);
-    hEffMapN[id]->SetMaximum(2);
+    hEffMapN[id]->SetMinimum(0.6);
+    hEffMapN[id]->SetMaximum(1.4);
 
     hEffMapN[id]->Divide(it->second);
+    hEffMapN[id]->SetStats(0);
     hEffMapN[id]->Draw("colz");
     Can.SaveAs(Name + ".gif");
 

@@ -82,7 +82,7 @@ int PlotTemperature (TString const FileName, TString const BeginDate, TString co
   printf("EndDate:   %4i%02i%02i.%02i%02i%02i\n", Year, Month, Day, Hour, Min, Sec);
   TDatime eDT(Year, Month, Day, Hour, Min, Sec);
 
-  if (bDT < eDT) {
+  if (bDT > eDT) {
     // You're probably thinking the same thing I am... this is totally backwards..
     std::cerr << "ERROR: Begin is after ending?  You're crazy." << std::endl;
     throw;
