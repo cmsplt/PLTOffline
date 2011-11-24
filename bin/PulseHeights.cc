@@ -161,7 +161,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         // Loop over all clusters on this plane
         for (size_t iCluster = 0; iCluster != Plane->NClusters(); ++iCluster) {
           PLTCluster* Cluster = Plane->Cluster(iCluster);
-	  //       if (iCluster == 1) break;
+          //if (iCluster == 1) break;
 
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
@@ -246,7 +246,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       for (size_t ib = 0; ib != vClEnTimeMap[id][ih].size(); ++ib) {
         hClEnTimeMap[id][ih]->SetBinContent(ib, vClEnTimeMap[id][ih][ib]);
       }
-      while (hClEnTimeMap[id][ih]->GetNbinsX() > 200) {
+      while (hClEnTimeMap[id][ih]->GetNbinsX() > 25) {
         if (hClEnTimeMap[id][ih]->GetNbinsX() % 2 == 1) {
           hClEnTimeMap[id][ih]->SetBins(hClEnTimeMap[id][ih]->GetNbinsX()+1, 0, hClEnTimeMap[id][ih]->GetXaxis()->GetXmax());
         }
@@ -260,8 +260,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       TH1F* Hist = hClEnTimeMap[id][ih];
 
       Hist->SetLineColor(HistColors[ih]);
-      Hist->Rebin(4);
-      Hist->Scale(1./4.);
+      //if (Hist->GetNbinsX() % 2 == 0) {
+      //  Hist->Rebin(2);
+      //  Hist->Scale(1./2.);
+      //}
     }
 
   }
@@ -285,6 +287,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+1);
 
+    TLegend* Leg = new TLegend(0.65, 0.7, 0.80, 0.88, "");
+    Leg->SetFillColor(0);
+    Leg->SetBorderSize(0);
+
     for (size_t ih = 0; ih != 4; ++ih) {
       TH1F* Hist = it->second[ih];
       Hist->SetStats(false);
@@ -296,10 +302,17 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         Hist->SetXTitle("Electrons");
         Hist->SetYTitle("Events");
         Hist->Draw("hist");
+        Leg->AddEntry(Hist, "All", "l");
       } else {
         Hist->Draw("samehist");
+        if (ih != 3) {
+          Leg->AddEntry(Hist, TString::Format(" %i Pixel", ih), "l");
+        } else {
+          Leg->AddEntry(Hist, TString::Format("#geq%i Pixel", ih), "l");
+        }
       }
     }
+    Leg->Draw("same");
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
     for (size_t ih = 1; ih != 4; ++ih) {
