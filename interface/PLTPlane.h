@@ -62,6 +62,7 @@ class PLTPlane
     static bool CompareChargeReverse (PLTHit*, PLTHit*);
 
     static bool IsFiducial (FiducialRegion const, PLTHit*);
+    static bool IsFiducial (FiducialRegion const, int const, int const);
 
     void SetChannel (int const);
     void SetROC (int const);

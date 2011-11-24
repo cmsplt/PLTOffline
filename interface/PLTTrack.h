@@ -22,13 +22,14 @@ class PLTTrack
     int  MakeTrack (PLTAlignment&);
 
     size_t NClusters ();
+    size_t NHits ();
 
     float LResidualX (size_t const);
     float LResidualY (size_t const);
     std::pair<float, float> LResiduals (PLTCluster&, PLTAlignment&);
 
-    bool IsFiducial (PLTPlane*, PLTAlignment&);
-    bool IsFiducial (int const, int const, PLTAlignment&);
+    bool IsFiducial (PLTPlane*, PLTAlignment&, PLTPlane::FiducialRegion);
+    bool IsFiducial (int const, int const, PLTAlignment&, PLTPlane::FiducialRegion);
 
     float TX (float const);
     float TY (float const);

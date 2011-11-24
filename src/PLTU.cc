@@ -50,8 +50,8 @@ namespace PLTU
 
     int const NBinsX = hIN->GetNbinsX();
     int const NBinsY = hIN->GetNbinsY();
-    int const ZMin = hIN->GetMinimum();
-    int const ZMax = hIN->GetMaximum();
+    float const ZMin = hIN->GetMinimum();
+    float const ZMax = hIN->GetMaximum() + 1;
 
     TString const hNAME = NewName == "" ? TString(hIN->GetName()) + "_1DZ" : NewName;
 

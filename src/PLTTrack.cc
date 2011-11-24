@@ -197,13 +197,13 @@ std::pair<float, float> PLTTrack::LResiduals (PLTCluster& Cluster, PLTAlignment&
 }
 
 
-bool PLTTrack::IsFiducial (PLTPlane* Plane, PLTAlignment& Alignment)
+bool PLTTrack::IsFiducial (PLTPlane* Plane, PLTAlignment& Alignment, PLTPlane::FiducialRegion FidRegion)
 {
-  return IsFiducial (Plane->Channel(), Plane->ROC(), Alignment);
+  return IsFiducial (Plane->Channel(), Plane->ROC(), Alignment, FidRegion);
 }
 
 
-bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Alignment)
+bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Alignment, PLTPlane::FiducialRegion FidRegion)
 {
   // Check if a track passes through the diamond on a en plane
 
@@ -226,6 +226,7 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
   //printf("IsFiducial: ROC  LX LY  PX PY  %1i  %12.3f %12.3f  %2i %2i\n", ROC, LXY.first, LXY.second, PX, PY);
 
   // If either row or col are outside of the diamond return false
+  return PLTPlane::IsFiducial(FidRegion, PX, PY);
   if (PX > PLTU::LASTCOL || PX < PLTU::FIRSTCOL || PY > PLTU::LASTROW || PY < PLTU::FIRSTROW) {
     return false;
   }
@@ -238,6 +239,16 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
 size_t PLTTrack::NClusters ()
 {
   return fClusters.size();
+}
+
+size_t PLTTrack::NHits ()
+{
+  size_t Sum = 0;
+  for (size_t i = 0; i != fClusters.size(); ++i) {
+    Sum += fClusters[i]->NHits();
+  }
+
+  return Sum;
 }
 
 float PLTTrack::LResidualX (size_t const i)

@@ -134,7 +134,7 @@ int OccupancyPlots (std::string const DataFileName)
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
-  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m1_m1;
+  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m3_m3;
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
 

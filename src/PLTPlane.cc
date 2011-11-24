@@ -237,41 +237,53 @@ bool PLTPlane::CompareChargeReverse (PLTHit* a, PLTHit* b)
 
 bool PLTPlane::IsFiducial (FiducialRegion const FidR, PLTHit* Hit)
 {
+  int const Col = Hit->Column();
+  int const Row = Hit->Row();
+
+  return IsFiducial(FidR, Col, Row);
+}
+
+bool PLTPlane::IsFiducial (FiducialRegion const FidR, int const Col, int const Row) {
+
   switch (FidR) {
     case kFiducialRegion_All:
       return true;
       break;
     case kFiducialRegion_Diamond:
-      if (Hit->Row()    >= PLTU::FIRSTROW &&
-          Hit->Row()    <  PLTU::LASTROW &&
-          Hit->Column() >= PLTU::FIRSTCOL &&
-          Hit->Column() <  PLTU::LASTCOL) {
+      if (Row >= PLTU::FIRSTROW &&
+          Row <= PLTU::LASTROW &&
+          Col >= PLTU::FIRSTCOL &&
+          Col <= PLTU::LASTCOL) {
         return true;
       }
+      return false;
       break;
     case kFiducialRegion_m1_m1:
-      if (Hit->Row()    >= PLTU::FIRSTROW + 1 &&
-          Hit->Row()    <  PLTU::LASTROW  - 1 &&
-          Hit->Column() >= PLTU::FIRSTCOL + 1 &&
-          Hit->Column() <  PLTU::LASTCOL  - 1) {
+      if (Row >= PLTU::FIRSTROW + 1 &&
+          Row <= PLTU::LASTROW  - 1 &&
+          Col >= PLTU::FIRSTCOL + 1 &&
+          Col <= PLTU::LASTCOL  - 1) {
         return true;
       }
+      return false;
       break;
     case kFiducialRegion_m2_m2:
-      if (Hit->Row()    >= PLTU::FIRSTROW + 2 &&
-          Hit->Row()    <  PLTU::LASTROW  - 2 &&
-          Hit->Column() >= PLTU::FIRSTCOL + 2 &&
-          Hit->Column() <  PLTU::LASTCOL  - 2) {
+      if (Row >= PLTU::FIRSTROW + 2 &&
+          Row <= PLTU::LASTROW  - 2 &&
+          Col >= PLTU::FIRSTCOL + 2 &&
+          Col <= PLTU::LASTCOL  - 2) {
         return true;
       }
+      return false;
       break;
     case kFiducialRegion_m3_m3:
-      if (Hit->Row()    >= PLTU::FIRSTROW + 3 &&
-          Hit->Row()    <  PLTU::LASTROW  - 3 &&
-          Hit->Column() >= PLTU::FIRSTCOL + 3 &&
-          Hit->Column() <  PLTU::LASTCOL  - 3) {
+      if (Row >= PLTU::FIRSTROW + 3 &&
+          Row <= PLTU::LASTROW  - 3 &&
+          Col >= PLTU::FIRSTCOL + 3 &&
+          Col <= PLTU::LASTCOL  - 3) {
         return true;
       }
+      return false;
       break;
     default:
       std::cerr << "ERROR in PLTPlane::IsFiducial" << std::endl;
