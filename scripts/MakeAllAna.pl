@@ -93,7 +93,7 @@ foreach $line (<RUNS>) {
   $command = "cp plots/PulseHeight_Ch$channel.gif $outdir/PulseHeight.gif";
   `$command`;
 
-  PrintHTML($outdir, $run, $cassette, $channel, $trigger);
+  PrintHTML($outdir, $run, $cassette, $channel, $trigger, $file, $calib);
 
 
 }
@@ -102,7 +102,7 @@ foreach $line (<RUNS>) {
 
 sub PrintHTML
 {
-  my ($outdir, $run, $cassette, $channel, $trigger) = @_;
+  my ($outdir, $run, $cassette, $channel, $trigger, $file, $calib) = @_;
 
   open OUT, ">$outdir/index.html" or die "cannot open output html file $!";
 
@@ -110,6 +110,7 @@ print OUT "<html>";
 print OUT "<body>";
 print OUT "<h1>Run $run  Cassette $cassette  Ch$channel</h1>";
 print OUT "<h2>Trigger on ROC $trigger</h2>";
+print OUT "<p>File: $file<br>Calibration: $calib</p>";
 print OUT << 'ENDOFHTML'
 <hr>
 <p>
