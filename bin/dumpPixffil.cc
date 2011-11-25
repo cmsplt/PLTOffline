@@ -13,21 +13,21 @@ int convPXL (int ROC)
 
 /////////////////////////////////////////////////////////////////////////////
 // Decode error FIFO 
-void decodeErrorFifo(unsigned long word)
+void decodeErrorFifo(uint32_t unsigned word)
 {
   // Works for both, the error FIFO and the SLink error words. d.k. 25/04/07
-  const unsigned long  errorMask      = 0x3e00000;
-  const unsigned long  timeOut        = 0x3a00000;
-  const unsigned long  eventNumError  = 0x3e00000;
-  const unsigned long  trailError     = 0x3c00000;
-  const unsigned long  fifoError      = 0x3800000;
+  const uint32_t unsigned  errorMask      = 0x3e00000;
+  const uint32_t unsigned  timeOut        = 0x3a00000;
+  const uint32_t unsigned  eventNumError  = 0x3e00000;
+  const uint32_t unsigned  trailError     = 0x3c00000;
+  const uint32_t unsigned  fifoError      = 0x3800000;
 
 
   if (word & 0xffffffff) {
     if ((word & errorMask) == timeOut) {
 
       // TIMEOUT - More than 1 channel within a group can have a timeout error
-      unsigned long index = (word & 0x1F);  // index within a group of 4/5
+      uint32_t unsigned index = (word & 0x1F);  // index within a group of 4/5
 
       for (int i = 0; i < 5; i++) {
         index = index >> 1;
@@ -49,17 +49,17 @@ void decodeErrorFifo(unsigned long word)
 // Decode FIFO 2 spy data 
 // The headers are still not treated correctly.
 // 
-void decodeSpyDataFifo (unsigned long word, int event)
+void decodeSpyDataFifo (uint32_t unsigned word, int event)
 {
   if (word & 0xfffffff) {
 
-    const unsigned long int plsmsk = 0xff;
-    const unsigned long int pxlmsk = 0xff00;
-    const unsigned long int dclmsk = 0x1f0000;
-    const unsigned long int rocmsk = 0x3e00000;
-    const unsigned long int chnlmsk = 0xfc000000;
-    unsigned long int chan = ((word & chnlmsk) >> 26);
-    unsigned long int roc  = ((word & rocmsk)  >> 21);
+    const uint32_t unsigned plsmsk = 0xff;
+    const uint32_t unsigned pxlmsk = 0xff00;
+    const uint32_t unsigned dclmsk = 0x1f0000;
+    const uint32_t unsigned rocmsk = 0x3e00000;
+    const uint32_t unsigned chnlmsk = 0xfc000000;
+    uint32_t unsigned chan = ((word & chnlmsk) >> 26);
+    uint32_t unsigned roc  = ((word & rocmsk)  >> 21);
 
     // Check for embeded special words
     if (roc > 25) {
@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
   }
 
   unsigned long long totevent = 0;
-  unsigned long header = 0;
-  unsigned long n1, n2;
+  uint32_t unsigned header = 0;
+  uint32_t unsigned n1, n2;
   int wrdcount  =  0;
   int event = 0;
   int stopit = 0;
