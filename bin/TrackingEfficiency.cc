@@ -109,7 +109,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   std::map<int, TH2F*> hEffMapN;
   std::map<int, TH2F*> hEffMapD;
 
-  int const PixelDist = 2;
+  float const PixelDist = 2;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -187,7 +187,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           hEffMapD[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
-            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+            std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
+            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
               //hEffMapN[Channel * 10 + 2]->Fill(Plane[2]->Cluster(0)->SeedHit()->Column(), Plane[2]->Cluster(0)->SeedHit()->Row());
               hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
               ++HC[Channel].NFiducialAndHit[2];
@@ -206,7 +207,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           hEffMapD[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
           if (Plane[1]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
-            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+            std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
+            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
               hEffMapN[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
               ++HC[Channel].NFiducialAndHit[1];
             }
@@ -224,7 +226,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           hEffMapD[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
           if (Plane[0]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
-            if (abs(ResXY.first) <= PixelDist && abs(ResXY.second) <= PixelDist) {
+            std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
+            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
               hEffMapN[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
               ++HC[Channel].NFiducialAndHit[0];
             }
