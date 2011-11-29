@@ -109,7 +109,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   std::map<int, TH2F*> hEffMapN;
   std::map<int, TH2F*> hEffMapD;
 
-  float const PixelDist = 2;
+  float const PixelDist = 3;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -188,6 +188,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
+            //printf("ResXY: %15.9f   RPXY: %15.9f\n", ResXY.first, RPXY.first);
             if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
               //hEffMapN[Channel * 10 + 2]->Fill(Plane[2]->Cluster(0)->SeedHit()->Column(), Plane[2]->Cluster(0)->SeedHit()->Row());
               hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
@@ -248,8 +249,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     int const ROC     = id % 10;
 
     TString const Name = TString::Format("TrackingEfficiencyMap_Ch%i_ROC%i", Channel, ROC);
-    TCanvas Can(Name, Name, 200, 400);
-    Can.Divide(1, 2);
+    TCanvas Can(Name, Name, 200, 600);
+    Can.Divide(1, 3);
 
 
     Can.cd(1);
@@ -262,11 +263,15 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
     Can.cd(2)->SetLogy();
     TH1F* Hist1D = FidHistFrom2D(hEffMapN[id], "", 30, FidRegionTrack);
+    Hist1D->SetTitle( TString::Format("Tracking Efficiency Ch%i ROC%i", Channel, ROC));
     Hist1D->SetXTitle("Efficiency");
     Hist1D->SetYTitle("# of Pixels");
     Hist1D->SetMinimum(0.5);
-    Hist1D->Draw();
+    Hist1D->Clone()->Draw();
 
+    Can.cd(3);
+    Hist1D->SetMinimum(0);
+    Hist1D->Draw();
 
     Can.SaveAs("plots/"+ Name + ".gif");
 

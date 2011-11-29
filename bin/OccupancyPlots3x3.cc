@@ -229,8 +229,8 @@ int OccupancyPlots (std::string const DataFileName)
             cAllMap[Plane->Channel()]->Divide(3,3);
 
             sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
-            cOccupancyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
-            cOccupancyMap[Plane->Channel()]->Divide(3,2);
+            cOccupancyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
+            cOccupancyMap[Plane->Channel()]->Divide(3,3);
 
             sprintf(BUFF, "Occupancy w/ QuantilesCh%02i", Plane->Channel());
             cQuantileMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
@@ -241,8 +241,8 @@ int OccupancyPlots (std::string const DataFileName)
             cProjectionMap[Plane->Channel()]->Divide(3,3);
 
             sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
-            cEfficiencyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
-            cEfficiencyMap[Plane->Channel()]->Divide(3,2);
+            cEfficiencyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
+            cEfficiencyMap[Plane->Channel()]->Divide(3,3);
 
             sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
             cCoincidenceMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 400, 400);
@@ -297,6 +297,9 @@ int OccupancyPlots (std::string const DataFileName)
     hOccupancyMap[id]->Draw("colz");
     cOccupancyMap[Channel]->cd(ROC+3+1)->SetLogy(1);
     hOccupancy1D->SetMinimum(0.5);
+    hOccupancy1D->Clone()->Draw("hist");
+    cOccupancyMap[Channel]->cd(ROC+6+1);
+    hOccupancy1D->SetMinimum(0);
     hOccupancy1D->Draw("hist");
 
 
@@ -353,7 +356,7 @@ int OccupancyPlots (std::string const DataFileName)
 
     // 2D Occupancy efficiency plots wrt 3x3
     hEfficiencyMap[it->first] = Get3x3EfficiencyHist(*hQuantileMap[it->first], PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
-    hEfficiencyMap[it->first]->SetTitle("Occupancy Efficiency 3x3");
+    hEfficiencyMap[it->first]->SetTitle( TString::Format("Occupancy 3x3Eff Ch%i ROC%i", Channel, ROC));
     hEfficiencyMap[it->first]->SetXTitle("Column");
     hEfficiencyMap[it->first]->SetYTitle("Row");
     hEfficiencyMap[it->first]->SetZTitle("Efficiency (relative to neighbors)");
@@ -377,6 +380,9 @@ int OccupancyPlots (std::string const DataFileName)
     hEfficiencyMap[it->first]->Draw("colz");
 
     cEfficiencyMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    hEfficiency1DMap[it->first]->Clone()->Draw("");
+
+    cEfficiencyMap[Channel]->cd(ROC+6+1);
     hEfficiency1DMap[it->first]->Draw("");
 
 
