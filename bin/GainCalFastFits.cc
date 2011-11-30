@@ -21,7 +21,9 @@
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TFitResult.h"
+#include "TCanvas.h"
 
+#include "PLTU.h"
 
 
 TString Pack (int const mFec, int const mFecChannel, int const hubAddress, int const roc, int const col, int const row)
@@ -50,6 +52,9 @@ int GainCalFastFits (TString const InFileName)
     std::cerr << "ERROR; Cannot open file: " << InFileName << std::endl;
     throw;
   }
+
+  // Set some basic style
+  PLTU::SetStyle();
 
   // Open the output root file
   TString const OutRootName = "plots/GainCalFits.root";
@@ -133,6 +138,9 @@ int GainCalFastFits (TString const InFileName)
 
   std::map<TString, std::vector<float> > ROCSaturationValues;
   std::map<TString, std::vector<float> > ROCChi2;
+  std::map<TString, TH2F*> hGoodFitMap;
+  std::map<TString, TH2F*> hBadFitMap;
+  std::map<TString, TH2F*> hAllFitMap;
 
   // Loop over all entries in the map (which is by definiteion organized by pixel already, how nice
   for (std::map<TString, std::vector< std::pair<float, float> > >::iterator It = Map.begin(); It != Map.end(); ++It) {
@@ -143,6 +151,17 @@ int GainCalFastFits (TString const InFileName)
     // This is ROC
     sprintf(ROCId, "%1i%1i%02i%1i", mFec, mFecChannel, hubAddress, roc);
     //printf("ROCId: %1i %1i %02i %1i   %s %s\n", mFec, mFecChannel, hubAddress, roc, ROCId, It->first.Data());
+
+    // Hist for good bad and all fits
+    if (!hGoodFitMap.count(ROCId)) {
+      TString MyName;
+      MyName.Form("GoodFitMap_mFec%i_mFecChannel%i_hubAddress%02i_ROC%i", mFec, mFecChannel, hubAddress, roc);
+      hGoodFitMap[ROCId] = new TH2F(MyName, MyName, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+      MyName.Form("BadFitMap_mFec%i_mFecChannel%i_hubAddress%02i_ROC%i", mFec, mFecChannel, hubAddress, roc);
+      hBadFitMap[ROCId] = new TH2F(MyName, MyName, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+      MyName.Form("AllFitMap_mFec%i_mFecChannel%i_hubAddress%02i_ROC%i", mFec, mFecChannel, hubAddress, roc);
+      hAllFitMap[ROCId] = new TH2F(MyName, MyName, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+    }
 
     // Input for TGraph, define size, and fill them
     float X[It->second.size()];
@@ -175,14 +194,17 @@ int GainCalFastFits (TString const InFileName)
 
     // Do the fit
     int FitResult = g.Fit("FitFunc", "Q");
-    if (FitResult != 0) {
+    if (FitResult == 0) {
+      hGoodFitMap[ROCId]->Fill(col, row);
+      dGoodFits->cd();
+      g.Write();
+    } else {
+      hBadFitMap[ROCId]->Fill(col, row);
       dBadFits->cd();
       g.Write();
       printf("FitResult = %4i for %1i %1i %2i %2i %2i\n", FitResult, mFec, mFecChannel, hubAddress, col, row);
-    } else {
-      dGoodFits->cd();
-      g.Write();
     }
+    hAllFitMap[ROCId]->Fill(col, row);
 
     // Polt the Chi2
     FitChi2.Fill(FitFunc.GetChisquare());
@@ -204,6 +226,29 @@ int GainCalFastFits (TString const InFileName)
     ROCSaturationValues[ROCId].push_back(Param[0]);
     ROCChi2[ROCId].push_back(FitFunc.GetChisquare());
 
+  }
+
+  fOutRoot.cd();
+  for (std::map<TString, TH2F*>::iterator It = hGoodFitMap.begin(); It != hGoodFitMap.end(); ++It) {
+    It->second->Write();
+    TCanvas Can;
+    Can.cd();
+    It->second->Draw("colz");
+    Can.SaveAs(TString("plots/") + It->second->GetName() + ".gif");
+  }
+  for (std::map<TString, TH2F*>::iterator It = hBadFitMap.begin(); It != hBadFitMap.end(); ++It) {
+    It->second->Write();
+    TCanvas Can;
+    Can.cd();
+    It->second->Draw("colz");
+    Can.SaveAs(TString("plots/") + It->second->GetName() + ".gif");
+  }
+  for (std::map<TString, TH2F*>::iterator It = hAllFitMap.begin(); It != hAllFitMap.end(); ++It) {
+    It->second->Write();
+    TCanvas Can;
+    Can.cd();
+    It->second->Draw("colz");
+    Can.SaveAs(TString("plots/") + It->second->GetName() + ".gif");
   }
 
   // Plot the saturation values
