@@ -223,7 +223,7 @@ int GainCalFastFits (TString const InFileName)
     fprintf(fOutFits, "%1i %1i %2i %1i %2i %2i %12E %12E %12E %12E %12E\n", mFec, mFecChannel, hubAddress, roc, col, row, Param[0], Param[1], Param[2], Param[3], Param[4]);
 
     // Add saturation value to values
-    ROCSaturationValues[ROCId].push_back(Param[0]);
+    ROCSaturationValues[ROCId].push_back(Param[3]);
     ROCChi2[ROCId].push_back(FitFunc.GetChisquare());
 
   }
