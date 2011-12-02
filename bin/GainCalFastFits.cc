@@ -138,6 +138,11 @@ int GainCalFastFits (TString const InFileName)
 
   std::map<TString, std::vector<float> > ROCSaturationValues;
   std::map<TString, std::vector<float> > ROCChi2;
+  std::map<TString, std::vector<float> > ROCParam0;
+  std::map<TString, std::vector<float> > ROCParam1;
+  std::map<TString, std::vector<float> > ROCParam2;
+  std::map<TString, std::vector<float> > ROCParam3;
+  std::map<TString, std::vector<float> > ROCParam4;
   std::map<TString, TH2F*> hGoodFitMap;
   std::map<TString, TH2F*> hBadFitMap;
   std::map<TString, TH2F*> hAllFitMap;
@@ -216,6 +221,14 @@ int GainCalFastFits (TString const InFileName)
     Param[3] = FitFunc.GetParameter(3);
     Param[4] = FitFunc.GetParameter(4);
 
+    ROCParam0[ROCId].push_back(Param[0]);
+    ROCParam1[ROCId].push_back(Param[1]);
+    ROCParam2[ROCId].push_back(Param[2]);
+    ROCParam3[ROCId].push_back(Param[3]);
+    ROCParam4[ROCId].push_back(Param[4]);
+
+    //printf("%f   %f   %f   %f   %f\n", Param[0], Param[1],Param[2],Param[3],Param[4]);
+
     // Save the graph to output file
     fOutRoot.cd();
 
@@ -264,11 +277,48 @@ int GainCalFastFits (TString const InFileName)
     hC.Write();
 
     Name = TString::Format("Saturation_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
-    TH1F hS(Name, Name, 100, 0, 0.5);
+    TH1F hS(Name, Name, 100, 200, 300);
     for (size_t i = 0; i != ROCSaturationValues[It->first].size(); ++i) {
       hS.Fill(ROCSaturationValues[It->first][i]);
     }
     hS.Write();
+
+    Name = TString::Format("Param0_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F h0(Name, Name, 100, 0, 2);
+    for (size_t i = 0; i != ROCParam0[It->first].size(); ++i) {
+      h0.Fill(ROCParam0[It->first][i]);
+    }
+    h0.Write();
+
+    Name = TString::Format("Param1_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F h1(Name, Name, 100, -100, 0);
+    for (size_t i = 0; i != ROCParam1[It->first].size(); ++i) {
+      h1.Fill(ROCParam1[It->first][i]);
+    }
+    h1.Write();
+
+    Name = TString::Format("Param2_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F h2(Name, Name, 100, 4000, 6000);
+    for (size_t i = 0; i != ROCParam2[It->first].size(); ++i) {
+      h2.Fill(ROCParam2[It->first][i]);
+    }
+    h2.Write();
+
+    Name = TString::Format("Param3_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F h3(Name, Name, 100, 100, 400);
+    for (size_t i = 0; i != ROCParam3[It->first].size(); ++i) {
+      h3.Fill(ROCParam3[It->first][i]);
+    }
+    h3.Write();
+
+    Name = TString::Format("Param4_mF%1i_mFC%1i_hub%02i_ROC%1i", mFec, mFecChannel, hubAddress, roc);
+    TH1F h4(Name, Name, 100, 0, 2);
+    for (size_t i = 0; i != ROCParam4[It->first].size(); ++i) {
+      h4.Fill(ROCParam4[It->first][i]);
+    }
+    h4.Write();
+
+
   }
 
 
