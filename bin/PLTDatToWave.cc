@@ -50,7 +50,7 @@ int PLTDatToWave (int const N, TString const InputFileName)
   TGraph gr(kNUMBER, Time, Value);
   TCanvas Can;
   Can.cd();
-  gr.Draw("ac");
+  gr.Draw("ac*");
   Can.SaveAs("plots/Wave.gif");
 
   return 0;

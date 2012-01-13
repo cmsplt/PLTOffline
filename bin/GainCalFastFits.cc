@@ -179,7 +179,7 @@ int GainCalFastFits (TString const InFileName)
 
     // Actually make a TGraph
     TGraphErrors g(It->second.size(), X, Y);
-    TString const Name = TString::Format("Fit_mF%1i_mFC%1i_hub%2i_ROC%1i_Col%2i_Row%2i", mFec, mFecChannel, hubAddress, roc, col, row);
+    TString const Name = TString::Format("Fit_mF%1i_mFC%1i_hub%02i_ROC%1i_Col%2i_Row%2i", mFec, mFecChannel, hubAddress, roc, col, row);
     g.SetName(Name);
     g.SetTitle(Name);
 

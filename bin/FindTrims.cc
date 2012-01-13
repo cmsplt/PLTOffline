@@ -58,11 +58,18 @@ int FindTrims (std::string const InFileName)
            >> itrim
            >> NFired
            >> Efficiency;
-    //printf("%i %i %i %i %i %i %i %i %f\n" , mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, Efficiency);
+    printf("%i %i %i %i %i %i %i %i %f\n" , mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, Efficiency); 
     ROCID = 10000 * mFec + 1000 * mFecChannel + 10 * hubAddress + ROC;
+    std::cout << "Test1 " << Row << Col<< std::endl;
     STrim[ROCID].Checked[Col - MINCOL][Row - MINROW] = true;
+<<<<<<< FindTrims.cc
+
     if (fabs(0.5 - Efficiency)*100 < fabs(50 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW])) {
       if (Efficiency < 0.5){std::cout << "Efficiency = " << 100*Efficiency << " and STrim.Eff " << STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]<< std::endl;}
+=======
+    if (fabs(0.5 - Efficiency)*100 < fabs(50 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW])) {
+      if (Efficiency < 0.5){std::cout << "Efficiency = " << 100*Efficiency << " and STrim.Eff " << STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]<< std::endl;}
+>>>>>>> 1.11
       if (Col - MINCOL < 0 || Row - MINROW < 0) {
         std::cout << Col << "  " << Row << std::endl;
         std::cerr << "ERROR!!" << std::endl;
@@ -70,6 +77,7 @@ int FindTrims (std::string const InFileName)
       }
       STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]  = 100*Efficiency;
       STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] = itrim;
+
     }
   }
 
@@ -88,12 +96,23 @@ int FindTrims (std::string const InFileName)
 
     printf("%i  mFec = %i  mFecChannel = %i  hubAddress = %i  ROC = %i\n", It->first, mFec, mFecChannel, hubAddress, ROC);
 
+<<<<<<< FindTrims.cc
+    sprintf(BUFF, "fasttrim_values_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
+    sprintf(BUFF_EFFIC, "fasttrim_effic_mFec%i_mFecChannel%i_hubAddress%i_roc%i.txt", mFec, mFecChannel, hubAddress, ROC);
+=======
     sprintf(BUFF, "fasttrim_values_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
     sprintf(BUFF_EFFIC, "fasttrim_effic_mFec%i_mFecChannel%i_hubAddress%i_roc%i.txt", mFec, mFecChannel, hubAddress, ROC);
 
+>>>>>>> 1.11
+
+<<<<<<< FindTrims.cc
 
     FILE* ftrim = fopen(BUFF, "w");
     if (!ftrim) {
+=======
+    FILE* ftrim = fopen(BUFF, "w");
+    if (!ftrim) {
+>>>>>>> 1.11
       std::cerr << "ERROR: cannot open output file: " << BUFF << std::endl;
       throw;
     }
