@@ -29,6 +29,7 @@ float PLTCluster::Charge ()
   for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
     Sum += (*it)->Charge();
   }
+
   return Sum;
 }
 
@@ -71,6 +72,15 @@ int PLTCluster::PZ ()
 std::pair<int, int> PLTCluster::PCenter ()
 {
   return std::make_pair<int, int>(SeedHit()->Column(), SeedHit()->Row());
+}
+
+int PLTCluster::PCol ()
+{
+  return SeedHit()->Column();
+}
+int PLTCluster::PRow ()
+{
+  return SeedHit()->Row();
 }
 
 

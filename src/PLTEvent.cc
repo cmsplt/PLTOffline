@@ -50,10 +50,10 @@ PLTEvent::~PLTEvent ()
 void PLTEvent::SetDefaults ()
 {
   if (fGainCal.IsGood()) {
-    SetPlaneClustering(PLTPlane::kClustering_Seed_5x5);
+    SetPlaneClustering(PLTPlane::kClustering_Seed_5x5,PLTPlane::kFiducialRegion_m2_m2);
   } else {
     std::cerr << "WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering" << std::endl;
-    SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+    SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_m2_m2);
   }
 
   fRun = 0;
@@ -172,7 +172,7 @@ void PLTEvent::MakeEvent ()
   }
   // Loop over all planes and clusterize each one, then add each plane to the correct telescope (by channel number
   for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
-    it->second.Clusterize(fClustering);
+    it->second.Clusterize(fClustering,fFiducial);
     fTelescopeMap[it->second.Channel()].AddPlane( &(it->second) );
   }
 
@@ -199,10 +199,12 @@ void PLTEvent::SetPlaneFiducialRegion (PLTPlane::FiducialRegion in)
 
 
 
-void PLTEvent::SetPlaneClustering (PLTPlane::Clustering in)
+void PLTEvent::SetPlaneClustering (PLTPlane::Clustering in, PLTPlane::FiducialRegion fid)
 {
   std::cout << "PLTEvent::SetPlaneClustering setting clustering to " << in << std::endl;
   fClustering = in;
+  std::cout << "PLTEvent::SetPlaneFiducialRegion setting fiducial region to " << in << std::endl;
+  fFiducial = fid;
 }
 
 

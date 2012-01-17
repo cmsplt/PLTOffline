@@ -24,7 +24,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_m2_m2);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);

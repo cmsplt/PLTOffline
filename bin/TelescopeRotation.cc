@@ -32,7 +32,7 @@ int TelescopeRotation (std::string const DataFileName)
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
 
 

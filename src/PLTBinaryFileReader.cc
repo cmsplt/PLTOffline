@@ -77,14 +77,15 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
       }
 
       roc -= 1; // The fed gives 123, and we use the convention 012
+      //kga changed fiducial region
       if (roc <= 2) {
         //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
         PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
-        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
-          Hits.push_back(Hit);
-        } else {
-          delete Hit;
-        }
+	//        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
+	Hits.push_back(Hit);
+        //} else {
+	//delete Hit;
+	//}
       } else {
         //std::cerr << "WARNING: PLTBinaryFileReader found ROC with number and chan: " << roc << "  " << chan << std::endl;
       }

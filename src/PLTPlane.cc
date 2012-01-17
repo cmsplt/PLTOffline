@@ -104,7 +104,9 @@ bool PLTPlane::IsBiggestHitInNxN(PLTHit* Hit, int const mRow, int const mCol)
     if (fHits[i]->Row() == Hit->Row() && fHits[i]->Column() == Hit->Column()) {
       continue;
     }
-    if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol && fHits[i]->Charge() > Hit->Charge()) {
+    if (fHits[i]->Charge() > Hit->Charge()) {    
+      //kga oleksiy does just one cluster per plane--not saying it's right, just saying is all :) 
+      //if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol && fHits[i]->Charge() > Hit->Charge()) {
       return false;
     }
   }
@@ -131,7 +133,7 @@ int PLTPlane::NNeighbors (PLTHit* Hit)
 
 
 
-void PLTPlane::Clusterize (Clustering const Clust)
+void PLTPlane::Clusterize (Clustering const Clust, FiducialRegion const FidR)
 {
   // Cluster hits given one of the methods.
   // I sort hits here so that the largest charge hits are picked up first.
@@ -140,11 +142,11 @@ void PLTPlane::Clusterize (Clustering const Clust)
   switch (Clust) {
     case kClustering_Seed_3x3:
       std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
-      ClusterizeFromSeedNxN(1, 1);
+      ClusterizeFromSeedNxN(1, 1, FidR);
       break;
     case kClustering_Seed_5x5:
       std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
-      ClusterizeFromSeedNxN(2, 2);
+      ClusterizeFromSeedNxN(2, 2, FidR);
       break;
     case kClustering_NNeighbors:
       //ClusterizeNNeighbors();
@@ -152,7 +154,7 @@ void PLTPlane::Clusterize (Clustering const Clust)
       throw;
       break;
     case kClustering_AllTouching:
-      ClusterizeAllTouching();
+      ClusterizeAllTouching(FidR);
       break;
     case kClustering_NoClustering:
       // Dont to any clustering
@@ -167,12 +169,12 @@ void PLTPlane::Clusterize (Clustering const Clust)
 
 
 
-void PLTPlane::ClusterizeFromSeedNxN (int const mCol, int const mRow)
+void PLTPlane::ClusterizeFromSeedNxN (int const mCol, int const mRow, FiducialRegion const FidR)
 {
 
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {
-    if (IsBiggestHitInNxN(fHits[i], mCol, mRow)) {
+    if (IsBiggestHitInNxN(fHits[i], mCol, mRow) && IsFiducial(FidR,fHits[i])) {
       AddClusterFromSeedNxN(fHits[i], mCol, mRow);
     }
   }
@@ -180,7 +182,7 @@ void PLTPlane::ClusterizeFromSeedNxN (int const mCol, int const mRow)
 
 
 
-void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit)
+void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit, FiducialRegion const FidR)
 {
   for (size_t i = 0; i != fHits.size(); ++i) {
     if (std::find(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) != fClusterizedHits.end()) {
@@ -193,7 +195,7 @@ void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit)
     if ( abs(fHits[i]->Row() - Hit->Row()) <= 1 && abs(fHits[i]->Column() - Hit->Column()) <= 1) {
       Cluster->AddHit(fHits[i]);
       fClusterizedHits.push_back(fHits[i]);
-      AddAllHitsTouching(Cluster, fHits[i]);
+      AddAllHitsTouching(Cluster, fHits[i],FidR);
     }
   }
 
@@ -201,7 +203,7 @@ void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit)
 }
 
 
-void PLTPlane::ClusterizeAllTouching ()
+void PLTPlane::ClusterizeAllTouching ( FiducialRegion const FidR)
 {
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {
@@ -211,7 +213,7 @@ void PLTPlane::ClusterizeAllTouching ()
     PLTCluster* Cluster = new PLTCluster();
     Cluster->AddHit(fHits[i]);
     fClusterizedHits.push_back(fHits[i]);
-    AddAllHitsTouching(Cluster, fHits[i]);
+    AddAllHitsTouching(Cluster, fHits[i],FidR);
     fClusters.push_back(Cluster);
   }
 
@@ -281,6 +283,24 @@ bool PLTPlane::IsFiducial (FiducialRegion const FidR, int const Col, int const R
           Row <= PLTU::LASTROW  - 3 &&
           Col >= PLTU::FIRSTCOL + 3 &&
           Col <= PLTU::LASTCOL  - 3) {
+        return true;
+      }
+      return false;
+      break;
+    case kFiducialRegion_m4_m4:
+      if (Row >= PLTU::FIRSTROW + 4 &&
+          Row <= PLTU::LASTROW  - 4 &&
+          Col >= PLTU::FIRSTCOL + 4 &&
+          Col <= PLTU::LASTCOL  - 4) {
+        return true;
+      }
+      return false;
+      break;
+    case kFiducialRegion_m5_m5:
+      if (Row >= PLTU::FIRSTROW + 5 &&
+          Row <= PLTU::LASTROW  - 5 &&
+          Col >= PLTU::FIRSTCOL + 5 &&
+          Col <= PLTU::LASTCOL  - 5) {
         return true;
       }
       return false;

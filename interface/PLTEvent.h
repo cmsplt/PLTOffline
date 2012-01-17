@@ -37,7 +37,7 @@ class PLTEvent
     void AddHit (PLTHit*);
     void MakeEvent ();
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
-    void SetPlaneClustering (PLTPlane::Clustering);
+    void SetPlaneClustering (PLTPlane::Clustering,PLTPlane::FiducialRegion);
 
     unsigned long EventNumber ()
     { 
@@ -65,6 +65,7 @@ class PLTEvent
     PLTAlignment fAlignment;
 
     PLTPlane::Clustering fClustering;
+    PLTPlane::FiducialRegion fFiducial;
 
     std::map<int, PLTTelescope> fTelescopeMap;
     std::map<std::pair<int, int>, PLTPlane> fPlaneMap;

@@ -39,7 +39,9 @@ class PLTPlane
       kFiducialRegion_Diamond,
       kFiducialRegion_m1_m1,
       kFiducialRegion_m2_m2,
-      kFiducialRegion_m3_m3
+      kFiducialRegion_m3_m3,
+      kFiducialRegion_m4_m4,
+      kFiducialRegion_m5_m5
     };
 
     void    AddHit (PLTHit*);
@@ -48,10 +50,10 @@ class PLTPlane
     bool    AddClusterFromSeedNxN (PLTHit*, int const, int const);
     bool    IsBiggestHitInNxN (PLTHit*, int const, int const);
     int     NNeighbors (PLTHit*);
-    void    Clusterize (Clustering const);
-    void    ClusterizeFromSeedNxN (int const, int const);
-    void    AddAllHitsTouching (PLTCluster*, PLTHit*);
-    void    ClusterizeAllTouching ();
+    void    Clusterize (Clustering const, FiducialRegion const);
+    void    ClusterizeFromSeedNxN (int const, int const, FiducialRegion const);
+    void    AddAllHitsTouching (PLTCluster*, PLTHit*, FiducialRegion const);
+    void    ClusterizeAllTouching (FiducialRegion const);
     TH2F*   DrawHits2D ();
     size_t  NHits ();
     PLTHit* Hit (size_t);

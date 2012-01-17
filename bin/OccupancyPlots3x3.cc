@@ -135,7 +135,8 @@ int OccupancyPlots (std::string const DataFileName)
   PLTEvent Event(DataFileName);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m3_m3;
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+  //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_m3_m3);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
 
   // Map for all ROC hists and canvas

@@ -18,7 +18,8 @@ class PLTCluster
     PLTHit* SeedHit ();
 
 
-
+    int PRow();
+    int PCol();
     int PX ();
     int PY ();
     int PZ ();
