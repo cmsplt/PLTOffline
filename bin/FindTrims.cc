@@ -98,7 +98,7 @@ int FindTrims (std::string const InFileName)
     ROC         = It->first % 10;
 
 
-    printf("%i  mFec = %i  mFecChannel = %i  hubAddress = %i  ROC = %i\n", It->first, mFec, mFecChannel, hubAddress, ROC);
+    //    printf("%i  mFec = %i  mFecChannel = %i  hubAddress = %i  ROC = %i\n", It->first, mFec, mFecChannel, hubAddress, ROC);
 
     sprintf(BUFF, "fasttrim_values_mFec%i_mFecChannel%i_hubAddress%i_roc%i.pix1", mFec, mFecChannel, hubAddress, ROC);
     sprintf(BUFF_EFFIC, "fasttrim_effic_mFec%i_mFecChannel%i_hubAddress%i_roc%i.txt", mFec, mFecChannel, hubAddress, ROC);
@@ -134,9 +134,9 @@ int FindTrims (std::string const InFileName)
         fprintf(ftrim, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,
                 It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 8);
 	htrim->Fill(It->second.Trim[icol][irow]);
-	htrim_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Trim[icol][irow]);
+	htrim_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Trim[icol][irow]+0.1);
         fprintf(feff,"%2i %2i %2i %9.5f 50.0 %2i\n", ROC, MINCOL + icol, MINROW + irow, It->second.Eff[icol][irow], It->second.Trim[icol][irow]);
-	heff_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Eff[icol][irow]);
+	heff_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Eff[icol][irow]+0.1);
       }
     }
 
