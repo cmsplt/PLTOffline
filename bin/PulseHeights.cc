@@ -53,8 +53,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3);
-  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5,PLTPlane::kFiducialRegion_m5_m5);
+  //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
@@ -316,7 +316,6 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
     for (size_t ih = 1; ih != 4; ++ih) {
-      // change to correct pad on canvas and draw the hist
 
       // Grab hist
       TH1F* Hist = hClEnTimeMap[id][ih];
