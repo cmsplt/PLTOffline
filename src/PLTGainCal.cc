@@ -157,7 +157,6 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     mFec = mFecChannel = hubAddress = row = col = ch = 0;
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
-<<<<<<< PLTGainCal.cc
     if (mFecChannel == 1) {
       if (hubAddress == 5) {
         ch = 13;
@@ -184,20 +183,6 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
         std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
         continue;
       }
-=======
-
-    if (hubAddress == 5) {
-      ch = 24;
-    } else if (hubAddress == 13) {
-      ch = 23;
-    } else if (hubAddress == 21) {
-      ch = 21;
-    } else if (hubAddress == 29) {
-      ch = 20;
-    } else {
-      std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
-      continue;
->>>>>>> 1.6
     }
 
 
