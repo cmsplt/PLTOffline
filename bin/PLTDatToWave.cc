@@ -21,7 +21,7 @@ int PLTDatToWave (int const N, TString const InputFileName)
 {
   //int const kNUMBER = 205;
   int const kBEGIN  =  30;
-  int const kNUMBER = 100;
+  int const kNUMBER =  60;
 
   float Time[kNUMBER];
   float Value[kNUMBER];

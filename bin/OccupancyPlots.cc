@@ -132,7 +132,7 @@ int OccupancyPlots (std::string const DataFileName)
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName);
+  PLTEvent Event(DataFileName, true);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m1_m1;
   //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
@@ -165,12 +165,6 @@ int OccupancyPlots (std::string const DataFileName)
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-
-    // Hack for plotting only tracks
-    //if (Event.NTelescopes() == 1 && Event.Telescope(0)->HitPlaneBits() == 0x7 &&  Event.Telescope(0)->NClusters() == 3) {
-    //} else {
-    //  continue;
-    //}
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
@@ -280,6 +274,8 @@ int OccupancyPlots (std::string const DataFileName)
       if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
     }
   }
+
+  std::cout << "Done reading events.  Will make some plots now" << std::endl;
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   for (std::map<int, TH2F*>::iterator it = hOccupancyMap.begin(); it != hOccupancyMap.end(); ++it) {
