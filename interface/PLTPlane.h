@@ -61,6 +61,7 @@ class PLTPlane
     size_t  NClusters ();
     PLTCluster* Cluster (size_t);
     float   TZ ();
+    float   GZ ();
     static bool CompareChargeReverse (PLTHit*, PLTHit*);
 
     static bool IsFiducial (FiducialRegion const, PLTHit*);

@@ -8,9 +8,15 @@ PLTBinaryFileReader::PLTBinaryFileReader ()
 }
 
 
-PLTBinaryFileReader::PLTBinaryFileReader (std::string const in)
+PLTBinaryFileReader::PLTBinaryFileReader (std::string const in, bool IsText)
 {
-  Open(in);
+  SetIsText(IsText);
+
+  if (fIsText) {
+    OpenTextFile(in);
+  } else {
+    Open(in);
+  }
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
 }
 
@@ -23,6 +29,17 @@ PLTBinaryFileReader::~PLTBinaryFileReader ()
 
 bool PLTBinaryFileReader::Open (std::string const DataFileName)
 {
+  if (fIsText) {
+    return OpenTextFile(DataFileName);
+  } else {
+    return OpenBinary(DataFileName);
+  }
+}
+
+
+
+bool PLTBinaryFileReader::OpenBinary (std::string const DataFileName)
+{
   fFileName = DataFileName;
   fInfile.open(fFileName.c_str(),  std::ios::in | std::ios::binary);
   if (!fInfile) {
@@ -31,6 +48,28 @@ bool PLTBinaryFileReader::Open (std::string const DataFileName)
   }
 
   return true;
+}
+
+
+
+bool PLTBinaryFileReader::OpenTextFile (std::string const DataFileName)
+{
+  fFileName = DataFileName;
+  fInfile.open(fFileName.c_str());
+  if (!fInfile) {
+    std::cerr << "ERROR: cannot open input file: " << fFileName << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+
+
+void PLTBinaryFileReader::SetIsText (bool const in)
+{
+  fIsText = in;
+  return;
 }
 
 
@@ -81,11 +120,11 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
       if (roc <= 2) {
         //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
         PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
-	//        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
-	Hits.push_back(Hit);
+        //        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
+        Hits.push_back(Hit);
         //} else {
-	//delete Hit;
-	//}
+        //delete Hit;
+        //}
       } else {
         //std::cerr << "WARNING: PLTBinaryFileReader found ROC with number and chan: " << roc << "  " << chan << std::endl;
       }
@@ -101,7 +140,11 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
 
 int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event)
 {
-  return ReadEventHits(fInfile, Hits, Event);
+  if (fIsText) {
+    return ReadEventHitsText(fInfile, Hits, Event);
+  } else {
+    return ReadEventHits(fInfile, Hits, Event);
+  }
 }
 
 
@@ -163,6 +206,58 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
       }
     }
   }
+
+  return Hits.size();
+}
+
+
+
+
+int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event)
+{
+  int LastEventNumber = -1;
+  int EventNumber = -1;
+
+  if (InFile.eof()) {
+    return -1;
+  }
+
+  int Channel, ROC, Row, Col, ADC;
+  std::string Line;
+  std::istringstream LineStr;
+  while (true) {
+    std::getline(InFile, Line);
+    LineStr.clear();
+    LineStr.str(Line);
+
+    LineStr >> Channel;
+    if (LineStr.eof()) {
+      break;
+    }
+    LineStr >> ROC >> Col >> Row >> ADC >> EventNumber;
+
+
+    if (EventNumber != LastEventNumber && LastEventNumber != -1) {
+      InFile.putback('\n');
+      for (std::string::reverse_iterator It = Line.rbegin(); It != Line.rend(); ++It) {
+        InFile.putback(*It);
+      }
+      break;
+    }
+
+    PLTHit* Hit = new PLTHit(Channel, ROC, Col, Row, ADC);
+    //if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
+      Hits.push_back(Hit);
+    //} else {
+    //  delete Hit;
+    //}
+    //printf("%2i %2i %2i %2i %5i %9i\n", Channel, ROC, Col, Row, ADC, EventNumber);
+
+    LastEventNumber = EventNumber;
+    Event = EventNumber;
+
+  }
+  
 
   return Hits.size();
 }

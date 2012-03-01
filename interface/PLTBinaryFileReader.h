@@ -17,16 +17,21 @@ class PLTBinaryFileReader
 {
   public:
     PLTBinaryFileReader ();
-    PLTBinaryFileReader (std::string const);
+    PLTBinaryFileReader (std::string const, bool const IsText = false);
     ~PLTBinaryFileReader ();
 
     bool Open (std::string const);
+    bool OpenBinary (std::string const);
+    bool OpenTextFile (std::string const);
+    void SetIsText (bool const);
 
-    int  GetEvent ();
+
+
     int  convPXL (int);
     bool DecodeSpyDataFifo (uint32_t unsigned, std::vector<PLTHit*>&);
     int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&);
     int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
+    int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
 
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
 
@@ -35,6 +40,7 @@ class PLTBinaryFileReader
   private:
     std::string fFileName;
     std::ifstream fInfile;
+    bool fIsText;
 };
 
 

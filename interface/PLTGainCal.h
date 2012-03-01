@@ -27,7 +27,7 @@ class PLTGainCal
 
     void  SetCharge (PLTHit&);
     float GetCharge(int const ch, int const roc, int const col, int const row, int adc);
-    void  ReadGainCalFile (std::string const GainCalFileName, int const NParams = 5);
+    void  ReadGainCalFile (std::string const GainCalFileName);
     void  ReadGainCalFile3 (std::string const GainCalFileName);
     void  ReadGainCalFile5 (std::string const GainCalFileName);
 
@@ -48,6 +48,8 @@ class PLTGainCal
 
   private:
     bool fIsGood;
+
+    int  fNParams; // how many parameters for this gaincal
 
     static int const MAXCHNS =  48;
     static int const MAXROWS = 100;

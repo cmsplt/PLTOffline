@@ -14,9 +14,9 @@ class PLTEvent
 {
   public:
     PLTEvent ();
-    PLTEvent (std::string const);
-    PLTEvent (std::string const, std::string const);
-    PLTEvent (std::string const, std::string const, std::string const);
+    PLTEvent (std::string const, bool const IsText = false);
+    PLTEvent (std::string const, std::string const, bool const IsText = false);
+    PLTEvent (std::string const, std::string const, std::string const, bool const IsText = false);
     ~PLTEvent ();
 
 

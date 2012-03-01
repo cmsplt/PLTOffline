@@ -230,6 +230,14 @@ float PLTPlane::TZ ()
 
 
 
+float PLTPlane::GZ ()
+{
+  // Get the z-coord of this plane in the telescope
+  return Cluster(0)->GZ();
+}
+
+
+
 bool PLTPlane::CompareChargeReverse (PLTHit* a, PLTHit* b)
 {
   return a->Charge() > b->Charge();

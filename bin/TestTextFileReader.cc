@@ -24,9 +24,7 @@ int TestTextFileReader (std::string const InFileName)
   unsigned long crap;
 
   for (int ientry = 0; TFR.ReadEventHits(Hits, crap) >= 0; ++ientry) {
-    for (std::vector<PLTHit>::iterator Hit = Hits.begin(); Hit != Hits.end(); ++Hit) {
-      printf("ientry: %10i     EventNumber: %10lu    NHits: %5i\n", ientry, crap, (int) Hits.size());
-    }
+    printf("ientry: %10i     EventNumber: %10lu    NHits: %5i\n", ientry, crap, (int) Hits.size());
     Hits.clear();
   }
 

@@ -28,6 +28,8 @@ class PLTTelescope
     void      AddTrack (PLTTrack*);
     void      FillAndOrderTelescope ();
 
+    void      TrackFinderFromBeamCrossing ();
+
   private:
     std::vector<PLTPlane*> fPlanes;
     std::vector<PLTTrack*>  fTracks;

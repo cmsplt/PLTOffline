@@ -90,9 +90,17 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
     return -9999;
   }
 
-  float const charge = 65. * (TMath::Power( (float) adc, 2) * GC[ich][iroc][icol][irow][0] + (float) adc * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][2]
-                       + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
-                       );
+  float charge = -9999;
+  if (fNParams == 3) {
+    charge = 65. * (float(adc * adc) * GC[ich][iroc][icol][irow][2] + float(adc) * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][0]);
+    //printf("%12.3E %12.3E %12.3E  %9i  %12.3f\n",  GC[ich][iroc][icol][irow][0],  GC[ich][iroc][icol][irow][1],  GC[ich][iroc][icol][irow][2],  adc, charge);
+    //printf("22 2 %2i %2i %4i %10i %9.0f  %10.4E %10.4E %10.4E\n", col, row, (int) adc, 0, charge, GC[ich][iroc][icol][irow][0], GC[ich][iroc][icol][irow][1], GC[ich][iroc][icol][irow][2]);
+
+  } else if (fNParams == 5) {
+    charge = 65. * (TMath::Power( (float) adc, 2) * GC[ich][iroc][icol][irow][0] + (float) adc * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][2]
+                    + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
+                   );
+  }
   //printf("ich %2i  iroc %1i  icol %2i  row %2i  irow %2i  charge %12.3E\n", ich, iroc, icol, row, irow, charge);
   //printf("%12.3E %12.3E %12.3E %12.3E %12.3E\n",  GC[ich][iroc][icol][irow][0],  GC[ich][iroc][icol][irow][1],  GC[ich][iroc][icol][irow][2],  GC[ich][iroc][icol][irow][3],  GC[ich][iroc][icol][irow][3]);
   if (PLTGainCal::DEBUGLEVEL) {
@@ -102,16 +110,34 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
   return charge;
 }
 
-void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName, int const NParams)
+void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 {
   if (GainCalFileName == "") {
     fIsGood = false;
     return;
   }
 
-  if (NParams == 5) {
+  std::ifstream InFile(GainCalFileName.c_str());
+  if (!InFile.is_open()) {
+    std::cerr << "ERROR: cannot open gaincal file: " << GainCalFileName << std::endl;
+    throw;
+  }
+
+  std::string line;
+  std::getline(InFile, line);
+  std::istringstream linestream;
+  linestream.str(line);
+  int i = -6;
+  for (float junk; linestream >> junk; ++i) {
+  }
+  InFile.close();
+  fNParams = i;
+
+  printf("PLTGainCal sees a parameter file with %i params\n", fNParams);
+
+  if (fNParams == 5) {
     ReadGainCalFile5(GainCalFileName);
-  } else if (NParams == 3) {
+  } else if (fNParams == 3) {
     ReadGainCalFile3(GainCalFileName);
   } else {
     std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
@@ -157,32 +183,41 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     mFec = mFecChannel = hubAddress = row = col = ch = 0;
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
-    if (mFecChannel == 1) {
-      if (hubAddress == 5) {
-        ch = 13;
-      } else if (hubAddress == 13) {
-        ch = 99;
-      } else if (hubAddress == 21) {
-        ch = 14;
-      } else if (hubAddress == 29) {
-        ch = 15;
+    if (mFec == 0) {
+      ch = 22;
+    } else if (mFec == 7) {
+      if (mFecChannel == 1) {
+        if (hubAddress == 5) {
+          ch = 13;
+        } else if (hubAddress == 13) {
+          ch = 99;
+        } else if (hubAddress == 21) {
+          ch = 14;
+        } else if (hubAddress == 29) {
+          ch = 15;
+        } else {
+          std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
+          continue;
+        }
+      } else if (mFecChannel == 2) {
+        if (hubAddress == 5) {
+          ch = 16;
+        } else if (hubAddress == 13) {
+          ch = 99;
+        } else if (hubAddress == 21) {
+          ch = 17;
+        } else if (hubAddress == 29) {
+          ch = 22;
+        } else {
+          std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
+          continue;
+        }
       } else {
-        std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
-        continue;
+        std::cerr << "ERROR: I don't recognize this mFecChannel for this mFec  mFecChannel:" << mFecChannel << std::endl;
       }
-    } else if (mFecChannel == 2) {
-      if (hubAddress == 5) {
-        ch = 16;
-      } else if (hubAddress == 13) {
-        ch = 99;
-      } else if (hubAddress == 21) {
-        ch = 17;
-      } else if (hubAddress == 29) {
-        ch = 99;
-      } else {
-        std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
-        continue;
-      }
+    } else {
+      std::cerr << "ERROR: I don't recognize this mFec: " << mFec << std::endl;
+      continue;
     }
 
 
@@ -272,10 +307,12 @@ void PLTGainCal::PrintGainCal5 ()
 
 void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
 {
-  int ch,row,col;
+  int mFec, mFecChannel, hubAddress;
+  int ch, row, col, roc;
   int irow;
   int icol;
   int ich;
+  int iroc;
 
   ifstream f(GainCalFileName.c_str());
   if (!f) {
@@ -302,8 +339,7 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
   for ( ; std::getline(f, line); ) {
     ss.clear();
     ss.str(line.c_str());
-    ch = row = col = 0;
-    ss >> ch >> ch >> ch >> col >> row;
+    ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
     ch = 22;
 
     if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
@@ -316,36 +352,30 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     irow = RowIndex(row);
     icol = ColIndex(col);
     ich  = ChIndex(ch);
+    iroc = RocIndex(roc);
 
     if (irow < 0 || icol < 0 || ich < 0) {
       continue;
     }
 
-    ss >> GC[ich][0][icol][irow][0]
-       >> GC[ich][0][icol][irow][1]
-       >> GC[ich][0][icol][irow][2]
-       >> GC[ich][1][icol][irow][0]
-       >> GC[ich][1][icol][irow][1]
-       >> GC[ich][1][icol][irow][2]
-       >> GC[ich][2][icol][irow][0]
-       >> GC[ich][2][icol][irow][1]
-       >> GC[ich][2][icol][irow][2];
+    ss >> GC[ich][iroc][icol][irow][0]
+       >> GC[ich][iroc][icol][irow][1]
+       >> GC[ich][iroc][icol][irow][2];
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
       for (int i = 0; i != 3; ++i) {
+        printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
         for (int j = 0; j != 3; ++j) {
-          printf("%6.2E ", GC[ich][i][icol][irow][j]);
+          printf(" %9.1E", GC[ich][i][icol][irow][j]);
         }
+        printf("\n");
       }
-      printf("\n");
     }
-
   }
 
   // Apparently this file was read no problem...
   fIsGood = true;
-
 
   return;
 }

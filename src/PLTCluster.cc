@@ -113,6 +113,7 @@ float PLTCluster::LY ()
 
 std::pair<float, float> PLTCluster::LCenter ()
 {
+  //return LCenterOfMass();
   return std::make_pair<float, float>(SeedHit()->LX(), SeedHit()->LY());
 }
 
@@ -163,3 +164,63 @@ std::pair<float, float> PLTCluster::GCenter ()
   return std::make_pair<float, float>(SeedHit()->GX(), SeedHit()->GY());
 }
 
+
+std::pair<float, float> PLTCluster::LCenterOfMass ()
+{
+  // Return the Local coords based on a charge weighted average of pixel hits
+
+  // X, Y, and Total Charge
+  float X = 0.0;
+  float Y = 0.0;
+  float ChargeSum = 0.0;
+
+  // Loop over each hit in the cluster
+  for (std::vector<PLTHit*>::iterator It = fHits.begin(); It != fHits.end(); ++It) {
+    X += (*It)->LX() * (*It)->Charge();
+    Y += (*It)->LY() * (*It)->Charge();
+    ChargeSum += (*It)->Charge();
+  }
+
+  // If charge sum is zero or less there may be a problem and the weighting won't come out right is my guess..
+  if (ChargeSum <= 0.0) {
+    std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::LCenterOfMass()" << std::endl;
+  }
+
+  // Put fiducial warning here?
+
+  // Just for printing diagnostics
+  //printf("LCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
+
+  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+}
+
+
+
+std::pair<float, float> PLTCluster::GCenterOfMass ()
+{
+  // Return the Global coords based on a charge weighted average of pixel hits
+
+  // X, Y, and Total Charge
+  float X = 0.0;
+  float Y = 0.0;
+  float ChargeSum = 0.0;
+
+  // Loop over each hit in the cluster
+  for (std::vector<PLTHit*>::iterator It = fHits.begin(); It != fHits.end(); ++It) {
+    X += (*It)->GX() * (*It)->Charge();
+    Y += (*It)->GY() * (*It)->Charge();
+    ChargeSum += (*It)->Charge();
+  }
+
+  // If charge sum is zero or less there may be a problem and the weighting won't come out right is my guess..
+  if (ChargeSum <= 0.0) {
+    std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::GCenterOfMass()" << std::endl;
+  }
+
+  // Put fiducial warning here?
+
+  // Just for printing diagnostics
+  //printf("LCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
+
+  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+}

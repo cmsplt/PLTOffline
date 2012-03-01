@@ -3,6 +3,7 @@
 
 #include "PLTHit.h"
 
+#include <iostream>
 #include <vector>
 
 class PLTCluster
@@ -43,6 +44,10 @@ class PLTCluster
     float GY ();
     float GZ ();
     std::pair<float, float> GCenter ();
+
+    // Cluster center
+    std::pair<float, float> LCenterOfMass ();
+    std::pair<float, float> GCenterOfMass ();
 
 
   private:

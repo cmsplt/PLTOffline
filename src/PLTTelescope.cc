@@ -268,7 +268,51 @@ void PLTTelescope::FillAndOrderTelescope ()
     Ordered[ fPlanes[i]->ROC() ] = fPlanes[i];
   }
 
-
   fPlanes = Ordered;
+  return;
+}
+
+
+void PLTTelescope::TrackFinderFromBeamCrossing ()
+{
+  // Find tracks in this telescope given some range for the beam crossing
+  // which is assumed to be at 0,0,0.
+  // Draw a cone from hit in plane 0 backwards looking for hits
+
+  // Check that tracks haven't already been filled
+  if (fTracks.size() != 0) {
+    std::cerr << "ERROR: It looks like tracks have already been filled here: PLTTelescope::TrackFinderFromBeamCrossing()" << std::endl;
+    return;
+  }
+
+  if (this->HitPlaneBits() != 0x7) {
+    return;
+  }
+
+  std::vector<int> UsedHits;
+
+  for (size_t iCluster = 0; iCluster != fPlanes[0]->NClusters(); ++iCluster) {
+    std::pair<float, float> const XY = fPlanes[0]->Cluster(iCluster)->GCenterOfMass();
+    float const Z = fPlanes[0]->Cluster(iCluster)->GZ();
+
+    float const SlopeX = XY.first  / (Z - 0.0);
+    float const SlopeY = XY.second / (Z - 0.0);
+
+    for (size_t iPlane = 1; iPlane != fPlanes.size(); ++iPlane) {
+      for (int iClusterP = 0; iClusterP != fPlanes[iPlane]->NClusters(); ++iClusterP) {
+        // check used list
+        //if (fPlanes[iPlane]->Cluster(iClusterP).ResidualXY() < 0.5) {
+          // think about keeping this plane
+          // add to used list
+        //}
+      }
+    }
+  }
+
+
+
+  for (size_t iPlane = 0; iPlane != fPlanes.size(); ++iPlane) {
+  }
+
   return;
 }
