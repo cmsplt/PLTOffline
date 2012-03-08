@@ -37,6 +37,9 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
   fAlignment.ReadAlignmentFile(AlignmentFileName);
   
   SetDefaults();
+
+  SetTrackingAlignment(&fAlignment);
+  SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_All);
 }
 
 
@@ -58,6 +61,8 @@ void PLTEvent::SetDefaults ()
     std::cerr << "WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering" << std::endl;
     SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_m2_m2);
   }
+
+  SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
   fRun = 0;
 
@@ -187,6 +192,12 @@ void PLTEvent::MakeEvent ()
       fPlanes.push_back( it->second.Plane(i));
     }
     fTelescopes.push_back( &(it->second) );
+  }
+
+  if (GetTrackingAlgorithm()) {
+    for (std::vector<PLTTelescope*>::iterator iTelescope = fTelescopes.begin(); iTelescope != fTelescopes.end(); ++iTelescope) {
+      RunTracking(**iTelescope);
+    }
   }
 
   return;

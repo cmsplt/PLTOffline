@@ -5,12 +5,13 @@
 #include "PLTTelescope.h"
 #include "PLTGainCal.h"
 #include "PLTAlignment.h"
+#include "PLTTracking.h"
 
 
 #include <map>
 
 
-class PLTEvent
+class PLTEvent : public PLTTracking
 {
   public:
     PLTEvent ();

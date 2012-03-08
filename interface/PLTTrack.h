@@ -24,6 +24,8 @@ class PLTTrack
     size_t NClusters ();
     size_t NHits ();
 
+    PLTCluster* Cluster (size_t const);
+
     float LResidualX (size_t const);
     float LResidualY (size_t const);
     std::pair<float, float> LResiduals (PLTCluster&, PLTAlignment&);
@@ -33,6 +35,8 @@ class PLTTrack
 
     float TX (float const);
     float TY (float const);
+
+    float ChiSquare ();
 
   private:
     std::vector<PLTCluster*> fClusters;
@@ -50,6 +54,8 @@ class PLTTrack
     // Residuals for each roc in X and Y in terms of pixels
     float fLResidualX[3];
     float fLResidualY[3];
+
+    float fChiSquare;
 
     static bool const DEBUG = false;
 

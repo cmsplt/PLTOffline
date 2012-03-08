@@ -25,6 +25,63 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits)
 
 
 
+void GetTracksHeadOnFirstROCMultiTracks (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // This function to generate events hitting telescopes head on
+
+  int const NTelescopes = 1;
+  for (int i = 1; i <= NTelescopes; ++i) {
+
+    int const NTracks = gRandom->Integer(10);
+
+    for (int itrack = 0; itrack < NTracks; ++itrack) {
+
+      // pick a starting point on the first ROC
+      int const StartCol = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
+      int const StartRow = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
+
+      float const SlopeX = 9.0 * (gRandom->Rndm() - 0.5);
+      float const SlopeY = 9.0 * (gRandom->Rndm() - 0.5);
+
+
+      for (int r = 0; r != 3; ++r) {
+        //PLTAlignment::CP* C = Alignment.GetCP(i, r);
+
+        // make straight track, see where that hits a plane if it's shifted..
+        // Optionally give it some fuzz..
+
+        // Use L coord system:
+        // THINK ABOUT THIS FOR ROTATIONS...
+        float const LZ = Alignment.LZ(i, r);
+        float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
+        float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+
+        std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+
+        int const PX = Alignment.PXfromLX(LXY.first);
+        int const PY = Alignment.PYfromLY(LXY.second);
+
+
+        //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+
+        // Just some random adc value
+        int const adc = gRandom->Poisson(150);
+
+        // Add it as a hit if it's in the range of the diamond
+        if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+          Hits.push_back( new PLTHit(i+14, r, PX, PY, adc) );
+        } else {
+          //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
+        }
+      }
+    }
+  }
+  return;
+}
+
+
+
+
 void GetRandTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment, float const Eff0, float const Eff1, float const Eff2)
 {
   // This function to generate events hitting telescopes head on
@@ -39,8 +96,8 @@ void GetRandTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Ali
     int const StartCol = gRandom->Integer(PLTU::NCOL + 20) + PLTU::FIRSTCOL - 10;
     int const StartRow = gRandom->Integer(PLTU::NROW + 20) + PLTU::FIRSTROW - 10;
 
-    float const SlopeX = 9.0 * (gRandom->Rndm() - 0.5);
-    float const SlopeY = 9.0 * (gRandom->Rndm() - 0.5);
+    float const SlopeX = 2.0 * (gRandom->Rndm() - 0.5);
+    float const SlopeY = 2.0 * (gRandom->Rndm() - 0.5);
 
 
     for (int r = 0; r != 3; ++r) {
@@ -348,7 +405,7 @@ int PLTMC ()
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (2) {
+    switch (7) {
       case 0:
         GetTracksCollisions(Hits);
         break;
@@ -369,6 +426,9 @@ int PLTMC ()
         break;
       case 6:
         GetRandTracksROCEfficiencies(Hits, Alignment, 0.20, 0.80, 0.90);
+        break;
+      case 7:
+        GetTracksHeadOnFirstROCMultiTracks(Hits, Alignment);
         break;
     }
 

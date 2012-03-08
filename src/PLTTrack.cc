@@ -177,6 +177,14 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     }
   }
 
+  if (NClusters() < 3) {
+    fChiSquare = 0;
+  } else {
+    fChiSquare = 0;
+    for (size_t i = 0; i != NClusters(); ++i) {
+      fChiSquare += fLResidualX[i]*fLResidualX[i] + fLResidualY[i]*fLResidualY[i];
+    }
+  }
 
   return 0;
 }
@@ -251,6 +259,13 @@ size_t PLTTrack::NHits ()
   return Sum;
 }
 
+
+PLTCluster* PLTTrack::Cluster (size_t const i)
+{
+  return fClusters[i];
+}
+
+
 float PLTTrack::LResidualX (size_t const i)
 {
   return fLResidualX[i];
@@ -269,4 +284,9 @@ float PLTTrack::TX (float const Z)
 float PLTTrack::TY (float const Z)
 {
   return fTVY * Z + fTOY;
+}
+
+float PLTTrack::ChiSquare ()
+{
+  return fChiSquare;
 }

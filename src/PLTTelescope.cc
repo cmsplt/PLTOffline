@@ -64,27 +64,27 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
 
     // XZ
     Line[0][i].SetX1(0);
-    Line[0][i].SetX2(5);
+    Line[0][i].SetX2(7.5);
     Line[0][i].SetY1(T->TX(0));
-    Line[0][i].SetY2(T->TX(5));
+    Line[0][i].SetY2(T->TX(7.5));
 
     // YZ
     Line[1][i].SetX1(0);
-    Line[1][i].SetX2(5);
+    Line[1][i].SetX2(7.5);
     Line[1][i].SetY1(T->TY(0));
-    Line[1][i].SetY2(T->TY(5));
+    Line[1][i].SetY2(T->TY(7.5));
 
     // XY
     Line[2][i].SetX1(T->TX(0));
-    Line[2][i].SetX2(T->TX(5));
+    Line[2][i].SetX2(T->TX(7.5));
     Line[2][i].SetY1(T->TY(0));
-    Line[2][i].SetY2(T->TY(5));
+    Line[2][i].SetY2(T->TY(7.5));
 
-    printf("XY 0 5: %9.3f %9.3f   %9.3f %9.3f\n", T->TX(0), T->TY(0), T->TX(5), T->TY(5));
+    //printf("XY 0 7: %9.3f %9.3f   %9.3f %9.3f\n", T->TX(0), T->TY(0), T->TX(7), T->TY(7));
   }
 
-  for (int i = 0; i != NT; ++i) {
-    for (int j = 0; j != 3; ++j) {
+  for (int i = 0; i != 3; ++i) {
+    for (int j = 0; j != NT; ++j) {
       Line[i][j].SetLineColor(4);
     }
   }
@@ -102,7 +102,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXZ.GetXaxis()->SetTitleOffset(0.7);
   gXZ.GetYaxis()->SetTitleOffset(0.5);
   gXZ.SetMarkerColor(2);
-  gXZ.GetXaxis()->SetLimits(-0.5, 5.5);
+  gXZ.GetXaxis()->SetLimits(-0.5, 8);
   gXZ.SetMinimum(-0.3);
   gXZ.SetMaximum( 0.3);
   gXZ.Draw("A*");
@@ -120,7 +120,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gYZ.GetXaxis()->SetTitleOffset(0.7);
   gYZ.GetYaxis()->SetTitleOffset(0.5);
   gYZ.SetMarkerColor(2);
-  gYZ.GetXaxis()->SetLimits(-0.5, 5.5);
+  gYZ.GetXaxis()->SetLimits(-0.5, 8);
   gYZ.SetMinimum(-0.3);
   gYZ.SetMaximum( 0.3);
   gYZ.Draw("A*");
@@ -273,46 +273,3 @@ void PLTTelescope::FillAndOrderTelescope ()
 }
 
 
-void PLTTelescope::TrackFinderFromBeamCrossing ()
-{
-  // Find tracks in this telescope given some range for the beam crossing
-  // which is assumed to be at 0,0,0.
-  // Draw a cone from hit in plane 0 backwards looking for hits
-
-  // Check that tracks haven't already been filled
-  if (fTracks.size() != 0) {
-    std::cerr << "ERROR: It looks like tracks have already been filled here: PLTTelescope::TrackFinderFromBeamCrossing()" << std::endl;
-    return;
-  }
-
-  if (this->HitPlaneBits() != 0x7) {
-    return;
-  }
-
-  std::vector<int> UsedHits;
-
-  for (size_t iCluster = 0; iCluster != fPlanes[0]->NClusters(); ++iCluster) {
-    std::pair<float, float> const XY = fPlanes[0]->Cluster(iCluster)->GCenterOfMass();
-    float const Z = fPlanes[0]->Cluster(iCluster)->GZ();
-
-    float const SlopeX = XY.first  / (Z - 0.0);
-    float const SlopeY = XY.second / (Z - 0.0);
-
-    for (size_t iPlane = 1; iPlane != fPlanes.size(); ++iPlane) {
-      for (int iClusterP = 0; iClusterP != fPlanes[iPlane]->NClusters(); ++iClusterP) {
-        // check used list
-        //if (fPlanes[iPlane]->Cluster(iClusterP).ResidualXY() < 0.5) {
-          // think about keeping this plane
-          // add to used list
-        //}
-      }
-    }
-  }
-
-
-
-  for (size_t iPlane = 0; iPlane != fPlanes.size(); ++iPlane) {
-  }
-
-  return;
-}

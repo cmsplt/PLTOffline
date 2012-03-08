@@ -220,7 +220,7 @@ std::pair<float, float> PLTCluster::GCenterOfMass ()
   // Put fiducial warning here?
 
   // Just for printing diagnostics
-  //printf("LCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
+  //printf("GCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
 
   return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
 }
