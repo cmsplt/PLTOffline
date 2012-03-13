@@ -93,20 +93,16 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
   float charge = -9999;
   if (fNParams == 3) {
     charge = 65. * (float(adc * adc) * GC[ich][iroc][icol][irow][2] + float(adc) * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][0]);
-    //printf("%12.3E %12.3E %12.3E  %9i  %12.3f\n",  GC[ich][iroc][icol][irow][0],  GC[ich][iroc][icol][irow][1],  GC[ich][iroc][icol][irow][2],  adc, charge);
-    //printf("22 2 %2i %2i %4i %10i %9.0f  %10.4E %10.4E %10.4E\n", col, row, (int) adc, 0, charge, GC[ich][iroc][icol][irow][0], GC[ich][iroc][icol][irow][1], GC[ich][iroc][icol][irow][2]);
 
   } else if (fNParams == 5) {
     charge = 65. * (TMath::Power( (float) adc, 2) * GC[ich][iroc][icol][irow][0] + (float) adc * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][2]
                     + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
                    );
   }
-  //printf("ich %2i  iroc %1i  icol %2i  row %2i  irow %2i  charge %12.3E\n", ich, iroc, icol, row, irow, charge);
-  //printf("%12.3E %12.3E %12.3E %12.3E %12.3E\n",  GC[ich][iroc][icol][irow][0],  GC[ich][iroc][icol][irow][1],  GC[ich][iroc][icol][irow][2],  GC[ich][iroc][icol][irow][3],  GC[ich][iroc][icol][irow][3]);
   if (PLTGainCal::DEBUGLEVEL) {
     printf("%2i %1i %2i %2i %4i %10.1f\n", ch, roc, col, row, adc, charge);
   }
-  //printf("%4i  %10.1f\n", adc, charge);
+
   return charge;
 }
 
@@ -123,11 +119,20 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
     throw;
   }
 
+  // Loop over header lines in the input data file
+  for (std::string line; std::getline(InFile, line); ) {
+    if (line == "") {
+      break;
+    }
+  }
+
+
+
   std::string line;
   std::getline(InFile, line);
   std::istringstream linestream;
   linestream.str(line);
-  int i = -6;
+  int i = -4;
   for (float junk; linestream >> junk; ++i) {
   }
   InFile.close();
@@ -150,7 +155,7 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 
 void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 {
-  int mFec, mFecChannel, hubAddress, row, col, roc, ch;
+  int ch, row, col, roc;
   int irow;
   int icol;
   int ich;
@@ -159,6 +164,13 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
     throw;
+  }
+
+  // Loop over header lines in the input data file
+  for (std::string line; std::getline(f, line); ) {
+    if (line == "") {
+      break;
+    }
   }
 
   for (int i = 0; i != NCHNS; ++i) {
@@ -180,46 +192,10 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   for ( ; std::getline(f, line); ) {
     ss.clear();
     ss.str(line.c_str());
-    mFec = mFecChannel = hubAddress = row = col = ch = 0;
-    ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
+    ch = row = col = ch = 0;
+    ss >> ch >> roc >> col >> row;
 
-    if (mFec == 0) {
-      ch = 22;
-    } else if (mFec == 7) {
-      if (mFecChannel == 1) {
-        if (hubAddress == 5) {
-          ch = 13;
-        } else if (hubAddress == 13) {
-          ch = 99;
-        } else if (hubAddress == 21) {
-          ch = 14;
-        } else if (hubAddress == 29) {
-          ch = 15;
-        } else {
-          std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
-          continue;
-        }
-      } else if (mFecChannel == 2) {
-        if (hubAddress == 5) {
-          ch = 16;
-        } else if (hubAddress == 13) {
-          ch = 99;
-        } else if (hubAddress == 21) {
-          ch = 17;
-        } else if (hubAddress == 29) {
-          ch = 22;
-        } else {
-          std::cerr << "ERROR: I don't recognize this hubAddress: " << hubAddress << std::endl;
-          continue;
-        }
-      } else {
-        std::cerr << "ERROR: I don't recognize this mFecChannel for this mFec  mFecChannel:" << mFecChannel << std::endl;
-      }
-    } else {
-      std::cerr << "ERROR: I don't recognize this mFec: " << mFec << std::endl;
-      continue;
-    }
-
+    // Just remember that on the plane tester it's channel 22
 
     if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS %i\n", ch); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS %i\n", row); };
@@ -332,11 +308,16 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     }
   }
 
-  std::string line;
-  std::getline(f, line);
-  std::istringstream ss;
 
-  for ( ; std::getline(f, line); ) {
+  // Loop over header lines in the input data file
+  for (std::string line; std::getline(f, line); ) {
+    if (line == "") {
+      break;
+    }
+  }
+
+  std::istringstream ss;
+  for (std::string line ; std::getline(f, line); ) {
     ss.clear();
     ss.str(line.c_str());
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;

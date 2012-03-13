@@ -59,6 +59,7 @@ int GainCalFastFits (TString const InFileName)
     throw;
   }
 
+
   // Set some basic style
   PLTU_karen::SetStyle();
 
@@ -90,7 +91,7 @@ int GainCalFastFits (TString const InFileName)
   std::stringstream s;
 
   // veriales we care about
-  int mFec, mFecChannel, hubAddress, roc, col, row;
+  int mFec, mFecChannel, hubAddress, roc, channel, col, row;
   float adc, vcal;
 
   // Keep track of which ROCs and what VCals we use
@@ -98,6 +99,14 @@ int GainCalFastFits (TString const InFileName)
   std::set<TString> ROCNames;
   std::set<int>     VCals;
 
+
+  // Loop over header linesin the input data file
+  for (std::string line; std::getline(f, line); ) {
+    fprintf(fOutFits, "%s\n", line.c_str());
+    if (line == "\n") {
+      break;
+    }
+  }
 
   // Loop over all lines in the input data file
   for (std::string line; std::getline(f, line); ) {
