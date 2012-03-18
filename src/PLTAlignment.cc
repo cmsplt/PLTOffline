@@ -55,6 +55,7 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
                >> Y
                >> Z;
 
+
     // If the ROC is -1 it is telescope coords, 0,1,2 are ROCs, anything else is bad.
     if (ROC == -1) {
       TeleMap[Channel].GR = R;
@@ -176,53 +177,34 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
   // set w.r.t. center of diamond
   float LX = PXtoLX(PX);
   float LY = PYtoLY(PY);
-  float LZ = C->LZ;
 
-  // Start with local rotation
-  float const cl = cos(C->LR);
-  float const sl = sin(C->LR);
-  float TX = LX * cl - LY * sl;
-  float TY = LX * sl + LY * cl;
-  float TZ = LZ;
+  std::vector<float> TXYZ;
+  LtoTXYZ(TXYZ, LX, LY, Hit.Channel(), Hit.ROC());
 
-  // Local translation
-  TX += C->LX;
-  TY += C->LY;
-  // TZ = TZ =)
 
   if (DEBUG) {
     printf("TtoL - L XY DIFF %12.3f %12.3f\n",
-        TtoLX(TX, TY, Hit.Channel(), Hit.ROC()) - LX,
-        TtoLY(TX, TY, Hit.Channel(), Hit.ROC()) - LY);
+        TtoLX(TXYZ[0], TXYZ[1], Hit.Channel(), Hit.ROC()) - LX,
+        TtoLY(TXYZ[0], TXYZ[1], Hit.Channel(), Hit.ROC()) - LY);
   }
 
-
-  // Global rotation
-  float const cg = cos(C->GR);
-  float const sg = sin(C->GR);
-  float GX = TX * cg - TY * sg;
-  float GY = TX * sg + TY * cg;
-  float GZ = TZ;
-
-  // Global translation
-  GX += C->GX;
-  GY += C->GY;
-  GZ += C->GZ;
+  std::vector<float> GXYZ;
+  TtoGXYZ(GXYZ, TXYZ[0], TXYZ[1], TXYZ[2], Hit.Channel(), Hit.ROC());
 
 
   // Set the local, telescope, and global hit coords
   Hit.SetLXY(LX, LY);
-  Hit.SetTXYZ(TX, TY, TZ);
-  Hit.SetGXYZ(GX, GY, GZ);
+  Hit.SetTXYZ(TXYZ[0], TXYZ[1], TXYZ[2]);
+  Hit.SetGXYZ(GXYZ[0], GXYZ[1], GXYZ[2]);
 
   //printf("%12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E\n", LX, LY, TX, TY, TZ, GX, GY, GZ);
 
-  std::vector<float> TV;
-  GtoTXYZ(TV, GX, GY, GZ, Hit.Channel(), Hit.ROC());
-  if (DEBUG) {
-    printf("GtoT - T XYZ DIFF %12.3f %12.3f %12.3f\n",
-        TV[0] - TX, TV[1] - TY, TV[2] - TZ);
-  }
+  //std::vector<float> TV;
+  //GtoTXYZ(TV, GX, GY, GZ, Hit.Channel(), Hit.ROC());
+  //if (DEBUG) {
+  //  printf("GtoT - T XYZ DIFF %12.3f %12.3f %12.3f\n",
+  //      TV[0] - TX, TV[1] - TY, TV[2] - TZ);
+  //}
 
   return;
 }
@@ -275,6 +257,69 @@ std::pair<float, float> PLTAlignment::TtoLXY (float const TX, float const TY, in
   //printf("XY DIFF %12.3f  %12.3f\n", TX - LX, TY - LY);
 
   return std::make_pair<float, float>(LX, LY);
+}
+
+
+void PLTAlignment::LtoTXYZ (std::vector<float>& VOUT, float const LX, float const LY, int const Channel, int const ROC)
+{
+  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
+
+  if (!C) {
+    std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
+    throw;
+  }
+
+  // Start with local rotation
+  float const cl = cos(C->LR);
+  float const sl = sin(C->LR);
+  float TX = LX * cl - LY * sl;
+  float TY = LX * sl + LY * cl;
+  float TZ = C->LZ;
+
+  // Local translation
+  TX += C->LX;
+  TY += C->LY;
+
+  VOUT.resize(3);
+  VOUT[0] = TX;
+  VOUT[1] = TY;
+  VOUT[2] = TZ;
+
+  return;
+}
+
+
+void PLTAlignment::TtoGXYZ (std::vector<float>& VOUT, float const TX, float const TY, float const TZ, int const Channel, int const ROC)
+{
+  // Get the constants for this telescope/plane etc
+  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
+
+  if (!C) {
+    std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
+    return;
+    throw;
+  }
+
+  // Global rotation
+  float const cg = cos(C->GR);
+  float const sg = sin(C->GR);
+  float GX = TX * cg - TY * sg;
+  float GY = TX * sg + TY * cg;
+  float GZ = TZ;
+
+  // Global translation
+  GX += C->GX;
+  GY += C->GY;
+  GZ += C->GZ;
+
+  VOUT.resize(3, 0);
+  VOUT[0] = GX;
+  VOUT[1] = GY;
+  VOUT[2] = GZ;
+
+  return;
 }
 
 
@@ -377,4 +422,25 @@ PLTAlignment::CP* PLTAlignment::GetCP (int const ch, int const roc)
   }
 
   return (CP*) 0x0;
+}
+
+PLTAlignment::CP* PLTAlignment::GetCP (std::pair<int, int> const& CHROC)
+{
+  if (fConstantMap.count(CHROC)) {
+    return &fConstantMap[ CHROC ];
+  }
+
+  return (CP*) 0x0;
+}
+
+std::vector< std::pair<int, int> > PLTAlignment::GetListOfChannelROCs ()
+{
+  // returns a vector containing the pixel fed channels for everything in the alignment
+
+  std::vector< std::pair<int, int> > ROCS;
+  for (std::map< std::pair<int, int>, CP >::iterator i = fConstantMap.begin(); i != fConstantMap.end(); ++i) {
+    ROCS.push_back(i->first);
+  }
+
+  return ROCS;
 }

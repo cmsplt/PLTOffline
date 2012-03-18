@@ -28,11 +28,15 @@ class PLTAlignment
     float TtoLY (float const, float const, int const, int const);
     std::pair<float, float> TtoLXY (float, float, int const, int const);
 
+
+    void LtoTXYZ (std::vector<float>&, float const, float const, int const, int const);
+    void TtoGXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     void GtoTXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     float GetTZ (int const, int const);
 
     float PXtoLX (int const);
     float PYtoLY (int const);
+
 
     int PXfromLX (float const);
     int PYfromLY (float const);
@@ -72,6 +76,9 @@ class PLTAlignment
     };
 
     CP* GetCP (int const, int const);
+    CP* GetCP (std::pair<int, int> const&);
+
+    std::vector< std::pair<int, int> > GetListOfChannelROCs ();
 
     // Mini struct to be used only in reading alignment file
     struct TelescopeAlignmentStruct {
