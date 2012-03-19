@@ -24,23 +24,29 @@
 #include "TFitResult.h"
 #include "TCanvas.h"
 
-#include "PLTU.h"
+#include "PLTU_karen.h"
 
 
 int const MINCOL = 13;
 int const MAXCOL = 38;
 int const MINROW = 39;
-int const MAXROW = 77;
+int const MAXROW = 79;
 
 int const NCOL = MAXCOL - MINCOL + 1;
 int const NROW = MAXROW - MINROW + 1;
 
+//kga
+//added Done--this keeps track of whether or not the efficiency for the trim value hit 100%.  
+//if this is the case, we don't want a trim value lower than that
+//b/c that implies the efficiency peaked, flattened, and then fell off again.
 struct B
 {
   float Eff[NCOL][NROW];
   int   Trim[NCOL][NROW];
   bool  Checked[NCOL][NROW];
+  bool  Done[NCOL][NROW];
 };
+
 
 
 int FindTrims (std::string const InFileName)
@@ -51,6 +57,10 @@ int FindTrims (std::string const InFileName)
     std::cerr << "ERROR: cannot open file: " << InFileName << std::endl;
     throw;
   }
+
+
+  // Set some basic style
+  PLTU_karen::SetStyle();
 
 
   std::map<int, B> STrim;
@@ -70,11 +80,14 @@ int FindTrims (std::string const InFileName)
            >> itrim
            >> NFired
            >> Efficiency;
-    //printf("%i %i %i %i %i %i %i %i %f\n" , mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, Efficiency);
+    printf("%i %i %i %i %i %i %i %i %f\n" , mFec, mFecChannel, hubAddress, Col, Row, ROC, VCal, itrim, Efficiency);
+    std::cout << "100*Efficiency =" << 100*Efficiency << std::endl;
+
     ROCID = 10000 * mFec + 1000 * mFecChannel + 10 * hubAddress + ROC;
     STrim[ROCID].Checked[Col - MINCOL][Row - MINROW] = true;
-    if (fabs(0.5 - Efficiency)*100 < fabs(50 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW])) {
-      if (Efficiency < 0.5){std::cout << "Efficiency = " << 100*Efficiency << " and STrim.Eff " << STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]<< std::endl;}
+    //if ((fabs(0.5 - Efficiency)*100 < fabs(50 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]))) {
+    if ((fabs(0.5 - Efficiency)*100 <= fabs(50 - STrim[ROCID].Eff[Col - MINCOL][Row - MINROW])) && (STrim[ROCID].Done[Col - MINCOL][Row - MINROW] != true)) {
+      if (Efficiency*100 < 50){std::cout << "Efficiency = " << 100*Efficiency << " and STrim.Eff " << STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]<< std::endl;}
       if (Col - MINCOL < 0 || Row - MINROW < 0) {
         std::cout << Col << "  " << Row << std::endl;
         std::cerr << "ERROR!!" << std::endl;
@@ -82,6 +95,17 @@ int FindTrims (std::string const InFileName)
       }
       STrim[ROCID].Eff[Col - MINCOL][Row - MINROW]  = 100*Efficiency;
       STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] = itrim;
+    }
+    else {std::cout << "Skipping ROCID = " << ROCID << " because it's already done with Trim = " << STrim[ROCID].Trim[Col - MINCOL][Row - MINROW] << std::endl;}
+    if (100*Efficiency > 90){
+      //mark the col and row as done as soon as the efficiency gets close to 100% (1)
+      //efficiency will increase from 0 to 1 as trim decreases (and as you go down in the file)
+      //If efficiency increases to 1, plateaus, and then drops down, you've got an IN efficiency
+      //but it's possible that during this inefficiency the trim value will be closer to 50%.
+      //we don't want that in our files.
+      //we want the 50% on the upward side of the efficiency plot, not the downward side.
+      //      std::cout << "This one's done! ROCID =" << ROCID << std::endl;
+      STrim[ROCID].Done[Col - MINCOL][Row - MINROW] = true;
     }
   }
 
@@ -131,12 +155,24 @@ int FindTrims (std::string const InFileName)
     }
     for (int icol = 0; icol != NCOL; ++icol) {
       for (int irow = 0; irow != NROW; ++irow) {
-        fprintf(ftrim, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,
-                It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 8);
-	htrim->Fill(It->second.Trim[icol][irow]);
-	htrim_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Trim[icol][irow]+0.1);
-        fprintf(feff,"%2i %2i %2i %9.5f 50.0 %2i\n", ROC, MINCOL + icol, MINROW + irow, It->second.Eff[icol][irow], It->second.Trim[icol][irow]);
-	heff_2x2->Fill(MINCOL+icol,MINROW +irow,It->second.Eff[icol][irow]+0.1);
+	//int trim = It->second.Checked[icol][irow] ? It->second.Trim[icol][irow] : 15;
+	//float eff = It->second.Checked[icol][irow] ? It->second.Eff[icol][irow] : 0;
+	//	int trim = It->second.Done[icol][irow] ? It->second.Trim[icol][irow] : 15;
+	//	float eff = It->second.Done[icol][irow] ? It->second.Eff[icol][irow] : 0;
+	int trim = 15;
+	int eff = 0;
+	//if either the efficiency hit 100% at some point, OR the best trim had an eff within a reasonable range
+	if (It->second.Done[icol][irow] || (It->second.Eff[icol][irow] > 1 && It->second.Eff[icol][irow] < 99)){
+	  trim = It->second.Trim[icol][irow];
+	  eff = It->second.Eff[icol][irow];
+	}
+	
+	fprintf(ftrim, "%2i %2i 1 0 %2i\n", MINCOL + icol, MINROW + irow,trim);
+	htrim->Fill(trim);
+	htrim_2x2->Fill(MINCOL+icol,MINROW +irow,trim+0.1);
+        fprintf(feff,"%2i %2i %2i %9.5f 50.0 %2i\n", ROC, MINCOL + icol, MINROW + irow, eff,trim);
+	heff_2x2->Fill(MINCOL+icol,MINROW +irow,eff+0.1);
+
       }
     }
 
@@ -194,26 +230,6 @@ int main (int argc, char* argv[])
   }
 
   std::string const InFileName = argv[1];
-
-
-  gROOT->SetStyle("Plain");
-  gStyle->SetPalette(1);
-  gStyle->SetOptStat(0);
-  gStyle->SetLabelFont(42,"XYZ");
-  gStyle->SetLabelSize(0.03,"XYZ");
-  gStyle->SetTextFont(42);
-  gStyle->SetTextSize(0.07);
-  //gStyle->SetTitleFont(42,"t");
-  gStyle->SetTitleFontSize(0.06);
-  gStyle->SetTitleX(0.15f);
-  gStyle->SetTitleY(0.97f);
-  //gStyle->SetTitleFont(42,"XYZ");
-  gStyle->SetTitleBorderSize(0);
-  gStyle->SetCanvasDefW(990);
-  gStyle->SetCanvasDefW(400);
-  gStyle->SetPadGridX(1);
-  gStyle->SetPadGridY(1);
-
 
 
   FindTrims(InFileName);
