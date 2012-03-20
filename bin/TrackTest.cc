@@ -62,10 +62,10 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int ir = 0; ir != 3; ++ir) {
             std::vector<TH2F*> Vec;
             TString R = TString::Format("%i", ir);
-            Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R, Name+"_12Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
-            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
-            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 30, -0.3, 0.3, 30, -0.3, 0.3 ));
-            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  30, -0.3, 0.3, 30, -0.3, 0.3 ));
+            Vec.push_back( new TH2F( Name+"_12Plane_ROC"+R, Name+"_12Plane_ROC"+R, 100, -0.1, 0.1, 100, -0.1, 0.1 ));
+            Vec.push_back( new TH2F( Name+"_02Plane_ROC"+R, Name+"_02Plane_ROC"+R, 100, -0.1, 0.1, 100, -0.1, 0.1 ));
+            Vec.push_back( new TH2F( Name+"_01Plane_ROC"+R, Name+"_01Plane_ROC"+R, 100, -0.1, 0.1, 100, -0.1, 0.1 ));
+            Vec.push_back( new TH2F( Name+"_3Plane_ROC"+R,  Name+"_3Plane_ROC"+R,  100, -0.1, 0.1, 100, -0.1, 0.1 ));
             ResidualMap[Telescope->Channel()].push_back(Vec);
         }
       }
@@ -102,9 +102,6 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
           for (int j = 0; j != 3; ++j) {
             PLTCluster* Cluster = Telescope->Plane(j)->Cluster(0);
             std::pair<float, float> RXY = Tracks[i].LResiduals(*Cluster, Alignment);
-            if (Telescope->Channel() == 23 && i == 1 && j == 1) {
-              printf("Filling ResidualMap ch ROC i ResXY: %2i %i %i %12.6f %12.6f\n", Telescope->Channel(), Cluster->ROC(), i, RXY.first, RXY.second);
-            }
             ResidualMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(RXY.first, RXY.second);
 
             if (i == j && i <= 2) {

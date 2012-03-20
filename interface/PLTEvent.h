@@ -38,7 +38,7 @@ class PLTEvent : public PLTTracking
     void AddHit (PLTHit*);
     void MakeEvent ();
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
-    void SetPlaneClustering (PLTPlane::Clustering,PLTPlane::FiducialRegion);
+    void SetPlaneClustering (PLTPlane::Clustering, PLTPlane::FiducialRegion);
 
     unsigned long EventNumber ()
     { 

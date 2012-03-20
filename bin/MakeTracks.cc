@@ -61,7 +61,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
       PLTTelescope* Telescope = Event.Telescope(it);
 
       static int ievent = 0;
-      if (Telescope->NTracks() > 3 && ievent < 20) {
+      if (Telescope->NTracks() > 0 && ievent < 20) {
         Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ievent++).Data() );
       }
 

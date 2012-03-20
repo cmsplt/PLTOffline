@@ -23,6 +23,7 @@ class PLTTelescope
     size_t    NHits ();
     size_t    NClusters ();
     size_t    NTracks ();
+    PLTTrack* Track (size_t);
     int       HitPlaneBits ();
     int       NHitPlanes ();
     void      AddTrack (PLTTrack*);
@@ -31,7 +32,7 @@ class PLTTelescope
 
   private:
     std::vector<PLTPlane*> fPlanes;
-    std::vector<PLTTrack*>  fTracks;
+    std::vector<PLTTrack*> fTracks;
     int fChannel;
 
 

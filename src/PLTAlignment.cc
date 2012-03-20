@@ -49,24 +49,31 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
     std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
 
     // read one line at a time
-    float R, X, Y, Z;
-    LineStream >> R
-               >> X
-               >> Y
-               >> Z;
+    float R, RZ, RY, X, Y, Z;
 
 
     // If the ROC is -1 it is telescope coords, 0,1,2 are ROCs, anything else is bad.
     if (ROC == -1) {
-      TeleMap[Channel].GR = R;
-      TeleMap[Channel].GX = X;
-      TeleMap[Channel].GY = Y;
-      TeleMap[Channel].GZ = Z;
+      LineStream >> RZ
+                 >> RY
+                 >> X
+                 >> Y
+                 >> Z;
+      TeleMap[Channel].GRZ = RZ;
+      TeleMap[Channel].GRY = RY;
+      TeleMap[Channel].GX  = X;
+      TeleMap[Channel].GY  = Y;
+      TeleMap[Channel].GZ  = Z;
     } else if (ROC == 0 || ROC == 1 || ROC == 2) {
       if (TeleMap.count(Channel) == 0) {
         std::cerr << "ERROR: Telescope coords not defined which must be defined before ROCs in alignment file" << std::endl;
         throw;
       }
+
+      LineStream >> R
+                 >> X
+                 >> Y
+                 >> Z;
 
       // Construct the alignment obj
       CP C;
@@ -74,7 +81,8 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
       C.LX = X;
       C.LY = Y;
       C.LZ = Z;
-      C.GR = TeleMap[Channel].GR;
+      C.GRZ = TeleMap[Channel].GRZ;
+      C.GRY = TeleMap[Channel].GRY;
       C.GX = TeleMap[Channel].GX;
       C.GY = TeleMap[Channel].GY;
       C.GZ = TeleMap[Channel].GZ;
@@ -107,13 +115,14 @@ void PLTAlignment::PrintAlignmentFile (std::string const OutFileName)
     int const Channel = it->first.first;
     int const ROC     = it->first.second;
     CP C = it->second;
-    fprintf(Out, "%2i  %1i %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E\n",
+    fprintf(Out, "%2i  %1i %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E\n",
         Channel,
         ROC,
         C.LR,
         C.LX,
         C.LY,
-        C.GR,
+        C.GRZ,
+        C.GRY,
         C.GX,
         C.GY,
         C.GZ);
@@ -133,12 +142,12 @@ bool PLTAlignment::IsGood ()
 
 float PLTAlignment::PXtoLX (int const px)
 {
-  return PLTU::PIXELWIDTH * ((px + 0.0000001) - 25.5);
+  return PLTU::PIXELWIDTH * (25.5 - (px - 0.0000001));
 }
 
 float PLTAlignment::PYtoLY (int const py)
 {
-  return PLTU::PIXELHEIGHT * ((py + 0.0000001) - 59.5);
+  return PLTU::PIXELHEIGHT * (59.5 - (py - 0.0000001));
 }
 
 int PLTAlignment::PXfromLX (float const lx)
@@ -260,6 +269,42 @@ std::pair<float, float> PLTAlignment::TtoLXY (float const TX, float const TY, in
 }
 
 
+void PLTAlignment::VTtoVGXYZ (std::vector<float>& VOUT, float const TX, float const TY, float const TZ, int const Channel, int const ROC)
+{
+  // Get the constants for this telescope/plane etc
+  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
+
+  if (!C) {
+    std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
+    return;
+    throw;
+  }
+
+  // Global rotation about Zaxis
+  float const cgz = cos(C->GRZ);
+  float const sgz = sin(C->GRZ);
+  float GXZ = TX * cgz - TY * sgz;
+  float GYZ = TX * sgz + TY * cgz;
+  float GZZ = TZ;
+
+
+  // Global rotation about Yaxis
+  float const cgy = cos(C->GRY);
+  float const sgy = sin(C->GRY);
+  float GXY = GXZ * cgy + GZZ * sgy;
+  float GYY = GYZ;
+  float GZY = GZZ * cgy - GXZ * sgy;
+
+  VOUT.resize(3, 0);
+  VOUT[0] = GXY;
+  VOUT[1] = GYY;
+  VOUT[2] = GZY;
+
+
+  return;
+}
+
 void PLTAlignment::LtoTXYZ (std::vector<float>& VOUT, float const LX, float const LY, int const Channel, int const ROC)
 {
   std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
@@ -302,22 +347,30 @@ void PLTAlignment::TtoGXYZ (std::vector<float>& VOUT, float const TX, float cons
     throw;
   }
 
-  // Global rotation
-  float const cg = cos(C->GR);
-  float const sg = sin(C->GR);
-  float GX = TX * cg - TY * sg;
-  float GY = TX * sg + TY * cg;
-  float GZ = TZ;
+  // Global rotation about Zaxis
+  float const cgz = cos(C->GRZ);
+  float const sgz = sin(C->GRZ);
+  float GXZ = TX * cgz - TY * sgz;
+  float GYZ = TX * sgz + TY * cgz;
+  float GZZ = TZ;
 
-  // Global translation
-  GX += C->GX;
-  GY += C->GY;
-  GZ += C->GZ;
+  GXZ += C->GX;
+  GYZ += C->GY;
+  GZZ += C->GZ;
+
+
+  // Global rotation about Yaxis
+  float const cgy = cos(C->GRY);
+  float const sgy = sin(C->GRY);
+  float GXY = GXZ * cgy + GZZ * sgy;
+  float GYY = GYZ;
+  float GZY = GZZ * cgy - GXZ * sgy;
 
   VOUT.resize(3, 0);
-  VOUT[0] = GX;
-  VOUT[1] = GY;
-  VOUT[2] = GZ;
+  VOUT[0] = GXY;
+  VOUT[1] = GYY;
+  VOUT[2] = GZY;
+
 
   return;
 }
@@ -338,18 +391,26 @@ void PLTAlignment::GtoTXYZ (std::vector<float>& VOUT, float const GX, float cons
     throw;
   }
 
+  // Global rotation about Yaxis
+  float const cgy = cos(C->GRY);
+  float const sgy = sin(C->GRY);
+  float GXY = GX * cgy - GZ * sgy;
+  float GYY = GY;
+  float GZY = GZ * cgy + GX * sgy;
 
-  float const GXA = GX - C->GX;
-  float const GYA = GY - C->GY;
+
+  float const GXA = GXY - C->GX;
+  float const GYA = GYY - C->GY;
+  float const GZA = GZY - C->GZ;
 
 
-  float const cl = cos(C->GR);
-  float const sl = sin(C->GR);
+  float const cl = cos(C->GRZ);
+  float const sl = sin(C->GRZ);
 
 
   float const TX =  GXA * cl + GYA * sl;
   float const TY = -GXA * sl + GYA * cl;
-  float const TZ =  GZ - C->GZ;
+  float const TZ =  GZA;
 
 
   VOUT.resize(3);
@@ -391,9 +452,15 @@ float PLTAlignment::LZ (int const ch, int const roc)
 }
 
 
-float PLTAlignment::GR (int const ch, int const roc)
+float PLTAlignment::GRZ (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GR;
+  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GRZ;
+}
+
+
+float PLTAlignment::GRY (int const ch, int const roc)
+{
+  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GRY;
 }
 
 

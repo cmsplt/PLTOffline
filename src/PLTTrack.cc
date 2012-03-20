@@ -156,6 +156,21 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   fTOY = YT[0];
   fTOZ = ZT[0];
 
+  // These "G" quantities are defined to be point on ROC0
+  std::vector<float> GV;
+  // Rotate vector only..
+  Alignment.VTtoVGXYZ(GV, fTVX, fTVY, fTVZ, Channel, 0);
+  fGVX = GV[0];
+  fGVY = GV[1];
+  fGVZ = GV[2];
+  std::vector<float> GO;
+  Alignment.TtoGXYZ(GO, fTOX, fTOY, fTOZ, Channel, 0);
+  fGOX = GO[0];
+  fGOY = GO[1];
+  fGOZ = GO[2];
+
+  //printf("TEST: %f %f %f %f\n", fTOX, fTOY, fTOZ, fGOZ);
+
   // Compute where the line passes in each planes coords
   float XL[3];
   float YL[3];

@@ -39,11 +39,16 @@ PLTPlane* PLTTelescope::Plane(size_t i)
 void PLTTelescope::DrawTracksAndHits (std::string const Name)
 {
   int const NH = NHits();
+  int const NC = NClusters();
   int const NT = NTracks();
 
   float X[NH];
   float Y[NH];
   float Z[NH];
+
+  float CX[NC];
+  float CY[NC];
+  float CZ[NC];
 
   TLine Line[3][NT];
 
@@ -58,6 +63,19 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
       ++j;
     }
   }
+  int jc = 0;
+  for (size_t ip = 0; ip != NPlanes(); ++ip) {
+    PLTPlane* P = Plane(ip);
+    for (size_t ic = 0; ic != P->NClusters(); ++ic) {
+      PLTCluster* C = P->Cluster(ic);
+      CX[jc] = C->TX();
+      CY[jc] = C->TY();
+      CZ[jc] = C->TZ();
+      ++jc;
+    }
+  }
+
+  std::vector<PLTHit*> UsedHits;
 
   for (int i = 0; i != NT; ++i) {
     PLTTrack* T = fTracks[i];
@@ -67,33 +85,36 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     Line[0][i].SetX2(7.5);
     Line[0][i].SetY1(T->TX(0));
     Line[0][i].SetY2(T->TX(7.5));
+    Line[0][i].SetLineColor(i+1);
 
     // YZ
     Line[1][i].SetX1(0);
     Line[1][i].SetX2(7.5);
     Line[1][i].SetY1(T->TY(0));
     Line[1][i].SetY2(T->TY(7.5));
+    Line[1][i].SetLineColor(i+1);
 
     // XY
     Line[2][i].SetX1(T->TX(0));
     Line[2][i].SetX2(T->TX(7.5));
     Line[2][i].SetY1(T->TY(0));
     Line[2][i].SetY2(T->TY(7.5));
+    Line[2][i].SetLineColor(i+1);
 
     //printf("XY 0 7: %9.3f %9.3f   %9.3f %9.3f\n", T->TX(0), T->TY(0), T->TX(7), T->TY(7));
   }
 
-  for (int i = 0; i != 3; ++i) {
-    for (int j = 0; j != NT; ++j) {
-      Line[i][j].SetLineColor(4);
-    }
-  }
+  //for (int i = 0; i != 3; ++i) {
+  //  for (int j = 0; j != NT; ++j) {
+  //    Line[i][j].SetLineColor(4);
+  //  }
+  //}
 
   TCanvas C("TelescopeTrack", "TelescopeTrack", 400, 600);;
   C.Divide(1, 3);
 
   C.cd(1);
-  TGraph gXZ(NH, Z, X);
+  TGraph gXZ(NC, CZ, CX);
   gXZ.SetTitle("");
   gXZ.GetXaxis()->SetTitle("Z (cm)");
   gXZ.GetYaxis()->SetTitle("X (cm)");
@@ -101,7 +122,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXZ.GetYaxis()->SetTitleSize(0.08);
   gXZ.GetXaxis()->SetTitleOffset(0.7);
   gXZ.GetYaxis()->SetTitleOffset(0.5);
-  gXZ.SetMarkerColor(2);
+  gXZ.SetMarkerColor(40);
   gXZ.GetXaxis()->SetLimits(-0.5, 8);
   gXZ.SetMinimum(-0.3);
   gXZ.SetMaximum( 0.3);
@@ -111,7 +132,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   }
 
   C.cd(2);
-  TGraph gYZ(NH, Z, Y);
+  TGraph gYZ(NC, CZ, CY);
   gYZ.SetTitle("");
   gYZ.GetXaxis()->SetTitle("Z (cm)");
   gYZ.GetYaxis()->SetTitle("Y (cm)");
@@ -119,7 +140,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gYZ.GetYaxis()->SetTitleSize(0.08);
   gYZ.GetXaxis()->SetTitleOffset(0.7);
   gYZ.GetYaxis()->SetTitleOffset(0.5);
-  gYZ.SetMarkerColor(2);
+  gYZ.SetMarkerColor(40);
   gYZ.GetXaxis()->SetLimits(-0.5, 8);
   gYZ.SetMinimum(-0.3);
   gYZ.SetMaximum( 0.3);
@@ -131,7 +152,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   //TVirtualPad* Pad = C.cd(3);
   //Pad->DrawFrame(-30, -30, 30, 30);
   C.cd(3);
-  TGraph gXY(NH, X, Y);
+  TGraph gXY(NC, CX, CY);
   gXY.SetTitle("");
   gXY.GetXaxis()->SetTitle("X (cm)");
   gXY.GetYaxis()->SetTitle("Y (cm)");
@@ -139,7 +160,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXY.GetYaxis()->SetTitleSize(0.08);
   gXY.GetXaxis()->SetTitleOffset(0.7);
   gXY.GetYaxis()->SetTitleOffset(0.5);
-  gXY.SetMarkerColor(2);
+  gXY.SetMarkerColor(40);
   gXY.GetXaxis()->SetLimits(-0.3, 0.3);
   gXY.SetMinimum(-0.3);
   gXY.SetMaximum( 0.3);
@@ -216,6 +237,11 @@ size_t PLTTelescope::NClusters ()
 size_t PLTTelescope::NTracks ()
 {
   return fTracks.size();
+}
+
+PLTTrack* PLTTelescope::Track (size_t i)
+{
+  return fTracks[i];
 }
 
 int PLTTelescope::HitPlaneBits ()

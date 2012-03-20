@@ -41,15 +41,24 @@ class PLTTrack
   private:
     std::vector<PLTCluster*> fClusters;
 
-    // Vector in *telescope* coords
+  public:
+    // Vector in *telescope* and *global* coords
     float fTVX;
     float fTVY;
     float fTVZ;
 
-    // Origin in *telescope* coords as defined by ROC-0
+    float fGVX;
+    float fGVY;
+    float fGVZ;
+
+    // Origin in *telescope* and *global* coords as defined by ROC-0
     float fTOX;
     float fTOY;
     float fTOZ;
+
+    float fGOX;
+    float fGOY;
+    float fGOZ;
 
     // Residuals for each roc in X and Y in terms of pixels
     float fLResidualX[3];

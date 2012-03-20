@@ -241,22 +241,32 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 
 void PLTGainCal::CheckGainCalFile(std::string const GainCalFileName, int const Channel)
 {
-  ReadGainCalFile5(GainCalFileName);
+  ReadGainCalFile(GainCalFileName);
+
+  int const ich  = ChIndex(Channel);
+
+  int NMissing = 0;
+  int NTotal = 0;
 
   for (int j = 0; j != NROCS; ++j) {
     for (int k = 0; k != PLTU::NCOL; ++k) {
       for (int m = 0; m != PLTU::NROW; ++m) {
+        ++NTotal;
         if (
-          GC[Channel][j][k][m][0] == 0 &&
-          GC[Channel][j][k][m][1] == 0 &&
-          GC[Channel][j][k][m][2] == 0 &&
-          GC[Channel][j][k][m][3] == 0 &&
-          GC[Channel][j][k][m][4] == 0) {
-          printf("Missing Coefs: Ch %2i  Roc %1i  Col %2i  Row %2i\n", Channel, j, k, m);
+          GC[ich][j][k][m][0] == 0 &&
+          GC[ich][j][k][m][1] == 0 &&
+          GC[ich][j][k][m][2] == 0 &&
+          GC[ich][j][k][m][3] == 0 &&
+          GC[ich][j][k][m][4] == 0) {
+          printf("Missing Coefs: iCh %2i  iRoc %1i  iCol %2i  iRow %2i\n", ich, j, k, m);
+          ++NMissing;
         }
       }
     }
   }
+
+  printf("Number missing is: %i / %i = %E\n", NMissing, NTotal, (float) NMissing / (float) NTotal);
+
   return;
 }
 

@@ -109,7 +109,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   std::map<int, TH2F*> hEffMapN;
   std::map<int, TH2F*> hEffMapD;
 
-  float const PixelDist = 3;
+  float const PixelDist = 5;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -193,6 +193,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
               //hEffMapN[Channel * 10 + 2]->Fill(Plane[2]->Cluster(0)->SeedHit()->Column(), Plane[2]->Cluster(0)->SeedHit()->Row());
               hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
               ++HC[Channel].NFiducialAndHit[2];
+            } else {
+              static int ievent = 0;
+              if (ievent < 20) {
+                Telescope->DrawTracksAndHits( TString::Format("Jeebus_%04i.gif", ievent++).Data());
+              }
             }
           }
         }

@@ -32,6 +32,7 @@ class PLTAlignment
     void LtoTXYZ (std::vector<float>&, float const, float const, int const, int const);
     void TtoGXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     void GtoTXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
+    void VTtoVGXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     float GetTZ (int const, int const);
 
     float PXtoLX (int const);
@@ -54,25 +55,27 @@ class PLTAlignment
 
     //GetPXPY (LX, LY, ch, ROC);
 
-    float LR (int const, int const);
-    float LX (int const, int const);
-    float LY (int const, int const);
-    float LZ (int const, int const);
-    float GR (int const, int const);
-    float GX (int const, int const);
-    float GY (int const, int const);
-    float GZ (int const, int const);
+    float LR  (int const, int const);
+    float LX  (int const, int const);
+    float LY  (int const, int const);
+    float LZ  (int const, int const);
+    float GRZ (int const, int const);
+    float GRY (int const, int const);
+    float GX  (int const, int const);
+    float GY  (int const, int const);
+    float GZ  (int const, int const);
 
     struct CP {
       // All constants refer to planes as though we were looking FROM the IP
-      float LR; // Local clockwise rotation
-      float LX; // Local X translation
-      float LY; // Local Y translation
-      float LZ; // Local Z translation
-      float GR; // Global clockwise rotation
-      float GX; // Global X translation
-      float GY; // Global Y translation
-      float GZ; // Global Z translation
+      float LR;  // Local clockwise rotation
+      float LX;  // Local X translation
+      float LY;  // Local Y translation
+      float LZ;  // Local Z translation
+      float GRZ; // Global clockwise rotation about Z
+      float GRY; // Global clockwise rotation about Y
+      float GX;  // Global X translation
+      float GY;  // Global Y translation
+      float GZ;  // Global Z translation
     };
 
     CP* GetCP (int const, int const);
@@ -82,7 +85,7 @@ class PLTAlignment
 
     // Mini struct to be used only in reading alignment file
     struct TelescopeAlignmentStruct {
-      float GR, GX, GY, GZ;
+      float GRZ, GRY, GX, GY, GZ;
     };
 
 
