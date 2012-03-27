@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 #include "PLTEvent.h"
 #include "PLTU.h"
@@ -152,6 +153,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   TEveRecTrackD *rc = new TEveRecTrackD();
 
 
+  std::map<int, int> NTrackMap;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -159,13 +161,14 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
-    if (ientry > 4) return 2;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
 
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
+
+      if (NTrackMap[Telescope->Channel()] > 10) continue;
 
 
       printf("Number of tracks: %i\n", Telescope->NTracks());
@@ -185,6 +188,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
         //gEve->AddElement(list);
         //list->AddElement(track);
         gEve->AddElement(track);
+        ++NTrackMap[Telescope->Channel()];
       }
 
       gEve->Redraw3D(kTRUE);
