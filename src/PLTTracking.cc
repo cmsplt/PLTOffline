@@ -90,6 +90,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
   PLTPlane* P1 = Telescope.Plane(1);
   PLTPlane* P2 = Telescope.Plane(2);
 
+
   // Vector to keep track of tracks that we're interested in
   std::vector<PLTTrack*> MyTracks;
 
@@ -121,6 +122,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
         if (DEBUG) {
           printf("Distance: %12.3E\n", Distance);
         }
+
 
         // If it's not too far off, keep it!
         if (Distance < 0.1000) {

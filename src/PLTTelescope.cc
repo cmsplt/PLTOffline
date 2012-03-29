@@ -143,7 +143,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gYZ.SetMarkerColor(40);
   gYZ.GetXaxis()->SetLimits(-0.5, 8);
   gYZ.SetMinimum(-0.3);
-  gYZ.SetMaximum( 0.3);
+  gYZ.SetMaximum( 0.6);
   gYZ.Draw("A*");
   for (int i = 0; i != NT; ++i) {
     Line[1][i].Draw();

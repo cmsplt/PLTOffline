@@ -60,6 +60,10 @@ class PLTTrack
     float fGOY;
     float fGOZ;
 
+    // Where the track passes through the X=0(=0), Y=0(=1), and Z=0 planes
+    // Three corrds just because that's easy enough 
+    float fPlaner[3][3];
+
     // Residuals for each roc in X and Y in terms of pixels
     float fLResidualX[3];
     float fLResidualY[3];

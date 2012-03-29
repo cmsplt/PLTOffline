@@ -43,7 +43,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 
   float VX, VY, VZ;
 
-  int Channel = fClusters[0]->Channel();
+  int const Channel = fClusters[0]->Channel();
 
   if (NClusters() == 2) {
 
@@ -52,13 +52,16 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     VY = fClusters[1]->TY() - fClusters[0]->TY();
     VZ = fClusters[1]->TZ() - fClusters[0]->TZ();
 
+    float const SlopeX = VX / VZ;
+    float const SlopeY = VY / VZ;
+
     // Length
-    //float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);
+    float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);
 
     // Normalize vectors
-    VX = VX / VZ;
-    VY = VY / VZ;
-    VZ = VZ / VZ;
+    VX = VX / Mod;
+    VY = VY / Mod;
+    VZ = VZ / Mod;
 
     if (DEBUG) {
       printf("2P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
@@ -75,8 +78,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 
       PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
 
-      XT[ROC] = (C->LZ - fClusters[0]->TZ()) * VX + fClusters[0]->TX();
-      YT[ROC] = (C->LZ - fClusters[0]->TZ()) * VY + fClusters[0]->TY();
+      XT[ROC] = (C->LZ - fClusters[0]->TZ()) * SlopeX + fClusters[0]->TX();
+      YT[ROC] = (C->LZ - fClusters[0]->TZ()) * SlopeY + fClusters[0]->TY();
       ZT[ROC] =  C->LZ;
     }
 
@@ -100,11 +103,11 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
                       + fClusters[1]->TY() * fClusters[1]->TZ()
                       + fClusters[2]->TY() * fClusters[2]->TZ();
 
-    float const SlopeX = (3 * SumXZ - SumX * SumZ) / (3 * SumZ2 - SumZ * SumZ);
-    float const SlopeY = (3 * SumYZ - SumY * SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    float const MySlopeX = (3 * SumXZ - SumX * SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    float const MySlopeY = (3 * SumYZ - SumY * SumZ) / (3 * SumZ2 - SumZ * SumZ);
 
-    float const MySlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
-    float const MySlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
+    float const SlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
+    float const SlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
     //printf("SlopeDiff XY: %12.6E  %12.6E\n", MySlopeX - SlopeX, MySlopeY - SlopeY);
 
     VX = SlopeX;
@@ -112,15 +115,15 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     VZ = 1;
 
     // Length
-    //float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);
+    float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);
 
     // Normalize vectors
-    VX = VX / VZ;
-    VY = VY / VZ;
-    VZ = VZ / VZ;
+    VX = VX / Mod;
+    VY = VY / Mod;
+    VZ = VZ / Mod;
 
     if (DEBUG) {
-      printf("3P VXVYVZ %12.3f %12.3f %12.3f\n", VX, VY, VZ);
+      printf("3P VXVYVZ %12.3f %12.3f %12.3f  %12.3f\n", VX, VY, VZ, Mod);
     }
 
     float const AvgX = (fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX()) / 3.0;
@@ -139,8 +142,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
       PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
 
 
-      XT[ROC] = (C->LZ - AvgZ) * VX + AvgX;
-      YT[ROC] = (C->LZ - AvgZ) * VY + AvgY;
+      XT[ROC] = (C->LZ - AvgZ) * SlopeX + AvgX;
+      YT[ROC] = (C->LZ - AvgZ) * SlopeY + AvgY;
       ZT[ROC] =  C->LZ;
     }
 
@@ -169,6 +172,21 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   fGOY = GO[1];
   fGOZ = GO[2];
 
+  // Comput this track passes through each X=0, Y=0, Z=0 planes
+  fPlaner[0][0] = fGOX - fGOX / fGVX * fGVX;
+  fPlaner[0][1] = fGOY - fGOX / fGVX * fGVY;
+  fPlaner[0][2] = fGOZ - fGOX / fGVX * fGVZ;
+
+  fPlaner[1][0] = fGOX - fGOY / fGVY * fGVX;
+  fPlaner[1][1] = fGOY - fGOY / fGVY * fGVY;
+  fPlaner[1][2] = fGOZ - fGOY / fGVY * fGVZ;
+
+  fPlaner[2][0] = fGOX - fGOZ / fGVZ * fGVX;
+  fPlaner[2][1] = fGOY - fGOZ / fGVZ * fGVY;
+  fPlaner[2][2] = fGOZ - fGOZ / fGVZ * fGVZ;
+  //for (int ii = 0; ii != 3; ++ii) {
+  //  printf("%15E %15E %15E\n", fPlaner[ii][0], fPlaner[ii][1], fPlaner[ii][2]);
+  //}
   //printf("TEST: %f %f %f %f\n", fTOX, fTOY, fTOZ, fGOZ);
 
   // Compute where the line passes in each planes coords
@@ -178,7 +196,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   for (size_t ic = 0; ic != NClusters(); ++ic) {
     PLTCluster* Cluster = fClusters[ic];
 
-    int const Channel = Cluster->SeedHit()->Channel();
+    //int const Channel = Cluster->SeedHit()->Channel();
     int const ROC     = Cluster->SeedHit()->ROC();
 
     XL[ROC] = Alignment.TtoLX(XT[ROC], YT[ROC], Channel, ROC);
@@ -293,12 +311,12 @@ float PLTTrack::LResidualY (size_t const i)
 
 float PLTTrack::TX (float const Z)
 {
-  return fTVX * Z + fTOX;
+  return fTVX * (Z / fTVZ) + fTOX;
 }
 
 float PLTTrack::TY (float const Z)
 {
-  return fTVY * Z + fTOY;
+  return fTVY * (Z / fTVZ) + fTOY;
 }
 
 float PLTTrack::ChiSquare ()

@@ -20,7 +20,7 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
   fIsGood = true;
 
 
-  std::map<int, TelescopeAlignmentStruct> TeleMap;
+  fTelescopeMap.clear();
 
 
   // Open file
@@ -59,13 +59,13 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
                  >> X
                  >> Y
                  >> Z;
-      TeleMap[Channel].GRZ = RZ;
-      TeleMap[Channel].GRY = RY;
-      TeleMap[Channel].GX  = X;
-      TeleMap[Channel].GY  = Y;
-      TeleMap[Channel].GZ  = Z;
+      fTelescopeMap[Channel].GRZ = RZ;
+      fTelescopeMap[Channel].GRY = RY;
+      fTelescopeMap[Channel].GX  = X;
+      fTelescopeMap[Channel].GY  = Y;
+      fTelescopeMap[Channel].GZ  = Z;
     } else if (ROC == 0 || ROC == 1 || ROC == 2) {
-      if (TeleMap.count(Channel) == 0) {
+      if (fTelescopeMap.count(Channel) == 0) {
         std::cerr << "ERROR: Telescope coords not defined which must be defined before ROCs in alignment file" << std::endl;
         throw;
       }
@@ -81,11 +81,11 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
       C.LX = X;
       C.LY = Y;
       C.LZ = Z;
-      C.GRZ = TeleMap[Channel].GRZ;
-      C.GRY = TeleMap[Channel].GRY;
-      C.GX = TeleMap[Channel].GX;
-      C.GY = TeleMap[Channel].GY;
-      C.GZ = TeleMap[Channel].GZ;
+      C.GRZ = fTelescopeMap[Channel].GRZ;
+      C.GRY = fTelescopeMap[Channel].GRY;
+      C.GX = fTelescopeMap[Channel].GX;
+      C.GY = fTelescopeMap[Channel].GY;
+      C.GZ = fTelescopeMap[Channel].GZ;
 
       // Save this to alignment map
       fConstantMap[CHROC] = C;
@@ -102,7 +102,7 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
 }
 
 
-void PLTAlignment::PrintAlignmentFile (std::string const OutFileName)
+void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
 {
   // Open output file
   FILE* Out = fopen(OutFileName.c_str(), "w");
@@ -111,24 +111,27 @@ void PLTAlignment::PrintAlignmentFile (std::string const OutFileName)
     throw;
   }
 
-  for (std::map< std::pair<int, int>, CP >::iterator it = fConstantMap.begin(); it != fConstantMap.end(); ++it) {
-    int const Channel = it->first.first;
-    int const ROC     = it->first.second;
-    CP C = it->second;
-    fprintf(Out, "%2i  %1i %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E %15.6E\n",
-        Channel,
-        ROC,
-        C.LR,
-        C.LX,
-        C.LY,
-        C.GRZ,
-        C.GRY,
-        C.GX,
-        C.GY,
-        C.GZ);
+  for (std::map<int, TelescopeAlignmentStruct>::iterator it = fTelescopeMap.begin(); it != fTelescopeMap.end(); ++it) {
+    int const Channel = it->first;
+    TelescopeAlignmentStruct& Tele = it->second;
+
+    fprintf(Out, "\n");
+    fprintf(Out, "%2i  -1        %15E      %15E  %15E  %15E  %15E\n", Channel, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ);
+
+    for (int iroc = 0; iroc != 3; ++iroc) {
+      std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, iroc);
+
+      if (!fConstantMap.count(ChROC)) {
+        std::cerr << "ERROR: No entry in fConstantMap for Ch ROC: " << Channel << " " << iroc << std::endl;
+        continue;
+      }
+
+      CP& C = fConstantMap[ChROC];
+      fprintf(Out, "%2i   %1i        %15E                       %15E  %15E  %15E\n", Channel, iroc, C.LR, C.LX, C.LY, C.LZ);
+
+    }
   }
 
-  fclose(Out);
 
   return;
 }
@@ -152,12 +155,12 @@ float PLTAlignment::PYtoLY (int const py)
 
 int PLTAlignment::PXfromLX (float const lx)
 {
-  return (int) (lx / PLTU::PIXELWIDTH + 25.5);
+  return (int) (25.5 - lx / PLTU::PIXELWIDTH);
 }
 
 int PLTAlignment::PYfromLY (float const ly)
 {
-  return (int) (ly /  PLTU::PIXELHEIGHT + 59.5);
+  return (int) (59.5 - ly /  PLTU::PIXELHEIGHT);
 }
 
 std::pair<int, int> PLTAlignment::PXYfromLXY (std::pair<float, float> const& LXY)
@@ -206,7 +209,8 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
   Hit.SetTXYZ(TXYZ[0], TXYZ[1], TXYZ[2]);
   Hit.SetGXYZ(GXYZ[0], GXYZ[1], GXYZ[2]);
 
-  //printf("%12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E  %12.3E\n", LX, LY, TX, TY, TZ, GX, GY, GZ);
+  //printf("Channel %2i ROC %1i  Col %2i Row %2i  %12.3E  %12.3E - %12.3E  %12.3E  %12.3E - %12.3E  %12.3E  %12.3E\n",
+  //    Hit.Channel(), Hit.ROC(), Hit.Column(), Hit.Row(), LX, LY, TXYZ[0], TXYZ[1], TXYZ[2], GXYZ[0], GXYZ[1], GXYZ[2]);
 
   //std::vector<float> TV;
   //GtoTXYZ(TV, GX, GY, GZ, Hit.Channel(), Hit.ROC());
@@ -248,7 +252,6 @@ std::pair<float, float> PLTAlignment::TtoLXY (float const TX, float const TY, in
   if (!C) {
     std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
     return std::make_pair<float, float>(-999, -999);
-    throw;
   }
 
 
@@ -373,6 +376,15 @@ void PLTAlignment::TtoGXYZ (std::vector<float>& VOUT, float const TX, float cons
 
 
   return;
+}
+
+
+
+void PLTAlignment::LtoGXYZ (std::vector<float>& VOUT, float const LX, float const LY, int const Channel, int const ROC)
+{
+  std::vector<float> T;
+  LtoTXYZ(T, LX, LY, Channel, ROC);
+  TtoGXYZ(VOUT, T[0], T[1], T[2], Channel, ROC);
 }
 
 
@@ -511,3 +523,17 @@ std::vector< std::pair<int, int> > PLTAlignment::GetListOfChannelROCs ()
 
   return ROCS;
 }
+
+std::vector<int> PLTAlignment::GetListOfChannels ()
+{
+  std::vector<int> Channels;
+
+  for (std::map<int, TelescopeAlignmentStruct>::iterator it = fTelescopeMap.begin(); it != fTelescopeMap.end(); ++it)
+  {
+    Channels.push_back(it->first);
+  }
+
+  return Channels;
+}
+
+

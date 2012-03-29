@@ -130,7 +130,8 @@ float PLTCluster::TZ ()
 
 std::pair<float, float> PLTCluster::TCenter ()
 {
-  return std::make_pair<float, float>(SeedHit()->TX(), SeedHit()->TY());
+
+  return TCenterOfMass();
 }
 
 float PLTCluster::GX ()
@@ -203,6 +204,38 @@ std::pair<float, float> PLTCluster::GCenterOfMass ()
   for (std::vector<PLTHit*>::iterator It = fHits.begin(); It != fHits.end(); ++It) {
     X += (*It)->GX() * (*It)->Charge();
     Y += (*It)->GY() * (*It)->Charge();
+    ChargeSum += (*It)->Charge();
+  }
+
+  // If charge sum is zero or less return average
+  if (ChargeSum <= 0.0) {
+    //std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::GCenterOfMass()" << std::endl;
+    std::make_pair<float, float>(X / (float) NHits(), Y / (float) NHits());
+  }
+
+  // Put fiducial warning here?
+
+  // Just for printing diagnostics
+  //printf("GCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
+
+  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+}
+
+
+
+std::pair<float, float> PLTCluster::TCenterOfMass ()
+{
+  // Return the Global coords based on a charge weighted average of pixel hits
+
+  // X, Y, and Total Charge
+  float X = 0.0;
+  float Y = 0.0;
+  float ChargeSum = 0.0;
+
+  // Loop over each hit in the cluster
+  for (std::vector<PLTHit*>::iterator It = fHits.begin(); It != fHits.end(); ++It) {
+    X += (*It)->TX() * (*It)->Charge();
+    Y += (*It)->TY() * (*It)->Charge();
     ChargeSum += (*It)->Charge();
   }
 

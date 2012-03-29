@@ -105,7 +105,8 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
             ResidualMap[Telescope->Channel()][Cluster->ROC()][i]->Fill(RXY.first, RXY.second);
 
             if (i == j && i <= 2) {
-              RowResByCol[Telescope->Channel() * 10 + j][Cluster->PX() - PLTU::FIRSTCOL].push_back(RXY.second);
+              // fix this
+              //RowResByCol[Telescope->Channel() * 10 + j][Cluster->PX() - PLTU::FIRSTCOL].push_back(RXY.second);
             }
           }
         }

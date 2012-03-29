@@ -20,7 +20,7 @@ class PLTAlignment
     ~PLTAlignment ();
 
     void ReadAlignmentFile (std::string const);
-    void PrintAlignmentFile (std::string const);
+    void WriteAlignmentFile (std::string const);
     void AlignHit (PLTHit&);
     bool IsGood ();
 
@@ -30,6 +30,7 @@ class PLTAlignment
 
 
     void LtoTXYZ (std::vector<float>&, float const, float const, int const, int const);
+    void LtoGXYZ (std::vector<float>&, float const, float const, int const, int const);
     void TtoGXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     void GtoTXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
     void VTtoVGXYZ (std::vector<float>&, float const, float const, float const, int const, int const);
@@ -82,6 +83,7 @@ class PLTAlignment
     CP* GetCP (std::pair<int, int> const&);
 
     std::vector< std::pair<int, int> > GetListOfChannelROCs ();
+    std::vector<int> GetListOfChannels ();
 
     // Mini struct to be used only in reading alignment file
     struct TelescopeAlignmentStruct {
@@ -92,6 +94,7 @@ class PLTAlignment
 
   private:
     std::map< std::pair<int, int>, CP > fConstantMap;
+    std::map<int, TelescopeAlignmentStruct> fTelescopeMap;
     bool fIsGood;
 
     static bool const DEBUG = false;

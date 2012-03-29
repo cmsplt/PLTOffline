@@ -45,6 +45,7 @@ class PLTCluster
 
     // Cluster center
     std::pair<float, float> LCenterOfMass ();
+    std::pair<float, float> TCenterOfMass ();
     std::pair<float, float> GCenterOfMass ();
 
 

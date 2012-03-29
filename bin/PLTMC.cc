@@ -18,13 +18,200 @@
 #include "TRandom.h"
 
 
-void GetTracksCollisions (std::vector<PLTHit*>& Hits)
+void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 {
+  // Grab list of telescopes
+  static std::vector<int> Channels = Alignment.GetListOfChannels();
+
+
+  static int const NTracks = 1;//gRandom->Integer(10);
+
+  for (int itrack = 0; itrack < NTracks; ++itrack) {
+    int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
+    int const ROC     = gRandom->Integer(3);
+    //printf("Channel: %2i  ROC: %i\n", Channel, ROC);
+
+    float const lx = 0;//0.45 * (gRandom->Rndm() - 0.5);
+    float const ly = 0.45 * (gRandom->Rndm() - 0.5);
+    //printf(" lx ly: %15E  %15E\n", lx, ly);
+
+    static std::vector<float> TXYZ;
+    Alignment.LtoTXYZ(TXYZ, lx, ly, Channel, ROC);
+    //printf(" TXYZ: %15E  %15E  %15E\n", TXYZ[0], TXYZ[1], TXYZ[2]);
+
+    static std::vector<float> GXYZ;
+    Alignment.TtoGXYZ(GXYZ, TXYZ[0], TXYZ[1], TXYZ[2], Channel, ROC);
+    //printf(" GXYZ: %15E  %15E  %15E\n", GXYZ[0], GXYZ[1], GXYZ[2]);
+
+    float const SlopeX = GXYZ[0] / GXYZ[2];
+    float const SlopeY = GXYZ[1] / GXYZ[2];
+    //if (Channel == 3)
+    //printf(" Slope X Y: %15E  %15E\n", SlopeX, SlopeY);
+
+    for (size_t iroc = 0; iroc != 3; ++iroc) {
+      std::vector<float> VP;
+      Alignment.LtoGXYZ(VP, 0, 0, Channel, iroc);
+      //printf("  VP XYZ: %15E  %15E  %15E\n", VP[0], VP[1], VP[2]);
+
+      float const GZ = VP[2];
+      float const GX = SlopeX * GZ;
+      float const GY = SlopeY * GZ;
+      //printf("ROC %1i  GXYZ: %15E  %15E  %15E\n", iroc, GX, GY, GZ);
+
+
+      std::vector<float> T;
+      Alignment.GtoTXYZ(T, GX, GY, GZ, Channel, iroc);
+      //if (Channel == 3) printf("HI %15E\n", GX - T[0]);
+      //if (Channel == 3)
+      //printf("ROC %1i TX TY TZ  %15E %15E %15E\n", iroc, T[0], T[1], T[2]);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(T[0], T[1], Channel, iroc);
+      std::pair<int, int>     PXY = Alignment.PXYfromLXY(LXY);
+      int const PX = PXY.first;
+      int const PY = PXY.second;
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it as a hit if it's in the range of the diamond
+      //printf("ROC %1i LX PX LY PY   %15E %2i  %15E %2i\n", iroc, LXY.first, PX, LXY.second, PY);
+      if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+        Hits.push_back( new PLTHit(Channel, iroc, PX, PY, adc) );
+      } else {
+        //printf("LX PX LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", LXY.first, PX, rXY.second, PY);
+      }
+    }
+
+
+
+
+  }
+
+
   return;
 }
 
 
 
+void GetTracksParallel (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // Grab list of telescopes
+  static std::vector<int> Channels = Alignment.GetListOfChannels();
+
+
+  static int const NTracks = 1;//gRandom->Integer(10);
+
+  for (int itrack = 0; itrack < NTracks; ++itrack) {
+    int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
+    int const ROC     = gRandom->Integer(3);
+
+    //printf("Channel: %2i  ROC: %i\n", Channel, ROC);
+
+    // pick a starting point on the first ROC
+    int const StartCol = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
+    int const StartRow = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
+
+    //printf(" StartCol: %4i  StartRow: %4i\n", StartCol, StartRow);
+
+    float const lx = Alignment.PXtoLX(StartCol);
+    float const ly = Alignment.PYtoLY(StartRow);
+
+    //printf(" lx ly: %15E  %15E\n", lx, ly);
+
+    static std::vector<float> TXYZ;
+    Alignment.LtoTXYZ(TXYZ, lx, ly, Channel, ROC);
+    //printf(" TXYZ: %15E  %15E  %15E\n", TXYZ[0], TXYZ[1], TXYZ[2]);
+
+    static std::vector<float> GXYZ;
+    Alignment.TtoGXYZ(GXYZ, TXYZ[0], TXYZ[1], TXYZ[2], Channel, ROC);
+    float const GX = GXYZ[0];
+    float const GY = GXYZ[1];
+    float const GZ = GXYZ[2];
+    //printf(" GXYZ: %15E  %15E  %15E\n", GXYZ[0], GXYZ[1], GXYZ[2]);
+
+    for (size_t iroc = 0; iroc != 3; ++iroc) {
+
+      std::vector<float> T;
+      Alignment.GtoTXYZ(T, GX, GY, GZ, Channel, iroc);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(T[0], T[1], Channel, iroc);
+      std::pair<int, int>     PXY = Alignment.PXYfromLXY(LXY);
+      int const PX = PXY.first;
+      int const PY = PXY.second;
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it as a hit if it's in the range of the diamond
+      //printf("iroc StartCol LX PX StartRow LY PY  %2i  %2i %6.2f %2i   %2i %6.2f %2i\n", iroc, StartCol, LXY.first, PX, StartRow, LXY.second, PY);
+      if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+        Hits.push_back( new PLTHit(Channel, iroc, PX, PY, adc) );
+      } else {
+        //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LXY.first, PX, StartRow, LXY.second, PY);
+      }
+    }
+
+
+
+
+  }
+
+
+  return;
+}
+void GetTracksRandomSlope (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // This function to generate events hitting telescopes head on
+
+  int const NTelescopes = 1;
+  for (int i = 1; i <= NTelescopes; ++i) {
+
+    int const NTracks = 1;//gRandom->Integer(10);
+
+    for (int itrack = 0; itrack < NTracks; ++itrack) {
+
+      // pick a starting point on the first ROC
+      int const StartCol = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
+      int const StartRow = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
+
+      float const SlopeX = 9.0 * (gRandom->Rndm() - 0.5);
+      float const SlopeY = 9.0 * (gRandom->Rndm() - 0.5);
+
+
+      for (int r = 0; r != 3; ++r) {
+        //PLTAlignment::CP* C = Alignment.GetCP(i, r);
+
+        // make straight track, see where that hits a plane if it's shifted..
+        // Optionally give it some fuzz..
+
+        // Use L coord system:
+        // THINK ABOUT THIS FOR ROTATIONS...
+        float const LZ = Alignment.LZ(i, r);
+        float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
+        float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+
+        std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
+
+        int const PX = Alignment.PXfromLX(LXY.first);
+        int const PY = Alignment.PYfromLY(LXY.second);
+
+
+        //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+
+        // Just some random adc value
+        int const adc = gRandom->Poisson(150);
+
+        // Add it as a hit if it's in the range of the diamond
+        if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+          Hits.push_back( new PLTHit(i, r, PX, PY, adc) );
+        } else {
+          //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
+        }
+      }
+    }
+  }
+  return;
+}
 void GetTracksHeadOnFirstROCMultiTracks (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 {
   // This function to generate events hitting telescopes head on
@@ -69,7 +256,7 @@ void GetTracksHeadOnFirstROCMultiTracks (std::vector<PLTHit*>& Hits, PLTAlignmen
 
         // Add it as a hit if it's in the range of the diamond
         if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
-          Hits.push_back( new PLTHit(i+14, r, PX, PY, adc) );
+          Hits.push_back( new PLTHit(i, r, PX, PY, adc) );
         } else {
           //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
         }
@@ -339,7 +526,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
   // This function to generate events hitting telescopes head on
 
   int const NTelescopes = 1;
-  for (int i = 1; i <= NTelescopes; ++i) {
+  for (int i = 15; i <= 15; ++i) {
 
     // pick a starting point on the first ROC
     int const StartCol = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
@@ -363,7 +550,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
       int const PY = Alignment.PYfromLY(LXY.second);
 
 
-      //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i    CLX CLY: %12.3f %12.3f\n", StartCol, LX, PX, StartRow, LY, PY, C->LX, C->LY);
+      printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
 
       // Just some random adc value
       int const adc = gRandom->Poisson(150);
@@ -393,21 +580,23 @@ int PLTMC ()
   uint32_t unsigned n2;
 
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
+  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_PLTMC.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/IdealAlignment.dat");
+  //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 10000;
+  int const NEvents = 1000000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (1) {
+    switch (0) {
       case 0:
-        GetTracksCollisions(Hits);
+        GetTracksCollisions(Hits, Alignment);
         break;
       case 1:
         GetTracksHeadOnFirstROC(Hits, Alignment);
@@ -429,6 +618,12 @@ int PLTMC ()
         break;
       case 7:
         GetTracksHeadOnFirstROCMultiTracks(Hits, Alignment);
+        break;
+      case 8:
+        GetTracksRandomSlope(Hits, Alignment);
+        break;
+      case 9:
+        GetTracksParallel(Hits, Alignment);
         break;
     }
 
