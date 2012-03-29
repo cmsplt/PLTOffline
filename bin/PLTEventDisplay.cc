@@ -88,7 +88,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
 
   Replica->AddNode(CP, 1);
   Top->AddNode(Replica, 1);
-  //Top->AddNode(BeamPipe, 1);
+  Top->AddNode(BeamPipe, 1);
 
 
   //--- close the geometry
@@ -148,7 +148,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   TEveTrackList *list = new TEveTrackList();
   TEveTrackPropagator* prop = list->GetPropagator();
   prop->SetFitDaughters(kFALSE);
-  prop->SetMaxZ(1470);
+  prop->SetMaxZ(185);
 
   TEveRecTrackD *rc = new TEveRecTrackD();
 

@@ -24,14 +24,14 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
   static std::vector<int> Channels = Alignment.GetListOfChannels();
 
 
-  static int const NTracks = 1;//gRandom->Integer(10);
+  static int const NTracks = 20;//gRandom->Integer(10);
 
   for (int itrack = 0; itrack < NTracks; ++itrack) {
     int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
     int const ROC     = gRandom->Integer(3);
     //printf("Channel: %2i  ROC: %i\n", Channel, ROC);
 
-    float const lx = 0;//0.45 * (gRandom->Rndm() - 0.5);
+    float const lx = 0.45 * (gRandom->Rndm() - 0.5);
     float const ly = 0.45 * (gRandom->Rndm() - 0.5);
     //printf(" lx ly: %15E  %15E\n", lx, ly);
 
@@ -67,6 +67,10 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 
       std::pair<float, float> LXY = Alignment.TtoLXY(T[0], T[1], Channel, iroc);
       std::pair<int, int>     PXY = Alignment.PXYfromLXY(LXY);
+
+      // Add some jitter
+      PXY.first  += (int) gRandom->Gaus(0, 1.2);
+      PXY.second += (int) gRandom->Gaus(0, 1.2);
       int const PX = PXY.first;
       int const PY = PXY.second;
 
@@ -581,13 +585,13 @@ int PLTMC ()
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_PLTMC.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/IdealAlignment.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/IdealAlignment_Half.dat");
   //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 1000000;
+  int const NEvents = 10;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
