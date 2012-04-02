@@ -36,6 +36,8 @@ class PLTTrack
     float TX (float const);
     float TY (float const);
 
+    std::pair<float, float> GXYatGZ (float const, PLTAlignment&);
+
     float ChiSquare ();
 
   private:

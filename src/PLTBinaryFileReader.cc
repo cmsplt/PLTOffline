@@ -140,17 +140,17 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event)
+int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
 {
   if (fIsText) {
-    return ReadEventHitsText(fInfile, Hits, Event);
+    return ReadEventHitsText(fInfile, Hits, Event, Time);
   } else {
-    return ReadEventHits(fInfile, Hits, Event);
+    return ReadEventHits(fInfile, Hits, Event, Time);
   }
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event)
+int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
 {
   uint32_t unsigned n1, n2;
 
@@ -200,6 +200,11 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
         if ((n1 & 0xf0000000) == 0xa0000000 || (n2 & 0xf0000000) == 0xa0000000) {
           bheader = false;
+          if ((n1 & 0xf0000000) == 0xa0000000) {
+            Time = n2;
+          } else {
+            Time = n1;
+          }
           //std::cout << "Found Event Trailer: " << Event << std::endl;
         } else {
           DecodeSpyDataFifo(n2, Hits);
@@ -215,7 +220,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
 
 
-int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event)
+int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
 {
   int LastEventNumber = -1;
   int EventNumber = -1;

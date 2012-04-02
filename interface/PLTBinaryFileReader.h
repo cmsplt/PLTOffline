@@ -29,9 +29,9 @@ class PLTBinaryFileReader
 
     int  convPXL (int);
     bool DecodeSpyDataFifo (uint32_t unsigned, std::vector<PLTHit*>&);
-    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&);
-    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
-    int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&);
+    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&, uint32_t unsigned&);
+    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t unsigned&);
+    int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t unsigned&);
 
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
 

@@ -175,7 +175,8 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         PLTTrack* T = Telescope->Track(itrack);
 
-        rc->fV.Set(T->fGOX, T->fGOY, T->fGOZ);
+        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
+        rc->fV.Set(TrXY.first, TrXY.second, 0);
         rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
         rc->fSign = 0;
 

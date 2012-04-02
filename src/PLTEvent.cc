@@ -205,6 +205,24 @@ void PLTEvent::MakeEvent ()
 
 
 
+void PLTEvent::WriteEventText (std::ofstream& f)
+{
+  // Be careful with this because things will be cut out by fiducial requirements!!
+
+  for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
+    f << (*it)->Channel() << " "
+      << (*it)->ROC() << " "
+      << (*it)->Column() << " "
+      << (*it)->Row() << " "
+      << (*it)->ADC() << " "
+      << fEvent << "\n";
+  }
+
+  return;
+}
+
+
+
 void PLTEvent::SetPlaneFiducialRegion (PLTPlane::FiducialRegion in)
 {
   fBinFile.SetPlaneFiducialRegion(in);
@@ -228,7 +246,7 @@ int PLTEvent::GetNextEvent ()
   Clear();
 
   // The number we'll return.. number of hits, or -1 for end
-  int ret = fBinFile.ReadEventHits(fHits, fEvent);
+  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime);
   if (ret < 0) {
     return ret;
   }

@@ -37,6 +37,7 @@ class PLTEvent : public PLTTracking
     void AddHit (PLTHit&);
     void AddHit (PLTHit*);
     void MakeEvent ();
+    void WriteEventText (std::ofstream&);
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
     void SetPlaneClustering (PLTPlane::Clustering, PLTPlane::FiducialRegion);
 
@@ -56,10 +57,22 @@ class PLTEvent : public PLTTracking
       return &fGainCal;
     }
 
+    uint32_t unsigned Time ()
+    {
+      return fTime;
+    }
+
+    void SetTime (uint32_t unsigned in)
+    {
+      fTime = in;
+      return;
+    }
+
   private:
     unsigned long fRun;
     unsigned long fRunSection;
     unsigned long fEvent;
+    uint32_t unsigned fTime;
 
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;
