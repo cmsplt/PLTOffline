@@ -3,12 +3,12 @@
 my $SECTION = $ARGV[0];
 my $RUNLINE = $SECTION + 1;
 
-my $EXEDIR       = "/users/h2/dhidas/DHidasPLT_Nov24";
+my $EXEDIR       = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT";
 my $SLINKDIR     = "/cms/data24/dhidas/TestBeam_Oct2011/slink";
 my $GAINCALDIR   = "/cms/data24/dhidas/TestBeam_Oct2011/GainCalFits";
-my $ALIGNMENTDIR = "/users/h2/dhidas/DHidasPLT_Nov24/ALIGNMENT";
-my $BASEOUTDIR   = "/users/h2/dhidas/DHidasPLT_Nov24/AnaOut";
-my $RUNLIST      = "/users/h2/dhidas/DHidasPLT_Nov24/scripts/RunList_October2011PS.dat";
+my $ALIGNMENTDIR = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/ALIGNMENT";
+my $BASEOUTDIR   = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/AnaOut";
+my $RUNLIST      = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/scripts/RunList_October2011PS.dat";
 
 my $THISRUNDIR = "$BASEOUTDIR/Running_$SECTION";
 mkdir $THISRUNDIR;

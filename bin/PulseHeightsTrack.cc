@@ -2,7 +2,7 @@
 //
 // Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
 //
-// Created on: Thu May 26 16:47:32 CEST 2011
+// Created on: Wed Apr  4 03:30:11 EDT 2012
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@
 
 
 // FUNCTION DEFINITIONS HERE
-int PulseHeights (std::string const, std::string const);
+int PulseHeightsTrack (std::string const, std::string const);
 
 
 
@@ -43,7 +43,7 @@ float Average (std::vector<float>& V)
 
 
 
-int PulseHeights (std::string const DataFileName, std::string const GainCalFileName)
+int PulseHeightsTrack (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   PLTU::SetStyle();
   gStyle->SetOptStat(111111);
@@ -52,9 +52,12 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5,PLTPlane::kFiducialRegion_m2_m2);
-  //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
+  Event.SetPlaneFiducialRegion(FidRegionHits);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
@@ -73,13 +76,15 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   int const TimeWidth = 100;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
-
   // Loop over all events in file
   int ientry = 0;
   for ( ; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
+
+    if (ientry < 100000) continue;
+
 
     int const TimeBinNumber = ientry / TimeWidth;
     if (ientry % TimeWidth == 0) {
@@ -93,76 +98,68 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       }
     }
 
+
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
-      for (size_t iPlane = 0; iPlane != Telescope->NPlanes(); ++iPlane) {
-        PLTPlane* Plane = Telescope->Plane(iPlane);
 
-        int Channel = Plane->Channel();
-        int ROC = Plane->ROC();
+      int const Channel = Telescope->Channel();
 
-        if (ROC > 2) {
-          std::cerr << "WARNING: ROC > 2 found: " << ROC << std::endl;
-          continue;
-        }
-        if (Channel > 99) {
-          std::cerr << "WARNING: Channel > 99 found: " << Channel << std::endl;
-          continue;
-        }
+      for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
+        PLTTrack* Track = Telescope->Track(itrack);
 
-        // ID the plane and roc by 3 digit number
-        int const id = 10 * Channel + ROC;
 
-        if (!hMap.count(id)) {
-          hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
-                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, 0, XMax) );
-          for (size_t ih = 1; ih != 4; ++ih) {
-            hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
-                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, 0, XMax) );
+
+        for (size_t icluster = 0; icluster < Track->NClusters(); ++icluster) {
+          PLTCluster* Cluster = Track->Cluster(icluster);
+
+          int const ROC = Cluster->ROC();
+
+          // ID the plane and roc by 3 digit number
+          int const id = 10 * Channel + ROC;
+
+          if (!hMap.count(id)) {
+            hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
+                  TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, 0, XMax) );
+            for (size_t ih = 1; ih != 4; ++ih) {
+              hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
+                    TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, 0, XMax) );
+            }
+
+            // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
+            if (!cMap.count(Channel)) {
+              // Create canvas with given name
+              cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("PulseHeightTrack_Ch%02i", Channel), 900, 600);
+              cMap[Channel]->Divide(3, 2);
+            }
           }
 
-          // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
-          if (!cMap.count(Channel)) {
-            // Create canvas with given name
-            cMap[Channel] = new TCanvas( TString::Format("PulseHeight_Ch%02i", Channel), TString::Format("PulseHeight_Ch%02i", Channel), 900, 600);
-            cMap[Channel]->Divide(3, 2);
+          if (!vClEnTimeMap.count(id)) {
+            vClEnTimeMap[id].resize(4);
+            vClEnTimeMap[id][0].resize(ientry / TimeWidth + 1, 0);
+            vClEnTimeMap[id][1].resize(ientry / TimeWidth + 1, 0);
+            vClEnTimeMap[id][2].resize(ientry / TimeWidth + 1, 0);
+            vClEnTimeMap[id][3].resize(ientry / TimeWidth + 1, 0);
+            ChargeHits[id].resize(4);
+
+
+            // One in three chance you'll need a new canvas for thnat =)
+            if (!cClEnTimeMap.count(id)) {
+              cClEnTimeMap[id] = new TCanvas( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%i", Channel, ROC), TString::Format("PulseHeightTrackTime_Ch%02i_ROC%i", Channel, ROC), 900, 300);
+              cClEnTimeMap[id]->Divide(3, 1);
+            }
           }
-        }
 
+          // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
+          if (!hClusterSizeMap.count(id)) {
+            hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
+            hClusterSizeMap[id]->SetXTitle("Number of pixels in Cluster");
 
-        if (!vClEnTimeMap.count(id)) {
-          vClEnTimeMap[id].resize(4);
-          vClEnTimeMap[id][0].resize(ientry / TimeWidth + 1, 0);
-          vClEnTimeMap[id][1].resize(ientry / TimeWidth + 1, 0);
-          vClEnTimeMap[id][2].resize(ientry / TimeWidth + 1, 0);
-          vClEnTimeMap[id][3].resize(ientry / TimeWidth + 1, 0);
-          ChargeHits[id].resize(4);
-
-
-          // One in three chance you'll need a new canvas for thnat =)
-          if (!cClEnTimeMap.count(id)) {
-            cClEnTimeMap[id] = new TCanvas( TString::Format("PulseHeightTime_Ch%02i_ROC%i", Channel, ROC), TString::Format("PulseHeightTime_Ch%02i_ROC%i", Channel, ROC), 900, 300);
-            cClEnTimeMap[id]->Divide(3, 1);
+            // One in three chance you'll need a new canvas for thnat =)
+            if (!cClusterSizeMap.count(Channel)) {
+              cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSizeTrack_Ch%02i", Channel), TString::Format("ClusterSizeTrack_Ch%02i", Channel), 900, 300);
+              cClusterSizeMap[Channel]->Divide(3, 1);
+            }
           }
-        }
-
-        // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
-        if (!hClusterSizeMap.count(id)) {
-          hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
-          hClusterSizeMap[id]->SetXTitle("Number of pixels in Cluster");
-
-          // One in three chance you'll need a new canvas for thnat =)
-          if (!cClusterSizeMap.count(Channel)) {
-            cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSize_Ch%02i", Channel), TString::Format("ClusterSize_Ch%02i", Channel), 900, 300);
-            cClusterSizeMap[Channel]->Divide(3, 1);
-          }
-        }
-
-
-        // Loop over all clusters on this plane
-        for (size_t iCluster = 0; iCluster != Plane->NClusters(); ++iCluster) {
-          PLTCluster* Cluster = Plane->Cluster(iCluster);
-          //if (iCluster == 1) break;
 
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
@@ -193,7 +190,6 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
             }
           }
 
-
           // Extend the plots if we need to (less careful but I assume 0123 all scale together)
           if (ientry % TimeWidth == 0) {
 
@@ -211,11 +207,12 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
               }
             }
           }
+
+
+
         }
       }
     }
-
-
   }
   std::cout << "Events read: " << ientry+1 << std::endl;
 
@@ -230,13 +227,13 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     int const Remainder = vClEnTimeMap[id][0].size() % 2;
 
     printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
-    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTime_Ch%02i_ROC%1i_All", Channel, ROC),
+    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_All", Channel, ROC),
           TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels All", Channel, ROC), vClEnTimeMap[id][0].size() + Remainder, 0, (vClEnTimeMap[id][0].size() + Remainder) * TimeWidth ) );
     for (size_t ih = 1; ih != 3; ++ih) {
-      hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih),
+      hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih),
             TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih), vClEnTimeMap[id][ih].size() + Remainder, 0, (vClEnTimeMap[id][ih].size() + Remainder) * TimeWidth) );
     }
-    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) 3),
+    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) 3),
           TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels %i+", Channel, ROC, (int) 3), vClEnTimeMap[id][3].size() + Remainder, 0, (vClEnTimeMap[id][3].size() + Remainder) * TimeWidth) );
     for (size_t ih = 0; ih != 4; ++ih) {
       hClEnTimeMap[id][ih]->SetNdivisions(5);
@@ -299,7 +296,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       Hist->SetNdivisions(5);
       Hist->SetLineColor(HistColors[ih]);
       if (ih == 0) {
-        Hist->SetTitle( TString::Format("PulseHeight Ch%02i ROC%1i", Channel, ROC) );
+        Hist->SetTitle( TString::Format("PulseHeightTrack Ch%02i ROC%1i", Channel, ROC) );
         Hist->SetXTitle("Electrons");
         Hist->SetYTitle("Events");
         Hist->Draw("hist");
@@ -307,9 +304,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       } else {
         Hist->Draw("samehist");
         if (ih != 3) {
-          Leg->AddEntry(Hist, TString::Format(" %i Pixel", ih), "l");
+          Leg->AddEntry(Hist, TString::Format(" %i Pixel", (int) ih), "l");
         } else {
-          Leg->AddEntry(Hist, TString::Format("#geq%i Pixel", ih), "l");
+          Leg->AddEntry(Hist, TString::Format("#geq%i Pixel", (int) ih), "l");
         }
       }
     }
@@ -363,17 +360,19 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 int main (int argc, char* argv[])
 {
-  if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName]" << std::endl;
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [AlignmentFileName]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
   std::string const GainCalFileName = argv[2];
+  std::string const AlignmentFileName = argv[3];
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
+  std::cout << "AlignmentFileName: " << GainCalFileName << std::endl;
 
-  PulseHeights(DataFileName, GainCalFileName);
+  PulseHeightsTrack(DataFileName, GainCalFileName, AlignmentFileName);
 
   return 0;
 }
