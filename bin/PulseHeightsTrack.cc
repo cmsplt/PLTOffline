@@ -54,8 +54,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
@@ -83,7 +83,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    if (ientry < 100000) continue;
 
 
     int const TimeBinNumber = ientry / TimeWidth;
