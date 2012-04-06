@@ -73,7 +73,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  = 50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 100;
+  int const TimeWidth = 10000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   // Loop over all events in file

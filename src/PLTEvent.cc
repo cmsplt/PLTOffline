@@ -246,7 +246,7 @@ int PLTEvent::GetNextEvent ()
   Clear();
 
   // The number we'll return.. number of hits, or -1 for end
-  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime);
+  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime, fBX);
   if (ret < 0) {
     return ret;
   }

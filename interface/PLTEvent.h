@@ -68,11 +68,23 @@ class PLTEvent : public PLTTracking
       return;
     }
 
+    uint32_t unsigned BX ()
+    {
+      return fBX;
+    }
+
+    void SetBX (uint32_t unsigned in)
+    {
+      fBX = in;
+      return;
+    }
+
   private:
     unsigned long fRun;
     unsigned long fRunSection;
     unsigned long fEvent;
-    uint32_t unsigned fTime;
+    uint32_t fTime;
+    uint32_t fBX;
 
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;

@@ -140,17 +140,17 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
+int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
   if (fIsText) {
-    return ReadEventHitsText(fInfile, Hits, Event, Time);
+    return ReadEventHitsText(fInfile, Hits, Event, Time, BX);
   } else {
-    return ReadEventHits(fInfile, Hits, Event, Time);
+    return ReadEventHits(fInfile, Hits, Event, Time, BX);
   }
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
+int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
   uint32_t unsigned n1, n2;
 
@@ -189,6 +189,12 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
       Event = (n1 & 0xff000000) == 0x50000000 ? n1 & 0xffffff : n2 & 0xffffff;
       //std::cout << "Found Event Header: " << Event << std::endl;
 
+      if ((n1 & 0xff000000) == 0x50000000) {
+        BX = ((n2 & 0xfff00000) >> 20);
+      } else {
+        BX = ((n1 & 0xfff00000) >> 20);
+      }
+
       while (bheader) {
         InFile.read((char *) &n2, sizeof n2);
         InFile.read((char *) &n1, sizeof n1);
@@ -220,7 +226,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
 
 
-int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t unsigned& Time)
+int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
   int LastEventNumber = -1;
   int EventNumber = -1;

@@ -31,6 +31,7 @@ int MakeTracks (std::string const, std::string const, std::string const);
 int MakeTracks (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
+  std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
 
   // Set some basic style for plots

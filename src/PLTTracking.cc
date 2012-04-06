@@ -48,6 +48,8 @@ int PLTTracking::GetTrackingAlgorithm ()
 void PLTTracking::RunTracking (PLTTelescope& Telescope)
 {
   switch (fTrackingAlgorithm) {
+    case kTrackingAlgorithm_NoTracking:
+      break;
     case kTrackingAlgorithm_01to2_All:
       TrackFinder_01to2_All(Telescope);
       break;
