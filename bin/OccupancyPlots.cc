@@ -138,6 +138,7 @@ int OccupancyPlots (std::string const DataFileName)
   //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_m1_m1);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
+  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
   // Map for all ROC hists and canvas
   std::map<int, TH2F*>    hAllMap;
