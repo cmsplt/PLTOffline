@@ -57,7 +57,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_9x9, PLTPlane::kFiducialRegion_All);
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
@@ -69,12 +69,15 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   std::map<int, TCanvas*>            cMap;
 
   // Bins and max for pulse height plots
-  int   const NBins =    50;
-  float const XMax  = 50000;
+  int   const NBins =    60;
+  float const XMin  =  -1000;
+  float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
   int const TimeWidth = 10000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
+
+  TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
 
   // Loop over all events in file
   int ientry = 0;
@@ -84,6 +87,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     }
 
 
+    int NTracksPerEvent = 0;
 
     int const TimeBinNumber = ientry / TimeWidth;
     if (ientry % TimeWidth == 0) {
@@ -100,8 +104,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
+      NTracksPerEvent += Telescope->NTracks();
 
       int const Channel = Telescope->Channel();
+
+      if (Telescope->NTracks() > 1) continue;
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
@@ -118,10 +125,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
           if (!hMap.count(id)) {
             hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
-                  TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, 0, XMax) );
+                  TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
             for (size_t ih = 1; ih != 4; ++ih) {
               hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
-                    TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, 0, XMax) );
+                    TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
             }
 
             // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
@@ -169,6 +176,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           // Call it once.. it's faster.
           float const ThisClusterCharge = Cluster->Charge();
 
+          //if (ThisClusterCharge <= 0) {
+          //  printf("%12.0f\n", ThisClusterCharge);
+          //}
+
           hMap[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
             hMap[id][1]->Fill( ThisClusterCharge );
@@ -212,8 +223,16 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
         }
       }
     }
+
+    HistNTracks.Fill(NTracksPerEvent);
+
   }
   std::cout << "Events read: " << ientry+1 << std::endl;
+
+  TCanvas CanNTracks;
+  CanNTracks.cd();
+  HistNTracks.Draw("hist");
+  CanNTracks.SaveAs("plots/NTracksPerEvent.gif");
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad for ClEnTime
   for (std::map<int, std::vector< std::vector<float> > >::iterator it = vClEnTimeMap.begin(); it != vClEnTimeMap.end(); ++it) {
