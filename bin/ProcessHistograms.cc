@@ -35,7 +35,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     exit(1);
   }
 
-  int const NOrbitsToAvg = 2;
+  int const NOrbitsToAvg = 9;
 
   uint32_t OrbitTime;
   uint32_t Orbit;
@@ -174,7 +174,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
 int main (int argc, char* argv[])
 {
-  if (argc != 2) {
+  if (argc != 4) {
     std::cerr << "Usage: " << argv[0] << " [InFileName] [FirstBin] [LastBin]" << std::endl;
     return 1;
   }
