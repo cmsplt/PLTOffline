@@ -31,62 +31,62 @@ int ProcessHistograms (std::string const InFileName)
 
   while (true) {
 
-  GotIt = false;
-  while (!GotIt) {
-    InFile.read( (char*) &OrbitTime, sizeof(uint32_t));
-    if (InFile.eof()) {
-      usleep(200000);
-      InFile.clear();
-    } else {
-      GotIt = true;
-    }
-  }
-
-  GotIt = false;
-  while (!GotIt) {
-    InFile.read( (char*) &Orbit, sizeof(uint32_t));
-    if (InFile.eof()) {
-      usleep(200000);
-      InFile.clear();
-    } else {
-      GotIt = true;
-    }
-  }
-
-  GotIt = false;
-  while (!GotIt) {
-    InFile.read( (char*) &Channel, sizeof(uint32_t));
-    if (InFile.eof()) {
-      usleep(200000);
-      InFile.clear();
-    } else {
-      GotIt = true;
-    }
-  }
-
-
-  int iBucket = 0;
-  while (iBucket < NBUCKETS) {
     GotIt = false;
     while (!GotIt) {
-      InFile.read( (char*) &BigBuff[iBucket], sizeof(uint32_t));
+      InFile.read( (char*) &OrbitTime, sizeof(uint32_t));
       if (InFile.eof()) {
-        GotIt = false;
         usleep(200000);
         InFile.clear();
       } else {
         GotIt = true;
-        ++iBucket;
       }
     }
-  }
 
-  uint64_t TotalInChannel = 0;
-  for (int ib = 0; ib < NBUCKETS; ++ib) {
-    TotalInChannel += (BigBuff[ib] & 0xfff);
-  }
+    GotIt = false;
+    while (!GotIt) {
+      InFile.read( (char*) &Orbit, sizeof(uint32_t));
+      if (InFile.eof()) {
+        usleep(200000);
+        InFile.clear();
+      } else {
+        GotIt = true;
+      }
+    }
 
-  printf("Channel: %2i  OrbitTime: %15lu  Orbit: %15lu   Total: %15lu\n", (int) Channel, (unsigned long) OrbitTime, (unsigned long) Orbit, (unsigned long) TotalInChannel);
+    GotIt = false;
+    while (!GotIt) {
+      InFile.read( (char*) &Channel, sizeof(uint32_t));
+      if (InFile.eof()) {
+        usleep(200000);
+        InFile.clear();
+      } else {
+        GotIt = true;
+      }
+    }
+
+
+    int iBucket = 0;
+    while (iBucket < NBUCKETS) {
+      GotIt = false;
+      while (!GotIt) {
+        InFile.read( (char*) &BigBuff[iBucket], sizeof(uint32_t));
+        if (InFile.eof()) {
+          GotIt = false;
+          usleep(200000);
+          InFile.clear();
+        } else {
+          GotIt = true;
+          ++iBucket;
+        }
+      }
+    }
+
+    uint64_t TotalInChannel = 0;
+    for (int ib = 0; ib < NBUCKETS; ++ib) {
+      TotalInChannel += (BigBuff[ib] & 0xfff);
+    }
+
+    printf("Channel: %2i  OrbitTime: %15lu  Orbit: %15lu   Total: %15lu\n", (int) Channel, (unsigned long) OrbitTime, (unsigned long) Orbit, (unsigned long) TotalInChannel);
 
   }
 
