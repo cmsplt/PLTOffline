@@ -22,6 +22,7 @@ class PLTPlane
     enum Clustering {
       kClustering_Seed_3x3,
       kClustering_Seed_5x5,
+      kClustering_Seed_9x9,
       kClustering_NNeighbors,
       kClustering_AllTouching,
       kClustering_NoClustering

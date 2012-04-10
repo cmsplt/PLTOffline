@@ -148,6 +148,10 @@ void PLTPlane::Clusterize (Clustering const Clust, FiducialRegion const FidR)
       std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
       ClusterizeFromSeedNxN(2, 2, FidR);
       break;
+    case kClustering_Seed_9x9:
+      std::sort(fHits.begin(), fHits.end(), PLTPlane::CompareChargeReverse);
+      ClusterizeFromSeedNxN(4, 4, FidR);
+      break;
     case kClustering_NNeighbors:
       //ClusterizeNNeighbors();
       std::cerr << "PLTPlane::ClusterizeNNeighbors not written yet" << std::endl;
@@ -178,6 +182,7 @@ void PLTPlane::ClusterizeFromSeedNxN (int const mCol, int const mRow, FiducialRe
       AddClusterFromSeedNxN(fHits[i], mCol, mRow);
     }
   }
+  return;
 }
 
 
