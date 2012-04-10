@@ -82,7 +82,7 @@ int ProcessHistograms (std::string const InFileName)
     TotalInChannel += (BigBuff[ib] & 0xfff);
   }
 
-  printf("Channel: %2i  OrbitTime: %15i  Orbit: %15i   Total: %15i\n", Channel, OrbitTime, Orbit, TotalInChannel);
+  printf("Channel: %2i  OrbitTime: %15i  Orbit: %15i   Total: %15i\n", Channel, OrbitTime, Orbit, (int) TotalInChannel);
 
   return 0;
 }
