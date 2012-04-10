@@ -3,6 +3,7 @@
 
 #include "PLTPlane.h"
 #include "PLTTrack.h"
+#include "PLTU.h"
 
 #include "TCanvas.h"
 #include "TLine.h"
