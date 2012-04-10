@@ -24,7 +24,7 @@
 
 int const NBUCKETS = 3564;
 int const NORBITS  = 4096;
-int const NMAXCHANNELS = 5;
+int const NMAXCHANNELS = 6;
 
 int ProcessHistograms (std::string const InFileName, int const FirstBucket, int const LastBucket)
 {
@@ -63,8 +63,11 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   for (int i = 0; i != NMAXCHANNELS; ++i) {
     TString const Name = TString::Format("HistByChannel_Ch%i", i);
     HistByChannel[i] = new TH1F(Name, Name, MyNBuckets, FirstBucket, LastBucket);
+  }
+  for (int i = 0; i != 1; ++i) {
     TString const NameC = TString::Format("HistByChannel_Ch%i", i);
-    CanByChannel[i] = new TCanvas(NameC, NameC, 900, 300);
+    CanByChannel[i] = new TCanvas(NameC, NameC, 900, 700);
+    CanByChannel[i]->Divide(1, NMAXCHANNELS);
   }
 
 
@@ -148,6 +151,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
     for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
+      HistByChannel[*ich]->Reset();
       uint64_t TotalInChannel = 0;
       for (int iOrbit = 0; iOrbit != NOrbitsToAvg; ++iOrbit) {
         if (IsChInOrbit[*ich][iOrbit]) {
@@ -159,12 +163,13 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
           }
         }
       }
-      CanByChannel[*ich]->cd();
+      CanByChannel[0]->cd(*ich + 1);
       HistByChannel[*ich]->Draw();
-      CanByChannel[*ich]->SaveAs( TString(CanByChannel[*ich]->GetName()) + ".gif", "s");
+      //CanByChannel[*ich]->SaveAs( TString(CanByChannel[*ich]->GetName()) + ".gif", "s");
 
       printf("Channel: %2i  OrbitTime: %15lu  Orbit: %15lu   Total: %15lu\n", (int) *ich, (unsigned long) 0, (unsigned long) 0, (unsigned long) TotalInChannel);
     }
+    CanByChannel[0]->Update();
     std::cout << std::endl;
   }
 
