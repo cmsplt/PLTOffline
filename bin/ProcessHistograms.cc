@@ -71,7 +71,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   }
   for (int i = 0; i != 1; ++i) {
     TString const NameC = TString::Format("HistByChannel_Ch%i", i);
-    CanByChannel[i] = new TCanvas(NameC, NameC, 900, 700);
+    CanByChannel[i] = new TCanvas(NameC, NameC, 1800, 1100);
     CanByChannel[i]->Divide(1, NMAXCHANNELS);
   }
 
@@ -153,7 +153,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
       }
 
       if (!SeenFirstEOF) {
-        continue;
+        //continue;
       }
 
       IsChInOrbit[Channel][iOrbit] = true;
@@ -179,7 +179,6 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
 
 
-    std::cout << "TotalSum: " << TotalSum << std::endl;
     for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
       HistByChannel[*ich]->Reset();
@@ -194,8 +193,11 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
           }
         }
       }
-      CanByChannel[0]->cd(*ich + 1);
-      HistByChannel[*ich]->Draw();
+
+      if (SeenFirstEOF) {
+        CanByChannel[0]->cd(*ich + 1);
+        HistByChannel[*ich]->Draw();
+      }
       //CanByChannel[*ich]->SaveAs( TString(CanByChannel[*ich]->GetName()) + ".gif", "s");
 
       printf("Channel: %2i  OrbitTime: %15lu  Orbit: %15lu   Total: %15lu\n", (int) *ich, (unsigned long) 0, (unsigned long) 0, (unsigned long) TotalInChannel);
@@ -208,7 +210,6 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     GraphTotal.SetPoint(ThisPoint, FirstOrbitTime, TotalSum);
     CanByChannel[0]->cd(3);
     GraphTotal.Draw("Ap");
-    std::cout << FirstOrbitTime - 14400000 << "  " << FirstOrbitTime << std::endl;
     GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
     CanByChannel[0]->Update();
   }
