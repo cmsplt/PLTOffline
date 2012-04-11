@@ -27,6 +27,8 @@ int const NBUCKETS = 3564;
 int const NORBITS  = 4096;
 int const NMAXCHANNELS = 6;
 
+int ChColor[5] = { 2, 3, 0, 4, 6 };
+
 int ProcessHistograms (std::string const InFileName, int const FirstBucket, int const LastBucket)
 {
 
@@ -68,10 +70,11 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   for (int i = 0; i != NMAXCHANNELS; ++i) {
     TString const Name = TString::Format("HistByChannel_Ch%i", i);
     HistByChannel[i] = new TH1F(Name, Name, MyNBuckets, FirstBucket, LastBucket);
+    HistByChannel[i]->SetLineColor( ChColor[i] );
   }
   for (int i = 0; i != 1; ++i) {
     TString const NameC = TString::Format("HistByChannel_Ch%i", i);
-    CanByChannel[i] = new TCanvas(NameC, NameC, 1800, 1100);
+    CanByChannel[i] = new TCanvas(NameC, NameC, 600, 600);
     CanByChannel[i]->Divide(1, NMAXCHANNELS);
   }
 
@@ -79,6 +82,11 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
   TGraph GraphTotal;
   GraphTotal.SetMarkerStyle(1);
+  TGraph GraphCh[NMAXCHANNELS];
+  for (int ich = 0; ich < NMAXCHANNELS; ++ich) {
+    GraphCh[ich].SetMarkerStyle(1);
+    GraphCh[ich].SetMarkerColor( ChColor[ich] );
+  }
   int    NGraphPoints = 0;
 
   while (true) {
@@ -179,6 +187,13 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
 
 
+    int ThisPoint = NGraphPoints++;
+    GraphTotal.Set(ThisPoint+1);
+    GraphTotal.SetPoint(ThisPoint, FirstOrbitTime, TotalSum);
+    CanByChannel[0]->cd(3);
+    GraphTotal.Draw("Ap");
+    GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
+
     for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
       HistByChannel[*ich]->Reset();
@@ -193,6 +208,12 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
           }
         }
       }
+    GraphCh[*ich].Set(ThisPoint+1);
+    GraphCh[*ich].SetPoint(ThisPoint, FirstOrbitTime, TotalInChannel);
+    CanByChannel[0]->cd(3);
+    GraphCh[*ich].Draw("samep");
+    GraphCh[*ich].GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
+
 
       if (SeenFirstEOF) {
         CanByChannel[0]->cd(*ich + 1);
@@ -205,12 +226,6 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     //if (!SeenFirstEOF) {
     //    sleep(1);
     //}
-    int ThisPoint = NGraphPoints++;
-    GraphTotal.Set(ThisPoint+1);
-    GraphTotal.SetPoint(ThisPoint, FirstOrbitTime, TotalSum);
-    CanByChannel[0]->cd(3);
-    GraphTotal.Draw("Ap");
-    GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
     CanByChannel[0]->Update();
   }
 
