@@ -35,7 +35,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     exit(1);
   }
 
-  int const NOrbitsToAvg = 9;
+  int const NOrbitsToAvg = 9*5;
 
   uint32_t OrbitTime;
   uint32_t Orbit;
@@ -43,6 +43,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   uint32_t BigBuff[NBUCKETS];
 
   bool GotIt;
+  bool SeenFirstEOF = false;
 
   uint32_t OTime[NMAXCHANNELS][NOrbitsToAvg];
   uint32_t O[NMAXCHANNELS][NOrbitsToAvg];
@@ -81,6 +82,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         if (InFile.eof()) {
           usleep(200000);
           InFile.clear();
+          SeenFirstEOF = true;
         } else {
           GotIt = true;
         }
@@ -92,6 +94,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         if (InFile.eof()) {
           usleep(200000);
           InFile.clear();
+          SeenFirstEOF = true;
         } else {
           GotIt = true;
         }
@@ -103,6 +106,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         if (InFile.eof()) {
           usleep(200000);
           InFile.clear();
+          SeenFirstEOF = true;
         } else {
           GotIt = true;
         }
@@ -118,11 +122,16 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
             GotIt = false;
             usleep(200000);
             InFile.clear();
+            SeenFirstEOF = true;
           } else {
             GotIt = true;
             ++iBucket;
           }
         }
+      }
+
+      if (!SeenFirstEOF) {
+        continue;
       }
 
       IsChInOrbit[Channel][iOrbit] = true;
@@ -132,7 +141,6 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
           IsInVec = true;
         }
       }
-      //if (std::count(Ch.begin(), Ch.end(), Channel) == 0) {
       if (!IsInVec) {
         Ch.push_back(Channel);
       }
