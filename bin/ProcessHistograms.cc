@@ -17,7 +17,8 @@
 #include "TH1F.h"
 #include "TCanvas.h"
 #include "TSystem.h"
-//#include "TApplication.h"
+#include "TApplication.h"
+#include "TGraph.h"
 //#include "TGMainFrame.h"
 
 
@@ -42,6 +43,9 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   uint32_t Channel;
   uint32_t BigBuff[NBUCKETS];
 
+  uint32_t FirstOrbitTime;
+  uint32_t LastOrbitTime;
+
   bool GotIt;
   bool SeenFirstEOF = false;
 
@@ -51,7 +55,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   std::vector<int> Ch;
 
   bool IsChInOrbit[NMAXCHANNELS][NOrbitsToAvg];
-  for (int i = 0; i != NOrbitsToAvg; ++i) {
+  for (int i = 0; i != NMAXCHANNELS; ++i) {
     for (int j = 0; j != NOrbitsToAvg; ++j) {
       IsChInOrbit[i][j] = false;
     }
@@ -72,9 +76,16 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   }
 
 
+
+  TGraph GraphTotal;
+  GraphTotal.SetMarkerStyle(1);
+  int    NGraphPoints = 0;
+
   while (true) {
 
+    uint64_t TotalSum = 0;
     for (int iOrbit = 0; iOrbit < NOrbitsToAvg; ++iOrbit) {
+
 
       GotIt = false;
       while (!GotIt) {
@@ -86,6 +97,12 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         } else {
           GotIt = true;
         }
+      }
+
+      if (iOrbit == 0) {
+        FirstOrbitTime = OrbitTime;
+      } else if (iOrbit == NOrbitsToAvg - 1) {
+        LastOrbitTime = OrbitTime;
       }
 
       GotIt = false;
@@ -130,6 +147,11 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         }
       }
 
+      if (Orbit < 25000) {
+        --iOrbit;
+        continue;
+      }
+
       if (!SeenFirstEOF) {
         continue;
       }
@@ -147,16 +169,17 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
       for (int ib = 0; ib < NBUCKETS; ++ib) {
         Counts[Channel][iOrbit][ib] = (BigBuff[ib] & 0xfff);
+        TotalSum += (BigBuff[ib] & 0xfff);
       }
 
       OTime[Channel][iOrbit] = OrbitTime;
       O[Channel][iOrbit] = Orbit;
 
-
     }
 
 
 
+    std::cout << "TotalSum: " << TotalSum << std::endl;
     for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
       HistByChannel[*ich]->Reset();
@@ -177,8 +200,17 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
       printf("Channel: %2i  OrbitTime: %15lu  Orbit: %15lu   Total: %15lu\n", (int) *ich, (unsigned long) 0, (unsigned long) 0, (unsigned long) TotalInChannel);
     }
+    //if (!SeenFirstEOF) {
+    //    sleep(1);
+    //}
+    int ThisPoint = NGraphPoints++;
+    GraphTotal.Set(ThisPoint+1);
+    GraphTotal.SetPoint(ThisPoint, FirstOrbitTime, TotalSum);
+    CanByChannel[0]->cd(3);
+    GraphTotal.Draw("Ap");
+    std::cout << FirstOrbitTime - 14400000 << "  " << FirstOrbitTime << std::endl;
+    GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
     CanByChannel[0]->Update();
-    std::cout << std::endl;
   }
 
   return 0;
@@ -191,7 +223,12 @@ int main (int argc, char* argv[])
     std::cerr << "Usage: " << argv[0] << " [InFileName] [FirstBin] [LastBin]" << std::endl;
     return 1;
   }
-  //TApplication theApp("PLT", &argc, argv);
+
+  int myargc;
+  char* myargv[0];
+  //TApplication theApp("PLT", &myargc, myargv);
+  //TestMainFrame mainWindow(gClient->GetRoot(), 400, 220);
+
 
   std::string const InFileName = argv[1];
   int const FirstBin = atoi(argv[2]);
