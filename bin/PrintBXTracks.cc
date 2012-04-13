@@ -34,6 +34,7 @@ int PrintBXTracks (std::string const DataFileName, std::string const GainCalFile
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
   std::map<int, int> BXMap;
+  std::map<int, int> BXMapCh;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -41,18 +42,16 @@ int PrintBXTracks (std::string const DataFileName, std::string const GainCalFile
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
-    if (ientry > 50000) {
-      break;
-    }
+    if (ientry > 10000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
 
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
-      if (Telescope->NTracks() > 0) {
+      for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         ++BXMap[Event.BX()];
-        break;
+        ++BXMapCh[Event.BX()*100+Telescope->Channel()];
       }
     }
   }
@@ -61,6 +60,9 @@ int PrintBXTracks (std::string const DataFileName, std::string const GainCalFile
     printf("BX: %5i   N: %15i\n", it->first, it->second);
   }
 
+  for (std::map<int, int>::iterator it = BXMapCh.begin(); it != BXMapCh.end(); ++it) {
+    printf("BX: %5i  Ch: %2i  N: %15i\n", it->first / 100, it->first % 100, it->second);
+  }
 
   return 0;
 }

@@ -48,10 +48,14 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
 
+  std::map<int, int> NTrkEvMap;
+
   TH2F* HistBeamSpot[3];
   HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -50, 50, 25, -540, 340);
   HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -50, 50, 25, -540, 340);
   HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 25, -50, 50, 25, -50, 50);
+
+  std::map<int, TH1F*> MapSlope;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -59,15 +63,24 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
+
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
 
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
 
-      static int ievent = 0;
-      if (Telescope->NTracks() > 0 && ievent < 20) {
-        Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), ievent++).Data() );
+      if (!MapSlope[Telescope->Channel()]) {
+        TString const Name = TString::Format("Slope_Ch%i", Telescope->Channel());
+        MapSlope[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+      }
+
+
+      if (Telescope->NClusters() > 3) continue;
+
+
+      if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 20) {
+          Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), NTrkEvMap[Telescope->Channel()]).Data() );
       }
 
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
@@ -76,6 +89,9 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         HistBeamSpot[0]->Fill( Track->fPlaner[0][1], Track->fPlaner[0][2]);
         HistBeamSpot[1]->Fill( Track->fPlaner[1][0], Track->fPlaner[1][2]);
         HistBeamSpot[2]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
+
+        MapSlope[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
+
       }
     }
 
@@ -105,6 +121,14 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   Can.cd(3+6);
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
   Can.SaveAs("BeamSpot.gif");
+
+  for (std::map<int, TH1F*>::iterator it = MapSlope.begin(); it != MapSlope.end(); ++it) {
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    Can.SaveAs( TString(it->second->GetName()) + ".gif");
+    delete it->second;
+  }
 
   return 0;
 }

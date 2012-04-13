@@ -55,9 +55,9 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m3_m3;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_9x9, PLTPlane::kFiducialRegion_All);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, PLTPlane::kFiducialRegion_All);
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
@@ -86,6 +86,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
+
+    //if (ientry < 500000) continue;
+    //if (ientry >= 800000) break;
+    //if (ientry >= 100000) break;
 
     int NTracksPerEvent = 0;
 
@@ -198,6 +202,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
             } else if (NHits >= 3) {
               ChargeHits[id][3].push_back( ThisClusterCharge );
             }
+          } else {
+            //std::cout << Cluster->Channel() << " " << Cluster->SeedHit()->ROC() << " " << Cluster->SeedHit()->Column() << "  " << Cluster->SeedHit()->Row() << "  " << ThisClusterCharge << "  " << Cluster->SeedHit()->ADC() << std::endl;
+          }
+          if (Cluster->SeedHit()->ADC() > 220) {
+            //std::cout << Cluster->SeedHit()->ADC() << "  " << Cluster->SeedHit()->Charge() << std::endl;
           }
 
           // Extend the plots if we need to (less careful but I assume 0123 all scale together)

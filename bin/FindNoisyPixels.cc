@@ -82,7 +82,7 @@ int FindNoisyPixels (std::string const DataFileName, std::string const Alignment
     Double_t Median[1];
     Double_t Prob[1] = { 0.5 };
     Hist->GetQuantiles(1, Median, Prob);
-    float const Threshold = Median[0] + 4.0 * Hist->GetRMS();
+    float const Threshold = Median[0] + 5.0 * Hist->GetRMS();
     delete Hist;
 
     TH2F* Hist2D = It->second;

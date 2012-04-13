@@ -53,7 +53,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m5_m5);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, PLTPlane::kFiducialRegion_m2_m2);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
@@ -67,8 +67,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   std::map<int, TCanvas*>            cMap;
 
   // Bins and max for pulse height plots
-  int   const NBins =    50;
-  float const XMax  = 50000;
+  int   const NBins =     60;
+  float const XMin  =  -1000;
+  float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
   int const TimeWidth = 100;
@@ -81,6 +82,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
+
+    //if (ientry > 100000) break;
 
     int const TimeBinNumber = ientry / TimeWidth;
     if (ientry % TimeWidth == 0) {
@@ -116,10 +119,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
         if (!hMap.count(id)) {
           hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
-                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, 0, XMax) );
+                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
           for (size_t ih = 1; ih != 4; ++ih) {
             hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
-                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, 0, XMax) );
+                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
           }
 
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it

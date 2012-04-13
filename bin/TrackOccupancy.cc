@@ -39,8 +39,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
-    if (ientry <  300000) continue;
-    if (ientry >= 600000) break;
+    if (ientry >= 100000) break;
 
 
     // Loop over all planes with hits in event
