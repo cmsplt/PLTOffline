@@ -57,7 +57,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m3_m3;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, PLTPlane::kFiducialRegion_All);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
@@ -112,7 +112,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
       int const Channel = Telescope->Channel();
 
-      if (Telescope->NTracks() > 1) continue;
+      //if (Telescope->NTracks() > 1) continue;
+      if (Telescope->NClusters() != 3) continue;
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
@@ -233,7 +234,9 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       }
     }
 
-    HistNTracks.Fill(NTracksPerEvent);
+    if (NTracksPerEvent != 0) {
+      HistNTracks.Fill(NTracksPerEvent);
+    }
 
   }
   std::cout << "Events read: " << ientry+1 << std::endl;

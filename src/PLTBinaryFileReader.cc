@@ -122,7 +122,7 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
         PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
 
         // only keep hits on the diamond
-        if (PLTPlane::IsFiducial(PLTPlane::kFiducialRegion_Diamond, Hit)) {
+        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
           Hits.push_back(Hit);
         } else {
           delete Hit;

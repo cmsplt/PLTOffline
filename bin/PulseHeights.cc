@@ -83,7 +83,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    //if (ientry > 100000) break;
+    // First event time
+    static uint32_t const StartTime = Event.Time();
+
 
     int const TimeBinNumber = ientry / TimeWidth;
     if (ientry % TimeWidth == 0) {
