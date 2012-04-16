@@ -35,10 +35,10 @@ class PLTGainCal
 
     void PrintGainCal5 ();
 
-    int RowIndex (int const);
-    int ColIndex (int const);
-    int ChIndex (int const);
-    int RocIndex (int const);
+    static int RowIndex (int const);
+    static int ColIndex (int const);
+    static int ChIndex (int const);
+    static int RocIndex (int const);
 
     float GetCoef(int const, int const, int const, int const, int const);
 
