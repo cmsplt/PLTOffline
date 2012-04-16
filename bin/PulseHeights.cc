@@ -72,7 +72,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Time width in events for energy time dep plots
   // This is the time width in ms
-  int const TimeWidth = 1000 * (60 * 1);
+  int const TimeWidth = 1000 * (6);
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
 
@@ -84,7 +84,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    if (ientry >= 1000000) break;
+    //if (ientry >= 2000000) break;
 
     // First event time
     static uint32_t const StartTime = Event.Time();
@@ -292,6 +292,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       if (ig == 3) {
         g->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
         g->SetMaximum(60000);
+        g->SetMinimum(0);
         g->Draw("Apl");
       } else {
         g->Draw("samepl");
