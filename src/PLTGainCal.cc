@@ -192,7 +192,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   for ( ; std::getline(f, line); ) {
     ss.clear();
     ss.str(line.c_str());
-    ch = row = col = ch = 0;
+    ch = row = col = 0;
     ss >> ch >> roc >> col >> row;
 
     // Just remember that on the plane tester it's channel 22
