@@ -67,6 +67,12 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
+  std::map<int, TH2F* > hMap2D;
+  std::map<int, TCanvas*>            cMap2D;
+
+  double Avg2D[250][PLTU::NCOL][PLTU::NROW];
+  int      N2D[250][PLTU::NCOL][PLTU::NROW];
+  
 
   // Bins and max for pulse height plots
   int   const NBins =    60;
@@ -85,11 +91,14 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
+    //if (Event.BX() != 20) continue;
+
+    //if (ientry < 4700000) continue;
 
 
     //if (ientry < 500000) continue;
-    //if (ientry >= 800000) break;
-    //if (ientry >= 100000) break;
+    //if (ientry >= 3600000) break;
+    if (ientry >= 5000000) break;
 
     int NTracksPerEvent = 0;
 
@@ -131,6 +140,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           if (!hMap.count(id)) {
             hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
                   TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
+            hMap2D[id] = new TH2F( TString::Format("Avg Energy Ch %02i ROC %1i Pixels All", Channel, ROC),
+                  TString::Format("PixelEnergy_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
             for (size_t ih = 1; ih != 4; ++ih) {
               hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
                     TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
@@ -184,6 +195,14 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           //if (ThisClusterCharge <= 0) {
           //  printf("%12.0f\n", ThisClusterCharge);
           //}
+
+          int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
+          int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
+
+          if (ThisClusterCharge < 100000 && ThisClusterCharge >= 0) {
+            Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
+            ++N2D[id][col][row];
+          }
 
           hMap[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
@@ -343,8 +362,18 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     Leg->Draw("same");
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
-    for (size_t ih = 1; ih != 4; ++ih) {
 
+    for (int ia = 0; ia != PLTU::NCOL; ++ia) {
+      for (int ja = 0; ja != PLTU::NROW; ++ja) {
+        hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
+      }
+    }
+    hMap2D[id]->SetMaximum(60000);
+    hMap2D[id]->SetStats(false);
+    hMap2D[id]->Draw("colz");
+
+    if (false)
+    for (size_t ih = 1; ih != 4; ++ih) {
       // Grab hist
       TH1F* Hist = hClEnTimeMap[id][ih];
 
