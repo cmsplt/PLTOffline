@@ -17,6 +17,7 @@
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TLegend.h"
+#include "TGraphErrors.h"
 
 
 
@@ -60,8 +61,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
   // Map for all ROC hists and canvas
-  std::map<int, std::vector< std::vector<float> > > vClEnTimeMap;
-  std::map<int, std::vector<TH1F*> > hClEnTimeMap;
+  std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
   std::map<int, TCanvas*> cClEnTimeMap;
   std::map<int, TH1F*>    hClusterSizeMap;
   std::map<int, TCanvas*> cClusterSizeMap;
@@ -86,6 +86,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
 
   // Loop over all events in file
+  int NGraphPoints = 0;
   int ientry = 0;
   for ( ; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
@@ -98,22 +99,49 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
     //if (ientry < 500000) continue;
     //if (ientry >= 3600000) break;
-    if (ientry >= 5000000) break;
+    if (ientry >= 50000) break;
 
     int NTracksPerEvent = 0;
 
-    int const TimeBinNumber = ientry / TimeWidth;
-    if (ientry % TimeWidth == 0) {
-      for (std::map<int, std::vector< std::vector<float> > >::iterator it = vClEnTimeMap.begin(); it != vClEnTimeMap.end(); ++it) {
-        int const id = it->first;
 
-        // extend each hist
-        for (int iTimeHist = 0; iTimeHist < 4; ++iTimeHist) {
-          it->second[iTimeHist].push_back(0);
+    // First event time
+    static uint32_t const StartTime = Event.Time();
+    uint32_t const ThisTime = Event.Time();
+
+
+    while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
+      // make point(s)
+      for (std::map<int, std::vector<TGraphErrors*> >::iterator mit = gClEnTimeMap.begin(); mit != gClEnTimeMap.end(); ++mit) {
+        int const id = mit->first;
+        for (size_t ig = 0; ig != mit->second.size(); ++ig) {
+          TGraphErrors* g = (mit->second)[ig];
+
+          if (g->GetN() != NGraphPoints) {
+            // Play some catchup
+            g->Set(NGraphPoints);
+            for (int i = 0; i > NGraphPoints; ++i) {
+              g->SetPoint(i, i * TimeWidth, 0);
+            }
+          }
+
+          g->Set( NGraphPoints + 1 );
+          if (ChargeHits[id][ig].size() != 0) {
+            float const Avg = PLTU::Average(ChargeHits[id][ig]);
+            g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
+            g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) ChargeHits[id][ig].size()));
+            ChargeHits[id][ig].clear();
+            ChargeHits[id][ig].reserve(10000);
+          } else {
+            g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
+            g->SetPointError( NGraphPoints , 0, 0 );
+          }
         }
       }
-    }
+      ++NGraphPoints;
 
+      std::cout << NGraphPoints << std::endl;
+
+    }
 
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
@@ -123,6 +151,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
       //if (Telescope->NTracks() > 1) continue;
       if (Telescope->NClusters() != 3) continue;
+
+
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
@@ -150,25 +180,26 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
             // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
             if (!cMap.count(Channel)) {
               // Create canvas with given name
-              cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("PulseHeightTrack_Ch%02i", Channel), 900, 600);
-              cMap[Channel]->Divide(3, 2);
+              cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("PulseHeightTrack_Ch%02i", Channel), 900, 900);
+              cMap[Channel]->Divide(3, 3);
             }
           }
 
-          if (!vClEnTimeMap.count(id)) {
-            vClEnTimeMap[id].resize(4);
-            vClEnTimeMap[id][0].resize(ientry / TimeWidth + 1, 0);
-            vClEnTimeMap[id][1].resize(ientry / TimeWidth + 1, 0);
-            vClEnTimeMap[id][2].resize(ientry / TimeWidth + 1, 0);
-            vClEnTimeMap[id][3].resize(ientry / TimeWidth + 1, 0);
-            ChargeHits[id].resize(4);
-
-
-            // One in three chance you'll need a new canvas for thnat =)
-            if (!cClEnTimeMap.count(id)) {
-              cClEnTimeMap[id] = new TCanvas( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%i", Channel, ROC), TString::Format("PulseHeightTrackTime_Ch%02i_ROC%i", Channel, ROC), 900, 300);
-              cClEnTimeMap[id]->Divide(3, 1);
+          if (!gClEnTimeMap.count(id)) {
+            gClEnTimeMap[id].resize(4);
+            for (size_t ig = 0; ig != 4; ++ig) {
+              TString const Name = TString::Format("TimeAvgGraph_id%i_Cl%i", id, ig);
+              gClEnTimeMap[id][ig] = new TGraphErrors();
+              gClEnTimeMap[id][ig]->SetName(Name);
             }
+          }
+
+          if (!ChargeHits.count(id)) {
+            ChargeHits[id].resize(4);
+            ChargeHits[id][0].reserve(10000);
+            ChargeHits[id][1].reserve(10000);
+            ChargeHits[id][2].reserve(10000);
+            ChargeHits[id][3].reserve(10000);
           }
 
           // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
@@ -223,31 +254,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
               ChargeHits[id][3].push_back( ThisClusterCharge );
             }
           } else {
-            //std::cout << Cluster->Channel() << " " << Cluster->SeedHit()->ROC() << " " << Cluster->SeedHit()->Column() << "  " << Cluster->SeedHit()->Row() << "  " << ThisClusterCharge << "  " << Cluster->SeedHit()->ADC() << std::endl;
           }
-          if (Cluster->SeedHit()->ADC() > 220) {
-            //std::cout << Cluster->SeedHit()->ADC() << "  " << Cluster->SeedHit()->Charge() << std::endl;
-          }
-
-          // Extend the plots if we need to (less careful but I assume 0123 all scale together)
-          if (ientry % TimeWidth == 0) {
-
-            // Loop over all ids
-            for (std::map<int, std::vector< std::vector<float> > >::iterator it = vClEnTimeMap.begin(); it != vClEnTimeMap.end(); ++it) {
-              int const id = it->first;
-
-              // extend each hist
-              for (int iTimeHist = 0; iTimeHist < 4; ++iTimeHist) {
-                std::vector<float>* Vec = &it->second[iTimeHist];
-                if (ChargeHits[id][iTimeHist].size() > 0) {
-                  (*Vec)[TimeBinNumber] = Average(ChargeHits[id][iTimeHist]);
-                }
-                ChargeHits[id][iTimeHist].clear();
-              }
-            }
-          }
-
-
 
         }
       }
@@ -265,61 +272,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   HistNTracks.Draw("hist");
   CanNTracks.SaveAs("plots/NTracksPerEvent.gif");
 
-  // Loop over all histograms and draw them on the correct canvas in the correct pad for ClEnTime
-  for (std::map<int, std::vector< std::vector<float> > >::iterator it = vClEnTimeMap.begin(); it != vClEnTimeMap.end(); ++it) {
 
-    // Decode the ID
-    int const Channel = it->first / 10;
-    int const ROC     = it->first % 10;
-    int const id      = it->first;
-
-    int const Remainder = vClEnTimeMap[id][0].size() % 2;
-
-    printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
-    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_All", Channel, ROC),
-          TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels All", Channel, ROC), vClEnTimeMap[id][0].size() + Remainder, 0, (vClEnTimeMap[id][0].size() + Remainder) * TimeWidth ) );
-    for (size_t ih = 1; ih != 3; ++ih) {
-      hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih),
-            TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih), vClEnTimeMap[id][ih].size() + Remainder, 0, (vClEnTimeMap[id][ih].size() + Remainder) * TimeWidth) );
-    }
-    hClEnTimeMap[id].push_back( new TH1F( TString::Format("PulseHeightTrackTime_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) 3),
-          TString::Format("Pulse Height Time Dep for Ch %02i ROC %1i Pixels %i+", Channel, ROC, (int) 3), vClEnTimeMap[id][3].size() + Remainder, 0, (vClEnTimeMap[id][3].size() + Remainder) * TimeWidth) );
-    for (size_t ih = 0; ih != 4; ++ih) {
-      hClEnTimeMap[id][ih]->SetNdivisions(5);
-      hClEnTimeMap[id][ih]->SetStats(false);
-      hClEnTimeMap[id][ih]->SetMinimum(0);
-      hClEnTimeMap[id][ih]->SetXTitle("Event Number");
-      //hClEnTimeMap[id][ih]->SetYTitle("Average Charge (electrons)");
-      for (size_t ib = 0; ib != vClEnTimeMap[id][ih].size(); ++ib) {
-        hClEnTimeMap[id][ih]->SetBinContent(ib, vClEnTimeMap[id][ih][ib]);
-      }
-      while (hClEnTimeMap[id][ih]->GetNbinsX() > 25) {
-        if (hClEnTimeMap[id][ih]->GetNbinsX() % 2 == 1) {
-          hClEnTimeMap[id][ih]->SetBins(hClEnTimeMap[id][ih]->GetNbinsX()+1, 0, hClEnTimeMap[id][ih]->GetXaxis()->GetXmax());
-        }
-        hClEnTimeMap[id][ih]->Rebin();
-        hClEnTimeMap[id][ih]->Scale(0.5);
-      }
-    }
-
-    for (size_t ih = 1; ih != 4; ++ih) {
-      // Grab hist
-      TH1F* Hist = hClEnTimeMap[id][ih];
-
-      Hist->SetLineColor(HistColors[ih]);
-      //if (Hist->GetNbinsX() % 2 == 0) {
-      //  Hist->Rebin(2);
-      //  Hist->Scale(1./2.);
-      //}
-    }
-
-  }
-
-  // Loop over all canvas, save them, and delete them
-  for (std::map<int, TCanvas*>::iterator it = cClEnTimeMap.begin(); it != cClEnTimeMap.end(); ++it) {
-    //it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
-    //delete it->second;
-  }
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   for (std::map<int, std::vector<TH1F*> >::iterator it = hMap.begin(); it != hMap.end(); ++it) {
@@ -360,8 +313,28 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       }
     }
     Leg->Draw("same");
+
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
+    for (size_t ig = 3; ig != 0; --ig) {
+
+      // Grab hist
+      TGraphErrors* g = gClEnTimeMap[id][ig];
+
+      g->SetMarkerColor(HistColors[ig]);
+      g->SetLineColor(HistColors[ig]);
+      if (ig == 3) {
+        g->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
+        g->SetMaximum(60000);
+        g->Draw("Apl");
+      } else {
+        g->Draw("samepl");
+      }
+    }
+
+
+    // change to correct pad on canvas and draw the hist
+    cMap[Channel]->cd(ROC+6+1);
 
     for (int ia = 0; ia != PLTU::NCOL; ++ia) {
       for (int ja = 0; ja != PLTU::NROW; ++ja) {
@@ -372,22 +345,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     hMap2D[id]->SetStats(false);
     hMap2D[id]->Draw("colz");
 
-    if (false)
-    for (size_t ih = 1; ih != 4; ++ih) {
-      // Grab hist
-      TH1F* Hist = hClEnTimeMap[id][ih];
-
-      Hist->SetNdivisions(5);
-      Hist->SetMaximum(60000);
-      Hist->SetMinimum(0);
-      Hist->SetLineColor(HistColors[ih]);
-      if (ih == 1) {
-        Hist->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
-        Hist->Draw("hist");
-      } else {
-        Hist->Draw("histsame");
-      }
-    }
   }
 
   // Save Cluster Size canvases
