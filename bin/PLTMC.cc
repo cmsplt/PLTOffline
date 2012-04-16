@@ -24,7 +24,7 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
   static std::vector<int> Channels = Alignment.GetListOfChannels();
 
 
-  static int const NTracks = 20;//gRandom->Integer(10);
+  static int const NTracks = 2;//gRandom->Integer(10);
 
   for (int itrack = 0; itrack < NTracks; ++itrack) {
     int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
@@ -584,14 +584,14 @@ int PLTMC ()
   uint32_t unsigned n2;
 
   PLTAlignment Alignment;
-  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_PLTMC.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/IdealAlignment_Half.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_PLTMC.dat");
+  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
   //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 10;
+  int const NEvents = 100000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
