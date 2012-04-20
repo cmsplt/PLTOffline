@@ -37,9 +37,9 @@ int PLTHistReader::GetNextBuffer ()
 {
   fChannels.clear();
   fBuckets.clear();
-  static uint32_t LastOrbitTime = -1;
-  uint32_t MyOrbitTime;
-  if (LastOrbitTime == (uint32_t) -1) {
+  static uint32_t LastOrbitTime = 0;
+  static uint32_t MyOrbitTime;
+  if (LastOrbitTime == 0) {
     fInFile.read( (char*) &MyOrbitTime, sizeof(uint32_t));
     fTempOrbitTime = MyOrbitTime;
   }
@@ -84,7 +84,7 @@ int PLTHistReader::GetNextBuffer ()
   } while (fTempOrbitTime == MyOrbitTime);
 
   LastOrbitTime = fTempOrbitTime;
-  MyOrbitTime = LastOrbitTime;
+  MyOrbitTime = fTempOrbitTime;
 
   return (int) fChannels.size();
 }
