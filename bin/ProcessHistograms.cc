@@ -19,6 +19,8 @@
 #include "TSystem.h"
 #include "TApplication.h"
 #include "TGraph.h"
+#include "TStyle.h"
+#include "TROOT.h"
 //#include "TGMainFrame.h"
 
 
@@ -27,7 +29,7 @@ int const NBUCKETS = 3564;
 int const NORBITS  = 4096;
 int const NMAXCHANNELS = 6;
 
-int ChColor[5] = { 2, 3, 0, 4, 6 };
+int ChColor[6]  = { 20, 30, 0, 40, 46, 9 };
 
 int ProcessHistograms (std::string const InFileName, int const FirstBucket, int const LastBucket)
 {
@@ -37,6 +39,9 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     std::cerr << "ERROR: cannot open file: " << InFileName << std::endl;
     exit(1);
   }
+
+  gROOT->SetStyle("Plain");
+  gStyle->SetOptStat(0);
 
   int const NOrbitsToAvg = 9*5;
 
@@ -74,14 +79,14 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   }
   for (int i = 0; i != 1; ++i) {
     TString const NameC = TString::Format("HistByChannel_Ch%i", i);
-    CanByChannel[i] = new TCanvas(NameC, NameC, 600, 600);
+    CanByChannel[i] = new TCanvas(NameC, NameC, 1800, 1100);
     CanByChannel[i]->Divide(1, NMAXCHANNELS);
   }
 
 
 
   TGraph GraphTotal;
-  GraphTotal.SetMarkerStyle(1);
+  GraphTotal.SetMarkerStyle(6);
   TGraph GraphCh[NMAXCHANNELS];
   for (int ich = 0; ich < NMAXCHANNELS; ++ich) {
     GraphCh[ich].SetMarkerStyle(1);
@@ -177,7 +182,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
       for (int ib = 0; ib < NBUCKETS; ++ib) {
         Counts[Channel][iOrbit][ib] = (BigBuff[ib] & 0xfff);
-        TotalSum += (BigBuff[ib] & 0xfff);
+        TotalSum += (BigBuff[ib] & 0xfff) / 5.0;
       }
 
       OTime[Channel][iOrbit] = OrbitTime;
@@ -193,6 +198,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     CanByChannel[0]->cd(3);
     GraphTotal.Draw("Ap");
     GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
+    //GraphTotal.GetYaxis()->SetRangeUser(0, GraphTotal.GetMaximum() * (1.2));
 
     for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
@@ -227,6 +233,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     //    sleep(1);
     //}
     CanByChannel[0]->Update();
+    std::cout << std::endl;
   }
 
   return 0;
