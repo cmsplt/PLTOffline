@@ -20,6 +20,7 @@ class PLTHistReader
     uint64_t GetTotal ();
     uint64_t GetTotalInChannel (size_t const);
     uint64_t GetTotalInBucket (size_t const);
+    int      GetChBucket(int, int);
 
     int      AverageNext (int const);
     uint64_t GetAverage ();

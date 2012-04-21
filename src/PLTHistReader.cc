@@ -120,6 +120,10 @@ int PLTHistReader::AverageNext (int const NToAvg)
 
 
 
+int PLTHistReader::GetChBucket (int ic, int ib)
+{
+  return (fBigBuff[ic][ib] & 0xfff);
+}
 
 uint64_t PLTHistReader::GetTotal ()
 {
