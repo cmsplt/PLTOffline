@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <map>
 
 #include "TString.h"
 #include "TMath.h"
@@ -44,6 +45,8 @@ class PLTGainCal
 
     bool IsGood () { return fIsGood; }
 
+    int GetHardwareID (int const Channel) { return fHardwareMap[Channel]; }
+
 
 
   private:
@@ -69,6 +72,9 @@ class PLTGainCal
     // ch,roc,col,row [3]
     //float GC[MAXCHNS][MAXROCS][MAXCOLS][MAXROWS][3];
     float GC[NCHNS][NROCS][NCOLS][NROWS][5];
+
+    // Map for hardware locations by fed channel
+    std::map<int, int> fHardwareMap;
 
 };
 

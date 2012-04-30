@@ -168,9 +168,15 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 
   // Loop over header lines in the input data file
   for (std::string line; std::getline(f, line); ) {
+    int mf, mfc, hub;
     if (line == "") {
       break;
     }
+    std::istringstream ss;
+    ss.str(line);
+    ss >> mf >> mfc >> hub >> ch;
+
+    fHardwareMap[ch] = 1000*mf + 100*mfc + hub;
   }
 
   for (int i = 0; i != NCHNS; ++i) {
