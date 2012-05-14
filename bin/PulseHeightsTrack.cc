@@ -124,7 +124,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //uint32_t static ThisTime = 0;
     //++ThisTime;
 
-    std::cout << "ThisTime: " << ThisTime << std::endl; exit(0);
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
       // make point(s)
