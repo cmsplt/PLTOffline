@@ -80,7 +80,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
-  std::map<int, TH2F* > hMap2D;
+  std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
 
   double Avg2D[250][PLTU::NCOL][PLTU::NROW];
@@ -93,7 +93,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * (3);
+  int const TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
@@ -111,8 +111,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
 
     //if (ientry < 500000) continue;
-    //if (ientry >= 1000000) break;
-    //if (ientry >= 5000000) break;
+    //if (ientry >= 3600000) break;
+    //if (ientry >= 50000) break;
 
     int NTracksPerEvent = 0;
 
@@ -120,6 +120,9 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     // First event time
     static uint32_t const StartTime = Event.Time();
     uint32_t const ThisTime = Event.Time();
+    //static uint32_t const StartTime = 0;
+    //uint32_t static ThisTime = 0;
+    //++ThisTime;
 
     std::cout << "ThisTime: " << ThisTime << std::endl; exit(0);
 
@@ -330,20 +333,24 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
-    for (size_t ig = 3; ig != 0; --ig) {
+    for (size_t ig = 3; ig != -1; --ig) {
 
       // Grab hist
       TGraphErrors* g = gClEnTimeMap[id][ig];
+      if (g == 0x0) {
+        std::cerr << "ERROR: no g for ig == " << ig << std::endl;
+        continue;
+      }
 
       g->SetMarkerColor(HistColors[ig]);
       g->SetLineColor(HistColors[ig]);
       if (ig == 3) {
         g->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
-        g->SetMaximum(60000);
         g->SetMinimum(0);
-        g->Draw("Apl");
+        g->SetMaximum(60000);
+        g->Draw("Ap");
       } else {
-        g->Draw("samepl");
+        g->Draw("samep");
       }
       OUTFILE.cd();
       g->Write();
@@ -353,8 +360,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+6+1);
 
+  for (int ja = 0; ja != PLTU::NROW; ++ja) {
     for (int ia = 0; ia != PLTU::NCOL; ++ia) {
-      for (int ja = 0; ja != PLTU::NROW; ++ja) {
         if (Avg2D[id][ia][ja] < 25000) {
           int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
           int const mf  = hwdAddy / 1000;
@@ -363,11 +370,18 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           fprintf(OutPix, "%1i %1i %2i %1i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + ia, PLTU::FIRSTROW + ja);
         } else {
         }
-	hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
+        if (Avg2D[id][ia][ja] > 0) {
+          hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
+        }
+        printf("%6.0f ", Avg2D[id][ia][ja]);
       }
+      std::cout << std::endl;
     }
     hMap2D[id]->SetMaximum(60000);
     hMap2D[id]->SetStats(false);
+    hMap2D[id]->SetXTitle("Column");
+    hMap2D[id]->SetYTitle("Row");
+    hMap2D[id]->SetZTitle("Electrons");
     hMap2D[id]->Draw("colz");
     OUTFILE.cd();
     hMap2D[id]->Write();

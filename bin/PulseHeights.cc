@@ -54,7 +54,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m2_m2);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
@@ -72,7 +72,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Time width in events for energy time dep plots
   // This is the time width in ms
-  int const TimeWidth = 1000 * (6);
+  //int const TimeWidth = 1000 * (60 * 1);
+  int const TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
 
@@ -87,8 +88,11 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     //if (ientry >= 2000000) break;
 
     // First event time
-    static uint32_t const StartTime = Event.Time();
-    uint32_t const ThisTime = Event.Time();
+    //static uint32_t const StartTime = Event.Time();
+    //uint32_t const ThisTime = Event.Time();
+    static uint32_t const StartTime = 0;
+    uint32_t static ThisTime = 0;
+    ++ThisTime;
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
@@ -282,7 +286,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     Leg->Draw("same");
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
-    for (size_t ig = 3; ig != 0; --ig) {
+    for (size_t ig = 3; ig!= -1; --ig) {
 
       // Grab hist
       TGraphErrors* g = gClEnTimeMap[id][ig];
@@ -291,6 +295,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       g->SetLineColor(HistColors[ig]);
       if (ig == 3) {
         g->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
+        g->SetMinimum(0);
         g->SetMaximum(60000);
         g->SetMinimum(0);
         g->Draw("Apl");
