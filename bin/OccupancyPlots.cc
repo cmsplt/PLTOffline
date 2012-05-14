@@ -443,35 +443,28 @@ int OccupancyPlots (std::string const DataFileName)
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Ch%02i.pdf", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cQuantileMap.begin(); it != cQuantileMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Quantile_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Quantile_Ch%02i.pdf", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cProjectionMap.begin(); it != cProjectionMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Projection_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Projection_Ch%02i.pdf", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cEfficiencyMap.begin(); it != cEfficiencyMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Efficiency_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Efficiency_Ch%02i.pdf", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cCoincidenceMap.begin(); it != cCoincidenceMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i.pdf", it->first));
   }
   for (std::map<int, TCanvas*>::iterator it = cMeanMap.begin(); it != cMeanMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Mean_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_Mean_Ch%02i.pdf", it->first));
   }
   for (std::map<int, TCanvas*>::iterator it = cAllMap.begin(); it != cAllMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i.png", it->first));
-    it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i.pdf", it->first));
     delete it->second;
   }
 
