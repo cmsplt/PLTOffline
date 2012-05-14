@@ -11,10 +11,10 @@
 #include <vector>
 #include <map>
 
-#include "TFIle.h"
+#include "TFile.h"
 #include "TString.h"
-#include "Tgraph.h"
-#include "TgraphErrors.h"
+#include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TCanvas.h"
 #include "TAxis.h"
 #include "TFrame.h"
