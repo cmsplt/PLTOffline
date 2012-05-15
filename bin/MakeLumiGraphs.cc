@@ -43,27 +43,31 @@ int MakeLumiGraphs (TString const InFileName, TString const OutFileName)
   TCanvas Can;
   Can.cd();
 
-  Tree->Draw("htot:(time_orbit-58344973)", "ch == 0");
+  //TString const TimeOffset = "-58344973";
+  //TString const TimeOffset = "-43501008-63000";
+  TString const TimeOffset = "-43501008";
+
+  Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 0");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());
   gr->SetName("LumiRages_Ch0");
   gr->Write();
 
-  Tree->Draw("htot:(time_orbit-58344973)", "ch == 1");
+  Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 1");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());
   gr->SetName("LumiRages_Ch1");
   gr->Write();
 
-  Tree->Draw("htot:(time_orbit-58344973)", "ch == 3");
+  Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 3");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());
   gr->SetName("LumiRages_Ch3");
   gr->Write();
 
-  Tree->Draw("htot:(time_orbit-58344973)", "ch == 4");
+  Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 4");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());
   gr->SetName("LumiRages_Ch4");
   gr->Write();
 
-  Tree->Draw("htot:(time_orbit-58344973)", "ch == 5");
+  Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 5");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());
   gr->SetName("LumiRages_Ch5");
   gr->Write();
