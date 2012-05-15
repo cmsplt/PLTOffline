@@ -22,7 +22,7 @@
 
 int const NBUCKETS = 3564;
 int const NORBITS  = 4096;
-int const NMAXCHANNELS = 6;
+int const NMAXCHANNELS = 9;
 
 int HistNTP (std::string const InFileName, std::string const OutFileName)
 {
@@ -43,7 +43,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
   int Hist[NMAXCHANNELS][NBUCKETS];
   Tree.Branch("Time", &Time, "Time/I");
   Tree.Branch("Total", &Total, "Total/I");
-  Tree.Branch("Hist", Hist, "Hist[6][3564]/I");
+  Tree.Branch("Hist", Hist, "Hist[9][3564]/I");
 
   uint32_t LastTime;
   for (int ientry = 0; HistReader.GetNextBuffer() >= 0; ++ientry) {

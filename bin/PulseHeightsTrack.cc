@@ -52,7 +52,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
   int const HistColors[4] = { 1, 4, 28, 2 };
 
-  TFile OUTFILE("VDM.root", "recreate");
+  TFile OUTFILE("PHT.root", "recreate");
   if (!OUTFILE.IsOpen()) {
     std::cerr << "ERROR: cannot open output file" << std::endl;
     exit(1);
@@ -93,7 +93,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000;
+  int const TimeWidth = 1000 * 3;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
@@ -123,6 +123,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //static uint32_t const StartTime = 0;
     //uint32_t static ThisTime = 0;
     //++ThisTime;
+
+    std::cout << StartTime << std::endl; exit(0);
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {

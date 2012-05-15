@@ -52,10 +52,10 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
   //LumiChannels.push_back(5);
 
 
-  Double_t const xmin = 0;//7500e+3;//pad->GetUxmin();
+  Double_t const xmin = 8e+6;//7500e+3;//pad->GetUxmin();
   Double_t const ymin = 0;
   Double_t const xmax = 15000e+3;//10000e+3;//pad->GetUxmax();
-  Double_t const ymax = 70000;
+  Double_t const ymax = 5e+6;
 
   // Loop over channels
   for (std::vector<int>::iterator ch = PHChannels.begin(); ch != PHChannels.end(); ++ch) {
@@ -112,6 +112,7 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
       gLumi->Draw("p");
 
       TGaxis *axis = new TGaxis(xmax,ymin,xmax, ymax,ymin,ymax,510,"+L");
+      overlay->SetLogy(1);
       //axis->SetLineColor(kRed);
       //axis->SetLabelColor(kRed);
       axis->SetLabelSize(0.03);
