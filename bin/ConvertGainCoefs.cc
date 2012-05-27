@@ -28,14 +28,26 @@ int ConvertGainCoefs (std::string const InFileName, std::string const OutFileNam
   // Container for conversion
   std::map<int, int> M;
   //M[ mFec * 1000 + mFecChannel * 100 + hubAddress] = Channel;
-  M[ 8229 ] = 20;
-  M[ 8221 ] = 21;
-  M[ 8213 ] = 23;
-  M[ 8205 ] = 24;
-  fprintf(OutFile, "8 2 29 20\n");
-  fprintf(OutFile, "8 2 21 21\n");
-  fprintf(OutFile, "8 2 13 23\n");
-  fprintf(OutFile, "8 2  5 24\n");
+  //M[ 8229 ] = 20;
+  //M[ 8221 ] = 21;
+  //M[ 8213 ] = 23;
+  //M[ 8205 ] = 24;
+  //fprintf(OutFile, "8 2 29 20\n");
+  //fprintf(OutFile, "8 2 21 21\n");
+  //fprintf(OutFile, "8 2 13 23\n");
+  //fprintf(OutFile, "8 2  5 24\n");
+
+  M[ 7105 ] = 13;
+  M[ 7121 ] = 14;
+  M[ 7129 ] = 15;
+  M[ 7205 ] = 16;
+  M[ 7221 ] = 24;
+  fprintf(OutFile, "7 1  5 13\n");
+  fprintf(OutFile, "7 1 21 14\n");
+  fprintf(OutFile, "7 1 29 15\n");
+  fprintf(OutFile, "8 2  5 16\n");
+  fprintf(OutFile, "8 2 21 24\n");
+
   fprintf(OutFile, "\n");
 
 
