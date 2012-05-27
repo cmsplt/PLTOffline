@@ -19,6 +19,7 @@
 #include "TLegend.h"
 #include "TGraphErrors.h"
 #include "TFile.h"
+#include "TRegexp.h"
 
 
 
@@ -52,7 +53,13 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
   int const HistColors[4] = { 1, 4, 28, 2 };
 
-  TFile OUTFILE("PHT.root", "recreate");
+  // Output name for root file, just tack it on the end..
+  TString const NI = DataFileName;
+  TString const BaseInName = NI.Contains('/') ? NI(NI.Last('/')+1, NI.Length()-NI.Last('/')-1) : NI;
+  TString const OutFileName = BaseInName + ".PHT.root";
+  std::cout << "PulseHeights saved to: " << OutFileName << std::endl;
+
+  TFile OUTFILE(OutFileName, "recreate");
   if (!OUTFILE.IsOpen()) {
     std::cerr << "ERROR: cannot open output file" << std::endl;
     exit(1);
@@ -74,7 +81,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
-  //Event.ReadPixelMask("PixelMask_miniplt.conv.dat");
+  Event.ReadPixelMask("PixelMask_miniplt.conv.dat");
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;

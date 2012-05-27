@@ -31,7 +31,12 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
     exit(1);
   }
 
-  TFile OutFile("MyOutGraphs.root", "recreate");
+  // Output name for root file, just tack it on the end..
+  TString const BaseInName = PHFileName.Contains('/') ? PHFileName(PHFileName.Last('/')+1, PHFileName.Length()-PHFileName.Last('/')-1) : PHFileName;
+  TString const OutFileName = BaseInName + ".PHLumi.root";
+  std::cout << "Overlays saved to: " << OutFileName << std::endl;
+
+  TFile OutFile(OutFileName, "create");
   if (!OutFile.IsOpen()) {
     std::cerr << "ERROR: Cannot open output file" << std::endl;
     exit(1);
