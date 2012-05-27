@@ -29,6 +29,7 @@ int PlotBuckets (std::string const InFileName, int const ENTRY)
     }
 
     std::cout << "Found Entry: " << ENTRY << std::endl;
+    std::cout << "At Time: " << HistReader.GetOrbitTime() << std::endl;
 
 
     // container for hists
@@ -63,7 +64,7 @@ int PlotBuckets (std::string const InFileName, int const ENTRY)
     Can.cd(5);
     Hist[5]->Draw("hist");
 
-    Can.SaveAs("Buckets.gif");
+    Can.SaveAs(TString::Format("Buckets_%i.gif", ENTRY));
 
     break;
 

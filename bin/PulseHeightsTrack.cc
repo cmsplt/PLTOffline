@@ -74,7 +74,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
-  Event.ReadPixelMask("MyPixelMaskFile.dat");
+  //Event.ReadPixelMask("PixelMask_miniplt.conv.dat");
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
@@ -95,7 +95,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 3;
+  int const TimeWidth = 1000 * 30;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
@@ -126,7 +126,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //uint32_t static ThisTime = 0;
     //++ThisTime;
 
-    std::cout << StartTime << std::endl; exit(0);
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
@@ -336,7 +335,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
-    for (size_t ig = 3; ig != -1; --ig) {
+    for (size_t ig = 3; ig != 0; --ig) {
 
       // Grab hist
       TGraphErrors* g = gClEnTimeMap[id][ig];

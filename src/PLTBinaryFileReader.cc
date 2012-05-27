@@ -118,14 +118,19 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
       roc -= 1; // The fed gives 123, and we use the convention 012
       //kga changed fiducial region
       if (roc <= 2) {
-        //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
-        PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
 
-        // only keep hits on the diamond
-        if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
-          Hits.push_back(Hit);
-        } else {
-          delete Hit;
+        // Check the pixel mask
+        if ( !IsPixelMasked( chan*100000 + roc*10000 + mycol*100 + abs(convPXL((word & pxlmsk) >> 8)) ) ) {
+
+          //printf("IN OUT: %10i %10i\n", (word & pxlmsk) >> 8, convPXL((word & pxlmsk) >> 8));
+          PLTHit* Hit = new PLTHit((int) chan, (int) roc, (int) mycol, (int) abs(convPXL((word & pxlmsk) >> 8)), (int) (word & plsmsk));
+
+          // only keep hits on the diamond
+          if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
+            Hits.push_back(Hit);
+          } else {
+            delete Hit;
+          }
         }
       } else {
         //std::cerr << "WARNING: PLTBinaryFileReader found ROC with number and chan: " << roc << "  " << chan << std::endl;
@@ -258,14 +263,16 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
       break;
     }
 
-    PLTHit* Hit = new PLTHit(Channel, ROC, Col, Row, ADC);
-    // only keep hits on the diamond
-    if (PLTPlane::IsFiducial(PLTPlane::kFiducialRegion_Diamond, Hit)) {
-      Hits.push_back(Hit);
-    } else {
-      delete Hit;
+    if ( !IsPixelMasked( Channel*100000 + ROC*10000 + Col*100 + Row ) ) {
+      PLTHit* Hit = new PLTHit(Channel, ROC, Col, Row, ADC);
+      // only keep hits on the diamond
+      if (PLTPlane::IsFiducial(PLTPlane::kFiducialRegion_Diamond, Hit)) {
+        Hits.push_back(Hit);
+      } else {
+        delete Hit;
+      }
+      //printf("%2i %2i %2i %2i %5i %9i\n", Channel, ROC, Col, Row, ADC, EventNumber);
     }
-    //printf("%2i %2i %2i %2i %5i %9i\n", Channel, ROC, Col, Row, ADC, EventNumber);
 
     LastEventNumber = EventNumber;
     Event = EventNumber;
@@ -280,7 +287,30 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
 
 void PLTBinaryFileReader::ReadPixelMask (std::string const InFileName)
 {
-  fPixelMask.insert(1);
+  std::cout << "PLTBinaryFileReader::ReadPixelMask reading file: " << InFileName << std::endl;
+
+  std::ifstream InFile(InFileName.c_str());
+  if (!InFile.is_open()) {
+    std::cerr << "ERROR: cannot open PixelMask file: " << InFileName << std::endl;
+    throw;
+  }
+
+  // Loop over header lines in the input data file
+  for (std::string line; std::getline(InFile, line); ) {
+    if (line == "") {
+      break;
+    }
+  }
+
+  std::istringstream linestream;
+  int ch, roc, col, row;
+  for (std::string line; std::getline(InFile, line); ) {
+    linestream.str(line);
+    linestream >> ch >> roc >> col >> row;
+
+    fPixelMask.insert( ch*100000 + roc*10000 + col*100 + row );
+  }
+
   return;
 }
 
