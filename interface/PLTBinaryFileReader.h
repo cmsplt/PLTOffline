@@ -7,6 +7,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <stdint.h>
+#include <set>
 
 #include "PLTHit.h"
 #include "PLTPlane.h"
@@ -33,6 +34,9 @@ class PLTBinaryFileReader
     int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
     int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
 
+    void ReadPixelMask (std::string const);
+    bool IsPixelMasked (int const);
+
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
 
     PLTPlane::FiducialRegion fPlaneFiducialRegion;
@@ -41,6 +45,8 @@ class PLTBinaryFileReader
     std::string fFileName;
     std::ifstream fInfile;
     bool fIsText;
+
+    std::set<int> fPixelMask;
 };
 
 

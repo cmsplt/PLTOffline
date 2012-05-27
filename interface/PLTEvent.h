@@ -79,6 +79,13 @@ class PLTEvent : public PLTTracking
       return;
     }
 
+    void ReadPixelMask (std::string const in) 
+    {
+      fBinFile.ReadPixelMask(in);
+      return;
+    }
+
+
   private:
     unsigned long fRun;
     unsigned long fRunSection;

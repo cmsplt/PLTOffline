@@ -277,6 +277,23 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
 }
 
 
+
+void PLTBinaryFileReader::ReadPixelMask (std::string const InFileName)
+{
+  fPixelMask.insert(1);
+  return;
+}
+
+
+bool PLTBinaryFileReader::IsPixelMasked (int const ChannelPixel)
+{
+  if (fPixelMask.count(ChannelPixel)) {
+    return true;
+  }
+  return false;
+}
+
+
 void PLTBinaryFileReader::SetPlaneFiducialRegion (PLTPlane::FiducialRegion in)
 {
   std::cout << "PLTBinaryFileReader::SetPlaneFiducialRegion setting region: " << in << std::endl;

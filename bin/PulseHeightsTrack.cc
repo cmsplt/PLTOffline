@@ -74,6 +74,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
+  Event.ReadPixelMask("MyPixelMaskFile.dat");
+
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
   std::map<int, TH1F*>    hClusterSizeMap;
