@@ -64,6 +64,11 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
+  std::map<int, TH2F* >              hMap2D;
+  std::map<int, TCanvas*>            cMap2D;
+
+  double Avg2D[250][PLTU::NCOL][PLTU::NROW];
+  int      N2D[250][PLTU::NCOL][PLTU::NROW];
 
   // Bins and max for pulse height plots
   int   const NBins =     60;
@@ -85,7 +90,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    //if (ientry >= 2000000) break;
+    if (ientry >= 1000000) break;
 
     // First event time
     //static uint32_t const StartTime = Event.Time();
@@ -154,6 +159,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         if (!hMap.count(id)) {
           hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
                 TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
+            hMap2D[id] = new TH2F( TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
+              TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
           for (size_t ih = 1; ih != 4; ++ih) {
             hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
                    TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
@@ -162,8 +169,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
           if (!cMap.count(Channel)) {
             // Create canvas with given name
-            cMap[Channel] = new TCanvas( TString::Format("PulseHeight_Ch%02i", Channel), TString::Format("PulseHeight_Ch%02i", Channel), 900, 600);
-            cMap[Channel]->Divide(3, 2);
+            cMap[Channel] = new TCanvas( TString::Format("PulseHeight_Ch%02i", Channel), TString::Format("PulseHeight_Ch%02i", Channel), 900, 900);
+            cMap[Channel]->Divide(3, 3);
           }
         }
 
@@ -206,11 +213,19 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
 
-          // Fill cluster size
-          hClusterSizeMap[id]->Fill(NHits);
+          int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
+          int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
 
           // Call it once.. it's faster.
           float const ThisClusterCharge = Cluster->Charge();
+
+          if (ThisClusterCharge < 100000 && ThisClusterCharge >= 0) {
+            Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
+            ++N2D[id][col][row];
+          }
+
+          // Fill cluster size
+          hClusterSizeMap[id]->Fill(NHits);
 
           hMap[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
@@ -303,6 +318,31 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         g->Draw("samepl");
       }
     }
+    cMap[Channel]->cd(ROC+6+1);
+    for (int ja = 0; ja != PLTU::NROW; ++ja) {
+      for (int ia = 0; ia != PLTU::NCOL; ++ia) {
+        if (Avg2D[id][ia][ja] < 25000) {
+          int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
+          int const mf  = hwdAddy / 1000;
+          int const mfc = (hwdAddy % 1000) / 100;
+          int const hub = hwdAddy % 100;
+          //fprintf(OutPix, "%1i %1i %2i %1i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + ia, PLTU::FIRSTROW + ja);
+        } else {
+        }
+        if (Avg2D[id][ia][ja] > 0) {
+          hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
+        }
+        printf("%6.0f ", Avg2D[id][ia][ja]);
+      }
+      std::cout << std::endl;
+    }
+    hMap2D[id]->SetMaximum(60000);
+    hMap2D[id]->SetStats(false);
+    hMap2D[id]->SetXTitle("Column");
+    hMap2D[id]->SetYTitle("Row");
+    hMap2D[id]->SetZTitle("Electrons");
+    hMap2D[id]->Draw("colz");
+
   }
 
   // Save Cluster Size canvases
