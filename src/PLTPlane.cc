@@ -71,6 +71,10 @@ bool PLTPlane::AddClusterFromSeedNxN (PLTHit* Hit, int const mCol, int const mRo
   // New cluster
   PLTCluster* Cluster = new PLTCluster();
 
+  if ( std::count(fClusterizedHits.begin(), fClusterizedHits.end(), Hit) != 0 ) {
+    std::cout << "HIHIHI" << std::endl;
+  }
+
   // Add the seed
   Cluster->AddHit(Hit);
   fClusterizedHits.push_back(Hit);
@@ -104,9 +108,7 @@ bool PLTPlane::IsBiggestHitInNxN(PLTHit* Hit, int const mRow, int const mCol)
     if (fHits[i]->Row() == Hit->Row() && fHits[i]->Column() == Hit->Column()) {
       continue;
     }
-    if (fHits[i]->Charge() > Hit->Charge()) {    
-      //kga oleksiy does just one cluster per plane--not saying it's right, just saying is all :) 
-      //if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol && fHits[i]->Charge() > Hit->Charge()) {
+    if (abs(fHits[i]->Row() - Hit->Row()) <= mRow && abs(fHits[i]->Column() - Hit->Column()) <= mCol && fHits[i]->Charge() > Hit->Charge()) {
       return false;
     }
   }
