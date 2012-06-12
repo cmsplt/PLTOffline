@@ -64,6 +64,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
     }
 
 
+
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
 
@@ -72,7 +73,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
       if (!MapSlope[Telescope->Channel()]) {
         TString const Name = TString::Format("Slope_Ch%i", Telescope->Channel());
-        MapSlope[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlope[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlope[Telescope->Channel()]->SetXTitle("Local Telescope Track-Slope #DeltaY/#DeltaZ");
       }
 
 
