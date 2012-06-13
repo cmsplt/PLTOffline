@@ -153,8 +153,8 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
 
 int StandardAnalysis (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
-printf("StandardAna");
-  //Stylin'
+  std::cout << "StandardAna" << std::endl;
+
   PLTU::SetStyle();
   gStyle->SetOptStat(111111);
 
@@ -193,7 +193,7 @@ printf("StandardAna");
 
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
-printf("Event.Stuff");
+  printf("Event.Stuff\n");
   //Searching for treasure!!
   std::map<int, TH2F*>               hAllMap;
   std::map<int, TCanvas*>            cAllMap;
@@ -219,7 +219,7 @@ printf("Event.Stuff");
 
   double Avg2D[250][PLTU::NCOL][PLTU::NROW];
   int      N2D[250][PLTU::NCOL][PLTU::NROW];
-  //what is this syntax?
+
 
   // Bins and max for pulse height plots
   int   const NBins =    60;
@@ -246,8 +246,9 @@ printf("Event.Stuff");
 
   int ie = 0;
   int NGraphPoints = 0;
+  int flag = 1;
 
-  for ( ; Event.GetNextEvent() >= 0; ++ie) 
+  for ( ; Event.GetNextEvent() >= 0 && flag; ++ie) 
   {
 
 
@@ -304,9 +305,11 @@ printf("Event.Stuff");
             g->SetPointError( NGraphPoints , 0, 0 );
           }
         }
+      
       }
       ++NGraphPoints;
       std::cout << NGraphPoints << std::endl;
+      std::cout << "Timing Stuff\n";
     }
 
 
@@ -325,9 +328,8 @@ printf("Event.Stuff");
 
       NTracksPerEvent += Tele->NTracks();
       int const Channel = Tele->Channel();
-      //if (Tele->NTracks() > 1) continue;
-      if (Tele->NClusters() != 3) continue;
-
+      if (Tele->NTracks() < 1) continue;
+      //if (Tele->NClusters() != 3) continue;
 
 
       ///////////////////////////////////////
@@ -336,10 +338,15 @@ printf("Event.Stuff");
       //                                   //
       // Loop over all tracks in telescope //
       ///////////////////////////////////////
+     
+//			FAILURE				//
+     //std::cout << Tele->NTracks() << std::endl;
+      if(Tele->fTracks.size()) flag = 0;
 
       for (size_t itrack = 0; itrack < Tele->NTracks(); ++itrack) 
       {
         PLTTrack* Track = Tele->Track(itrack);
+     //std::cout << "Track Loop?" << std::endl;
 
         // Binary number for planes hit
         int phit = Tele->HitPlaneBits();
@@ -354,7 +361,6 @@ printf("Event.Stuff");
         if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
         if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
 
-std::cout << "\r\n gogogogogogg\r\n" << std::endl;
 
         ///////////////////////////////////////
         //                                   //
@@ -363,6 +369,7 @@ std::cout << "\r\n gogogogogogg\r\n" << std::endl;
         // Loop over all clusters in tracks  //
         ///////////////////////////////////////
 
+        //std::cout << Track->NClusters() << std::endl;
         for (size_t icluster = 0; icluster < Track->NClusters(); ++icluster)
         {
           PLTCluster* Cluster = Track->Cluster(icluster);
@@ -372,14 +379,15 @@ std::cout << "\r\n gogogogogogg\r\n" << std::endl;
           // ID the plane and roc by 3 digit number
           int const id = 10 * Channel + ROC;
 
+
+          //std::cout << hMap.count(id) << std::endl;
           if (!hMap.count(id)) {
-std::cout << "\r\n hmap1 \r\n" << std::endl;
             hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
                   TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
             hMap2D[id] = new TH2F( TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
-                  TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+                  TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, 
+                  PLTU::FIRSTROW, PLTU::LASTROW);
             for (size_t ih = 1; ih != 4; ++ih) {
-std::cout << "\r\n hmap 2\r\n" << std::endl;
 
               hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
                     TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
@@ -442,22 +450,18 @@ std::cout << "\r\n hmap 2\r\n" << std::endl;
             Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
             ++N2D[id][col][row];
           
-std::cout << "\r\n hmap7 \r\n" << std::endl;
 
           }
 
           hMap[id][0]->Fill( ThisClusterCharge );
 
           if (NHits == 1) {
-std::cout << "\r\n hmap3 \r\n" << std::endl;
 
             hMap[id][1]->Fill( ThisClusterCharge );
           } else if (NHits == 2) {
-std::cout << "\r\n hmap4 \r\n" << std::endl;
 
             hMap[id][2]->Fill( ThisClusterCharge );
           } else if (NHits >= 3) {
-std::cout << "\r\n hmap5 \r\n" << std::endl;
 
             hMap[id][3]->Fill( ThisClusterCharge );
           }
@@ -543,7 +547,6 @@ std::cout << "\r\n hmap5 \r\n" << std::endl;
   
             // Create new hist with the given name
             sprintf(BUFF, "Occupancy Ch%02i ROC%1i", Plane->Channel(), Plane->ROC());
-std::cout << "\r\nooooocccccc\r\n" << std::endl;
 
             hOccupancyMap[id] = new TH2F(BUFF, BUFF, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL+1, PLTU::NROW,PLTU::FIRSTROW, PLTU::LASTROW+1);
             hOccupancyMap[id]->SetXTitle("Column");
@@ -622,8 +625,8 @@ std::cout << "\r\nooooocccccc\r\n" << std::endl;
   //          END EVENT LOOP           //
   ///////////////////////////////////////
 
-  std::cout << "Done reading events. Will make some plots now…" << std::endl;
-  std::cout << "Events read: " << ie+1 << std::endl;
+  std::cout << "Done reading events. Will make some plots now..." << std::endl;
+  std::cout << "Events read: " << ie << std::endl;
 
 
   ///////////////////////////////////////
@@ -846,10 +849,13 @@ std::cout << "\r\nooooocccccc\r\n" << std::endl;
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
   //I think this is where my problem takes root.
-  for (int QWERT = 0; QWERT = 0; QWERT++){
-  //for (std::map<int, std::vector<TH1F*> >::iterator it = hMap.begin(); it != hMap.end(); ++it) {
-std::cout << "\r\n hmap6 \r\n" << std::endl;
-std::map<int, std::vector<TH1F*> >::iterator it = hMap.begin();
+  std::cout << "goo!" << std::endl;
+  std::cout << hMap.size() << std::endl;
+  std::cout.flush();
+  for (std::map<int, std::vector<TH1F*> >::iterator it = hMap.begin(); it != hMap.end(); ++it) {
+      std::cout << "goo two!" << std::endl;
+  std::cout.flush();
+
     std::cout << "begi PHT Histo" << std::endl;
     // Decode the ID
     int const Channel = it->first / 10;
