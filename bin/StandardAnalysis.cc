@@ -191,7 +191,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
 
-  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
+  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_All);
 
   printf("Event.Stuff\n");
   //Searching for treasure!!
@@ -246,9 +246,8 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
   int ie = 0;
   int NGraphPoints = 0;
-  int flag = 1;
 
-  for ( ; Event.GetNextEvent() >= 0 && flag; ++ie) 
+  for ( ; Event.GetNextEvent() >= 0 ; ++ie) 
   {
 
 
@@ -256,6 +255,8 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     {
       std::cout << "Processing event: " << ie << std::endl;
     }
+
+    if (ie == 100000) break;
 
   ///////////////////////////////////////
   //                                   //
@@ -328,8 +329,6 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
       NTracksPerEvent += Tele->NTracks();
       int const Channel = Tele->Channel();
-      if (Tele->NTracks() < 1) continue;
-      //if (Tele->NClusters() != 3) continue;
 
 
       ///////////////////////////////////////
@@ -341,7 +340,6 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
      
 //			FAILURE				//
      //std::cout << Tele->NTracks() << std::endl;
-      if(Tele->fTracks.size()) flag = 0;
 
       for (size_t itrack = 0; itrack < Tele->NTracks(); ++itrack) 
       {
