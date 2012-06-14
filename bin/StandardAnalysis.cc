@@ -330,6 +330,19 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       NTracksPerEvent += Tele->NTracks();
       int const Channel = Tele->Channel();
 
+      // Binary number for planes hit
+      int phit = Tele->HitPlaneBits();
+
+      // here we fill the plot of Planes in Coincidence
+      if(phit==0x1) hCoincidenceMap[Tele->Channel()]->Fill(0); //only first plane hit
+      if(phit==0x2) hCoincidenceMap[Tele->Channel()]->Fill(1); //only 2nd plane hit
+      if(phit==0x4) hCoincidenceMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
+
+      if(phit==0x3) hCoincidenceMap[Tele->Channel()]->Fill(3); //Plane 0 and 1 in coincidence
+      if(phit==0x6) hCoincidenceMap[Tele->Channel()]->Fill(4); //Plane 1 and 2 in coincidence
+      if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
+      if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
+
 
       ///////////////////////////////////////
       //                                   //
@@ -345,19 +358,6 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       {
         PLTTrack* Track = Tele->Track(itrack);
      //std::cout << "Track Loop?" << std::endl;
-
-        // Binary number for planes hit
-        int phit = Tele->HitPlaneBits();
-
-        // here we fill the plot of Planes in Coincidence
-        if(phit==0x1) hCoincidenceMap[Tele->Channel()]->Fill(0); //only first plane hit
-        if(phit==0x2) hCoincidenceMap[Tele->Channel()]->Fill(1); //only 2nd plane hit
-        if(phit==0x4) hCoincidenceMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
-
-        if(phit==0x3) hCoincidenceMap[Tele->Channel()]->Fill(3); //Plane 0 and 1 in coincidence
-        if(phit==0x6) hCoincidenceMap[Tele->Channel()]->Fill(4); //Plane 1 and 2 in coincidence
-        if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
-        if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
 
 
         ///////////////////////////////////////
