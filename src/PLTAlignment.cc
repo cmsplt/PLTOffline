@@ -145,12 +145,12 @@ bool PLTAlignment::IsGood ()
 
 float PLTAlignment::PXtoLX (int const px)
 {
-  return PLTU::PIXELWIDTH * (25.5 - (px - 0.0000001));
+  return PLTU::PIXELWIDTH * (25.5 - (px + 0.0000001));
 }
 
 float PLTAlignment::PYtoLY (int const py)
 {
-  return PLTU::PIXELHEIGHT * (59.5 - (py - 0.0000001));
+  return PLTU::PIXELHEIGHT * (59.5 - (py + 0.0000001));
 }
 
 int PLTAlignment::PXfromLX (float const lx)

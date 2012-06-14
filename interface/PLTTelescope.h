@@ -9,6 +9,8 @@
 #include "TLine.h"
 #include "TGraph.h"
 
+#include <stdint.h>
+
 class PLTTelescope
 {
   public:

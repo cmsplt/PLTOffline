@@ -18,10 +18,30 @@
 #include "TRandom.h"
 
 
+void GetPureNoise (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // Grab list of telescopes
+  static std::vector<int> Channels = Alignment.GetListOfChannels();
+
+  int Row, Column;
+  for (std::vector<int>::iterator ch = Channels.begin(); ch != Channels.end(); ++ch) {
+    for (int iroc = 0; iroc != 3; ++iroc) {
+      Column = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
+      Row    = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
+      Hits.push_back( new PLTHit(*ch, iroc, Column, Row, gRandom->Poisson(150)) );
+    }
+  }
+
+
+  return;
+}
+
+
 void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 {
   // Grab list of telescopes
   static std::vector<int> Channels = Alignment.GetListOfChannels();
+
 
 
   static int const NTracks = 2;//gRandom->Integer(10);
@@ -554,7 +574,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
       int const PY = Alignment.PYfromLY(LXY.second);
 
 
-      printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
+      //printf("StartCol LX PX StartRow LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", StartCol, LX, PX, StartRow, LY, PY);
 
       // Just some random adc value
       int const adc = gRandom->Poisson(150);
@@ -574,7 +594,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
 int PLTMC ()
 {
   // Open the output file
-  std::ofstream fout("data/PLTMC.dat", std::ios::binary);
+  std::ofstream fout("PLTMC.dat", std::ios::binary);
   if (!fout.is_open()) {
     std::cerr << "ERROR: cannot open output file" << std::endl;
     throw;
@@ -584,8 +604,8 @@ int PLTMC ()
   uint32_t unsigned n2;
 
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_PLTMC.dat");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_2cm.dat");
   //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
@@ -598,7 +618,7 @@ int PLTMC ()
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (0) {
+    switch (1) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
@@ -628,6 +648,9 @@ int PLTMC ()
         break;
       case 9:
         GetTracksParallel(Hits, Alignment);
+        break;
+      case 10:
+        GetPureNoise(Hits, Alignment);
         break;
     }
 
