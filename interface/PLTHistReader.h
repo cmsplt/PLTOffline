@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include "stdint.h"
 
 class PLTHistReader
 {

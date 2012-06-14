@@ -6,6 +6,8 @@
 #include "TRandom.h"
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
+#include <cstdlib>
 
 // This example is a variant of hsimple.C but using a TTree instead
 // of a TNtuple. It shows :

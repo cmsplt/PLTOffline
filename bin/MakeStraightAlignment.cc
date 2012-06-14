@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <string>
-
+#include <stdio.h>
 
 int MakeStraightAlignment (std::string const FileName)
 {

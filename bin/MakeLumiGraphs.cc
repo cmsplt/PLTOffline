@@ -8,14 +8,14 @@
 
 
 #include <iostream>
-#include <stdio.h>
 
 #include "TFile.h"
 #include "TTree.h"
 #include "TGraph.h"
 #include "TCanvas.h"
 #include "TString.h"
-
+#include <stdio.h>
+#include <cstdlib>
 
 int MakeLumiGraphs (TString const InFileName, TString const OutFileName)
 {

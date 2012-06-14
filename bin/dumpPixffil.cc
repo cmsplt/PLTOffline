@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
-
+#include <stdint.h>
 
 using namespace std;
 
