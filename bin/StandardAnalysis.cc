@@ -247,7 +247,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   int ie = 0;
   int NGraphPoints = 0;
 
-    TH1F hBX("hname", "htitle", 1, 100, 100);
+    TH1F hBX("Bunch Crossing", "Bunch Crossing", PLTHistReader::NBUCKETS, 0, PLTHistReader::NBUCKETS);
 
 
   for ( ; Event.GetNextEvent() >= 0 ; ++ie) 
@@ -990,7 +990,13 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   //////////
 
 
-
+            hBX.SetXTitle("Bunnch Crossing");
+            hBX.SetYTitle("Events");
+            hBX.SetZTitle("Bunch Crossing");
+            hBX.SetTitleOffset(1.2, "y");
+            hBX.SetTitleOffset(1.4, "z");
+            hBX.SetFillColor(40); 
+            hBX.SetStats(false);
     std::cout << "seg fault here?" << std::endl;
     TCanvas cBX("cname", "ctitle", 1200,300);
     cBX.cd();
