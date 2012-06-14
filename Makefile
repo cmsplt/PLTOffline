@@ -1,6 +1,6 @@
 CC = g++
 LD = g++
-CFLAGS = -Wall `root-config --cflags`
+CFLAGS = -O3 -Wall `root-config --cflags`
 LIBS = `root-config --libs` -Llib -lMinuit -lSpectrum -lEve -lGeom
 INCLUDE = -Iinterface -Idict
 OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
