@@ -255,7 +255,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
     //BunchCrossing??
     int BX = Event.BX();
-    std::cout << BX << std::endl;
+    //std::cout << BX << std::endl;
 
     hBX.Fill(BX);
     
@@ -992,7 +992,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
 
     std::cout << "seg fault here?" << std::endl;
-    TCanvas cBX("cname", "ctitle", 1,2);
+    TCanvas cBX("cname", "ctitle", 1200,300);
     cBX.cd();
     hBX.Draw("hist");
     cBX.SaveAs("plots/BunchCrossing.gif");
