@@ -18,6 +18,7 @@
 
 #include "PLTEvent.h"
 #include "PLTU.h"
+#include "PLTHistReader.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -227,7 +228,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 30;
+  int const TimeWidth = 1000 * 3;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
@@ -243,20 +244,30 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   //   Loop over all events in file    //
   ///////////////////////////////////////
 
-
   int ie = 0;
   int NGraphPoints = 0;
+
+    TH1F hBX("hname", "htitle", 1, 100, 100);
+
 
   for ( ; Event.GetNextEvent() >= 0 ; ++ie) 
   {
 
+    //BunchCrossing??
+    int BX = Event.BX();
+    std::cout << BX << std::endl;
 
-    if (ie % 1000 == 0) 
+    hBX.Fill(BX);
+    
+
+
+    if (ie % 10000 == 0) 
     {
-      std::cout << "Processing event: " << ie << std::endl;
+      std::cout << "Processing Event:" << ie << std::endl;
     }
 
     if (ie == 100000) break;
+
 
   ///////////////////////////////////////
   //                                   //
@@ -270,15 +281,15 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     //if (ie < 500000) continue;
     //if (ie >= 3600000) break;
     //if (ie >= 50000) break;
-
+  
     int NTracksPerEvent = 0;
 
     // First event time
-    static uint32_t const StartTime = Event.Time();
-    uint32_t const ThisTime = Event.Time();
-    //static uint32_t const StartTime = 0;
-    //uint32_t static ThisTime = 0;
-    //++ThisTime;
+    //static uint32_t const StartTime = Event.Time();
+    //uint32_t const ThisTime = Event.Time();
+    static uint32_t const StartTime = 0;
+    uint32_t static ThisTime = 0;
+    ++ThisTime;
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) 
     {
@@ -309,10 +320,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       
       }
       ++NGraphPoints;
-      std::cout << NGraphPoints << std::endl;
-      std::cout << "Timing Stuff\n";
     }
-
 
     ///////////////////////////////////////
     //        End of timing stuff        //
@@ -330,18 +338,6 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       NTracksPerEvent += Tele->NTracks();
       int const Channel = Tele->Channel();
 
-      // Binary number for planes hit
-      int phit = Tele->HitPlaneBits();
-
-      // here we fill the plot of Planes in Coincidence
-      if(phit==0x1) hCoincidenceMap[Tele->Channel()]->Fill(0); //only first plane hit
-      if(phit==0x2) hCoincidenceMap[Tele->Channel()]->Fill(1); //only 2nd plane hit
-      if(phit==0x4) hCoincidenceMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
-
-      if(phit==0x3) hCoincidenceMap[Tele->Channel()]->Fill(3); //Plane 0 and 1 in coincidence
-      if(phit==0x6) hCoincidenceMap[Tele->Channel()]->Fill(4); //Plane 1 and 2 in coincidence
-      if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
-      if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
 
 
       ///////////////////////////////////////
@@ -350,14 +346,11 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       //                                   //
       // Loop over all tracks in telescope //
       ///////////////////////////////////////
-     
-//			FAILURE				//
-     //std::cout << Tele->NTracks() << std::endl;
-
+   
       for (size_t itrack = 0; itrack < Tele->NTracks(); ++itrack) 
       {
         PLTTrack* Track = Tele->Track(itrack);
-     //std::cout << "Track Loop?" << std::endl;
+
 
 
         ///////////////////////////////////////
@@ -370,6 +363,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
         //std::cout << Track->NClusters() << std::endl;
         for (size_t icluster = 0; icluster < Track->NClusters(); ++icluster)
         {
+
           PLTCluster* Cluster = Track->Cluster(icluster);
 
           int const ROC = Cluster->ROC();
@@ -488,7 +482,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
         ///////////////////////////////////////
         //          END CLUST LOOP           //
         ///////////////////////////////////////
-      }
+       }
       ///////////////////////////////////////
       //          END TRACK LOOP           //
       ///////////////////////////////////////
@@ -607,6 +601,18 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       ///////////////////////////////////////
       //          END PLANE LOOP           //
       ///////////////////////////////////////
+     // Binary number for planes hit
+      int phit = Tele->HitPlaneBits();
+
+      // here we fill the plot of Planes in Coincidence
+      if(phit==0x1) hCoincidenceMap[Tele->Channel()]->Fill(0); //only first plane hit
+      if(phit==0x2) hCoincidenceMap[Tele->Channel()]->Fill(1); //only 2nd plane hit
+      if(phit==0x4) hCoincidenceMap[Tele->Channel()]->Fill(2); //only 3rd plane hit
+
+      if(phit==0x3) hCoincidenceMap[Tele->Channel()]->Fill(3); //Plane 0 and 1 in coincidence
+      if(phit==0x6) hCoincidenceMap[Tele->Channel()]->Fill(4); //Plane 1 and 2 in coincidence
+      if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
+      if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
 
     }
     ///////////////////////////////////////
@@ -925,7 +931,6 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     for (int ia = 0; ia != PLTU::NCOL; ++ia) {
         if (Avg2D[id][ia][ja] < 25000) {
 
-std::cout << "\r\n hmap n10 \r\n" << std::endl;
 
           int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
           int const mf  = hwdAddy / 1000;
@@ -936,13 +941,10 @@ std::cout << "\r\n hmap n10 \r\n" << std::endl;
         }
         if (Avg2D[id][ia][ja] > 0) {
 
-std::cout << "\n\n hmap1 \n\n" << std::endl;
-
           hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
         }
         printf("%6.0f ", Avg2D[id][ia][ja]);
       }
-      std::cout << std::endl;
     }
     hMap2D[id]->SetMaximum(60000);
     hMap2D[id]->SetStats(false);
@@ -953,7 +955,6 @@ std::cout << "\n\n hmap1 \n\n" << std::endl;
     OUTFILE.cd();
     hMap2D[id]->Write();
 
-std::cout << "\r\n hmap8 \r\n" << std::endl;
 
   }
 
@@ -989,9 +990,22 @@ std::cout << "\r\n hmap8 \r\n" << std::endl;
   //////////
 
 
+
+    std::cout << "seg fault here?" << std::endl;
+    TCanvas cBX("cname", "ctitle", 1,2);
+    cBX.cd();
+    hBX.Draw("hist");
+    cBX.SaveAs("plots/BunchCrossing.gif");
+
+
+
+
   std::cout << "Events read: " << ie + 1 << std::endl;
 
   return 0;
+
+
+
 }
 
 
