@@ -45,7 +45,7 @@ class PLTGainCal
 
     bool IsGood () { return fIsGood; }
 
-    int GetHardwareID (int const Channel) { return fHardwareMap[Channel]; }
+    int GetHardwareID (int const);
 
 
 
@@ -60,14 +60,14 @@ class PLTGainCal
     static int const MAXROCS =   3;
 
     static int const NCHNS =  36;
-    static int const NROWS =  40;
-    static int const NCOLS =  26;
+    static int const NROWS =  PLTU::NROW;
+    static int const NCOLS =  PLTU::NCOL;
     static int const NROCS =   3;
 
-    static int const IROWMIN = 39;
-    static int const IROWMAX = 79;
-    static int const ICOLMIN = 13;
-    static int const ICOLMAX = 38;
+    static int const IROWMIN = PLTU::FIRSTCOL;
+    static int const IROWMAX = PLTU::LASTCOL;
+    static int const ICOLMIN = PLTU::FIRSTROW;
+    static int const ICOLMAX = PLTU::LASTROW;
 
     // ch,roc,col,row [3]
     //float GC[MAXCHNS][MAXROCS][MAXCOLS][MAXROWS][3];
