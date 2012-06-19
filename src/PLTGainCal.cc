@@ -152,6 +152,10 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
   return;
 }
 
+int PLTGainCal::GetHardwareID (int const Channel)
+{ 
+  return fHardwareMap[Channel];
+}
 
 void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 {
@@ -177,6 +181,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     ss >> mf >> mfc >> hub >> ch;
 
     fHardwareMap[ch] = 1000*mf + 100*mfc + hub;
+    printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
   }
 
   for (int i = 0; i != NCHNS; ++i) {
@@ -337,7 +342,6 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     ss.clear();
     ss.str(line.c_str());
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
-    ch = 22;
 
     if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };

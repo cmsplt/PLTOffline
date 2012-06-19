@@ -220,7 +220,7 @@ void PLTPlane::ClusterizeAllTouching ( FiducialRegion const FidR)
     PLTCluster* Cluster = new PLTCluster();
     Cluster->AddHit(fHits[i]);
     fClusterizedHits.push_back(fHits[i]);
-    AddAllHitsTouching(Cluster, fHits[i],FidR);
+    AddAllHitsTouching(Cluster, fHits[i], FidR);
     fClusters.push_back(Cluster);
   }
 
