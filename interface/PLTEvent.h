@@ -85,6 +85,11 @@ class PLTEvent : public PLTTracking
       return;
     }
 
+    int GetHardwareID (int const ch)
+    {
+      return fGainCal.GetHardwareID(ch);
+    }
+
 
   private:
     unsigned long fRun;
