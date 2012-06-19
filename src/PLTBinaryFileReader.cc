@@ -5,6 +5,8 @@
 PLTBinaryFileReader::PLTBinaryFileReader ()
 {
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
+  fLastTime = 0;
+  fTimeMult = 0;
 }
 
 
@@ -18,6 +20,8 @@ PLTBinaryFileReader::PLTBinaryFileReader (std::string const in, bool IsText)
     Open(in);
   }
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
+  fLastTime = 0;
+  fTimeMult = 0;
 }
 
 
@@ -187,8 +191,8 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         }
       }
 
-    } else if ((n1 & 0xff000000) == 0x50000000 || (n2 & 0xff000000) == 0x50000000) {
-      // Found the header
+    } else if ( ((n1 & 0xff000000) == 0x50000000 && ((n2 & 0xfff00) >> 8) == 5 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) && ((n1 & 0xfff00) >> 8) == 5 ) && (n2 & 0xff) == 0 ){
+      // Found the header and it has correct FEDID
       wordcount = 1;
       bheader = true;
       Event = (n1 & 0xff000000) == 0x50000000 ? n1 & 0xffffff : n2 & 0xffffff;
@@ -196,8 +200,10 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
       if ((n1 & 0xff000000) == 0x50000000) {
         BX = ((n2 & 0xfff00000) >> 20);
+        fFEDID = ((n2 & 0xfff00) >> 8);
       } else {
         BX = ((n1 & 0xfff00000) >> 20);
+        fFEDID = ((n1 & 0xfff00) >> 8);
       }
 
       while (bheader) {
@@ -216,6 +222,12 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           } else {
             Time = n1;
           }
+          if (Time < fLastTime) {
+            ++fTimeMult;
+          }
+
+          fLastTime = Time;
+          Time = Time + 86400000 * fTimeMult;
           //std::cout << "Found Event Trailer: " << Event << std::endl;
         } else {
           DecodeSpyDataFifo(n2, Hits);

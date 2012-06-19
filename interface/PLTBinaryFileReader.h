@@ -45,6 +45,9 @@ class PLTBinaryFileReader
     std::string fFileName;
     std::ifstream fInfile;
     bool fIsText;
+    uint32_t fLastTime;
+    int fTimeMult;
+    int fFEDID;
 
     std::set<int> fPixelMask;
 };
