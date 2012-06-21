@@ -85,10 +85,13 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
+  std::map<int, TGraphErrors*>               gHitTimeMap;
   std::map<int, TH1F*>    hClusterSizeMap;
   std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
+  std::map<int, TH1F*>               hHitMap;
+  std::map<int, TCanvas*>            cHitMap;
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
   std::map<int, TH1F*>               h2PixRatioMap;
@@ -104,8 +107,9 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 1;
+  int const TimeWidth = 1000 * 0.01;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
+  std::map<int, std::vector<float> > NHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
 
@@ -117,10 +121,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    //if (ientry == 3000) break;
+    if (ientry == 100000) break;
 
 
     int NTracksPerEvent = 0;
+
 
 
     // First event time
@@ -160,6 +165,39 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           }
         }
       }
+
+      for (std::map<int, TGraphErrors*>::iterator git = gHitTimeMap.begin(); git != gHitTimeMap.end(); ++git) {
+        TGraphErrors* g = git->second;
+        int const id = git->first;
+
+        if (g == 0x0) {
+          std::cerr << "ERROR: no graph for git id == " << id << std::endl;
+          continue;
+        }
+        if (g->GetN() != NGraphPoints) {
+          // Play some catchup
+          g->Set(NGraphPoints);
+          for (int i = 0; i > NGraphPoints; ++i) {
+            g->SetPoint(i, i * TimeWidth, 0);
+          }
+        }
+          g->Set( NGraphPoints + 1 );
+          if (NHits[id].size() != 0) {
+            float const Avg = PLTU::Average(NHits[id]);
+            g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
+            g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NHits[id].size()));
+            NHits[id].clear();
+            NHits[id].reserve(100000);
+          } else {
+            g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
+            g->SetPointError( NGraphPoints , 0, 0 );
+          }
+      }
+
+
+
+
+
       ++NGraphPoints;
 
       //std::cout << NGraphPoints << std::endl;
@@ -179,6 +217,41 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       // skip single hit clusters in first plane
       //if (Telescope->Plane(0)->NClusters() >= 1)
       //if (Telescope->Plane(0)->Cluster(0)->NHits() <= 1) continue;
+
+
+
+      for (size_t iplane = 0; iplane != Telescope->NPlanes(); ++iplane) {
+        PLTPlane* Plane = Telescope->Plane(iplane);
+
+        int const ROC = Plane->ROC();
+        int const id = Channel * 10 + ROC;
+
+        if (!hHitMap.count(id)) {
+          hHitMap[id] = new TH1F(
+              TString::Format("NHits_Ch%02i_ROC%1i", Channel, ROC),
+              TString::Format("Number of Hits for Ch %02i ROC %1i", Channel, ROC),
+              50, 0, 50);
+          printf("Creating for: Ch %2i ROC %i  id %i\n", Channel, ROC, id);
+
+          TString const Name = TString::Format("TimeAvgNHits_Ch%i_ROC%i", Channel, ROC);
+          TString const Title = TString::Format("TimeAvg NHits Ch %i ROC %i", Channel, ROC);
+          gHitTimeMap[id] = new TGraphErrors();
+          gHitTimeMap[id]->SetName(Name);
+          gHitTimeMap[id]->SetTitle(Name);
+
+          if (!cHitMap.count(Channel)) {
+            cHitMap[Channel] = new TCanvas(
+                TString::Format("NHits_Ch%i", Channel),
+                TString::Format("Number of Hits in Ch%i", Channel),
+                900, 600);
+            cHitMap[Channel]->Divide(3,2);
+          }
+        }
+
+        // Fill the map with NHits
+        hHitMap[id]->Fill(Plane->NHits());
+        NHits[id].push_back(Plane->NHits());
+      }
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
@@ -426,8 +499,34 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
   }
 
+
+  // Loop over all histograms and draw them on the correct canvas in the correct pad
+  for (std::map<int, TH1F*>::iterator it = hHitMap.begin(); it != hHitMap.end(); ++it) {
+
+    // Decode the ID
+    int const Channel = it->first / 10;
+    int const ROC     = it->first % 10;
+    int const id      = it->first;
+
+    printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
+
+    // change to correct pad on canvas and draw the hist
+    cHitMap[Channel]->cd(ROC+1);
+    hHitMap[id]->Draw("hist");
+    cHitMap[Channel]->cd(ROC+3+1);
+    gHitTimeMap[id]->Draw("Ap");
+  }
+
   // Save Cluster Size canvases
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
+    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
+    it->second->Write();
+    delete it->second;
+  }
+
+
+  // Save Cluster Size canvases
+  for (std::map<int, TCanvas*>::iterator it = cHitMap.begin(); it != cHitMap.end(); ++it) {
     it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
     it->second->Write();
     delete it->second;
