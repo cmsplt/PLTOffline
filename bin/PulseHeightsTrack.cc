@@ -121,7 +121,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    if (ientry == 100000) break;
+    //if (ientry == 100000) break;
 
 
     int NTracksPerEvent = 0;
