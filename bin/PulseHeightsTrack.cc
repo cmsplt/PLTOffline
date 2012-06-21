@@ -40,6 +40,15 @@ float Average (std::vector<float>& V)
 }
 
 
+float Sum (std::vector<float>& V)
+{
+  double Sum = 0;
+  for (std::vector<float>::iterator it = V.begin(); it != V.end(); ++it) {
+    Sum += *it;
+  }
+
+  return Sum;
+}
 
 // CODE BELOW
 
@@ -107,7 +116,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 0.01;
+  int const TimeWidth = 1000 * 1;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, std::vector<float> > NHits;
 
@@ -183,7 +192,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
         }
           g->Set( NGraphPoints + 1 );
           if (NHits[id].size() != 0) {
-            float const Avg = PLTU::Average(NHits[id]);
+            float const Avg = Sum(NHits[id]) / (float) (1000*TimeWidth);
             g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
             g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NHits[id].size()));
             NHits[id].clear();
