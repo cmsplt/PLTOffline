@@ -97,7 +97,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
 
@@ -109,7 +109,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   std::map<int, TH2F*> hEffMapN;
   std::map<int, TH2F*> hEffMapD;
 
-  float const PixelDist = 5;
+  float const PixelDist = 3;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -117,6 +117,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
+    if (ientry == 300000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -278,7 +279,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     Hist1D->SetMinimum(0);
     Hist1D->Draw();
 
-    Can.SaveAs("plots/"+ Name + ".gif");
+    Can.SaveAs(Name + ".gif");
 
   }
 

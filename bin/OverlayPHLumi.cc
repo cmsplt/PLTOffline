@@ -48,20 +48,20 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
   PHChannels.push_back(14);
   PHChannels.push_back(15);
   PHChannels.push_back(16);
-  //PHChannels.push_back(24);
+  PHChannels.push_back(24);
 
   std::map<int, int> LumiChannels;
-  LumiChannels[13] = 0;
-  LumiChannels[14] = 1;
-  LumiChannels[15] = 3;
-  LumiChannels[16] = 4;
-  //LumiChannels.push_back(5);
+  LumiChannels[13] = 3;
+  LumiChannels[14] = 4;
+  LumiChannels[15] = 5;
+  LumiChannels[16] = 0;
+  LumiChannels[24] = 1;
 
 
-  Double_t const xmin = 8e+6;//7500e+3;//pad->GetUxmin();
+  Double_t const xmin = 0;//7500e+3;//pad->GetUxmin();
   Double_t const ymin = 0;
-  Double_t const xmax = 15000e+3;//10000e+3;//pad->GetUxmax();
-  Double_t const ymax = 5e+6;
+  Double_t const xmax = 1200e+3;//10000e+3;//pad->GetUxmax();
+  Double_t const ymax = 1e+4;
 
   // Loop over channels
   for (std::vector<int>::iterator ch = PHChannels.begin(); ch != PHChannels.end(); ++ch) {
@@ -71,6 +71,7 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
       std::cerr << "ERROR: cannot find lumi graph" << std::endl;
       continue;
     }
+    gLumi->GetXaxis()->SetRangeUser(xmin, xmax);
 
     // loop over rocs
     for (size_t iroc = 0; iroc != 3; ++iroc) {
@@ -118,7 +119,7 @@ int OverlayPHLumi (TString const PHFileName, TString const LumiFileName)
       gLumi->Draw("p");
 
       TGaxis *axis = new TGaxis(xmax,ymin,xmax, ymax,ymin,ymax,510,"+L");
-      overlay->SetLogy(1);
+      //overlay->SetLogy(1);
       //axis->SetLineColor(kRed);
       //axis->SetLabelColor(kRed);
       axis->SetLabelSize(0.03);

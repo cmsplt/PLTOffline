@@ -3,12 +3,12 @@
 my $SECTION = $ARGV[0];
 my $RUNLINE = $SECTION + 1;
 
-my $EXEDIR       = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT";
-my $SLINKDIR     = "/cms/data24/dhidas/TestBeam_Oct2011/slink";
-my $GAINCALDIR   = "/cms/data24/dhidas/TestBeam_Oct2011/GainCalFits";
-my $ALIGNMENTDIR = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/ALIGNMENT";
-my $BASEOUTDIR   = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/AnaOut";
-my $RUNLIST      = "/users/h2/dhidas/UserCode/dhidas/PLT/DHidasPLT/scripts/RunList_October2011PS.dat";
+my $EXEDIR       = "/data/PLT/DHidasPLT";
+my $SLINKDIR     = "/data/PLT/Testbeam_Oct2011/slink";
+my $GAINCALDIR   = "/data/PLT/Testbeam_Oct2011/GainCalFits_Converted";
+my $ALIGNMENTDIR = "$EXEDIR/ALIGNMENT";
+my $BASEOUTDIR   = "/afs/cern.ch/user/d/dhidas/public/html/PLT/temp/SeeOld2";
+my $RUNLIST      = "$EXEDIR/scripts/RunList_October2011PS.dat";
 
 my $THISRUNDIR = "$BASEOUTDIR/Running_$SECTION";
 mkdir $THISRUNDIR;
@@ -69,17 +69,10 @@ foreach $line (@MYRUNS) {
   $command = "$EXEDIR/OccupancyPlots $SLINKDIR/$file";
   print "$command\n";
   `$command`;
-  $command = "cp plots/Occupancy_Ch$channel.gif $outdir/Occupancy_1x1.gif";
+  $command = "cp plots/Occupancy_All_Ch$channel.gif $outdir/Occupancy_1x1.gif";
   print "$command\n";
   `$command`;
   $command = "cp plots/Occupancy_Efficiency_Ch$channel.gif $outdir/Occupancy_Efficiency_1x1.gif";
-  print "$command\n";
-  `$command`;
-
-  $command = "$EXEDIR/OccupancyPlots3x3 $SLINKDIR/$file";
-  print "$command\n";
-  `$command`;
-  $command = "cp plots/Occupancy_Efficiency_Ch$channel.gif $outdir/Occupancy_Efficiency_3x3.gif";
   print "$command\n";
   `$command`;
 
@@ -93,10 +86,10 @@ foreach $line (@MYRUNS) {
   $command = "cp plots/TrackingEfficiencyMap_Ch$channel"."_ROC2.gif $outdir/TrackingEfficiencyMap_ROC2.gif";
   `$command`;
 
-  $command = "$EXEDIR/PulseHeights $SLINKDIR/$file $GAINCALDIR/GainCalFits_$calib.dat";
+  $command = "$EXEDIR/PulseHeightsTrack $SLINKDIR/$file $GAINCALDIR/GainCalFits_$calib.dat $ALIGNMENTDIR/Alignment_Test.dat";
   print "$command\n";
   `$command`;
-  $command = "cp plots/PulseHeight_Ch$channel.gif $outdir/PulseHeight.gif";
+  $command = "cp plots/PulseHeightTrack_Ch$channel.gif $outdir/PulseHeightTrack.gif";
   `$command`;
 
   PrintHTML($outdir, $run, $cassette, $channel, $trigger, $file, $calib);
@@ -142,16 +135,9 @@ Relative occupancy to neighbors in a 3x3 box with 1 pixel on the border removed
 
 <hr>
 <p>
-Relative occupancy to neighbors in a 3x3 box with 1 pixel on the border removed
-</p>
-<img width="600" src="Occupancy_Efficiency_3x3.gif"><br>
-<hr>
-
-<hr>
-<p>
 Pulse heights..
 </p>
-<img width="600" src="PulseHeight.gif"><br>
+<img width="600" src="PulseHeightTrack.gif"><br>
 <hr>
 </body>
 </html>

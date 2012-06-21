@@ -78,7 +78,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   // Time width in events for energy time dep plots
   // This is the time width in ms
   //int const TimeWidth = 1000 * (60 * 1);
-  int const TimeWidth = 1000;
+  int const TimeWidth = 1000 * 10;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
 
@@ -90,14 +90,18 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    if (ientry >= 1000000) break;
+
 
     // First event time
-    //static uint32_t const StartTime = Event.Time();
-    //uint32_t const ThisTime = Event.Time();
-    static uint32_t const StartTime = 0;
-    uint32_t static ThisTime = 0;
-    ++ThisTime;
+    static uint32_t const StartTime = Event.Time();
+    uint32_t const ThisTime = Event.Time();
+    //static uint32_t const StartTime = 0;
+    //uint32_t static ThisTime = 0;
+    //++ThisTime;
+
+    //if (ientry == 300000) break;
+
+    //std::cout << StartTime << std::endl; exit(0);
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
@@ -143,6 +147,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
         int Channel = Plane->Channel();
         int ROC = Plane->ROC();
+
 
         if (ROC > 2) {
           std::cerr << "WARNING: ROC > 2 found: " << ROC << std::endl;
@@ -208,7 +213,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         // Loop over all clusters on this plane
         for (size_t iCluster = 0; iCluster != Plane->NClusters(); ++iCluster) {
           PLTCluster* Cluster = Plane->Cluster(iCluster);
-          //if (iCluster == 1) break;
+
+          //if (Cluster->NHits() != 1) continue;
+          //if (Cluster->Hit(0)->Column() != 31 || Cluster->Hit(0)->Row() != 55) continue;
 
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();

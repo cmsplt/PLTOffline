@@ -76,12 +76,12 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m3_m3;
+  PLTPlane::FiducialRegion FidRegionHits    = PLTPlane::kFiducialRegion_m2_m2;
+  PLTPlane::FiducialRegion FidRegionCluster = PLTPlane::kFiducialRegion_m2_m2;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionCluster);
 
-  Event.ReadPixelMask("PixelMask_miniplt.conv.dat");
+  //Event.ReadPixelMask("PixelMask_miniplt.conv.dat");
 
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
@@ -91,6 +91,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   std::map<int, TCanvas*>            cMap;
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
+  std::map<int, TH1F*>               h2PixRatioMap;
+  std::map<int, TCanvas*>            c2PixRatioMap;
 
   double Avg2D[250][PLTU::NCOL][PLTU::NROW];
   int      N2D[250][PLTU::NCOL][PLTU::NROW];
@@ -102,7 +104,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 30;
+  int const TimeWidth = 1000 * 1;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
@@ -114,13 +116,12 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-    //if (Event.BX() != 20) continue;
 
-    //if (ientry < 4700000) continue;
+    //if (ientry == 3000) break;
 
 
     //if (ientry < 500000) continue;
-    //if (ientry >= 3600000) break;
+    //if (ientry >= 2000000) break;
     //if (ientry >= 50000) break;
 
     int NTracksPerEvent = 0;
@@ -133,6 +134,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //uint32_t static ThisTime = 0;
     //++ThisTime;
 
+    //std::cout << "ThisTime: " << ThisTime << "  i " << ientry << "  " << Event.EventNumber() << std::endl;
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
@@ -165,7 +167,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       }
       ++NGraphPoints;
 
-      std::cout << NGraphPoints << std::endl;
+      //std::cout << NGraphPoints << std::endl;
 
     }
 
@@ -176,12 +178,21 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       int const Channel = Telescope->Channel();
 
       //if (Telescope->NTracks() > 1) continue;
-      if (Telescope->NClusters() != 3) continue;
+      //if (Telescope->NClusters() != 3) continue;
 
 
+      // skip single hit clusters in first plane
+      //if (Telescope->Plane(0)->NClusters() >= 1)
+      //if (Telescope->Plane(0)->Cluster(0)->NHits() <= 1) continue;
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
+
+        //if (sqrt(Track->ChiSquare()) > 0.005) continue;
+
+        //if (Channel == 13)
+        //std::cout << "sqrt TrackChi2: " << sqrt(Track->ChiSquare()) << std::endl;
+
 
 
 
@@ -194,13 +205,21 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           int const id = 10 * Channel + ROC;
 
           if (!hMap.count(id)) {
-            hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
-                  TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
-            hMap2D[id] = new TH2F( TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
-                  TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+            hMap[id].push_back( new TH1F(
+                  TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC),
+                  TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
+                  NBins, XMin, XMax) );
+            hMap[id][0]->SetDirectory(&OUTFILE);
+            hMap2D[id] = new TH2F(
+                TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC),
+                TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
+                PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
             for (size_t ih = 1; ih != 4; ++ih) {
-              hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
-                    TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
+              hMap[id].push_back( new TH1F( 
+                    TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih),
+                    TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
+                    NBins, XMin, XMax) );
+              hMap[id][ih]->SetDirectory(&OUTFILE);
             }
 
             // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
@@ -210,13 +229,26 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
               cMap[Channel]->Divide(3, 3);
             }
           }
+          if (!h2PixRatioMap.count(id)) {
+            h2PixRatioMap[id] = new TH1F(
+                TString::Format("2PixRatio_Ch%02i_ROC%1i", Channel, ROC),
+                TString::Format("Ratio of 2nd pix/Total Charge Ch %02i ROC %1i", Channel, ROC),
+                25, 0, 0.5);
+            if (!c2PixRatioMap.count(Channel)) {
+              // Create canvas with given name
+              c2PixRatioMap[Channel] = new TCanvas( TString::Format("2PixRatio_Ch%02i", Channel), TString::Format("2PixRatio_Ch%02i", Channel), 900, 300);
+              c2PixRatioMap[Channel]->Divide(3, 1);
+            }
+          }
 
           if (!gClEnTimeMap.count(id)) {
             gClEnTimeMap[id].resize(4);
             for (size_t ig = 0; ig != 4; ++ig) {
               TString const Name = TString::Format("TimeAvgGraph_id%i_Cl%i", (int) id, (int) ig);
+              TString const Title = TString::Format("TimeAvgGraph id%i Cl%i", (int) id, (int) ig);
               gClEnTimeMap[id][ig] = new TGraphErrors();
               gClEnTimeMap[id][ig]->SetName(Name);
+              gClEnTimeMap[id][ig]->SetTitle(Name);
             }
           }
 
@@ -230,7 +262,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
           // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
           if (!hClusterSizeMap.count(id)) {
-            hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
+            hClusterSizeMap[id] = new TH1F(
+                TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC),
+                TString::Format("ClusterSizeTrack_Ch%02i_ROC%i", Channel, ROC),
+                10, 0, 10);
             hClusterSizeMap[id]->SetXTitle("Number of pixels in Cluster");
 
             // One in three chance you'll need a new canvas for thnat =)
@@ -245,6 +280,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
           // Fill cluster size
           hClusterSizeMap[id]->Fill(NHits);
+
+          if (Cluster->NHits() == 2 && Cluster->Charge() > 0) {
+
+            h2PixRatioMap[id]->Fill(Cluster->Hit(1)->Charge() / Cluster->Charge());
+          }
 
           // Call it once.. it's faster.
           float const ThisClusterCharge = Cluster->Charge();
@@ -286,9 +326,9 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       }
     }
 
-    if (NTracksPerEvent != 0) {
+    //if (NTracksPerEvent != 0) {
       HistNTracks.Fill(NTracksPerEvent);
-    }
+    //}
 
   }
   std::cout << "Events read: " << ientry+1 << std::endl;
@@ -372,7 +412,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   for (int ja = 0; ja != PLTU::NROW; ++ja) {
     for (int ia = 0; ia != PLTU::NCOL; ++ia) {
         if (Avg2D[id][ia][ja] < 25000) {
-          int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
+          int const hwdAddy = Event.GetHardwareID(Channel);
           int const mf  = hwdAddy / 1000;
           int const mfc = (hwdAddy % 1000) / 100;
           int const hub = hwdAddy % 100;
@@ -421,6 +461,23 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     delete it->second;
   }
 
+  // Loop over cluster size plots
+  for (std::map<int, TH1F*>::iterator it = h2PixRatioMap.begin(); it != h2PixRatioMap.end(); ++it) {
+    // Decode the ID
+    int const Channel = it->first / 10;
+    int const ROC     = it->first % 10;
+
+    c2PixRatioMap[Channel]->cd(ROC+1);
+    it->second->Draw("hist");
+  }
+
+  // Save Cluster Size canvases
+  for (std::map<int, TCanvas*>::iterator it = c2PixRatioMap.begin(); it != c2PixRatioMap.end(); ++it) {
+    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
+    delete it->second;
+  }
+
+  OUTFILE.Write();
   OUTFILE.Close();
   fclose(OutPix);
 

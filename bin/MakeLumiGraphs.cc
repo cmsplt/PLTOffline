@@ -46,7 +46,7 @@ int MakeLumiGraphs (TString const InFileName, TString const OutFileName)
 
   //TString const TimeOffset = "-58344973";
   //TString const TimeOffset = "-43501008-63000";
-  TString const TimeOffset = "-43501008";
+  TString const TimeOffset = "-29400124";
 
   Tree->Draw("htot:(time_orbit"+TimeOffset+")", "ch == 0");
   gr = new TGraph(Tree->GetSelectedRows(), Tree->GetV2(), Tree->GetV1());

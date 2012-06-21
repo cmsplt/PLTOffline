@@ -48,7 +48,6 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-    if (ientry == 200000) break;
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
