@@ -231,7 +231,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
               TString::Format("NHits_Ch%02i_ROC%1i", Channel, ROC),
               TString::Format("Number of Hits for Ch %02i ROC %1i", Channel, ROC),
               50, 0, 50);
-          printf("Creating for: Ch %2i ROC %i  id %i\n", Channel, ROC, id);
+          hHitMap[id]->SetDirectory(&OUTFILE);
 
           TString const Name = TString::Format("TimeAvgNHits_Ch%i_ROC%i", Channel, ROC);
           TString const Title = TString::Format("TimeAvg NHits Ch %i ROC %i", Channel, ROC);
@@ -515,6 +515,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     hHitMap[id]->Draw("hist");
     cHitMap[Channel]->cd(ROC+3+1);
     gHitTimeMap[id]->Draw("Ap");
+    OUTFILE.cd();
+    gHitTimeMap[id]->Write();
   }
 
   // Save Cluster Size canvases
