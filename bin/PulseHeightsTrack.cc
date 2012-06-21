@@ -120,10 +120,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //if (ientry == 3000) break;
 
 
-    //if (ientry < 500000) continue;
-    //if (ientry >= 2000000) break;
-    //if (ientry >= 50000) break;
-
     int NTracksPerEvent = 0;
 
 
@@ -134,7 +130,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     //uint32_t static ThisTime = 0;
     //++ThisTime;
 
-    //std::cout << "ThisTime: " << ThisTime << "  i " << ientry << "  " << Event.EventNumber() << std::endl;
 
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
@@ -187,12 +182,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
-
-        //if (sqrt(Track->ChiSquare()) > 0.005) continue;
-
-        //if (Channel == 13)
-        //std::cout << "sqrt TrackChi2: " << sqrt(Track->ChiSquare()) << std::endl;
-
 
 
 
