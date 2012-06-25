@@ -58,7 +58,7 @@ float Sum (std::vector<float>& V)
 int PulseHeightsTrack (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   PLTU::SetStyle();
-  gStyle->SetOptStat(111111);
+  gStyle->SetOptStat(100010);
 
   int const HistColors[4] = { 1, 4, 28, 2 };
 
@@ -95,12 +95,14 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   // Map for all ROC hists and canvas
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
   std::map<int, TGraphErrors*>               gHitTimeMap;
+  std::map<int, TGraphErrors*>               gNTrackTimeMap;
   std::map<int, TH1F*>    hClusterSizeMap;
   std::map<int, TCanvas*> cClusterSizeMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
   std::map<int, TH1F*>               hHitMap;
   std::map<int, TCanvas*>            cHitMap;
+  std::map<int, TH1F*>               hNTrackMap;
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
   std::map<int, TH1F*>               h2PixRatioMap;
@@ -119,8 +121,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int const TimeWidth = 1000 * 1;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, std::vector<float> > NHits;
+  std::map<int, std::vector<float> > NTracks;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
+
+  TCanvas* cNTrackMap = new TCanvas("NTracks", "Number of Tracks", 1200, 600);
 
   // Loop over all events in file
   int NGraphPoints = 0;
@@ -190,28 +195,56 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
             g->SetPoint(i, i * TimeWidth, 0);
           }
         }
-          g->Set( NGraphPoints + 1 );
-          if (NHits[id].size() != 0) {
-            float const Avg = Sum(NHits[id]) / (float) (1000*TimeWidth);
-            g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
-            g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NHits[id].size()));
-            NHits[id].clear();
-            NHits[id].reserve(100000);
-          } else {
-            g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
-            g->SetPointError( NGraphPoints , 0, 0 );
+        g->Set( NGraphPoints + 1 );
+        if (NHits[id].size() != 0) {
+          float const Avg = Average(NHits[id]);
+          g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
+          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NHits[id].size()));
+          NHits[id].clear();
+          NHits[id].reserve(100000);
+        } else {
+          g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
+          g->SetPointError( NGraphPoints , 0, 0 );
+        }
+      }
+
+      for (std::map<int, TGraphErrors*>::iterator nit = gNTrackTimeMap.begin(); nit != gNTrackTimeMap.end(); ++nit) {
+        TGraphErrors* g = nit->second;
+        int const Channel = nit->first;
+
+        if (g == 0x0) {
+          std::cerr << "ERROR: no graph for nit id == " << Channel << std::endl;
+          continue;
+        }
+        if (g->GetN() != NGraphPoints) {
+          // Play some catchup
+          g->Set(NGraphPoints);
+          for (int i = 0; i > NGraphPoints; ++i) {
+            g->SetPoint(i, i * TimeWidth, 0);
           }
+        }
+        g->Set( NGraphPoints + 1 );
+        if (NTracks[Channel].size() != 0) {
+          float const Avg = Average(NTracks[Channel]);
+          g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
+          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NTracks[Channel].size()));
+          NTracks[Channel].clear();
+          NTracks[Channel].reserve(100000);
+        } else {
+          g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
+          g->SetPointError( NGraphPoints , 0, 0 );
+        }
       }
 
 
 
 
-
       ++NGraphPoints;
-
       //std::cout << NGraphPoints << std::endl;
-
     }
+
+
+
 
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
@@ -227,6 +260,26 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       //if (Telescope->Plane(0)->NClusters() >= 1)
       //if (Telescope->Plane(0)->Cluster(0)->NHits() <= 1) continue;
 
+      // NTrack time
+      if (!hNTrackMap.count(Channel)) {
+        hNTrackMap[Channel] = new TH1F(
+            TString::Format("NTracks_Ch%i", Channel),
+            TString::Format("Number of Tracks for Ch %i", Channel),
+            10, 0, 10);
+        hNTrackMap[Channel]->SetDirectory(&OUTFILE);
+
+        TString const Name = TString::Format("TimeAvgNTracks_Ch%i", Channel);
+        TString const Title = TString::Format("TimeAvg NTracks Ch %i", Channel);
+        gNTrackTimeMap[Channel] = new TGraphErrors();
+        gNTrackTimeMap[Channel]->SetName(Name);
+        gNTrackTimeMap[Channel]->SetTitle(Name);
+        gNTrackTimeMap[Channel]->GetYaxis()->SetTitle("# of Tracks / s");
+
+      }
+
+      // Fill the map with NTracks
+      hNTrackMap[Channel]->Fill(Telescope->NTracks());
+      NTracks[Channel].push_back(Telescope->NTracks());
 
 
       for (size_t iplane = 0; iplane != Telescope->NPlanes(); ++iplane) {
@@ -239,7 +292,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           hHitMap[id] = new TH1F(
               TString::Format("NHits_Ch%02i_ROC%1i", Channel, ROC),
               TString::Format("Number of Hits for Ch %02i ROC %1i", Channel, ROC),
-              50, 0, 50);
+              25, 0, 25);
           hHitMap[id]->SetDirectory(&OUTFILE);
 
           TString const Name = TString::Format("TimeAvgNHits_Ch%i_ROC%i", Channel, ROC);
@@ -247,6 +300,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           gHitTimeMap[id] = new TGraphErrors();
           gHitTimeMap[id]->SetName(Name);
           gHitTimeMap[id]->SetTitle(Name);
+          gHitTimeMap[id]->GetYaxis()->SetTitle("# of Hits / Event");
 
           if (!cHitMap.count(Channel)) {
             cHitMap[Channel] = new TCanvas(
@@ -256,11 +310,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
             cHitMap[Channel]->Divide(3,2);
           }
         }
-
-        // Fill the map with NHits
         hHitMap[id]->Fill(Plane->NHits());
         NHits[id].push_back(Plane->NHits());
       }
+
 
       for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
@@ -520,12 +573,34 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
 
     // change to correct pad on canvas and draw the hist
-    cHitMap[Channel]->cd(ROC+1);
+    cHitMap[Channel]->cd(ROC+1)->SetLogy(1);
     hHitMap[id]->Draw("hist");
     cHitMap[Channel]->cd(ROC+3+1);
     gHitTimeMap[id]->Draw("Ap");
     OUTFILE.cd();
     gHitTimeMap[id]->Write();
+  }
+
+  // Loop over all histograms and draw them on the correct canvas in the correct pad
+  cNTrackMap->Divide(hNTrackMap.size(), 2);
+
+  int PadCounter = 1;
+  for (std::map<int, TH1F*>::iterator it = hNTrackMap.begin(); it != hNTrackMap.end(); ++it) {
+
+    // Decode the ID
+    int const Channel = it->first;
+
+    printf("Drawing NTrack hists for Channel %i\n", Channel);
+
+    // change to correct pad on canvas and draw the hist
+    std::cout << "drawme: " << PadCounter << "   " << PadCounter + hNTrackMap.size() << std::endl;
+    cNTrackMap->cd(PadCounter)->SetLogy(1);
+    hNTrackMap[Channel]->Draw("hist");
+    cNTrackMap->cd(PadCounter + hNTrackMap.size());
+    gNTrackTimeMap[Channel]->Draw("Ap");
+    OUTFILE.cd();
+    gNTrackTimeMap[Channel]->Write();
+    ++PadCounter;
   }
 
   // Save Cluster Size canvases
@@ -542,6 +617,12 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     it->second->Write();
     delete it->second;
   }
+
+  // Save ntrack hists!
+  cNTrackMap->SaveAs( TString("plots/") + cNTrackMap->GetName()+TString(".gif") );
+  cNTrackMap->Write();
+  delete cNTrackMap;
+
 
 
   // Loop over cluster size plots
