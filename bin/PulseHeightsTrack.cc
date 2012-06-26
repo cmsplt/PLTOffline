@@ -595,7 +595,6 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     printf("Drawing NTrack hists for Channel %i\n", Channel);
 
     // change to correct pad on canvas and draw the hist
-    std::cout << "drawme: " << PadCounter << "   " << PadCounter + hNTrackMap.size() << std::endl;
     cNTrackMap->cd(PadCounter)->SetLogy(1);
     hNTrackMap[Channel]->Draw("hist");
     cNTrackMap->cd(PadCounter + hNTrackMap.size());
