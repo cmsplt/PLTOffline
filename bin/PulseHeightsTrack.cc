@@ -117,11 +117,13 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   float const XMin  =  -1000;
   float const XMax  =  50000;
 
+  int NEventsInTime = 0;
+
   // Time width in events for energy time dep plots
   int const TimeWidth = 1000 * 1;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
-  std::map<int, std::vector<float> > NHits;
-  std::map<int, std::vector<float> > NTracks;
+  std::map<int, float> NHitsSum;
+  std::map<int, float> NTracksSum;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
 
@@ -196,12 +198,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           }
         }
         g->Set( NGraphPoints + 1 );
-        if (NHits[id].size() != 0) {
-          float const Avg = Average(NHits[id]);
+        if (NHitsSum[id] != 0) {
+          float const Avg = NHitsSum[id] / (float) NEventsInTime;
           g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
-          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NHits[id].size()));
-          NHits[id].clear();
-          NHits[id].reserve(100000);
+          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NEventsInTime));
+          NHitsSum[id] = 0;
         } else {
           g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
           g->SetPointError( NGraphPoints , 0, 0 );
@@ -224,12 +225,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           }
         }
         g->Set( NGraphPoints + 1 );
-        if (NTracks[Channel].size() != 0) {
-          float const Avg = Average(NTracks[Channel]);
+        if (NTracksSum[Channel] != 0) {
+          float const Avg = NTracksSum[Channel] / (float) NEventsInTime;
           g->SetPoint(NGraphPoints, NGraphPoints * TimeWidth, Avg);
-          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NTracks[Channel].size()));
-          NTracks[Channel].clear();
-          NTracks[Channel].reserve(100000);
+          g->SetPointError( NGraphPoints, 0, Avg/sqrt((float) NEventsInTime));
+          NTracksSum[Channel] = 0;
         } else {
           g->SetPoint(NGraphPoints , NGraphPoints * TimeWidth, 0);
           g->SetPointError( NGraphPoints , 0, 0 );
@@ -241,6 +241,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
       ++NGraphPoints;
       //std::cout << NGraphPoints << std::endl;
+      NEventsInTime = 0;
     }
 
 
@@ -279,7 +280,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
       // Fill the map with NTracks
       hNTrackMap[Channel]->Fill(Telescope->NTracks());
-      NTracks[Channel].push_back(Telescope->NTracks());
+      NTracksSum[Channel] += Telescope->NTracks();
 
 
       for (size_t iplane = 0; iplane != Telescope->NPlanes(); ++iplane) {
@@ -311,7 +312,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           }
         }
         hHitMap[id]->Fill(Plane->NHits());
-        NHits[id].push_back(Plane->NHits());
+        NHitsSum[id] += Plane->NHits();
       }
 
 
@@ -454,6 +455,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       HistNTracks.Fill(NTracksPerEvent);
     //}
 
+    ++NEventsInTime;
   }
   std::cout << "Events read: " << ientry+1 << std::endl;
 
