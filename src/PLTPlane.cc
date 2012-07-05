@@ -167,7 +167,14 @@ void PLTPlane::Clusterize (Clustering const Clust, FiducialRegion const FidR)
       break;
     default:
       std::cerr << "ERROR in PLTPlane::Clusterize: no such clustering alg exists" << std::endl;
-      return;
+  }
+
+  // anything that isn't clustered add it here to the unclustered array
+  for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
+    if (!std::count(fClusterizedHits.begin(), fClusterizedHits.end(), *it)) {
+      //printf("Unclustered hit: Ch %2i ROC %i  Row %2i Col %2i\n", fChannel, fROC, (*it)->Row(), (*it)->Column());
+      fUnclusteredHits.push_back(*it);
+    }
   }
 
   return;
@@ -210,7 +217,7 @@ void PLTPlane::AddAllHitsTouching (PLTCluster* Cluster, PLTHit* Hit, FiducialReg
 }
 
 
-void PLTPlane::ClusterizeAllTouching ( FiducialRegion const FidR)
+void PLTPlane::ClusterizeAllTouching (FiducialRegion const FidR)
 {
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {
@@ -369,6 +376,19 @@ PLTCluster* PLTPlane::Cluster (size_t const i)
 {
   return fClusters[i];
 }
+
+
+size_t PLTPlane::NUnclusteredHits ()
+{
+  return fUnclusteredHits.size();
+}
+
+
+PLTHit* PLTPlane::UnclusteredHit (size_t in)
+{
+  return fUnclusteredHits[in];
+}
+
 
 int PLTPlane::ROC ()
 {

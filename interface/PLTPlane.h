@@ -61,6 +61,8 @@ class PLTPlane
     int     ROC ();
     size_t  NClusters ();
     PLTCluster* Cluster (size_t);
+    size_t  NUnclusteredHits ();
+    PLTHit* UnclusteredHit (size_t);
     float   TZ ();
     float   GZ ();
     static bool CompareChargeReverse (PLTHit*, PLTHit*);
@@ -77,6 +79,7 @@ class PLTPlane
     int fROC;
     std::vector<PLTHit*> fHits;
     std::vector<PLTHit*> fClusterizedHits;
+    std::vector<PLTHit*> fUnclusteredHits;
     std::vector<PLTCluster*> fClusters;
 
 };
