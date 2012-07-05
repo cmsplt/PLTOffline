@@ -4,7 +4,7 @@
 
 PLTBinaryFileReader::PLTBinaryFileReader ()
 {
-  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
+  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_All;
   fLastTime = 0;
   fTimeMult = 0;
 }
@@ -19,7 +19,7 @@ PLTBinaryFileReader::PLTBinaryFileReader (std::string const in, bool IsText)
   } else {
     Open(in);
   }
-  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
+  fPlaneFiducialRegion = PLTPlane::kFiducialRegion_All;
   fLastTime = 0;
   fTimeMult = 0;
 }
@@ -191,7 +191,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         }
       }
 
-    } else if ( ((n1 & 0xff000000) == 0x50000000 && ((n2 & 0xfff00) >> 8) == 5 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) && ((n1 & 0xfff00) >> 8) == 5 ) && (n2 & 0xff) == 0 ){
+    } else if ( ((n1 & 0xff000000) == 0x50000000 && ((n2 & 0xfff00) >> 8) == 5 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) && ((n1 & 0xfff00) >> 8) == 5 ) && (n1 & 0xff) == 0 ){
       // Found the header and it has correct FEDID
       wordcount = 1;
       bheader = true;
@@ -278,7 +278,7 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
     if ( !IsPixelMasked( Channel*100000 + ROC*10000 + Col*100 + Row ) ) {
       PLTHit* Hit = new PLTHit(Channel, ROC, Col, Row, ADC);
       // only keep hits on the diamond
-      if (PLTPlane::IsFiducial(PLTPlane::kFiducialRegion_Diamond, Hit)) {
+      if (PLTPlane::IsFiducial(fPlaneFiducialRegion, Hit)) {
         Hits.push_back(Hit);
       } else {
         delete Hit;

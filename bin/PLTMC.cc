@@ -28,7 +28,11 @@ void GetPureNoise (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
     for (int iroc = 0; iroc != 3; ++iroc) {
       Column = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
       Row    = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
-      Hits.push_back( new PLTHit(*ch, iroc, Column, Row, gRandom->Poisson(150)) );
+      if (Column >= PLTU::FIRSTCOL && Column <= PLTU::LASTCOL && Row >= PLTU::FIRSTROW && Row <= PLTU::LASTROW) {
+        Hits.push_back( new PLTHit(*ch, iroc, Column, Row, gRandom->Poisson(150)) );
+      } else {
+        std::cout << "out of range" << std::endl;
+      }
     }
   }
 
@@ -605,7 +609,7 @@ int PLTMC ()
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor_2cm.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
   //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
 
@@ -618,7 +622,7 @@ int PLTMC ()
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (1) {
+    switch (10) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
@@ -656,7 +660,7 @@ int PLTMC ()
 
 
     // Delete all hits and clear vector
-    n2 = 0x0;
+    n2 = (5 << 8);
     n =  0x50000000;
     n |= ievent;
     fout.write( (char*) &n2, sizeof(uint32_t) );
