@@ -55,7 +55,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -50, 50, 25, -540, 340);
   HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 25, -50, 50, 25, -50, 50);
 
-  std::map<int, TH1F*> MapSlope;
+  std::map<int, TH1F*> MapSlopeY;
+  std::map<int, TH1F*> MapSlopeX;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -71,10 +72,13 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
 
-      if (!MapSlope[Telescope->Channel()]) {
-        TString const Name = TString::Format("Slope_Ch%i", Telescope->Channel());
-        MapSlope[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
-        MapSlope[Telescope->Channel()]->SetXTitle("Local Telescope Track-Slope #DeltaY/#DeltaZ");
+      if (!MapSlopeY[Telescope->Channel()]) {
+        TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
+        Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaY/#DeltaZ");
       }
 
 
@@ -92,7 +96,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         HistBeamSpot[1]->Fill( Track->fPlaner[1][0], Track->fPlaner[1][2]);
         HistBeamSpot[2]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
 
-        MapSlope[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
+        MapSlopeY[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
+        MapSlopeX[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ);
 
       }
     }
@@ -124,7 +129,15 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
   Can.SaveAs("BeamSpot.gif");
 
-  for (std::map<int, TH1F*>::iterator it = MapSlope.begin(); it != MapSlope.end(); ++it) {
+  for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    Can.SaveAs( TString(it->second->GetName()) + ".gif");
+    delete it->second;
+  }
+
+  for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");

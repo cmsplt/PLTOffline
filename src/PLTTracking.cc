@@ -62,9 +62,9 @@ void PLTTracking::RunTracking (PLTTelescope& Telescope)
 }
 
 
-bool PLTTracking::CompareTrackChiSquare (PLTTrack* lhs, PLTTrack* rhs)
+bool PLTTracking::CompareTrackD2 (PLTTrack* lhs, PLTTrack* rhs)
 {
-  return lhs->ChiSquare() < rhs->ChiSquare();
+  return lhs->D2() < rhs->D2();
 }
 
 
@@ -92,6 +92,9 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
   PLTPlane* P1 = Telescope.Plane(1);
   PLTPlane* P2 = Telescope.Plane(2);
 
+  if (P0->NClusters() == 0 || P1->NClusters() == 0 || P2->NClusters() == 0) {
+    return;
+  }
 
   // Vector to keep track of tracks that we're interested in
   std::vector<PLTTrack*> MyTracks;
@@ -145,7 +148,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
   int const NTracksBefore = (int) MyTracks.size();
 
   // Grab the best tracks first and don't let there be overlap..
-  SortOutTracksNoOverlapBestChiSquare(MyTracks);
+  SortOutTracksNoOverlapBestD2(MyTracks);
 
   if (DEBUG) {
     printf("Found NTracks possible: %4i   Kept NTracks: %4i\n", NTracksBefore, (int) MyTracks.size());
@@ -164,14 +167,14 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
 
 
 
-void PLTTracking::SortOutTracksNoOverlapBestChiSquare (std::vector<PLTTrack*>& MyTracks)
+void PLTTracking::SortOutTracksNoOverlapBestD2 (std::vector<PLTTrack*>& MyTracks)
 {
   // Idea of this function is to start with the tracks with the best test-stat
   // and grab those tracks first..  then for the remaining tracks only keep them
   // if they have unique clusters.
 
   // Order tracks with lowest test statistic first
-  std::sort(MyTracks.begin(), MyTracks.end(), &PLTTracking::CompareTrackChiSquare);
+  std::sort(MyTracks.begin(), MyTracks.end(), &PLTTracking::CompareTrackD2);
 
   // Containers for tracks and clsters
   std::vector<PLTTrack*> UsedTracks;

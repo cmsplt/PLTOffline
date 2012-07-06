@@ -27,13 +27,13 @@ class PLTTracking
     void SetTrackingAlignment (PLTAlignment*);
     void SetTrackingAlgorithm (TrackingAlgorithm const);
     int  GetTrackingAlgorithm ();
-    static bool CompareTrackChiSquare (PLTTrack*, PLTTrack*);
+    static bool CompareTrackD2 (PLTTrack*, PLTTrack*);
 
 
     void RunTracking (PLTTelescope&);
 
     void TrackFinder_01to2_All (PLTTelescope&);
-    void SortOutTracksNoOverlapBestChiSquare(std::vector<PLTTrack*>&);
+    void SortOutTracksNoOverlapBestD2(std::vector<PLTTrack*>&);
 
 
   private:

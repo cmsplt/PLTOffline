@@ -38,7 +38,7 @@ class PLTTrack
 
     std::pair<float, float> GXYatGZ (float const, PLTAlignment&);
 
-    float ChiSquare ();
+    float D2 ();
 
   private:
     std::vector<PLTCluster*> fClusters;
@@ -70,7 +70,7 @@ class PLTTrack
     float fLResidualX[3];
     float fLResidualY[3];
 
-    float fChiSquare;
+    float fD2;
 
     static bool const DEBUG = false;
 

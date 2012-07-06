@@ -56,10 +56,10 @@ PLTEvent::~PLTEvent ()
 void PLTEvent::SetDefaults ()
 {
   if (fGainCal.IsGood()) {
-    SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m2_m2);
+    SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
   } else {
     std::cerr << "WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering" << std::endl;
-    SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_m2_m2);
+    SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
   }
 
   SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);

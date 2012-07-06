@@ -60,6 +60,14 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     HistCharge[i]->GetZaxis()->SetRangeUser(0, 50000);
   }
 
+  TH2F* HistChargeUnclustered[3];
+  for (int i = 0; i != 3; ++i) {
+    TString Name;
+    Name.Form("ChargeMapUnclustered_Ch%i_ROC%i", Channel(), i);
+    HistChargeUnclustered[i] = new TH2F(Name, Name, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL+1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+    HistChargeUnclustered[i]->GetZaxis()->SetRangeUser(0, 50000);
+  }
+
 
 
   int j = 0;
@@ -74,6 +82,12 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
 
       HistCharge[ip]->SetBinContent(H->Column() + 1 - PLTU::FIRSTCOL, H->Row() + 1 - PLTU::FIRSTROW, H->Charge());
     }
+    for (size_t ih = 0; ih != P->NUnclusteredHits(); ++ih) {
+      PLTHit* H = P->UnclusteredHit(ih);
+      HistChargeUnclustered[ip]->SetBinContent(H->Column() + 1 - PLTU::FIRSTCOL, H->Row() + 1 - PLTU::FIRSTROW, H->Charge());
+    }
+
+
 
   }
   int jc = 0;
@@ -123,15 +137,15 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   //  }
   //}
 
-  TCanvas C("TelescopeTrack", "TelescopeTrack", 800, 600);;
-  C.Divide(2, 3);
+  TCanvas C("TelescopeTrack", "TelescopeTrack", 800, 800);;
+  C.Divide(3, 3);
 
   C.cd(1);
   TGraph gXZ(NC, CZ, CX);
   gXZ.SetTitle("");
   gXZ.GetXaxis()->SetTitle("Z (cm)");
   gXZ.GetYaxis()->SetTitle("X (cm)");
-  gXZ.GetXaxis()->SetTitleSize(0.08);
+  gXZ.GetXaxis()->SetTitleSize(0.06);
   gXZ.GetYaxis()->SetTitleSize(0.08);
   gXZ.GetXaxis()->SetTitleOffset(0.7);
   gXZ.GetYaxis()->SetTitleOffset(0.5);
@@ -139,17 +153,19 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXZ.GetXaxis()->SetLimits(-0.5, 8);
   gXZ.SetMinimum(-0.3);
   gXZ.SetMaximum( 0.3);
-  gXZ.Draw("A*");
+  if (NC) {
+    gXZ.Draw("A*");
+  }
   for (int i = 0; i != NT; ++i) {
     Line[0][i].Draw();
   }
 
-  C.cd(3);
+  C.cd(4);
   TGraph gYZ(NC, CZ, CY);
   gYZ.SetTitle("");
   gYZ.GetXaxis()->SetTitle("Z (cm)");
   gYZ.GetYaxis()->SetTitle("Y (cm)");
-  gYZ.GetXaxis()->SetTitleSize(0.08);
+  gYZ.GetXaxis()->SetTitleSize(0.06);
   gYZ.GetYaxis()->SetTitleSize(0.08);
   gYZ.GetXaxis()->SetTitleOffset(0.7);
   gYZ.GetYaxis()->SetTitleOffset(0.5);
@@ -157,19 +173,21 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gYZ.GetXaxis()->SetLimits(-0.5, 8);
   gYZ.SetMinimum(-0.3);
   gYZ.SetMaximum( 0.6);
-  gYZ.Draw("A*");
+  if (NC) {
+    gYZ.Draw("A*");
+  }
   for (int i = 0; i != NT; ++i) {
     Line[1][i].Draw();
   }
 
   //TVirtualPad* Pad = C.cd(3);
   //Pad->DrawFrame(-30, -30, 30, 30);
-  C.cd(5);
+  C.cd(7);
   TGraph gXY(NC, CX, CY);
   gXY.SetTitle("");
   gXY.GetXaxis()->SetTitle("X (cm)");
   gXY.GetYaxis()->SetTitle("Y (cm)");
-  gXY.GetXaxis()->SetTitleSize(0.08);
+  gXY.GetXaxis()->SetTitleSize(0.06);
   gXY.GetYaxis()->SetTitleSize(0.08);
   gXY.GetXaxis()->SetTitleOffset(0.7);
   gXY.GetYaxis()->SetTitleOffset(0.5);
@@ -177,22 +195,32 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXY.GetXaxis()->SetLimits(-0.3, 0.3);
   gXY.SetMinimum(-0.3);
   gXY.SetMaximum( 0.6);
-  gXY.Draw("A*");
+  if (NC) {
+    gXY.Draw("A*");
+  }
   for (int i = 0; i != NT; ++i) {
     Line[2][i].Draw();
   }
 
   C.cd(2);
   HistCharge[0]->Draw("colz");
-  C.cd(4);
+  C.cd(5);
   HistCharge[1]->Draw("colz");
-  C.cd(6);
+  C.cd(8);
   HistCharge[2]->Draw("colz");
+
+  C.cd(3);
+  HistChargeUnclustered[0]->Draw("colz");
+  C.cd(6);
+  HistChargeUnclustered[1]->Draw("colz");
+  C.cd(9);
+  HistChargeUnclustered[2]->Draw("colz");
 
   C.SaveAs(Name.c_str());
 
   for (int i = 0; i != 3; ++i) {
     delete HistCharge[i];
+    delete HistChargeUnclustered[i];
   }
 
   return;

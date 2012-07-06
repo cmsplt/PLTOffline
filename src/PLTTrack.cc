@@ -211,11 +211,11 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   }
 
   if (NClusters() < 3) {
-    fChiSquare = 0;
+    fD2 = 0;
   } else {
-    fChiSquare = 0;
+    fD2 = 0;
     for (size_t i = 0; i != NClusters(); ++i) {
-      fChiSquare += fLResidualX[i]*fLResidualX[i] + fLResidualY[i]*fLResidualY[i];
+      fD2 += fLResidualX[i]*fLResidualX[i] + fLResidualY[i]*fLResidualY[i];
     }
   }
 
@@ -331,7 +331,7 @@ std::pair<float, float> PLTTrack::GXYatGZ (float const GZ, PLTAlignment& Alignme
 }
 
 
-float PLTTrack::ChiSquare ()
+float PLTTrack::D2 ()
 {
-  return fChiSquare;
+  return fD2;
 }

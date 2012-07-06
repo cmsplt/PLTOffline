@@ -51,7 +51,7 @@ int Verbose (std::string const DataFileName, std::string const GainCalFileName, 
 
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
-        printf("    Track: %4i  SlopeY: %12.9f  SlopeY: %12.9f  D: %15.9f\n", (int) itrack, Track->fTVY/Track->fTVZ, Track->fTVX/Track->fTVZ, Track->ChiSquare());
+        printf("    Track: %4i  SlopeY: %12.9f  SlopeY: %12.9f  D: %15.9f\n", (int) itrack, Track->fTVY/Track->fTVZ, Track->fTVX/Track->fTVZ, Track->D2());
       }
 
 
