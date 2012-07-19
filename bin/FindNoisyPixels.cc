@@ -18,21 +18,26 @@
 
 
 
-int FindNoisyPixels (std::string const DataFileName, std::string const AlignmentFileName)
+int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFileName)
 {
   // Set some basic style
   PLTU::SetStyle();
 
   std::cout << "DataFileName:    " << DataFileName << std::endl;
-  std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+  std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, "", AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName);
 
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, MyFiducialRegion);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
 
+  FILE* fNoise = fopen("NiosyPixels.dat", "w");
+  if (!fNoise) {
+    std::cerr << "ERROR: cannot open output file for writing" << std::endl;
+    exit(1);
+  }
 
   std::map<int, TH2F*> Map;
 
@@ -42,12 +47,6 @@ int FindNoisyPixels (std::string const DataFileName, std::string const Alignment
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    for (size_t itele = 0; itele != Event.NTelescopes(); ++itele) {
-      PLTTelescope* Telescope = Event.Telescope(itele);
-      //std::cout << Telescope->NTracks() << std::endl;
-      //Telescope->DrawTracksAndHits("hello.gif");
-      //exit(0);
-    }
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
@@ -87,11 +86,21 @@ int FindNoisyPixels (std::string const DataFileName, std::string const Alignment
 
     TH2F* Hist2D = It->second;
 
+    int ID;
+    int mf, mfc, hub;
     for (int i = 1; i <= Hist2D->GetNbinsX(); ++i) {
       for (int j = 1; j <= Hist2D->GetNbinsY(); ++j) {
         if (Hist2D->GetBinContent(i, j) > Threshold) {
           printf("Channel: %2i ROC: %1i  Hot Pixel: %2i %2i  Hit: %15i    Median = %15.3E  Threshold = %15.3E\n",
               Channel, ROC, PLTU::FIRSTCOL + i, PLTU::FIRSTROW + j, (int) Hist2D->GetBinContent(i, j), Median[0], Threshold);
+
+          ID = Event.GetHardwareID(Channel);
+          mf = ID / 1000;
+          mfc = (ID - mf) / 100;
+          hub = ID % 100;
+
+          fprintf(fNoise, "%i %i %2i %i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + i, PLTU::FIRSTROW + j);
+
         }
       }
     }
@@ -110,13 +119,13 @@ int FindNoisyPixels (std::string const DataFileName, std::string const Alignment
 int main (int argc, char* argv[])
 {
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [AlignmentFileName]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
-  std::string const AlignmentFileName = argv[2];
-  FindNoisyPixels(DataFileName, AlignmentFileName);
+  std::string const GainCalFileName = argv[2];
+  FindNoisyPixels(DataFileName, GainCalFileName);
 
   return 0;
 }
