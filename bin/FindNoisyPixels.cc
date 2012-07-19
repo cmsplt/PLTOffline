@@ -96,7 +96,7 @@ int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFi
 
           ID = Event.GetHardwareID(Channel);
           mf = ID / 1000;
-          mfc = (ID - mf) / 100;
+          mfc = (ID - mf*1000) / 100;
           hub = ID % 100;
 
           fprintf(fNoise, "%i %i %2i %i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + i, PLTU::FIRSTROW + j);
