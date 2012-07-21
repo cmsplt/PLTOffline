@@ -18,16 +18,15 @@
 
 
 
-int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFileName)
+int FindNoisyPixels (std::string const DataFileName)
 {
   // Set some basic style
   PLTU::SetStyle();
 
   std::cout << "DataFileName:    " << DataFileName << std::endl;
-  std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName);
+  PLTEvent Event(DataFileName);
 
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, MyFiducialRegion);
@@ -118,14 +117,13 @@ int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFi
 
 int main (int argc, char* argv[])
 {
-  if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName]" << std::endl;
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " [DataFileName]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
-  std::string const GainCalFileName = argv[2];
-  FindNoisyPixels(DataFileName, GainCalFileName);
+  FindNoisyPixels(DataFileName);
 
   return 0;
 }
