@@ -40,8 +40,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m3_m3;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_Diamond;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
 
@@ -86,7 +86,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
 
       if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 20) {
-          Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), NTrkEvMap[Telescope->Channel()]).Data() );
+        Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), NTrkEvMap[Telescope->Channel()]).Data() );
       }
 
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
