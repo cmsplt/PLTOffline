@@ -281,7 +281,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     int BX = Event.BX();
     hBX.Fill(BX);
 
-    if (ie == 100000) break;
+    //if (ie == 100000) break;
 
 
     ///////////////////////////////////////
