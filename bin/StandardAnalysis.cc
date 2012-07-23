@@ -15,6 +15,7 @@
 #include <map>
 #include <numeric>
 #include <cstring>
+#include <vector>
 
 #include "PLTEvent.h"
 #include "PLTU.h"
@@ -30,11 +31,11 @@
 #include "TStyle.h"
 #include "TLine.h"
 #include "TROOT.h"
+#include "TSystem.h"
 
 
 // FUNCTION DEFFINITIONS HERE
 
-int PulseHeightsTrack (std::string const, std::string const);
 
 
 float Average (std::vector<float>& V)
@@ -72,8 +73,8 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 
   for (int ix = 1; ix <= NBinsX; ++ix) {
     for (int iy = 1; iy <= NBinsY; ++iy) {
-      int const px = hIN->GetXaxis()->GetBinLowEdge(ix);
-      int const py = hIN->GetYaxis()->GetBinLowEdge(iy);
+      int const px = (int) hIN->GetXaxis()->GetBinLowEdge(ix);
+      int const py = (int) hIN->GetYaxis()->GetBinLowEdge(iy);
       if (PLTPlane::IsFiducial(FidRegion, px, py)) {
         if (hIN->GetBinContent(ix, iy) > ZMax) {
           h->Fill(ZMax - hIN->GetMaximum() / (float) NBins);
@@ -96,7 +97,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
   for (int icol = 1; icol <= HistIn.GetNbinsX(); ++icol) {
 
     // What pixel column is this?  If it's outside the range skip it
-    int const PixCol = HistEff->GetXaxis()->GetBinLowEdge(icol);
+    int const PixCol = (int) HistEff->GetXaxis()->GetBinLowEdge(icol);
     if (PixCol < FirstCol || PixCol > LastCol) {
       continue;
     }
@@ -104,7 +105,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
     for (int irow = 1; irow <= HistIn.GetNbinsY(); ++irow) {
 
       // What row is this?  If it's outside the range skip it
-      int const PixRow = HistEff->GetYaxis()->GetBinLowEdge(irow);
+      int const PixRow = (int) HistEff->GetYaxis()->GetBinLowEdge(irow);
       if (PixRow < FirstRow || PixRow > LastRow) {
         continue;
       }
@@ -119,7 +120,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
               //std::cout << "here " << HistIn.GetBinContent(icol + i, irow + j) << std::endl;
             }
             if ( (i != 0 || j != 0) && HistIn.GetBinContent(icol + i, irow + j) > 0) {
-              HitsNearThisPixel.push_back( HistIn.GetBinContent(icol + i, irow + j));
+              HitsNearThisPixel.push_back( (int) HistIn.GetBinContent(icol + i, irow + j));
             }
           }
         }
@@ -152,32 +153,39 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
 
 
 
-int StandardAnalysis (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
-{
-  std::cout << "StandardAna" << std::endl;
 
+int StandardAnalysis(std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, std::string const OutDir,  std::string const RunNumber)
+{
+  std::cout << "DataFileName:      " << DataFileName << std::endl;
+  std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
+  std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+  std::cout << "OutDir:            " << OutDir << std::endl;
+  std::cout << "RunNumber:         " << RunNumber << std::endl;
+
+
+  // Make output dir
+  if (gSystem->mkdir(OutDir.c_str(), true) != 0) {
+    std::cerr << "WARNIGN: either OutDir exists or it is un-mkdir-able: " << OutDir << std::endl;
+  }
+
+  // Set some basic style
   PLTU::SetStyle();
   gStyle->SetOptStat(111111);
 
+  // Hist colors for pulse heights
   int const HistColors[4] = { 1, 4, 28, 2 };
 
 
   // Output name for root file, just tack it on the end..
   TString const NI = DataFileName;
   TString const BaseInName = NI.Contains('/') ? NI(NI.Last('/')+1, NI.Length()-NI.Last('/')-1) : NI;
-  TString const OutFileName = BaseInName + ".PHT.root";
+  TString const OutFileName =  BaseInName + ".PHT.root";
   std::cout << "PulseHeights saved to: " << OutFileName << std::endl;
 
-  TFile OUTFILE(OutFileName, "recreate");
+  // Output root file
+  TFile OUTFILE(TString(OutDir.c_str()) + "/" + OutFileName, "recreate");
   if (!OUTFILE.IsOpen()) {
     std::cerr << "ERROR: cannot open output file" << std::endl;
-    exit(1);
-  }
-
-  // Out file for low energy pixels
-  FILE* OutPix = fopen("LowChargePixels.dat", "w");
-  if (!OutPix) {
-    std::cerr << "ERROR: cannot open out file for pixels" << std::endl;
     exit(1);
   }
 
@@ -185,16 +193,11 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-
-  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m1_m1;
-
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_m1_m1);
-
+  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_Diamond);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
-
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_All);
 
-  printf("Event.Stuff\n");
   //Searching for treasure!!
   std::map<int, TH2F*>               hAllMap;
   std::map<int, TCanvas*>            cAllMap;
@@ -228,13 +231,29 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   float const XMax  =  50000;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 3;
+  uint32_t const TimeWidth = 1000 * 3;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
 
   //Character buffer for writing names
   char BUFF[200];
+
+
+  std::vector<int> unique;
+  std::vector<double> firstMean;
+  std::vector<double> secondMean;
+  std::vector<double> thirdMean;
+  std::vector<double> fourthMean;
+
+  std::vector<double> firstRMS;
+  std::vector<double> secondRMS;
+  std::vector<double> thirdRMS;
+  std::vector<double> fourthRMS;
+
+
+
+
 
 
   ///////////////////////////////////////
@@ -247,41 +266,31 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   int ie = 0;
   int NGraphPoints = 0;
 
-    TH1F hBX("Bunch Crossing", "Bunch Crossing", PLTHistReader::NBUCKETS, 0, PLTHistReader::NBUCKETS);
+  TH1F hBX("Bunch Crossing", "Bunch Crossing", PLTHistReader::NBUCKETS, 0, PLTHistReader::NBUCKETS);
 
 
   for ( ; Event.GetNextEvent() >= 0 ; ++ie) 
   {
-
-    //BunchCrossing??
-    int BX = Event.BX();
-    //std::cout << BX << std::endl;
-
-    hBX.Fill(BX);
-    
-
 
     if (ie % 10000 == 0) 
     {
       std::cout << "Processing Event:" << ie << std::endl;
     }
 
-    //if (ie == 100000) break;
+    //BunchCrossing??
+    int BX = Event.BX();
+    hBX.Fill(BX);
+
+    if (ie == 100000) break;
 
 
-  ///////////////////////////////////////
-  //                                   //
-  //         PHT Timing Stuff          //
-  //                                   //
-  //  Dean's crazy crazy crazy stuff   //
-  ///////////////////////////////////////
+    ///////////////////////////////////////
+    //                                   //
+    //         PHT Timing Stuff          //
+    //                                   //
+    //  Dean's crazy crazy crazy stuff   //
+    ///////////////////////////////////////
 
-    //if (Event.BX() != 20) continue;
-    //if (ie < 4700000) continue;
-    //if (ie < 500000) continue;
-    //if (ie >= 3600000) break;
-    //if (ie >= 50000) break;
-  
     int NTracksPerEvent = 0;
 
     // First event time
@@ -317,7 +326,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
             g->SetPointError( NGraphPoints , 0, 0 );
           }
         }
-      
+
       }
       ++NGraphPoints;
     }
@@ -346,7 +355,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       //                                   //
       // Loop over all tracks in telescope //
       ///////////////////////////////////////
-   
+
       for (size_t itrack = 0; itrack < Tele->NTracks(); ++itrack) 
       {
         PLTTrack* Track = Tele->Track(itrack);
@@ -377,8 +386,8 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
             hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
                   TString::Format("PulseHeightTrack_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
             hMap2D[id] = new TH2F( TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
-                  TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, 
-                  PLTU::FIRSTROW, PLTU::LASTROW);
+                TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, 
+                PLTU::FIRSTROW, PLTU::LASTROW);
             for (size_t ih = 1; ih != 4; ++ih) {
 
               hMap[id].push_back( new TH1F( TString::Format("Track Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
@@ -388,7 +397,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
             // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
             if (!cMap.count(Channel)) {
               // Create canvas with given name
-              cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("PulseHeightTrack_Ch%02i", Channel), 900, 900);
+              cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("%s/PulseHeightTrack_Ch%02i", OutDir.c_str(), Channel), 900, 900);
               cMap[Channel]->Divide(3, 3);
             }
           }
@@ -417,7 +426,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
             // One in three chance you'll need a new canvas for thnat =)
             if (!cClusterSizeMap.count(Channel)) {
-              cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSizeTrack_Ch%02i", Channel), TString::Format("ClusterSizeTrack_Ch%02i", Channel), 900, 300);
+              cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSizeTrack_Ch%02i", Channel), TString::Format("%s/ClusterSizeTrack_Ch%02i", OutDir.c_str(), Channel), 900, 300);
               cClusterSizeMap[Channel]->Divide(3, 1);
             }
           }
@@ -441,7 +450,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
           if (ThisClusterCharge < 100000 && ThisClusterCharge >= 0) {
             Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
             ++N2D[id][col][row];
-          
+
 
           }
 
@@ -469,7 +478,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
             {
               ChargeHits[id][2].push_back( ThisClusterCharge );
             }
-             else if (NHits >= 3) 
+            else if (NHits >= 3) 
             {
               ChargeHits[id][3].push_back( ThisClusterCharge );
             }
@@ -477,12 +486,25 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
           else 
           {
           }
+          double rmsa = 0;
+          double rmsb = 0;
+          double rmsc = 0;
+          double meaa = 0;
+          double meab = 0;
+          double meac = 0;
+
+          rmsa = hMap[id][1]->GetRMS();
+          rmsb = hMap[id][2]->GetRMS();
+          rmsc = hMap[id][3]->GetRMS();
+          meaa = hMap[id][1]->GetMean();
+          meab = hMap[id][2]->GetMean();
+          meac = hMap[id][3]->GetMean();
 
         }
         ///////////////////////////////////////
         //          END CLUST LOOP           //
         ///////////////////////////////////////
-       }
+      }
       ///////////////////////////////////////
       //          END TRACK LOOP           //
       ///////////////////////////////////////
@@ -514,7 +536,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
           std::cerr << "WARNING: Channel > 99 found: " << Plane->Channel() << std::endl;
           continue;
         }
- 
+
         ///////////////////////////////////////
         //                                   //
         //          BEGIN HITS LOOP          //
@@ -533,10 +555,10 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
           //printf("Channel ROC Row Col ADC: %2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Row(), Hit->Column(), Hit->ADC(), Event.EventNumber());
 
 
-         // If the hist doesn't exist yet we have to make it
+          // If the hist doesn't exist yet we have to make it
           if (hOccupancyMap.count(id) == 0) 
           {
-  
+
             // Create new hist with the given name
             sprintf(BUFF, "Occupancy Ch%02i ROC%1i", Plane->Channel(), Plane->ROC());
 
@@ -562,23 +584,23 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
               sprintf(BUFF, "Occupancy All Ch%02i", Plane->Channel());
               cAllMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
               cAllMap[Plane->Channel()]->Divide(3,3);
-  
+
               sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
               cOccupancyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
               cOccupancyMap[Plane->Channel()]->Divide(3,3);
- 
+
               sprintf(BUFF, "Occupancy w/ QuantilesCh%02i", Plane->Channel());
               cQuantileMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
               cQuantileMap[Plane->Channel()]->Divide(3,2);
-  
+
               sprintf(BUFF, "Occupancy Projection Ch%02i", Plane->Channel());
               cProjectionMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
               cProjectionMap[Plane->Channel()]->Divide(3,3);
- 
+
               sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
               cEfficiencyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
               cEfficiencyMap[Plane->Channel()]->Divide(3,3);
- 
+
               sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
               cCoincidenceMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 400, 400);
               hCoincidenceMap[Plane->Channel()] = new TH1F(BUFF, BUFF, 7, 0, 7);
@@ -601,7 +623,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
       ///////////////////////////////////////
       //          END PLANE LOOP           //
       ///////////////////////////////////////
-     // Binary number for planes hit
+      // Binary number for planes hit
       int phit = Tele->HitPlaneBits();
 
       // here we fill the plot of Planes in Coincidence
@@ -711,7 +733,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
 
 
-   
+
 
     // 2D Occupancy efficiency plots wrt 3x3
     hEfficiencyMap[it->first] = Get3x3EfficiencyHist(*hQuantileMap[it->first], PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
@@ -783,7 +805,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
     // Naming for coincidence map
     char *bin[7] = { (char*)"ROC0"
-        , (char*)"ROC1"
+      , (char*)"ROC1"
         , (char*)"ROC2"
         , (char*)"ROC0&1"
         , (char*)"ROC1&2"
@@ -805,33 +827,100 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     it->second->Draw("");
   }
 
+  std::ofstream fHTML((OutDir + "/index.html").c_str());
+  if (!fHTML.is_open()) {
+    std::cerr << "ERROR: cannot open index.html in dir: " << OutDir << std::endl;
+    return 2;
+  }
+  fHTML << "<html><body>\n";
+  fHTML << "<h1>Run Summary: </h1>\n";
+  fHTML << "DataFileName: " << DataFileName << "<br />\n";
+  fHTML << "GainCalFileName: " << GainCalFileName << "<br />\n";
+  fHTML << "AlignmentFileName: " << AlignmentFileName << "<br />\n";
+  fHTML << "Number of events: " << ie << "<br />\n";
+  fHTML << "<br />\n<a href=\"" << OutFileName << "\">" << OutFileName << "</a><br />\n";
+  fHTML << "<hr />\n";
+
+
+
+  // Draw and save bunch crossing histogram
+  hBX.SetXTitle("Bunnch Crossing");
+  hBX.SetYTitle("Events");
+  hBX.SetZTitle("Bunch Crossing");
+  hBX.SetTitleOffset(1.2, "y");
+  hBX.SetTitleOffset(1.4, "z");
+  hBX.SetFillColor(40); 
+  hBX.SetStats(false);
+  TCanvas cBX("cname", "ctitle", 1200,300);
+  cBX.SetRightMargin(0.01);
+  cBX.SetLeftMargin(0.01);
+  cBX.cd();
+  hBX.Draw("hist");
+  cBX.SaveAs(OutDir + TString("/BunchCrossing.gif"));
+  fHTML << "<hr /><h2>BX</h2>\n";
+  fHTML << "<a href=\"BunchCrossing.gif\"><img src=\"BunchCrossing.gif\" width=\"600\" /></a>\n";
+
+
   // Loop over all canvas, save them, and delete them
-  for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Ch%02i.gif", it->first));
-    delete it->second;
-  }
-  for (std::map<int, TCanvas*>::iterator it = cQuantileMap.begin(); it != cQuantileMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Quantile_Ch%02i.gif", it->first));
-    delete it->second;
-  }
-  for (std::map<int, TCanvas*>::iterator it = cProjectionMap.begin(); it != cProjectionMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Projection_Ch%02i.gif", it->first));
-    delete it->second;
-  }
-  for (std::map<int, TCanvas*>::iterator it = cEfficiencyMap.begin(); it != cEfficiencyMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Efficiency_Ch%02i.gif", it->first));
-    delete it->second;
-  }
-  for (std::map<int, TCanvas*>::iterator it = cCoincidenceMap.begin(); it != cCoincidenceMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i.gif", it->first));
-  }
-  for (std::map<int, TCanvas*>::iterator it = cMeanMap.begin(); it != cMeanMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Mean_Ch%02i.gif", it->first));
-  }
+  fHTML << "<hr /><h2>Occupancy</h2>\n";
   for (std::map<int, TCanvas*>::iterator it = cAllMap.begin(); it != cAllMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i.gif", it->first));
+    TString const FileName = TString::Format("Occupancy_All_Ch%02i.gif", it->first);
+    fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
+    it->second->SaveAs(OutDir + "/" + FileName);
     delete it->second;
   }
+  fHTML << "<br />\n";
+
+  fHTML << "<table><tr>\n";
+  fHTML << "<td>Occupancy:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Occupancy by Quantile:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cQuantileMap.begin(); it != cQuantileMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Quantile_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Occupancy Projection:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cProjectionMap.begin(); it != cProjectionMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Projection_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Occupancy Efficiency:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cEfficiencyMap.begin(); it != cEfficiencyMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Efficiency_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Occupancy Coincidence:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cCoincidenceMap.begin(); it != cCoincidenceMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Coincidence_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Occupancy by Mean:</td><td>";
+  for (std::map<int, TCanvas*>::iterator it = cMeanMap.begin(); it != cMeanMap.end(); ++it) {
+    TString const FileName = TString::Format("Occupancy_Mean_Ch%02i.gif", it->first);
+    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
+    it->second->SaveAs(OutDir + "/" + FileName);
+    delete it->second;
+  }
+  fHTML << "</td></tr></table>\n";
+
 
   ///////////////////////////////////////
   //      END OCUPANCY HISTO           //
@@ -840,27 +929,21 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   TCanvas CanNTracks;
   CanNTracks.cd();
   HistNTracks.Draw("hist");
-  CanNTracks.SaveAs("plots/NTracksPerEvent.gif");
-
-  //
-  //
-  //
-  //
-  //
-  //
+  CanNTracks.cd(1)->SetLogy(1);
+  CanNTracks.SaveAs(OutDir + TString("/NTracksPerEvent.gif"));
+  CanNTracks.SetCanvasSize(400, 250);
+  CanNTracks.Modified();
+  CanNTracks.Update();
+  CanNTracks.SaveAs(OutDir + TString("/thm_NTracksPerEvent.gif"));
+  fHTML << "<h2>Tracks</h2>\n";
+  fHTML << "<a href=\"NTracksPerEvent.gif\"><img src=\"thm_NTracksPerEvent.gif\"></a>\n";
+  fHTML << "<hr />\n";
 
 
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
-  //I think this is where my problem takes root.
-  std::cout << "goo!" << std::endl;
-  std::cout << hMap.size() << std::endl;
-  std::cout.flush();
   for (std::map<int, std::vector<TH1F*> >::iterator it = hMap.begin(); it != hMap.end(); ++it) {
-      std::cout << "goo two!" << std::endl;
-  std::cout.flush();
 
-    std::cout << "begi PHT Histo" << std::endl;
     // Decode the ID
     int const Channel = it->first / 10;
     int const ROC     = it->first % 10;
@@ -874,6 +957,21 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     TLegend* Leg = new TLegend(0.65, 0.7, 0.80, 0.88, "");
     Leg->SetFillColor(0);
     Leg->SetBorderSize(0);
+
+
+    unique.push_back (id);
+
+    firstMean.push_back (it->second[0]->GetMean());  
+    secondMean.push_back (it->second[1]->GetMean());  
+    thirdMean.push_back (it->second[2]->GetMean());  
+    fourthMean.push_back (it->second[3]->GetMean());  
+
+    firstRMS.push_back (it->second[0]->GetRMS());
+    secondRMS.push_back (it->second[1]->GetRMS());
+    thirdRMS.push_back (it->second[2]->GetRMS());
+    fourthRMS.push_back (it->second[3]->GetRMS());
+
+
 
     for (size_t ih = 0; ih != 4; ++ih) {
       TH1F* Hist = it->second[ih];
@@ -918,6 +1016,7 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
         g->Draw("Ap");
       } else {
         g->Draw("samep");
+
       }
       OUTFILE.cd();
       g->Write();
@@ -927,20 +1026,9 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+6+1);
 
-  for (int ja = 0; ja != PLTU::NROW; ++ja) {
-    for (int ia = 0; ia != PLTU::NCOL; ++ia) {
-        if (Avg2D[id][ia][ja] < 25000) {
-
-
-          int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
-          int const mf  = hwdAddy / 1000;
-          int const mfc = (hwdAddy % 1000) / 100;
-          int const hub = hwdAddy % 100;
-          fprintf(OutPix, "%1i %1i %2i %1i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + ia, PLTU::FIRSTROW + ja);
-        } else {
-        }
+    for (int ja = 0; ja != PLTU::NROW; ++ja) {
+      for (int ia = 0; ia != PLTU::NCOL; ++ia) {
         if (Avg2D[id][ia][ja] > 0) {
-
           hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
         }
         printf("%6.0f ", Avg2D[id][ia][ja]);
@@ -959,8 +1047,11 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
   }
 
   // Save Cluster Size canvases
+  fHTML << "<hr /><h2>Pulse Heights Track</h2>\n";
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
-    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
+    TString const Name = it->second->GetName()+TString(".gif");
+    fHTML << "<a href=\"" << Name << "\"><img src=\"" << Name << "\" width=\"300\"></a>\n";
+    it->second->SaveAs( OutDir + TString("/") + Name );
     it->second->Write();
     delete it->second;
   }
@@ -978,69 +1069,62 @@ int StandardAnalysis (std::string const DataFileName, std::string const GainCalF
 
   // Save Cluster Size canvases
   for (std::map<int, TCanvas*>::iterator it = cClusterSizeMap.begin(); it != cClusterSizeMap.end(); ++it) {
-    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
+    it->second->SaveAs( OutDir + TString("/") + it->second->GetName()+TString(".gif") );
     delete it->second;
   }
 
   OUTFILE.Close();
-  fclose(OutPix);
-  
-  //
-  //
-  //////////
 
 
-            hBX.SetXTitle("Bunnch Crossing");
-            hBX.SetYTitle("Events");
-            hBX.SetZTitle("Bunch Crossing");
-            hBX.SetTitleOffset(1.2, "y");
-            hBX.SetTitleOffset(1.4, "z");
-            hBX.SetFillColor(40); 
-            hBX.SetStats(false);
-    std::cout << "seg fault here?" << std::endl;
-    TCanvas cBX("cname", "ctitle", 1200,300);
-    cBX.cd();
-    hBX.Draw("hist");
-    cBX.SaveAs("plots/BunchCrossing.gif");
+  for(size_t asd = 0; asd < firstMean.size(); ++asd) {
+    std::cout << "\nFirst Mean & RMS:  " << firstMean[asd] << " " << firstRMS[asd] <<""<< std::endl;
+    std::cout <<"\nSecond Mean & RMS: " <<secondMean[asd] << " " << secondRMS[asd] <<""<< std::endl;
+    std::cout <<"\nThird Mean & RMS:  " <<thirdMean[asd] << " " << thirdRMS[asd] <<""<< std::endl;
+    std::cout <<"\nFourth Mean & RMS: " <<fourthMean[asd]<< " " << fourthRMS[asd] <<""<< std::endl;
+  }
 
 
 
 
-  std::cout << "Events read: " << ie + 1 << std::endl;
+
+
+  FILE* ofile = fopen( (OutDir + "/output.txt").c_str(), "w");
+  fprintf(ofile, "$n%s $d%s $ie%d ", RunNumber.c_str(), OutDir.c_str(), ie);
+  for(size_t q = 0; q <firstMean.size(); ++q) {
+    fprintf(ofile, "$id%d ", unique[q]);
+    fprintf(ofile, "$m1%lf $m2%lf $m3%lf $m4%lf ", firstMean[q], secondMean[q], thirdMean[q], fourthMean[q]);
+    fprintf(ofile, "$r1%lf $r2%lf $r3%lf $r4%lf ", firstRMS[q], secondRMS[q], thirdRMS[q], fourthRMS[q]);
+  }
+  fprintf(ofile, "!!\n");
+  fclose(ofile);
+
+  fHTML << "</body></html>";
+  fHTML.close();
+
+
+
 
   return 0;
-
-
-
 }
+
+
+
+
 
 
 int main (int argc, char* argv[])
 {
-
-  if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [AlignmentFileName]" << std::endl;
+  if (argc != 6) {
+    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [AlignmentFileName] [OutDir] [RunNumber]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
   std::string const GainCalFileName = argv[2];
   std::string const AlignmentFileName = argv[3];
-  std::cout << "DataFileName:    " << DataFileName << std::endl;
-  std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
-  std::cout << "AlignmentFileName: " << GainCalFileName << std::endl;
+  std::string const OutDir = argv[4];
+  std::string const RunNumber = argv[5];
 
-  StandardAnalysis(DataFileName, GainCalFileName, AlignmentFileName);
+  return StandardAnalysis(DataFileName, GainCalFileName, AlignmentFileName, OutDir, RunNumber);
 
-
-
-  return 0;
 }
-
-
-
-
-
-
-
-
