@@ -47,6 +47,7 @@ int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFi
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
+    //if (ientry == 1500000) break;
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
@@ -99,7 +100,7 @@ int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFi
           mfc = (ID - mf*1000) / 100;
           hub = ID % 100;
 
-          fprintf(fNoise, "%i %i %2i %i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + i, PLTU::FIRSTROW + j);
+          fprintf(fNoise, "%i %i %2i %i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + i - 1, PLTU::FIRSTROW + j - 1);
 
         }
       }
