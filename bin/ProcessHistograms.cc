@@ -79,7 +79,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   }
   for (int i = 0; i != 1; ++i) {
     TString const NameC = TString::Format("HistByChannel_Ch%i", i);
-    CanByChannel[i] = new TCanvas(NameC, NameC, 1800, 1100);
+    CanByChannel[i] = new TCanvas(NameC, NameC, 1000, 700);
     CanByChannel[i]->Divide(1, NMAXCHANNELS);
   }
 
@@ -182,7 +182,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
       for (int ib = 0; ib < NBUCKETS; ++ib) {
         Counts[Channel][iOrbit][ib] = (BigBuff[ib] & 0xfff);
-        TotalSum += (BigBuff[ib] & 0xfff) / 5.0;
+        TotalSum += (BigBuff[ib] & 0xfff) / 4.0;
       }
 
       OTime[Channel][iOrbit] = OrbitTime;
@@ -249,7 +249,7 @@ int main (int argc, char* argv[])
 
   int myargc;
   char* myargv[0];
-  //TApplication theApp("PLT", &myargc, myargv);
+  TApplication theApp("PLT", &myargc, myargv);
   //TestMainFrame mainWindow(gClient->GetRoot(), 400, 220);
 
 
