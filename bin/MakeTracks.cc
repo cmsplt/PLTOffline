@@ -68,17 +68,17 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
-
+      
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
 
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
         MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
-        MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaY/#DeltaZ");
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
       }
 
 
@@ -127,13 +127,13 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[1]->ProjectionY()->Draw("ep");
   Can.cd(3+6);
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
-  Can.SaveAs("BeamSpot.gif");
+  Can.SaveAs("plots/BeamSpot.gif");
 
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs( TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
 
@@ -141,7 +141,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs( TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
 
