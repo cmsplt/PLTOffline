@@ -9,6 +9,7 @@
 
 #include "TString.h"
 #include "TMath.h"
+#include "TF1.h"
 
 #include "PLTHit.h"
 #include "PLTCluster.h"
@@ -31,6 +32,7 @@ class PLTGainCal
     void  ReadGainCalFile (std::string const GainCalFileName);
     void  ReadGainCalFile3 (std::string const GainCalFileName);
     void  ReadGainCalFile5 (std::string const GainCalFileName);
+    void  ReadGainCalFileExt (std::string const GainCalFileName);
 
     void CheckGainCalFile (std::string const GainCalFileName, int const Channel);
 
@@ -51,8 +53,10 @@ class PLTGainCal
 
   private:
     bool fIsGood;
+    bool fIsExternalFunction;
 
     int  fNParams; // how many parameters for this gaincal
+    TF1 fFitFunction;
 
     static int const MAXCHNS =  48;
     static int const MAXROWS = 100;
@@ -71,7 +75,7 @@ class PLTGainCal
 
     // ch,roc,col,row [3]
     //float GC[MAXCHNS][MAXROCS][MAXCOLS][MAXROWS][3];
-    float GC[NCHNS][NROCS][NCOLS][NROWS][5];
+    float GC[NCHNS][NROCS][NCOLS][NROWS][6];
 
     // Map for hardware locations by fed channel
     std::map<int, int> fHardwareMap;

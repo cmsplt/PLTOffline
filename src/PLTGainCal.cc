@@ -91,13 +91,23 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
   }
 
   float charge = -9999;
-  if (fNParams == 3) {
-    charge = 65. * (float(adc * adc) * GC[ich][iroc][icol][irow][2] + float(adc) * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][0]);
+  if (fIsExternalFunction) {
+    for (int ipar = 0; ipar < fNParams; ++ipar) {
+      fFitFunction.SetParameter(ipar, GC[ich][iroc][icol][irow][ipar]);
+    }
+    charge = fFitFunction.Eval(adc);
+  } else {
+    if (fNParams == 3) {
+      charge = 65. * (float(adc * adc) * GC[ich][iroc][icol][irow][2] + float(adc) * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][0]);
 
-  } else if (fNParams == 5) {
-    charge = 65. * (TMath::Power( (float) adc, 2) * GC[ich][iroc][icol][irow][0] + (float) adc * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][2]
-                    + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
-                   );
+    } else if (fNParams == 5) {
+      charge = 65. * (TMath::Power( (float) adc, 2) * GC[ich][iroc][icol][irow][0] + (float) adc * GC[ich][iroc][icol][irow][1] + GC[ich][iroc][icol][irow][2]
+          + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
+          );
+    } else {
+      std::cerr << "ERROR: PLTGainCal::GetCharge() I do not know of that number of fNParams" << std::endl;
+      exit(1);
+    }
   }
   if (PLTGainCal::DEBUGLEVEL) {
     printf("%2i %1i %2i %2i %4i %10.1f\n", ch, roc, col, row, adc, charge);
@@ -118,6 +128,11 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
     std::cerr << "ERROR: cannot open gaincal file: " << GainCalFileName << std::endl;
     throw;
   }
+  TString CheckFirstLine;
+  CheckFirstLine.ReadLine(InFile);
+  if (CheckFirstLine.BeginsWith("Parameters of the vcal vs. pulse height fits")) {
+    fIsExternalFunction = true;
+  }
 
   // Loop over header lines in the input data file
   for (std::string line; std::getline(InFile, line); ) {
@@ -128,11 +143,16 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 
 
 
+
   std::string line;
   std::getline(InFile, line);
   std::istringstream linestream;
   linestream.str(line);
-  int i = -4;
+  int i = 0;
+  if (fIsExternalFunction) {
+  } else {
+   i -= 4;
+  }
   for (float junk; linestream >> junk; ++i) {
   }
   InFile.close();
@@ -140,13 +160,18 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 
   printf("PLTGainCal sees a parameter file with %i params\n", fNParams);
 
-  if (fNParams == 5) {
-    ReadGainCalFile5(GainCalFileName);
-  } else if (fNParams == 3) {
-    ReadGainCalFile3(GainCalFileName);
+  if (fIsExternalFunction) {
+    ReadGainCalFileExt(GainCalFileName);
+    exit(0);
   } else {
-    std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
-    throw;
+    if (fNParams == 5) {
+      ReadGainCalFile5(GainCalFileName);
+    } else if (fNParams == 3) {
+      ReadGainCalFile3(GainCalFileName);
+    } else {
+      std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
+      throw;
+    }
   }
 
   return;
@@ -229,6 +254,116 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
        >> GC[ich][roc][icol][irow][2]
        >> GC[ich][roc][icol][irow][3]
        >> GC[ich][roc][icol][irow][4];
+
+    // dude, you really don't want to do this..
+    if (PLTGainCal::DEBUGLEVEL) {
+      for (int i = 0; i != 3; ++i) {
+        for (int j = 0; j != 5; ++j) {
+          printf("%6.2E ", GC[ich][i][icol][irow][j]);
+        }
+      }
+      printf("\n");
+    }
+
+  }
+
+  // Apparently this file was read no problem...
+  fIsGood = true;
+
+
+  return;
+}
+
+
+void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
+{
+  int const ch = 1;
+  int const roc = 0;
+  int row, col;
+  int irow;
+  int icol;
+  int ich;
+
+  int const mf = 8, mfc = 1, hub = 5;
+  fHardwareMap[ch] = 1000*mf + 100*mfc + hub;
+  printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
+
+  ifstream f(GainCalFileName.c_str());
+  if (!f) {
+    std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
+    throw;
+  }
+
+  // Loop over header lines in the input data file
+  TString FunctionLine;
+  FunctionLine.ReadLine(f);
+  FunctionLine.ReadLine(f);
+  FunctionLine.ReplaceAll("par[", "[");
+
+  // Set the root function
+  TF1 MyFunction("GainCalFitFunction", FunctionLine, -10000, 10000);
+  fFitFunction = MyFunction;
+
+  // Get blank line out of the way
+  FunctionLine.ReadLine(f);
+
+  
+
+  // Reset everything
+  for (int i = 0; i != NCHNS; ++i) {
+    for (int j = 0; j != NROCS; ++j) {
+      for (int k = 0; k != PLTU::NCOL; ++k) {
+        for (int m = 0; m != PLTU::NROW; ++m) {
+          for (int n = 0; n != 5; ++n) {
+            GC[i][j][k][m][n] = 0;
+          }
+        }
+      }
+    }
+  }
+
+  std::string line;
+  std::getline(f, line);
+  std::istringstream ss;
+
+  // extra word in gaincalfile
+  std::string PixWord;
+
+  // Just check this number to make sure it's the right size...
+  float Coefs[6];
+  if (fNParams > 6) {
+    std::cerr << "ERROR: NParams is too huge PLTGainCal::ReadGainCalFileExt()" << std::endl;
+    exit(1);
+  }
+  for ( ; std::getline(f, line); ) {
+    ss.clear();
+    ss.str(line.c_str());
+
+    for (int ipar = 0; ipar < fNParams; ++ipar) {
+      ss >> Coefs[ipar];
+    }
+    ss >> PixWord
+       >> col
+       >> row;
+
+
+    if (row >= MAXROWS) { printf("ERROR: over MAXROWS %i\n", row); };
+    if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS %i\n", col); };
+    if (PLTGainCal::DEBUGLEVEL) {
+      printf("%i %i %i\n", ch, row, col);
+    }
+
+    irow = RowIndex(row);
+    icol = ColIndex(col);
+    ich  = ChIndex(ch);
+
+    if (irow < 0 || icol < 0 || ich < 0) {
+      continue;
+    }
+
+    for (int ipar = 0; ipar < fNParams; ++ipar) {
+      GC[ich][roc][icol][irow][ipar] = Coefs[ipar];
+    }
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
