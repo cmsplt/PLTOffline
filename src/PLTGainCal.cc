@@ -162,7 +162,6 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 
   if (fIsExternalFunction) {
     ReadGainCalFileExt(GainCalFileName);
-    exit(0);
   } else {
     if (fNParams == 5) {
       ReadGainCalFile5(GainCalFileName);
