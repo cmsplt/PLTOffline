@@ -33,7 +33,7 @@ int SkimEvents (std::string const DataFileName, std::string const OutFileName)
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    if (ientry > 100) break;
+    //if (ientry > 10000) break;
 
     Event.WriteEventText(OutFile);
   }
