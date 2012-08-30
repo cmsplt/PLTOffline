@@ -65,7 +65,7 @@ void tree1(TString const InFileName, TString const OutFileName)
     if(FileHist.gcount()!= sizeof(time_orbit)){std::cout<<"End of File!"<<std::endl; t1.Write(); return;}
     FileHist.read((char*)&orbit,sizeof(uint32_t));
     FileHist.read((char*)&ch,sizeof(uint32_t));
-    FileHist.read((char*)bigbuff,3564*sizeof(unsigned long));
+    FileHist.read((char*)bigbuff,3564*sizeof(uint32_t));
     //cout<<"orbit "<<dec<<orbit<<" time "<<time_orbit<<" ch ij "<<ij<<" Coinc ";
     htot=0;for(int ij=0;ij<3564;ij++) {htot+=(bigbuff[ij]&0xfff);}//cout<<tot<<endl;
     t1.Fill();
