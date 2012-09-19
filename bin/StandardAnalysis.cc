@@ -2,10 +2,11 @@
 //
 // Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
 // Allison Sachs     <asachs2@utk.edu>
+// Grant Riley       <griley4@utk.edu>
 //
 // Created on: Tue Jun  5 16:41:13 CEST 2012
 //
-// Allison's dirty and ugly prototype of Standard Analysis!
+// Grant's version for October 2012 Beam Test at PS
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -165,7 +166,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
   // Make output dir
   if (gSystem->mkdir(OutDir.c_str(), true) != 0) {
-    std::cerr << "WARNIGN: either OutDir exists or it is un-mkdir-able: " << OutDir << std::endl;
+    std::cerr << "WARNING: either OutDir exists or it is un-mkdir-able: " << OutDir << std::endl;
   }
 
   // Set some basic style
@@ -211,8 +212,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
   std::map<int, TH1F*>               hEfficiency1DMap;
   std::map<int, TCanvas*>            cCoincidenceMap;
   std::map<int, TH1F*>               hCoincidenceMap;
-  std::map<int, TH2F*>               hMeanMap;
-  std::map<int, TCanvas*>            cMeanMap;
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
   std::map<int, TH1F*>               hClusterSizeMap;
   std::map<int, TCanvas*>            cClusterSizeMap;
@@ -605,9 +604,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
               cCoincidenceMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 400, 400);
               hCoincidenceMap[Plane->Channel()] = new TH1F(BUFF, BUFF, 7, 0, 7);
 
-              sprintf(BUFF, "Occupancy by Mean Ch%02i", Plane->Channel());
-              cMeanMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
-              cMeanMap[Plane->Channel()]->Divide(3,2);
             }
           }
 
@@ -680,7 +676,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     hOccupancy1D->SetMinimum(0.5);
     hOccupancy1D->Clone()->Draw("hist");
     cOccupancyMap[Channel]->cd(ROC+6+1);
-    hOccupancy1D->SetMinimum(0);
     hOccupancy1D->Draw("hist");
 
 
@@ -766,27 +761,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
     cEfficiencyMap[Channel]->cd(ROC+6+1);
     hEfficiency1DMap[it->first]->Draw("");
-
-
-    // Occupancy normalized by mean
-    sprintf(BUFF, "Occupancy by Mean Ch%02i ROC%1i", Channel, ROC);
-    hMeanMap[id] = (TH2F*) it->second->Clone(BUFF);
-    hMeanMap[id]->SetTitle(BUFF);
-    TH1F* hMean = PLTU::HistFrom2D(hMeanMap[it->first], "", 50);
-    hMeanMap[id]->Scale(1.0/hMean->GetMean());
-    delete hMean;
-    hMean = PLTU::HistFrom2D(hMeanMap[it->first], "", 50);
-    hMeanMap[id]->SetZTitle("Relative number of hits");
-    hMeanMap[id]->GetXaxis()->CenterTitle();
-    hMeanMap[id]->GetYaxis()->CenterTitle();
-    hMeanMap[id]->GetZaxis()->CenterTitle();
-    hMeanMap[id]->SetTitleOffset(1.2, "z");
-    hMeanMap[id]->SetStats(false);
-    cMeanMap[Channel]->cd(ROC+1);
-    hMeanMap[it->first]->Draw("colz");
-    cMeanMap[Channel]->cd(ROC+3+1);
-    hMean->Draw("hist");
-
 
     // Summary canvas of your three favorite plots
     cAllMap[Channel]->cd(ROC+1);
@@ -912,14 +886,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     delete it->second;
   }
   fHTML << "</td></tr>\n";
-  fHTML << "<tr><td>Occupancy by Mean:</td><td>";
-  for (std::map<int, TCanvas*>::iterator it = cMeanMap.begin(); it != cMeanMap.end(); ++it) {
-    TString const FileName = TString::Format("Occupancy_Mean_Ch%02i.gif", it->first);
-    fHTML << " <a href=\"" << FileName << "\">" << it->first << "</a>";
-    it->second->SaveAs(OutDir + "/" + FileName);
-    delete it->second;
-  }
-  fHTML << "</td></tr></table>\n";
 
 
   ///////////////////////////////////////
