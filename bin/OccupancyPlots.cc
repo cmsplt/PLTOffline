@@ -357,7 +357,6 @@ int OccupancyPlots (std::string const DataFileName)
     hOccupancy1D->SetMinimum(0.5);
     hOccupancy1D->Clone()->Draw("hist");
     cOccupancyMap[Channel]->cd(ROC+6+1);
-    hOccupancy1D->SetMinimum(0);
     hOccupancy1D->Draw("hist");
 
 
@@ -379,7 +378,7 @@ int OccupancyPlots (std::string const DataFileName)
     }
     cQuantileMap[Channel]->cd(ROC+3+1)->SetLogy(1);
     hOccupancy1D->Draw("hist");
-
+    
     // Grab a line and draw it on the plot
     TLine* LineQuantile = new TLine(QValue[0], hOccupancy1D->GetMaximum(), QValue[0], .5);
     LineQuantile->SetLineColor(2);
@@ -443,27 +442,6 @@ int OccupancyPlots (std::string const DataFileName)
     cEfficiencyMap[Channel]->cd(ROC+6+1);
     hEfficiency1DMap[it->first]->Draw("");
 
-
-    // Occupancy normalized by mean
-    sprintf(BUFF, "Occupancy by Mean Ch%02i ROC%1i", Channel, ROC);
-    hMeanMap[id] = (TH2F*) it->second->Clone(BUFF);
-    hMeanMap[id]->SetTitle(BUFF);
-    TH1F* hMean = PLTU::HistFrom2D(hMeanMap[it->first], "", 50);
-    hMeanMap[id]->Scale(1.0/hMean->GetMean());
-    delete hMean;
-    hMean = PLTU::HistFrom2D(hMeanMap[it->first], "", 50);
-    hMeanMap[id]->SetZTitle("Relative number of hits");
-    hMeanMap[id]->GetXaxis()->CenterTitle();
-    hMeanMap[id]->GetYaxis()->CenterTitle();
-    hMeanMap[id]->GetZaxis()->CenterTitle();
-    hMeanMap[id]->SetTitleOffset(1.2, "z");
-    hMeanMap[id]->SetStats(false);
-    cMeanMap[Channel]->cd(ROC+1);
-    hMeanMap[it->first]->Draw("colz");
-    cMeanMap[Channel]->cd(ROC+3+1);
-    hMean->Draw("hist");
-
-
     // Summary canvas of your three favorite plots
     cAllMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
@@ -524,9 +502,6 @@ int OccupancyPlots (std::string const DataFileName)
   }
   for (std::map<int, TCanvas*>::iterator it = cCoincidenceMap.begin(); it != cCoincidenceMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i.gif", it->first));
-  }
-  for (std::map<int, TCanvas*>::iterator it = cMeanMap.begin(); it != cMeanMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Mean_Ch%02i.gif", it->first));
   }
   for (std::map<int, TCanvas*>::iterator it = cAllMap.begin(); it != cAllMap.end(); ++it) {
     it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i.gif", it->first));
