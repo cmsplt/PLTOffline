@@ -36,6 +36,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   // Set some basic style for plots
   PLTU::SetStyle();
+  gStyle->SetOptStat(1111);
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
@@ -74,10 +75,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
         MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
         MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
       }
 

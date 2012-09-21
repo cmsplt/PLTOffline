@@ -85,8 +85,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits    = PLTPlane::kFiducialRegion_m2_m2;
-  PLTPlane::FiducialRegion FidRegionCluster = PLTPlane::kFiducialRegion_m2_m2;
+  PLTPlane::FiducialRegion FidRegionHits    = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionCluster = PLTPlane::kFiducialRegion_Diamond;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionCluster);
 
