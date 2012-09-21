@@ -162,6 +162,9 @@ void PLTPlane::Clusterize (Clustering const Clust, FiducialRegion const FidR)
     case kClustering_AllTouching:
       ClusterizeAllTouching(FidR);
       break;
+    case kClustering_OnePixOneCluster:
+      ClusterizeOnePixOneCluster(FidR);
+      break;
     case kClustering_NoClustering:
       // Dont to any clustering
       break;
@@ -228,6 +231,24 @@ void PLTPlane::ClusterizeAllTouching (FiducialRegion const FidR)
     Cluster->AddHit(fHits[i]);
     fClusterizedHits.push_back(fHits[i]);
     AddAllHitsTouching(Cluster, fHits[i], FidR);
+    fClusters.push_back(Cluster);
+  }
+
+  return;
+}
+
+
+
+void PLTPlane::ClusterizeOnePixOneCluster (FiducialRegion const FidR)
+{
+  // Loop over hits and find biggest..then use as seeds..
+  for (size_t i = 0; i != fHits.size(); ++i) {
+    if (std::find(fClusterizedHits.begin(), fClusterizedHits.end(), fHits[i]) != fClusterizedHits.end()) {
+      continue;
+    }
+    PLTCluster* Cluster = new PLTCluster();
+    Cluster->AddHit(fHits[i]);
+    fClusterizedHits.push_back(fHits[i]);
     fClusters.push_back(Cluster);
   }
 

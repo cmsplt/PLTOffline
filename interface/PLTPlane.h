@@ -25,6 +25,7 @@ class PLTPlane
       kClustering_Seed_9x9,
       kClustering_NNeighbors,
       kClustering_AllTouching,
+      kClustering_OnePixOneCluster,
       kClustering_NoClustering
     };
 
@@ -54,6 +55,7 @@ class PLTPlane
     void    Clusterize (Clustering const, FiducialRegion const);
     void    ClusterizeFromSeedNxN (int const, int const, FiducialRegion const);
     void    AddAllHitsTouching (PLTCluster*, PLTHit*, FiducialRegion const);
+    void    ClusterizeOnePixOneCluster(FiducialRegion const);
     void    ClusterizeAllTouching (FiducialRegion const);
     TH2F*   DrawHits2D ();
     size_t  NHits ();
