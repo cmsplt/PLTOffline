@@ -219,6 +219,8 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
   std::map<int, TCanvas*>            cMap;
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
+  std::map<int, TH1F*>               MapSlopeY;
+  std::map<int, TH1F*>               MapSlopeX;
 
   double Avg2D[250][PLTU::NCOL][PLTU::NROW];
   int      N2D[250][PLTU::NCOL][PLTU::NROW];
@@ -346,6 +348,15 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
       NTracksPerEvent += Tele->NTracks();
       int const Channel = Tele->Channel();
 
+      
+      if (!MapSlopeY[Tele->Channel()]) {
+        TString Name = TString::Format("SlopeY_Ch%i", Tele->Channel());
+        MapSlopeY[Tele->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlopeY[Tele->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
+        Name = TString::Format("SlopeX_Ch%i", Tele->Channel());
+        MapSlopeX[Tele->Channel()] = new TH1F(Name, Name, 100, -0.1, 0.1);
+        MapSlopeX[Tele->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
+      }
 
 
       ///////////////////////////////////////
@@ -359,6 +370,10 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
       {
         PLTTrack* Track = Tele->Track(itrack);
 
+      
+
+        MapSlopeY[Tele->Channel()]->Fill(Track->fTVY/Track->fTVZ);
+        MapSlopeX[Tele->Channel()]->Fill(Track->fTVX/Track->fTVZ);
 
 
         ///////////////////////////////////////
@@ -637,7 +652,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     //          END TELE LOOP            //
     ///////////////////////////////////////
 
-    if (NTracksPerEvent != 0) 
+   ; if (NTracksPerEvent != 0) 
     {
       HistNTracks.Fill(NTracksPerEvent);
     }
@@ -773,6 +788,11 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
   }
 
 
+
+
+
+
+
   for (std::map<int, TH1F*>::iterator it = hCoincidenceMap.begin(); it != hCoincidenceMap.end(); ++it) 
   {
     cCoincidenceMap[it->first]->cd();
@@ -844,8 +864,33 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     delete it->second;
   }
   fHTML << "<br />\n";
-
   fHTML << "<table><tr>\n";
+
+  fHTML << "<tr><td>Slope Y:</td><td>";
+  for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    TString const FileName = TString::Format("SlopeY_Ch%02i.gif", it->first);
+    TString const FilePlace = OutDir + TString(it->second->GetName()) + ".gif";
+    Can.SaveAs(FilePlace);
+    fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
+  fHTML << "<tr><td>Slope X:</td><td>";
+  for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+
+    TString const FileName = TString::Format("SlopeX_Ch%02i.gif", it->first);
+    TString const FilePlace = OutDir + TString(it->second->GetName()) + ".gif";
+    Can.SaveAs(FilePlace);
+    fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
+    delete it->second;
+  }
+  fHTML << "</td></tr>\n";
   fHTML << "<td>Occupancy:</td><td>";
   for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
     TString const FileName = TString::Format("Occupancy_Ch%02i.gif", it->first);
@@ -885,7 +930,11 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     it->second->SaveAs(OutDir + "/" + FileName);
     delete it->second;
   }
+
   fHTML << "</td></tr>\n";
+
+
+
 
 
   ///////////////////////////////////////
