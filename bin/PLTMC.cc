@@ -622,7 +622,7 @@ int PLTMC ()
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (10) {
+    switch (9) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
