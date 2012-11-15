@@ -873,7 +873,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     it->second->Draw("hist");
     TString const FileName = TString::Format("SlopeY_Ch%02i.gif", it->first);
     TString const FilePlace = OutDir + TString(it->second->GetName()) + ".gif";
-    Can.SaveAs(FilePlace);
+    Can.SaveAs(OutDir + "/" + FileName);
     fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
     delete it->second;
   }
@@ -883,10 +883,9 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-
     TString const FileName = TString::Format("SlopeX_Ch%02i.gif", it->first);
     TString const FilePlace = OutDir + TString(it->second->GetName()) + ".gif";
-    Can.SaveAs(FilePlace);
+    Can.SaveAs(OutDir + "/" + FileName);
     fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
     delete it->second;
   }
