@@ -120,12 +120,13 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int NEventsInTime = 0;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 1;
+  int const TimeWidth = 1000 * 30;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, float> NHitsSum;
   std::map<int, float> NTracksSum;
 
   TH1F HistNTracks("NTracksPerEvent", "NTracksPerEvent", 50, 0, 50);
+  int NTracksTotalTotal = 0;
 
   TCanvas* cNTrackMap = new TCanvas("NTracks", "Number of Tracks", 1200, 600);
 
@@ -250,6 +251,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
       NTracksPerEvent += Telescope->NTracks();
+      NTracksTotalTotal += NTracksPerEvent;
 
       int const Channel = Telescope->Channel();
 
@@ -661,6 +663,8 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   OUTFILE.Write();
   OUTFILE.Close();
   fclose(OutPix);
+
+  std::cout << "Number of tracks total: " << NTracksTotalTotal << std::endl;
 
   return 0;
 }

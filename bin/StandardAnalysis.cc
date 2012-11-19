@@ -215,10 +215,14 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
   std::map<int, std::vector<TGraphErrors*> > gClEnTimeMap;
   std::map<int, TH1F*>               hClusterSizeMap;
   std::map<int, TCanvas*>            cClusterSizeMap;
+  std::map<int, TH1F*>               hNClustersMap;
+  std::map<int, TCanvas*>            cNClustersMap;
   std::map<int, std::vector<TH1F*> > hMap;
   std::map<int, TCanvas*>            cMap;
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
+  std::map<int, std::vector<TH1F*> > hPulseHeightMap;
+  std::map<int, TCanvas*>            cPulseHeightMap;
   std::map<int, TH1F*>               MapSlopeY;
   std::map<int, TH1F*>               MapSlopeX;
 
@@ -227,9 +231,9 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
 
   // Bins and max for pulse height plots
-  int   const NBins =    60;
+  int   const NBins =    120;
   float const XMin  =  -1000;
-  float const XMax  =  50000;
+  float const XMax  =  200000;
 
   // Time width in events for energy time dep plots
   uint32_t const TimeWidth = 1000 * 3;
@@ -295,11 +299,11 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     int NTracksPerEvent = 0;
 
     // First event time
-    //static uint32_t const StartTime = Event.Time();
-    //uint32_t const ThisTime = Event.Time();
-    static uint32_t const StartTime = 0;
-    uint32_t static ThisTime = 0;
-    ++ThisTime;
+    static uint32_t const StartTime = Event.Time();
+    uint32_t const ThisTime = Event.Time();
+    //static uint32_t const StartTime = 0;
+    //uint32_t static ThisTime = 0;
+    //++ThisTime;
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) 
     {
@@ -376,6 +380,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
         MapSlopeX[Tele->Channel()]->Fill(Track->fTVX/Track->fTVZ);
 
 
+
         ///////////////////////////////////////
         //                                   //
         //         BEGIN CLUST LOOP          //
@@ -445,6 +450,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
             }
           }
 
+
           // Get number of hits in this cluster
           size_t NHits = Cluster->NHits();
 
@@ -461,7 +467,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
           int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
           int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
 
-          if (ThisClusterCharge < 100000 && ThisClusterCharge >= 0) {
+          if (ThisClusterCharge >= 0) {
             Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
             ++N2D[id][col][row];
 
@@ -481,7 +487,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
             hMap[id][3]->Fill( ThisClusterCharge );
           }
 
-          if (ThisClusterCharge < 200000) 
+          if (ThisClusterCharge < 900000) 
           {
             ChargeHits[id][0].push_back( ThisClusterCharge );
             if (NHits == 1) 
@@ -537,6 +543,10 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
         PLTPlane* Plane = Tele->Plane(iPlane);
 
+        int const id = Tele->Channel() * 10 + Plane->ROC();
+        int const Channel = Tele->Channel();
+        int const ROC = Plane->ROC();
+
         // Check Roc# 0, 1, 2
         if (Plane->ROC() > 2) {
           std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
@@ -551,6 +561,58 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
           continue;
         }
 
+
+        if (!hPulseHeightMap.count(id)) {
+          hPulseHeightMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
+                TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
+            //hPulseHeightMap2D[id] = new TH2F( TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
+            //  TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC), PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+          for (size_t ih = 1; ih != 4; ++ih) {
+            hPulseHeightMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
+                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i", Channel, ROC, (int) ih), NBins, XMin, XMax) );
+          }
+
+          // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
+          if (!cPulseHeightMap.count(Channel)) {
+            // Create canvas with given name
+            cPulseHeightMap[Channel] = new TCanvas( TString::Format("PulseHeight_Ch%02i", Channel), TString::Format("PulseHeight_Ch%02i", Channel), 900, 900);
+            cPulseHeightMap[Channel]->Divide(1, 3);
+          }
+        }
+
+        for(size_t icluster = 0; icluster != Plane->NClusters(); ++icluster)
+        {
+          PLTCluster* Cluster = Plane->Cluster(icluster);
+
+          // Get number of hits in this cluster and charge
+          size_t NHits = Cluster->NHits();
+          float const ThisClusterCharge = Cluster->Charge();
+
+          if ( (Tele->HitPlaneBits() == 0x3 || Tele->HitPlaneBits() == 0x5 || Tele->HitPlaneBits() == 0x6 || Tele->HitPlaneBits() == 0x7)) {
+            hPulseHeightMap[id][0]->Fill( ThisClusterCharge );
+            if (NHits == 1) {
+              hPulseHeightMap[id][1]->Fill( ThisClusterCharge );
+            } else if (NHits == 2) {
+              hPulseHeightMap[id][2]->Fill( ThisClusterCharge );
+            } else if (NHits >= 3) {
+              hPulseHeightMap[id][3]->Fill( ThisClusterCharge );
+            }
+          }
+        }
+
+
+        if (!hNClustersMap.count(id)) {
+          hNClustersMap[id] = new TH1F( TString::Format("NClusters_Ch%02i_ROC%i", Channel, ROC), TString::Format("NClusters_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
+          hNClustersMap[id]->SetXTitle("Number of Clusters");
+
+          // One in three chance you'll need a new canvas for thnat =)
+          if (!cNClustersMap.count(Channel)) {
+            cNClustersMap[Channel] = new TCanvas( TString::Format("NClusters_Ch%02i", Channel), TString::Format("%s/NClusters_Ch%02i", OutDir.c_str(), Channel), 900, 300);
+            cNClustersMap[Channel]->Divide(3, 1);
+          }
+        }
+        hNClustersMap[id]->Fill(Plane->NClusters());
+
         ///////////////////////////////////////
         //                                   //
         //          BEGIN HITS LOOP          //
@@ -561,8 +623,6 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
         for(size_t ihit = 0; ihit != Plane->NHits(); ++ihit)
         {
 
-
-          int const id = Tele->Channel() * 10 + Plane->ROC();
 
           PLTHit* Hit = Plane->Hit(ihit);
 
@@ -864,9 +924,9 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     delete it->second;
   }
   fHTML << "<br />\n";
-  fHTML << "<table><tr>\n";
 
-  fHTML << "<tr><td>Slope Y:</td><td>";
+  fHTML << "<hr>\n";
+  fHTML << "<h2>Slope Y:</h2>";
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
     TCanvas Can;
     Can.cd();
@@ -877,8 +937,8 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
     delete it->second;
   }
-  fHTML << "</td></tr>\n";
-  fHTML << "<tr><td>Slope X:</td><td>";
+  fHTML << "\n";
+  fHTML << "<h2>Slope X:</h2>";
   for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
     TCanvas Can;
     Can.cd();
@@ -889,7 +949,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
     delete it->second;
   }
-  fHTML << "</td></tr>\n";
+  fHTML << "<hr>\n";
   fHTML << "<td>Occupancy:</td><td>";
   for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
     TString const FileName = TString::Format("Occupancy_Ch%02i.gif", it->first);
@@ -897,7 +957,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     it->second->SaveAs(OutDir + "/" + FileName);
     delete it->second;
   }
-  fHTML << "</td></tr>\n";
+  fHTML << "<table>\n";
   fHTML << "<tr><td>Occupancy by Quantile:</td><td>";
   for (std::map<int, TCanvas*>::iterator it = cQuantileMap.begin(); it != cQuantileMap.end(); ++it) {
     TString const FileName = TString::Format("Occupancy_Quantile_Ch%02i.gif", it->first);
@@ -931,8 +991,22 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
   }
 
   fHTML << "</td></tr>\n";
+  fHTML << "</table>\n";
 
 
+  fHTML << "<hr>\n";
+  fHTML << "<h2>NClusters:</h2>";
+  for (std::map<int, TH1F*>::iterator it = hNClustersMap.begin(); it != hNClustersMap.end(); ++it) {
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    TString const FileName = TString(it->second->GetName()) + ".gif";
+    TString const FilePlace = OutDir + TString(it->second->GetName()) + ".gif";
+    Can.SaveAs(OutDir + "/" + FileName);
+    fHTML << "<a href=\"" << FileName << "\"><img src=\"" << FileName << "\" width=\"300\" /></a>\n";
+    delete it->second;
+  }
+  fHTML << "\n";
 
 
 
@@ -1026,7 +1100,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
       if (ig == 3) {
         g->SetTitle( TString::Format("Average Pulse Height ROC %i", ROC) );
         g->SetMinimum(0);
-        g->SetMaximum(60000);
+        g->SetMaximum(120000);
         g->Draw("Ap");
       } else {
         g->Draw("samep");
@@ -1048,7 +1122,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
         printf("%6.0f ", Avg2D[id][ia][ja]);
       }
     }
-    hMap2D[id]->SetMaximum(60000);
+    hMap2D[id]->SetMaximum(120000);
     hMap2D[id]->SetStats(false);
     hMap2D[id]->SetXTitle("Column");
     hMap2D[id]->SetYTitle("Row");
@@ -1070,6 +1144,55 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     delete it->second;
   }
 
+  // Loop over all histograms and draw them on the correct canvas in the correct pad
+  for (std::map<int, std::vector<TH1F*> >::iterator it = hPulseHeightMap.begin(); it != hPulseHeightMap.end(); ++it) {
+
+    // Decode the ID
+    int const Channel = it->first / 10;
+    int const ROC     = it->first % 10;
+    int const id      = it->first;
+
+    printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
+
+    // change to correct pad on canvas and draw the hist
+    cPulseHeightMap[Channel]->cd(ROC+1);
+
+    TLegend* Leg = new TLegend(0.65, 0.7, 0.80, 0.88, "");
+    Leg->SetFillColor(0);
+    Leg->SetBorderSize(0);
+
+    for (size_t ih = 0; ih != 4; ++ih) {
+      TH1F* Hist = it->second[ih];
+      Hist->SetStats(false);
+
+      Hist->SetNdivisions(5);
+      Hist->SetLineColor(HistColors[ih]);
+      if (ih == 0) {
+        Hist->SetTitle( TString::Format("PulseHeight >= 2-fold Ch%02i ROC%1i", Channel, ROC) );
+        Hist->SetXTitle("Electrons");
+        Hist->SetYTitle("Events");
+        Hist->Draw("hist");
+        Leg->AddEntry(Hist, "All", "l");
+      } else {
+        Hist->Draw("samehist");
+        if (ih != 3) {
+          Leg->AddEntry(Hist, TString::Format(" %i Pixel", (int) ih), "l");
+        } else {
+          Leg->AddEntry(Hist, TString::Format("#geq%i Pixel", (int) ih), "l");
+        }
+      }
+    }
+    Leg->Draw("same");
+  }
+  // Save Cluster Size canvases
+  fHTML << "<hr /><h2>Pulse Heights >= 2-fold</h2>\n";
+  for (std::map<int, TCanvas*>::iterator it = cPulseHeightMap.begin(); it != cPulseHeightMap.end(); ++it) {
+    TString const Name = it->second->GetName()+TString(".gif");
+    fHTML << "<a href=\"" << Name << "\"><img src=\"" << Name << "\" width=\"300\"></a>\n";
+    it->second->SaveAs( OutDir + TString("/") + Name );
+    it->second->Write();
+    delete it->second;
+  }
 
   // Loop over cluster size plots
   for (std::map<int, TH1F*>::iterator it = hClusterSizeMap.begin(); it != hClusterSizeMap.end(); ++it) {
@@ -1086,6 +1209,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     it->second->SaveAs( OutDir + TString("/") + it->second->GetName()+TString(".gif") );
     delete it->second;
   }
+
 
   OUTFILE.Close();
 

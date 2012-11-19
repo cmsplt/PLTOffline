@@ -17,7 +17,8 @@ class PLTTracking
   public:
     enum TrackingAlgorithm {
       kTrackingAlgorithm_NoTracking = 0,
-      kTrackingAlgorithm_01to2_All
+      kTrackingAlgorithm_01to2_All,
+      kTrackingAlgorithm_2PlaneTracks_All
     };
 
     PLTTracking ();

@@ -121,7 +121,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
 
@@ -140,7 +140,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   std::map<int, TH1F*> hEffMapPulseHeightD;
   std::map<int, TH1F*> hMapPulseHeights;
 
-  float const PixelDist = 3;
+  float const PixelDist = 5;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {

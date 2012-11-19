@@ -26,7 +26,7 @@ int Verbose (std::string const DataFileName, std::string const GainCalFileName, 
   gStyle->SetOptStat(0);
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName, true);
 
   PLTPlane::FiducialRegion FidRegionHits    = PLTPlane::kFiducialRegion_All;
   PLTPlane::FiducialRegion FidRegionCluster = PLTPlane::kFiducialRegion_All;

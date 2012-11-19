@@ -142,6 +142,11 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
+
+      if ( !(Telescope->HitPlaneBits() == 0x3 || Telescope->HitPlaneBits() == 0x5 || Telescope->HitPlaneBits() == 0x6 || Telescope->HitPlaneBits() == 0x7)) {
+        continue;
+      }
+
       for (size_t iPlane = 0; iPlane != Telescope->NPlanes(); ++iPlane) {
         PLTPlane* Plane = Telescope->Plane(iPlane);
 
@@ -230,6 +235,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
             Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
             ++N2D[id][col][row];
           }
+
 
           // Fill cluster size
           hClusterSizeMap[id]->Fill(NHits);

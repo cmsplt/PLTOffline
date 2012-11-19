@@ -59,6 +59,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
 
 
 
+
       Total = HistReader.GetTotal();
       std::vector<uint32_t>* Ch = HistReader.Channels();
       for (int ich = 0; ich != Ch->size(); ++ich) {
