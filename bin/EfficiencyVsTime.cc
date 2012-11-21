@@ -371,9 +371,9 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   gEff->SetMinimum(0.0);
   gEff->SetMaximum(1.0);
 
-  if(fit_dim==1) sprintf(title,"eff_vs_time_slopeX_ch%i.png",channel);
-  else if(fit_dim==2) sprintf(title,"eff_vs_time_slopeY_ch%i.png",channel);
-  else if(fit_dim==3) sprintf(title,"eff_vs_time_slope2D_ch%i.png",channel);
+  if(fit_dim==1) sprintf(title,"plots/EfficiencyVsTime_SlopeX_Ch%i.eps",channel);
+  else if(fit_dim==2) sprintf(title,"plots/EfficiencyVsTime_SlopeY_Ch%i.eps",channel);
+  else if(fit_dim==3) sprintf(title,"plots/EfficiencyVsTime_Slope2D_Ch%i.eps",channel);
   c1->SaveAs(title);
 
   TCanvas *c2 = new TCanvas("c2","Cross Checks",400,800);
@@ -458,9 +458,9 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
     gBgdE->SetMaximum(1.0);
   }
 
-  if(fit_dim==1) sprintf(title,"cross_checks_slopeX_ch%i.png",channel);
-  else if(fit_dim==2) sprintf(title,"cross_checks_slopeY_ch%i.png",channel);
-  else if(fit_dim==3) sprintf(title,"cross_checks_slope2D_ch%i.png",channel);
+  if(fit_dim==1) sprintf(title,"plots/EfficiencyCrossChecks_SlopeX_Ch%i.eps",channel);
+  else if(fit_dim==2) sprintf(title,"plots/EfficiencyCrossChecks_SlopeY_Ch%i.eps",channel);
+  else if(fit_dim==3) sprintf(title,"plots/EfficiencyCrossChecks_Slope2D_Ch%i.eps",channel);
   c2->SaveAs(title);
 
   TCanvas *c3 = new TCanvas("c3","Slope Distributions",400,800);
@@ -480,7 +480,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   sprintf(drawString,"slopeY_ch%i>>hTotalSlopeY",channel);
   data->Draw(drawString);
   hTotalSlopeY->Draw();
-  sprintf(title,"slopeDistributions_ch%i.png",channel);
+  sprintf(title,"plots/SlopeDistributions_Ch%i.eps",channel);
   c3->SaveAs(title);
 
   f->Close();
