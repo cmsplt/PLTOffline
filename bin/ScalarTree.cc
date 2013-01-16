@@ -38,6 +38,7 @@ int ScalarTree (TString const InFileName, TString const OutFileName)
   }
 
   TTree t1("ScalarTree","Pasta Sauce Boss");
+  t1.SetDirectory(&OutFile);
   t1.Branch("time_orbit",&time_orbit,"time_orbit/I");
   t1.Branch("fpga",&fpga,"fpga/I");
   t1.Branch("fedid",&fedid,"fedid/I");
@@ -45,19 +46,21 @@ int ScalarTree (TString const InFileName, TString const OutFileName)
 
   for(int i=0;i<2000000000;i++){
     FileScaler.read((char*)&time_orbit,sizeof(uint32_t));
-    if(FileScaler.gcount()!= sizeof(time_orbit)){std::cout<<"End of File!"<<std::endl; return 0;}
+    if(FileScaler.gcount()!= sizeof(time_orbit)){std::cout<<"End of File!"<<std::endl; break;}
     FileScaler.read((char*)&orbit,sizeof(uint32_t));
     FileScaler.read((char*)&ij,sizeof(uint32_t));
     FileScaler.read((char*)scaldat,27*sizeof(uint32_t));
     fedid = (ij&0x8)>>3;
     fpga  = (ij&0x3);
 
+    //printf("%12lu %12lu %12lu  %12lu %12lu %12lu\n", scaldat[0], scaldat[1], scaldat[2], scaldat[3], scaldat[4], scaldat[5]);
+
 
     t1.Fill();
 
   } 
 
-  OutFile.Write();
+  t1.Write();
   OutFile.Close();
 
 
