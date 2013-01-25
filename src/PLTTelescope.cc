@@ -9,6 +9,11 @@ PLTTelescope::PLTTelescope ()
 
 PLTTelescope::~PLTTelescope ()
 {
+  // Telescopes own Tracks in them.
+  for (size_t itrack = 0; itrack != fTracks.size(); ++itrack) {
+    delete fTracks[itrack];
+  }
+
   // Byebye
 }
 
