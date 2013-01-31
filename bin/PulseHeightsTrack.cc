@@ -423,7 +423,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
           int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
 
-          if (ThisClusterCharge < 100000 && ThisClusterCharge >= 0) {
+          if (ThisClusterCharge < 5000000 && ThisClusterCharge >= 0) {
             Avg2D[id][col][row] = Avg2D[id][col][row] * ((double) N2D[id][col][row] / ((double) N2D[id][col][row] + 1.)) + ThisClusterCharge / ((double) N2D[id][col][row] + 1.);
             ++N2D[id][col][row];
           }
@@ -437,7 +437,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
             hMap[id][3]->Fill( ThisClusterCharge );
           }
 
-          if (ThisClusterCharge < 200000) {
+          if (ThisClusterCharge < 5000000) {
             ChargeHits[id][0].push_back( ThisClusterCharge );
             if (NHits == 1) {
               ChargeHits[id][1].push_back( ThisClusterCharge );
