@@ -143,10 +143,6 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     for (size_t iTelescope = 0; iTelescope != Event.NTelescopes(); ++iTelescope) {
       PLTTelescope* Telescope = Event.Telescope(iTelescope);
 
-      if ( !(Telescope->HitPlaneBits() == 0x3 || Telescope->HitPlaneBits() == 0x5 || Telescope->HitPlaneBits() == 0x6 || Telescope->HitPlaneBits() == 0x7)) {
-        continue;
-      }
-
       for (size_t iPlane = 0; iPlane != Telescope->NPlanes(); ++iPlane) {
         PLTPlane* Plane = Telescope->Plane(iPlane);
 
@@ -328,7 +324,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         g->SetMinimum(0);
         g->Draw("Apl");
       } else {
-        g->Draw("samepl");
+        g->Draw("samep");
       }
     }
     cMap[Channel]->cd(ROC+6+1);
