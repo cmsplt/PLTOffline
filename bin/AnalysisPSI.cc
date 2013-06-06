@@ -167,9 +167,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
           if (!cMap.count(id)) {
             // Create canvas with given name
-            cMap[id] = new TCanvas( TString::Format("Summary_Ch%02i", id), TString::Format("Summary_Ch%02i", id), 900, 900);
+            cMap[id] = new TCanvas( TString::Format("Summary_Ch%02i_ROC%i", Channel, ROC), TString::Format("Summary_Ch%02i_ROC%i", Channel, ROC), 900, 900);
             cMap[id]->Divide(2, 2);
-            cMapB[id] = new TCanvas( TString::Format("Summary_Ch%02i_NoCut", id), TString::Format("Summary_Ch%02i_NoCut", id), 900, 900);
+            cMapB[id] = new TCanvas( TString::Format("Summary_Ch%02i_ROC%i_NoCut", Channel, ROC), TString::Format("Summary_Ch%02i_ROC%i_NoCut", Channel, ROC), 900, 900);
             cMapB[id]->Divide(2, 2);
           }
         }
