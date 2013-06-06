@@ -53,10 +53,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, true);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m2_m2);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
-  //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
   // Map for all ROC hists and canvas
   std::map<int, TH1F*>    hClusterSizeMap;
@@ -128,7 +128,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
                 NBins, XMin, XMax) );
             hMap2D[id] = new TH2F( 
               TString::Format("PixelCharge_Ch%02i_ROC%1i_All", Channel, ROC),
-              TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
+              TString::Format("Avg Cluster Charge Ch %02i ROC %1i", Channel, ROC),
               PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
           for (size_t ih = 1; ih != 4; ++ih) {
             hMap[id].push_back( new TH1F(
@@ -139,18 +139,29 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
           hMapB[id].push_back( new TH1F(
                 TString::Format("PulseHeight_Ch%02i_ROC%1i_All_NoCut", Channel, ROC),
-                TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
+                TString::Format("Pulse Height for Ch %02i ROC %1i NoCut Pixels All", Channel, ROC),
                 NBins, XMin, XMaxB) );
             hMapB2D[id] = new TH2F( 
               TString::Format("PixelCharge_Ch%02i_ROC%1i_All_NoCut", Channel, ROC),
-              TString::Format("Avg Charge Ch %02i ROC %1i Pixels All", Channel, ROC),
+              TString::Format("Avg Cluster Charge Ch %02i ROC %1i NoCut", Channel, ROC),
               PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
           for (size_t ih = 1; ih != 4; ++ih) {
             hMapB[id].push_back( new TH1F(
                   TString::Format("PulseHeight_Ch%02i_ROC%1i_Pixels%i_NoCut", Channel, ROC, (int) ih),
-                  TString::Format("Pulse Height for Ch %02i ROC %1i Pixels %i", Channel, ROC, (int) ih),
+                  TString::Format("Pulse Height for Ch %02i ROC %1i NoCut Pixels %i", Channel, ROC, (int) ih),
                   NBins, XMin, XMaxB) );
           }
+
+          // Occupancy
+            hOccupancy[id] = new TH2F( 
+              TString::Format("Occupancy_Ch%02i_ROC%1i", Channel, ROC),
+              TString::Format("Occupancy Ch %02i ROC %1i", Channel, ROC),
+              PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+            hOccupancyB[id] = new TH2F( 
+              TString::Format("Occupancy_Ch%02i_ROC%1i_NoCut", Channel, ROC),
+              TString::Format("Occupancy Ch %02i ROC %1i NoCut", Channel, ROC),
+              PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+
 
 
           // If we're making a new hist I'd say there's a 1 in 3 chance we'll need a canvas for it
@@ -167,10 +178,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
         // If this id doesn't exist in the cluster size map, make the hist and possibly canvas for this channel
         if (!hClusterSizeMap.count(id)) {
-          hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), 10, 0, 10);
+          hClusterSizeMap[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i", Channel, ROC), TString::Format("ClusterSize Ch%02i ROC%i", Channel, ROC), 10, 0, 10);
           hClusterSizeMap[id]->SetXTitle("Number of pixels in Cluster");
 
-          hClusterSizeMapB[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i_NoCut", Channel, ROC), TString::Format("ClusterSize_Ch%02i_ROC%i_NoCut", Channel, ROC), 10, 0, 10);
+          hClusterSizeMapB[id] = new TH1F( TString::Format("ClusterSize_Ch%02i_ROC%i_NoCut", Channel, ROC), TString::Format("ClusterSize Ch%02i ROC%i NoCut", Channel, ROC), 10, 0, 10);
           hClusterSizeMapB[id]->SetXTitle("Number of pixels in Cluster");
 
         }
@@ -200,7 +211,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
           // Fill cluster size
           hClusterSizeMapB[id]->Fill(NHits);
-          hOccupancyB[id]->Fill(col, row);
+          for (int ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+            hOccupancyB[id]->Fill(Cluster->Hit(ihit)->Column(), Cluster->Hit(ihit)->Row());
+          }
 
           hMapB[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
@@ -218,7 +231,9 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
             // Fill cluster size
             hClusterSizeMap[id]->Fill(NHits);
-            hOccupancy[id]->Fill(col, row);
+            for (int ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+              hOccupancy[id]->Fill(Cluster->Hit(ihit)->Column(), Cluster->Hit(ihit)->Row());
+            }
 
             hMap[id][0]->Fill( ThisClusterCharge );
             if (NHits == 1) {
@@ -304,7 +319,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         if (Avg2D[id][ia][ja] > 0) {
           hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
         }
-        printf("%6.0f ", Avg2D[id][ia][ja]);
+        //printf("%6.0f ", Avg2D[id][ia][ja]);
       }
       std::cout << std::endl;
     }
@@ -321,11 +336,87 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   }
 
+
+  for (std::map<int, std::vector<TH1F*> >::iterator it = hMapB.begin(); it != hMapB.end(); ++it) {
+
+    // Decode the ID
+    int const Channel = it->first / 10;
+    int const ROC     = it->first % 10;
+    int const id      = it->first;
+
+    printf("Drawing hists for Channel %2i ROC %i\n", Channel, ROC);
+
+    // change to correct pad on canvas and draw the hist
+    cMapB[id]->cd(1);
+
+    TLegend* Leg = new TLegend(0.65, 0.7, 0.80, 0.88, "");
+    Leg->SetFillColor(0);
+    Leg->SetBorderSize(0);
+
+    for (size_t ih = 0; ih != 4; ++ih) {
+      TH1F* Hist = it->second[ih];
+      Hist->SetStats(false);
+
+      Hist->SetNdivisions(5);
+      Hist->SetLineColor(HistColors[ih]);
+      if (ih == 0) {
+        Hist->SetTitle( TString::Format("PulseHeight Ch%02i ROC%1i NoCut", Channel, ROC) );
+        Hist->SetXTitle("Electrons");
+        Hist->SetYTitle("Events");
+        Hist->Draw("hist");
+        Leg->AddEntry(Hist, "All", "l");
+      } else {
+        Hist->Draw("samehist");
+        if (ih != 3) {
+          Leg->AddEntry(Hist, TString::Format(" %i Pixel", ih), "l");
+        } else {
+          Leg->AddEntry(Hist, TString::Format("#geq%i Pixel", ih), "l");
+        }
+      }
+    }
+    Leg->Draw("same");
+
+
+    cMapB[id]->cd(2);
+    hClusterSizeMapB[id]->Draw("hist");
+
+
+
+
+    // change to correct pad on canvas and draw the hist
+    cMapB[id]->cd(3);
+    for (int ja = 0; ja != PLTU::NROW; ++ja) {
+      for (int ia = 0; ia != PLTU::NCOL; ++ia) {
+        if (AvgB2D[id][ia][ja] > 0) {
+          hMapB2D[id]->SetBinContent(ia+1, ja+1, AvgB2D[id][ia][ja]);
+        }
+        printf("%6.0f ", AvgB2D[id][ia][ja]);
+      }
+      std::cout << std::endl;
+    }
+    hMapB2D[id]->SetMaximum(60000);
+    hMapB2D[id]->SetStats(false);
+    hMapB2D[id]->SetXTitle("Column");
+    hMapB2D[id]->SetYTitle("Row");
+    hMapB2D[id]->SetZTitle("Electrons");
+    hMapB2D[id]->Draw("colz");
+
+
+    cMapB[id]->cd(4);
+    hOccupancyB[id]->Draw("colz");
+
+  }
+
   // Save Cluster Size canvases
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
     it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
     delete it->second;
   }
+  for (std::map<int, TCanvas*>::iterator it = cMapB.begin(); it != cMapB.end(); ++it) {
+    it->second->SaveAs( TString("plots/") + it->second->GetName()+TString(".gif") );
+    delete it->second;
+  }
+
 
 
   // Loop over cluster size plots
