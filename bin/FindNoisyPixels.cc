@@ -93,7 +93,7 @@ int FindNoisyPixels (std::string const DataFileName, std::string const GainCalFi
       for (int j = 1; j <= Hist2D->GetNbinsY(); ++j) {
         if (Hist2D->GetBinContent(i, j) > Threshold) {
           printf("Channel: %2i ROC: %1i  Hot Pixel: %2i %2i  Hit: %15i    Median = %15.3E  Threshold = %15.3E\n",
-              Channel, ROC, PLTU::FIRSTCOL + i, PLTU::FIRSTROW + j, (int) Hist2D->GetBinContent(i, j), Median[0], Threshold);
+              Channel, ROC, PLTU::FIRSTCOL + i - 1, PLTU::FIRSTROW + j - 1, (int) Hist2D->GetBinContent(i, j), Median[0], Threshold);
 
           ID = Event.GetHardwareID(Channel);
           mf = ID / 1000;
