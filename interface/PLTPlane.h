@@ -49,6 +49,8 @@ class PLTPlane
     void    AddHit (PLTHit*);
     float   Charge ();
     int     Channel ();
+    int     LastDAC ();
+    void    SetLastDAC (int const);
     bool    AddClusterFromSeedNxN (PLTHit*, int const, int const);
     bool    IsBiggestHitInNxN (PLTHit*, int const, int const);
     int     NNeighbors (PLTHit*);
@@ -75,10 +77,13 @@ class PLTPlane
     void SetChannel (int const);
     void SetROC (int const);
 
+    void Clear ();
 
-  private:
+
+  protected:
     int fChannel;
     int fROC;
+    int fLastDAC;
     std::vector<PLTHit*> fHits;
     std::vector<PLTHit*> fClusterizedHits;
     std::vector<PLTHit*> fUnclusteredHits;

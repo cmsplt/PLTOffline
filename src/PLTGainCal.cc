@@ -455,7 +455,7 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     for (int j = 0; j != NROCS; ++j) {
       for (int k = 0; k != PLTU::NCOL; ++k) {
         for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 3; ++n) {
+          for (int n = 0; n != 5; ++n) {
             GC[i][j][k][m][n] = 0;
           }
         }
@@ -476,6 +476,89 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     ss.clear();
     ss.str(line.c_str());
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
+
+    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
+    if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };
+    if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS\n"); };
+    if (PLTGainCal::DEBUGLEVEL) {
+      printf("%i %i %i\n", ch, row, col);
+    }
+
+    irow = RowIndex(row);
+    icol = ColIndex(col);
+    ich  = ChIndex(ch);
+    iroc = RocIndex(roc);
+
+    if (irow < 0 || icol < 0 || ich < 0) {
+      continue;
+    }
+
+    ss >> GC[ich][iroc][icol][irow][0]
+       >> GC[ich][iroc][icol][irow][1]
+       >> GC[ich][iroc][icol][irow][2];
+
+    // dude, you really don't want to do this..
+    if (PLTGainCal::DEBUGLEVEL) {
+      for (int i = 0; i != 3; ++i) {
+        printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
+        for (int j = 0; j != 3; ++j) {
+          printf(" %9.1E", GC[ich][i][icol][irow][j]);
+        }
+        printf("\n");
+      }
+    }
+  }
+
+  // Apparently this file was read no problem...
+  fIsGood = true;
+
+  return;
+}
+
+
+
+void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
+{
+  // Set NParams for 3
+  std::cout << "Reading file for Tester GainCal and setting NParams to 3: " << GainCalFileName << std::endl;
+  fNParams = 3;
+
+  // Zero for params that don't exist for the teststand
+  int const mFec = 0;
+  int const mFecChannel = 0;
+  int const hubAddress = 0;
+  int const ch = 1;
+  int const roc = 0;
+  int row, col;
+  int irow;
+  int icol;
+  int ich;
+  int iroc;
+
+  ifstream f(GainCalFileName.c_str());
+  if (!f) {
+    std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
+    throw;
+  }
+
+  for (int i = 0; i != NCHNS; ++i) {
+    for (int j = 0; j != NROCS; ++j) {
+      for (int k = 0; k != PLTU::NCOL; ++k) {
+        for (int m = 0; m != PLTU::NROW; ++m) {
+          for (int n = 0; n != 5; ++n) {
+            GC[i][j][k][m][n] = 0;
+          }
+        }
+      }
+    }
+  }
+
+
+  std::istringstream ss;
+  for (std::string line ; std::getline(f, line); ) {
+    ss.clear();
+    ss.str(line.c_str());
+    ss >> col >> row;
 
     if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };

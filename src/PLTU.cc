@@ -110,5 +110,15 @@ namespace PLTU
   }
 
 
+  float KahanAverage (std::vector<float>& Vec)
+  {
+    if (Vec.size() == 0) {
+      return 0;
+    }
+
+    float const Sum = KahanSummation(Vec.begin(), Vec.end());
+    return Sum / (float) Vec.size();
+  }
+
 
 }

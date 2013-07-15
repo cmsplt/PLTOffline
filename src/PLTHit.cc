@@ -104,6 +104,17 @@ int PLTHit::ROC ()
   return fROC;
 }
 
+int PLTHit::LastDAC ()
+{
+  return fLastDAC;
+}
+
+void PLTHit::SetLastDAC (int const i)
+{
+  fLastDAC = i;
+  return;
+}
+
 int PLTHit::Row ()
 {
   // Get row for this hit

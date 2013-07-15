@@ -20,6 +20,7 @@ class PLTHit
     int fColumn;
     int fRow;
     int fADC;
+    int fLastDAC;
     float fCharge;
 
     // Local coordinates on plane as define from the center of the diamond
@@ -46,6 +47,8 @@ class PLTHit
     bool  MatchesColumnRow (PLTHit*);
     int   Channel ();
     int   ROC ();
+    int   LastDAC ();
+    void  SetLastDAC (int const);
     int   Row ();
     int   Column ();
     int   ADC ();
