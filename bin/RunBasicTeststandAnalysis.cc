@@ -2,385 +2,185 @@
 //
 // Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
 //
-// Created on: Tue Oct  9 14:14:16 CEST 2012
+// Created on: Wed Apr 10 17:35:17 CEST 2013
 //
 ////////////////////////////////////////////////////////////////////
 
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <map>
-#include <cstdlib>
-#include <algorithm>
 
-#include "TString.h"
-#include "TH1I.h"
-#include "TH2I.h"
-#include "TCanvas.h"
-#include "TSpectrum.h"
-#include "TMarker.h"
-#include "TLine.h"
-#include "TStyle.h"
-#include "TGraph.h"
+#include "PLTTesterEvent.h"
+
 #include "TFile.h"
-#include "TF1.h"
+#include "TSystem.h"
+#include "TGraphErrors.h"
 
 
-int const UBThreshold = 1400;
-int const NMAXUB = 6;
-int EventData[205];
-
-int LevelsROC[6];
-
-
-
-
-int LevelInfo (int const Value)
+int TestStandTest (std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
 {
-  if (Value <= 0) {
-    std::cout << "Something is wrong" << std::endl;
-    return -1;
-  }
-  else if (Value > 0            && Value <= LevelsROC[0]) return 0;
-  else if (Value > LevelsROC[0] && Value <= LevelsROC[1]) return 1;
-  else if (Value > LevelsROC[1] && Value <= LevelsROC[2]) return 2;
-  else if (Value > LevelsROC[2] && Value <= LevelsROC[3]) return 3;
-  else if (Value > LevelsROC[3] && Value <= LevelsROC[4]) return 4;
-  else if (Value > LevelsROC[4]) return 5;
+  std::cout << "Output will be sent to: " << OutDir << std::endl;
+  TString const OutRootFileName = OutDir + "/TestOut.root";
+  gSystem->mkdir(OutDir.c_str(), true);
 
-  return -1;
-}
+  TFile fOutRoot(OutRootFileName, "recreate");
+  std::ofstream OutFile("TestOut.txt");
 
 
-
-std::pair<int, int> fill_pixel_info(int* evt , int ctr)
-{
-  int finalcol = -1;
-  int finalrow = -1;
-  int c1 = evt[ctr + 1];
-  int c0 = evt[ctr + 2];
-  int r2 = evt[ctr + 3];
-  int r1 = evt[ctr + 4];
-  int r0 = evt[ctr + 5];
-
-  int trancol=(LevelInfo(c1))*6 + (LevelInfo(c0));
-  int tranrow=(LevelInfo(r2))*36 + (LevelInfo(r1))*6 + (LevelInfo(r0));
-  if(tranrow%2 == 0)
-  {
-    finalrow=79 - (tranrow - 2)/2;
-    finalcol=trancol * 2;
-  }
-  else
-  {
-    finalrow=79 - (tranrow - 3)/2;
-    finalcol=trancol * 2 + 1;
-  }
+  PLTTesterEvent Event(DataFileName, GainCalFileName, OutDir, &fOutRoot);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_m2_m2);
 
 
-
-  return std::make_pair<int, int>(finalcol, finalrow);
-}
-
-
-
-
-int RunBasicTeststandAnalysis (std::string const InFileName)
-{
-  // open input file
-  std::ifstream InFile(InFileName.c_str());
-  if (!InFile.is_open()) {
-    std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
-    exit(1);
-  }
-
-  TFile fOutFile("Test.root", "recreate");
-
-  TH1I hROCUBLevels("ROCUBLevens", "ROCUBLevels", 150, 500, 2000);
-  TH1I hTBMUBLevels("TBMUBLevels", "TBMUBLevels", 150, 500, 2000);
-  TH1I hROCLevels("ROCLevels", "Levels", 310, 1400, 4500);
-  TH1I hTBMLevels("TBMLevels", "Levels", 210, 1400, 3500);
-  TH1I hPulseHeightADC("PulseHeightADC", "PulseHeightADC", 200, 1000, 4000);
-  TH1I hNHits("NHits", "NHits", 20, 0, 20);
-  TH1I hLastDAC("LastDAC", "LastDAC", 2000, 2000, 4000);
-
-
-  std::map<int, float> GainAvg[120][120];
-  std::map<int, int>   GainN[120][120];
-
-  TH1I hUBPosition[5];
-  for (int i = 0; i != 5; ++i) {
-    TString const Name = TString::Format("UBPositionl%i", i);
-    hUBPosition[i].SetName(Name);
-    hUBPosition[i].SetTitle(Name);
-    hUBPosition[i].SetBins(200, 0, 200);
-    hUBPosition[i].SetLineColor(i + 1);
-  }
-
-  // Run through each line and look at the levels
-  int iLine = 0;
-  for (std::string Line; std::getline(InFile, Line) && iLine < 100000; ++iLine) {
-    int NUB = 0;
-    int UBPosition[NMAXUB];
-    std::istringstream SLine;
-    SLine.str(Line);
-    for (int iadc = 0; iadc != 205; ++iadc) {
-      SLine >> EventData[iadc];
-      if (EventData[iadc] < UBThreshold) {
-        UBPosition[NUB++] = iadc;
-
-        if (NUB <= 3 || NUB >= 5) {
-          hTBMUBLevels.Fill(EventData[iadc]);
-        } else if (NUB == 4) {
-          hROCUBLevels.Fill(EventData[iadc]);
-        }
-        if (NUB <= 5) {
-          hUBPosition[NUB - 1].Fill(iadc);
-        }
-      }
-      if (NUB == NMAXUB) {
-        break;
-      }
-    }
-
-    if (NUB != NMAXUB) {
-      //std::cerr << "WARNING: Incorrect number of UB in this event.  Skipping.  NUB = " << NUB << std::endl;
-      continue;
-    }
-
-    int const NHits = (UBPosition[4] - UBPosition[3] - 3) / 6;
-    if (UBPosition[4] - UBPosition[3] <= 3) {
-      //std::cout << "No Hits" << std::endl;
-      continue;
-    }
-
-    //std::cout << UBPosition[4] - UBPosition[3] << "  : " << NHits << std::endl;
-    if ((UBPosition[4] - UBPosition[3] - 3) % 6 != 0) {
-      //std::cerr << "ERROR: Incorrect position for an UB is messing this event up.  Skipping" << std::endl;
-      continue;
-    }
-
-    hLastDAC.Fill(EventData[ UBPosition[3] + 2 ]); // LastDAC
-    hNHits.Fill(NHits);
-    for (int ihit = 0; ihit != NHits; ++ihit) {
-      hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 1 + ihit * 6 ]); // DCol High
-      hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 2 + ihit * 6 ]); // DCol Low
-      hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 3 + ihit * 6 ]); // Pixel High
-      hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 4 + ihit * 6 ]); // Pixel Mid
-      hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 5 + ihit * 6 ]); // Pixel Low
-      //hROCLevels.Fill(EventData[ UBPosition[3] + 2 + 6 + ihit * 6 ]); // Pulse Height
-      hPulseHeightADC.Fill(EventData[ UBPosition[3] + 2 + 6 + ihit * 6 ]); // Pulse Height
-    }
-
-    // Plot TBM Levels
-    hTBMUBLevels.Fill(EventData[UBPosition[0]]);
-    hTBMUBLevels.Fill(EventData[UBPosition[1]]);
-    hTBMUBLevels.Fill(EventData[UBPosition[2]]);
-    hTBMUBLevels.Fill(EventData[UBPosition[4]]);
-    hTBMUBLevels.Fill(EventData[UBPosition[5]]);
-
-    hTBMLevels.Fill(EventData[UBPosition[0] + 4]);
-    hTBMLevels.Fill(EventData[UBPosition[0] + 5]);
-    hTBMLevels.Fill(EventData[UBPosition[0] + 6]);
-    hTBMLevels.Fill(EventData[UBPosition[0] + 7]);
-
-
-  }
-
-
-
-  TCanvas cTBMLevels;
-  cTBMLevels.cd()->SetLogy(1);
-  hTBMLevels.Draw("hist");
-  cTBMLevels.SaveAs("LevelsTBM.eps");
-
-  TCanvas cTBMUBLevels;
-  cTBMUBLevels.cd()->SetLogy(1);
-  hTBMUBLevels.Draw("hist");
-  cTBMUBLevels.SaveAs("LevelsTBMUB.eps");
-
-  TSpectrum Spectrum(20);
-  Spectrum.SetAverageWindow(20);//probably does nothing
-  int const NPeaks = Spectrum.Search(&hROCLevels);
-  float* Peaks = Spectrum.GetPositionX();
-  std::sort(Peaks, Peaks + NPeaks);//new, dangerous. 
-  //print aft
-  printf("Peak positions after sort\n");
-  printf(" %f %f %f %f %f %f\n", Peaks[0], Peaks[1], Peaks[2], Peaks[3], Peaks[4], Peaks[5]);
-
-  if (NPeaks != 6) {
-    std::cerr << "ERROR: NPeaks != 6.  NPeaks = "<< NPeaks << std::endl;
-    exit(1);
-  }
-
-  TMarker pPoint[NPeaks];
-  for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].SetX(Peaks[i]);
-    pPoint[i].SetY(hROCLevels.GetBinContent(hROCLevels.FindBin(Peaks[i])));
-    pPoint[i].SetMarkerStyle(3);
-  }
-
-  float const hHistMaxY = hROCLevels.GetMaximum();
-
-  TLine lLine[NPeaks];
-  for (int i = 0; i < NPeaks; ++i) {
-    float xp = Peaks[i];
-    float yp = Peaks[i + 1];
-    xp = xp + (yp - xp) / 2.0;
-    printf(" Threshold %d value %f\n", i, xp);
-
-    if (i <= 6) {
-      LevelsROC[i] = xp;
-    }
-
-    lLine[i].SetLineColor(2);
-    lLine[i].SetX1(xp);  lLine[i].SetX2(xp);
-    lLine[i].SetY1(1);   lLine[i].SetY2(hHistMaxY);
-  }
-
-
-
-  TCanvas cROCLevels;
-  cROCLevels.cd()->SetLogy(1);
-  hROCLevels.Draw("hist");
-  for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].Draw("same");
-    lLine[i].Draw("same");
-  }
-  cROCLevels.SaveAs("LevelsROC.eps");
-
-  TCanvas cROCUBLevels;
-  cROCUBLevels.cd()->SetLogy(1);
-  hROCUBLevels.Draw("hist");
-  cROCUBLevels.SaveAs("LevelsROCUB.eps");
-
-  TCanvas cUBPosition;
-  cUBPosition.cd();
-  hUBPosition[0].Draw();
-  hUBPosition[1].Draw("same");
-  hUBPosition[2].Draw("same");
-  hUBPosition[3].Draw("same");
-  hUBPosition[4].Draw("same");
-  cUBPosition.SaveAs("UBPosition.eps");
-
-  TCanvas cPulseHeightADC;
-  cPulseHeightADC.cd();
-  hPulseHeightADC.Draw();
-  cPulseHeightADC.SaveAs("PulseHeightADC.eps");
-
-  TCanvas cNHits;
-  cNHits.cd();
-  hNHits.Draw();
-  cNHits.SaveAs("NHits.eps");
-
-  TCanvas cLastDAC;
-  cLastDAC.cd();
-  hLastDAC.Draw();
-  cLastDAC.SaveAs("LastDAC.eps");
+  // Bins and max for pulse height plots
+  int   const NBins =     60;
+  float const XMin  =  -1000;
+  float const XMax  =  50000;
 
 
 
   TH2I hOccupancy("Occupancy", "Occupancy", 26, 13, 39, 40, 40, 80);
+  hOccupancy.SetDirectory(&fOutRoot);
 
-  // Now check out the data
-  InFile.clear();
-  InFile.seekg(0, std::ios::beg);
-  if (!InFile.is_open()) {
-    std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
-    exit(1);
+
+  int const HistColors[4] = { 1, 4, 28, 2 };
+  TGraphErrors gPHT[4];
+  for (int ig = 0; ig < 4; ++ig) {
+    gPHT[ig].Set(0);
+    gPHT[ig].SetName( TString::Format("TimeAvgGraph_Cl%i", ig) );
+    gPHT[ig].SetMinimum(0);
+    gPHT[ig].SetMaximum(30000);
+    gPHT[ig].SetMarkerColor(HistColors[ig]);
+    gPHT[ig].SetLineColor(HistColors[ig]);
   }
+  gPHT[0].SetTitle("Average Pulse Height");
+  gPHT[1].SetTitle("Avg PH for 1 Pixel Clusters");
+  gPHT[2].SetTitle("Avg PH for 2 Pixel Clusters");
+  gPHT[3].SetTitle("Avg PH for #ge 3 Pixel Clusters");
 
-  for (std::string Line; std::getline(InFile, Line); ) {
-    int NUB = 0;
-    int UBPosition[NMAXUB];
-    std::istringstream SLine;
-    SLine.str(Line);
-    for (int iadc = 0; iadc != 205; ++iadc) {
-      SLine >> EventData[iadc];
-      if (EventData[iadc] < UBThreshold && NUB < NMAXUB) {
-        UBPosition[NUB++] = iadc;
+  int const TimeWidth = 2;
+  int EndTimeWindow = TimeWidth;
 
-        if (NUB <= 5) {
-          hUBPosition[NUB - 1].Fill(iadc);
-        }
-      }
-    }
-
-    //printf("%9i %9i %9i %9i %9i\n", EventData[200], EventData[201], EventData[202], EventData[203], EventData[204]);
-
-    if (NUB != NMAXUB) {
-      //std::cerr << "WARNING: Incorrect number of UB in this event.  Skipping.  NUB = " << NUB << std::endl;
-      continue;
-    }
-
-    int const NHits = (UBPosition[4] - UBPosition[3] - 3) / 6;
-    if (UBPosition[4] - UBPosition[3] <= 3) {
-      //std::cout << "No Hits" << std::endl;
-      continue;
-    }
-
-    //std::cout << UBPosition[4] - UBPosition[3] << "  : " << NHits << std::endl;
-    if ((UBPosition[4] - UBPosition[3] - 3) % 6 != 0) {
-      //std::cerr << "ERROR: Incorrect position for an UB is messing this event up.  Skipping" << std::endl;
-      continue;
-    }
-
-    for (int ihit = 0; ihit != NHits; ++ihit) {
-      std::pair<int, int> colrow = fill_pixel_info(EventData, UBPosition[3] + 2 + 0 + ihit * 6);
-      //printf("Hit %4i  %2i %2i\n", ihit, colrow.first, colrow.second);
-      int const VCalMult = EventData[201] == 0 ? 1 : 7;
-      //printf("Time %5i   vcal %5i   adc %5i\n", EventData[200], EventData[202] * VCalMult, EventData[ UBPosition[3] + 2 + 6 + ihit * 6 ]);
-      hOccupancy.Fill(colrow.first, colrow.second);
-
-      GainAvg[colrow.first][colrow.second][EventData[202] * VCalMult] = GainAvg[colrow.first][colrow.second][EventData[202] * VCalMult] * ((double) GainN[colrow.first][colrow.second][EventData[202] * VCalMult] / ((double) GainN[colrow.first][colrow.second][EventData[202] * VCalMult] + 1.)) + EventData[ UBPosition[3] + 2 + 6 + ihit * 6 ] / ((double) GainN[colrow.first][colrow.second][EventData[202] * VCalMult] + 1.);
-      ++GainN[colrow.first][colrow.second][EventData[202] * VCalMult];
-
-    }
-
-  }
-
-  FILE* fGainCoefs = fopen("calibcofs.txt", "w");
+  std::vector<float> vClPH[4];
+  vClPH[0].reserve(10000);
+  vClPH[1].reserve(10000);
+  vClPH[2].reserve(10000);
+  vClPH[3].reserve(10000);
 
 
-  for (int i = 0; i != 120; ++i) {
-    for (int j = 0; j != 120; ++j) {
-      if (GainAvg[i][j].empty()) {
-        continue;
-      }
-      printf("%3i %3i %9i\n", i, j, (int) GainAvg[i][j].size());
-
-      TGraph g((int) GainAvg[i][j].size());
-      g.SetName( TString::Format("Fit_%i_%i", i, j).Data() );
-      float ADCMin = 99999;
-      float ADCMax = 0;
-      int p = 0;
-      for (std::map<int, float>::iterator It = GainAvg[i][j].begin(); It != GainAvg[i][j].end(); ++It) {
-        g.SetPoint(p++, It->second, It->first);
-        if (It->second > ADCMax) {
-          ADCMax = It->second;
-        }
-        if (It->second < ADCMin) {
-          ADCMin = It->second;
-        }
-      }
-      TString const FitName = TString::Format("f1_%i_%i", i, j);
-      TF1 FitFunction(FitName, "pol2");
-      g.Fit(FitName, "Q", "", ADCMin, ADCMin + 0.7 * (ADCMax - ADCMin));
-      g.Write();
-
-      float const P0 = FitFunction.GetParameter(0);
-      float const P1 = FitFunction.GetParameter(1);
-      float const P2 = FitFunction.GetParameter(2);
-
-      fprintf(fGainCoefs,"%d %d %f %f %f\n", i, j, P0, P1, P2);
-    }
+  TH1F* hPulseHeight[4];
+  hPulseHeight[0] = new TH1F("PulseHeight_All", "Pulse Height for All Clusters", NBins, XMin, XMax);
+  hPulseHeight[0]->SetLineColor(HistColors[0]);
+  hPulseHeight[0]->SetDirectory(&fOutRoot);
+  for (int ih = 1; ih != 4; ++ih) {
+    hPulseHeight[ih] = new TH1F( TString::Format("PulseHeight_Pixels%i", ih), TString::Format("Pulse Height for %i Pixel Clusters", ih), NBins, XMin, XMax);
+    hPulseHeight[ih]->SetLineColor(HistColors[ih]);
+    hPulseHeight[ih]->SetDirectory(&fOutRoot);
   }
 
 
-  TCanvas cOccupancy;
-  cOccupancy.cd();
-  hOccupancy.Draw("colz");
-  cOccupancy.SaveAs("Occupancy.eps");
+
+
+  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    if (ientry % 10000 == 0) {
+      std::cout << "Processing entry: " << ientry << " time: " << Event.Time() << std::endl;
+    }
+
+    static int const StartTime = Event.Time();
+    int const ThisTime = Event.Time() - StartTime;
+
+    if (ThisTime < EndTimeWindow) {
+      for (size_t icluster = 0; icluster != Event.NClusters(); ++icluster) {
+        PLTCluster* Cluster = Event.Cluster(icluster);
+        float const Charge = Cluster->Charge();
+        if (Charge > 900000 || Charge < -900000) {
+          continue;
+        }
+
+        if (Charge == 0) {
+          printf("%i %i %i\n", (int) Cluster->NHits(), Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
+          exit(0);
+        }
+
+
+
+        vClPH[0].push_back(Charge);
+        hPulseHeight[0]->Fill(Charge);
+        Cluster->NHits();
+        if (Cluster->NHits() == 1) {
+          vClPH[1].push_back(Charge);
+          hPulseHeight[1]->Fill(Charge);
+        } else if (Cluster->NHits() == 2) {
+          vClPH[2].push_back(Charge);
+          hPulseHeight[2]->Fill(Charge);
+        } else if (Cluster->NHits() >= 3) {
+          vClPH[3].push_back(Charge);
+          hPulseHeight[3]->Fill(Charge);
+        }
+
+      }
+
+    } else {
+      for (int ig = 0; ig < 4; ++ig) {
+        if (vClPH[ig].size() > 0) {
+          int const N = gPHT[ig].GetN();
+          gPHT[ig].Set(N+1);
+          float const Average = PLTU::Average(vClPH[ig]);
+          gPHT[ig].SetPoint(N , EndTimeWindow - TimeWidth / 2, Average);
+          gPHT[ig].SetPointError(N, TimeWidth / 2, Average / sqrt((float) vClPH[ig].size()));
+          //std::cout << vClPH[ig].size() << std::endl;
+          printf("Adding point to graph %i: Time: %7i to %7i seconds.  Agv %9.1f +/- %9.1f\n", ig, EndTimeWindow - TimeWidth, EndTimeWindow, Average,  Average/sqrt((float) vClPH[ig].size()));
+          vClPH[ig].clear();
+          vClPH[ig].reserve(10000);
+        }
+      }
+
+      EndTimeWindow += TimeWidth;
+
+    }
+
+    //Event.WriteEventText(OutFile);
+
+    for (size_t ihit = 0; ihit != Event.NHits(); ++ihit) {
+      PLTHit* Hit = Event.Hit(ihit);
+      hOccupancy.Fill(Hit->Column(), Hit->Row());
+    }
+  }
+
+  Event.MakePlots();
+
+
+  for (int ig = 0; ig < 4; ++ig) {
+    TString const Name = TString::Format("PHvsTime_%i", ig);
+    TCanvas c(Name, Name);
+    c.cd();
+    gPHT[ig].Draw("Ap");
+    gPHT[ig].GetXaxis()->SetTitle("Time (s)");
+    gPHT[ig].GetYaxis()->SetTitle("PH (electrons)");
+    c.Write();
+  }
+
+  TCanvas cPHT("PHVsTime", "PHVsTime");
+  gPHT[0].Draw("Ap");
+  gPHT[1].Draw("p");
+  gPHT[2].Draw("p");
+  gPHT[3].Draw("p");
+  gPHT[0].GetXaxis()->SetTitle("Time (s)");
+  gPHT[0].GetYaxis()->SetTitle("PH (electrons)");
+  cPHT.Write();
+  cPHT.SaveAs(TString(OutDir) + "/PHVsTime.gif");
+
+  TCanvas cPH("PH", "PH");
+  hPulseHeight[0]->Draw("Hist");
+  hPulseHeight[1]->Draw("SameHist");
+  hPulseHeight[2]->Draw("SameHist");
+  hPulseHeight[3]->Draw("SameHist");
+  hPulseHeight[0]->GetXaxis()->SetTitle("PH (electrons)");
+  cPH.Write();
+  cPH.SaveAs(TString(OutDir) + "/PulseHeight.gif");
+
+
+  fOutRoot.Write();
+  fOutRoot.Close();
+  OutFile.close();
 
   return 0;
 }
@@ -388,12 +188,12 @@ int RunBasicTeststandAnalysis (std::string const InFileName)
 
 int main (int argc, char* argv[])
 {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName]" << std::endl;
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [OutDir]" << std::endl;
     return 1;
   }
 
-  RunBasicTeststandAnalysis(argv[1]);
+  TestStandTest(argv[1], argv[2], argv[3]);
 
   return 0;
 }
