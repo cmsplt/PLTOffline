@@ -56,7 +56,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   gPHT[2].SetTitle("Avg PH for 2 Pixel Clusters");
   gPHT[3].SetTitle("Avg PH for #ge 3 Pixel Clusters");
 
-  int const TimeWidth = 2;
+  int const TimeWidth = 5;
   int EndTimeWindow = TimeWidth;
 
   std::vector<float> vClPH[4];
