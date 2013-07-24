@@ -97,7 +97,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
         if (Charge == 0) {
           printf("%i %i %i\n", (int) Cluster->NHits(), Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
-          exit(0);
+          continue;
         }
 
 
