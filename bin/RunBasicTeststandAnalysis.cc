@@ -194,6 +194,8 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   cPH.SaveAs(TString(OutDir) + "/PulseHeight.gif");
 
 
+  TCanvas cPulseHeightAvg2D("AveragePulseHeight", "Average Pulse Height");
+  cPulseHeightAvg2D.cd();
   for (int ja = 0; ja != PLTU::NROW; ++ja) {
     for (int ia = 0; ia != PLTU::NCOL; ++ia) {
       if (PulseHeightAvg2D[ia][ja] > 0) {
@@ -210,6 +212,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   hPulseHeightAvg2D.SetZTitle("Electrons");
   hPulseHeightAvg2D.Draw("colz");
   hPulseHeightAvg2D.Write();
+
 
 
   fOutRoot.Write();
