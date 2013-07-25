@@ -14,6 +14,7 @@
 #include "TFile.h"
 #include "TSystem.h"
 #include "TGraphErrors.h"
+#include "TH2F.h"
 
 
 int TestStandTest (std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
@@ -38,6 +39,9 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
 
   TH2I hOccupancy("Occupancy", "Occupancy", 26, 13, 39, 40, 40, 80);
+  TH2F hPulseHeightAvg2D("PulseHeightAvg", "Average Pulse Height", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+  double PulseHeightAvg2D[PLTU::NCOL][PLTU::NROW];
+  int    PulseHeightN2D[PLTU::NCOL][PLTU::NROW];
   hOccupancy.SetDirectory(&fOutRoot);
 
 
@@ -139,6 +143,18 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
     //Event.WriteEventText(OutFile);
 
+    for (size_t icluster = 0; icluster != Event.NClusters(); ++icluster) {
+      PLTCluster* Cluster = Event.Cluster(icluster);
+      int const col = Cluster->SeedHit()->Column();
+      int const row = Cluster->SeedHit()->Row();
+      float const ThisClusterCharge = Cluster->Charge();
+      if (ThisClusterCharge < 5000000 && ThisClusterCharge >= 0) {
+        PulseHeightAvg2D[col][row] = PulseHeightAvg2D[col][row] * ((double) PulseHeightN2D[col][row] / ((double) PulseHeightN2D[col][row] + 1.)) + ThisClusterCharge / ((double) PulseHeightN2D[col][row] + 1.);
+        ++PulseHeightN2D[col][row];
+      }
+
+    }
+
     for (size_t ihit = 0; ihit != Event.NHits(); ++ihit) {
       PLTHit* Hit = Event.Hit(ihit);
       hOccupancy.Fill(Hit->Column(), Hit->Row());
@@ -176,6 +192,24 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   hPulseHeight[0]->GetXaxis()->SetTitle("PH (electrons)");
   cPH.Write();
   cPH.SaveAs(TString(OutDir) + "/PulseHeight.gif");
+
+
+  for (int ja = 0; ja != PLTU::NROW; ++ja) {
+    for (int ia = 0; ia != PLTU::NCOL; ++ia) {
+      if (PulseHeightAvg2D[ia][ja] > 0) {
+        hPulseHeightAvg2D.SetBinContent(ia+1, ja+1, PulseHeightAvg2D[ia][ja]);
+      }
+      printf("%6.0f ", PulseHeightAvg2D[ia][ja]);
+    }
+    std::cout << std::endl;
+  }
+  hPulseHeightAvg2D.SetMaximum(60000);
+  hPulseHeightAvg2D.SetStats(false);
+  hPulseHeightAvg2D.SetXTitle("Column");
+  hPulseHeightAvg2D.SetYTitle("Row");
+  hPulseHeightAvg2D.SetZTitle("Electrons");
+  hPulseHeightAvg2D.Draw("colz");
+  hPulseHeightAvg2D.Write();
 
 
   fOutRoot.Write();
