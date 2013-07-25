@@ -23,6 +23,8 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   TString const OutRootFileName = OutDir + "/TestOut.root";
   gSystem->mkdir(OutDir.c_str(), true);
 
+  PLTU::SetStyle();
+
   TFile fOutRoot(OutRootFileName, "recreate");
   std::ofstream OutFile("TestOut.txt");
 
@@ -145,8 +147,8 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
     for (size_t icluster = 0; icluster != Event.NClusters(); ++icluster) {
       PLTCluster* Cluster = Event.Cluster(icluster);
-      int const col = Cluster->SeedHit()->Column();
-      int const row = Cluster->SeedHit()->Row();
+      int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
+      int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
       float const ThisClusterCharge = Cluster->Charge();
       if (ThisClusterCharge < 5000000 && ThisClusterCharge >= 0) {
         PulseHeightAvg2D[col][row] = PulseHeightAvg2D[col][row] * ((double) PulseHeightN2D[col][row] / ((double) PulseHeightN2D[col][row] + 1.)) + ThisClusterCharge / ((double) PulseHeightN2D[col][row] + 1.);
@@ -193,7 +195,6 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   cPH.Write();
   cPH.SaveAs(TString(OutDir) + "/PulseHeight.gif");
 
-
   TCanvas cPulseHeightAvg2D("AveragePulseHeight", "Average Pulse Height");
   cPulseHeightAvg2D.cd();
   for (int ja = 0; ja != PLTU::NROW; ++ja) {
@@ -212,6 +213,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   hPulseHeightAvg2D.SetZTitle("Electrons");
   hPulseHeightAvg2D.Draw("colz");
   hPulseHeightAvg2D.Write();
+  cPulseHeightAvg2D.SaveAs(TString(OutDir) + "/PulseHeightAvg.gif");
 
 
 
