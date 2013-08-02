@@ -32,9 +32,11 @@ namespace PLTU
   void SetStyle ();
 
   TH1F* HistFrom2D(TH2F*, TString const NewName = "", int const NBins = -1, bool const SkipZeroBins = true);
+  TH1F* HistFrom2D(TH2F*, float const ZMin, float const ZMax, TString const NewName = "", int const NBins = -1, bool const SkipZeroBins = true);
   float KahanSummation (std::vector<float>::iterator, std::vector<float>::iterator);
   float Average (std::vector<float>&);
   float KahanAverage (std::vector<float>&);
+  void  AddToRunningAverage(double&, int&, double const);
 
 }
 

@@ -46,7 +46,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
 
   // Define occupancy plot and attach it to the root file
-  TH2I hOccupancy("Occupancy", "Occupancy", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+  TH2F hOccupancy("Occupancy", "Occupancy", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
   hOccupancy.SetDirectory(&fOutRoot);
 
   // The PH 2D plot is done using a running average for each pixel using these two arrays
@@ -121,44 +121,9 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
     static int const StartTime = Event.Time();
     int const ThisTime = Event.Time() - StartTime;
 
-    if (ThisTime < EndTimeWindow) {
-      // This time is still in the current time window
-
-      // Loop over all clusters
-      for (size_t icluster = 0; icluster != Event.NClusters(); ++icluster) {
-
-        // Grab this cluster
-        PLTCluster* Cluster = Event.Cluster(icluster);
-
-        // Get cluster charge
-        float const Charge = Cluster->Charge();
-
-        // If this charge is something crazy we skip it
-        if (Charge > 1000000 || Charge < -1000000) {
-          continue;
-        }
-
-        // Just out of curosity print zero-charge clusters
-        if (Charge == 0) {
-          printf("Cluster has zero charge:   NHits: %3i  Column: %2i  Row: %2i\n", (int) Cluster->NHits(), Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
-          continue;
-        }
-
-        // Number of hits in this cluster
-        int const NHitsInCluster = Cluster->NHits();
-
-        // Fill in PH histogram
-        hPulseHeight[0]->Fill(Charge);
-        NHitsInCluster > 2 ? hPulseHeight[3]->Fill(Charge) : hPulseHeight[NHitsInCluster]->Fill(Charge);
-
-        // Add to running averages for the PH vs time plots
-        PLTU::AddToRunningAverage(PulseHeightTimeAvg[0], PulseHeightTimeN[0], Charge);
-        NHitsInCluster > 2 ?    PLTU::AddToRunningAverage(PulseHeightTimeAvg[3], PulseHeightTimeN[3], Charge) :
-                                PLTU::AddToRunningAverage(PulseHeightTimeAvg[NHitsInCluster], PulseHeightTimeN[NHitsInCluster], Charge);
-      }
-
-    } else {
-      // We have come to the end of this time window
+    // Have we come to the end of the time window?  If so we make a point on the graphs
+    // and then define the next time window
+    if (!(ThisTime < EndTimeWindow)) {
 
       // Loop over all graphs and add points as needed for the PH vs time plot
       for (int ig = 0; ig < 4; ++ig) {
@@ -178,8 +143,9 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
       // The end of the next time window moves up by one TimeWidth
       EndTimeWindow += TimeWidth;
-
     }
+
+
 
     // This is if you want a text dump of the data
     //Event.WriteEventText(OutFile);
@@ -196,6 +162,29 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
       // Grab this cluster charge
       float const ThisClusterCharge = Cluster->Charge();
+
+      // If this charge is something crazy we skip it
+      if (ThisClusterCharge > 1000000 || ThisClusterCharge < -1000000) {
+        continue;
+      }
+
+      // Just out of curosity print zero-charge clusters
+      if (ThisClusterCharge == 0) {
+        printf("Cluster has zero charge:   NHits: %3i  Column: %2i  Row: %2i\n", (int) Cluster->NHits(), Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
+        continue;
+      }
+
+      // Number of hits in this cluster
+      int const NHitsInCluster = Cluster->NHits();
+
+      // Fill in PH histogram
+      hPulseHeight[0]->Fill(ThisClusterCharge);
+      NHitsInCluster > 2 ? hPulseHeight[3]->Fill(ThisClusterCharge) : hPulseHeight[NHitsInCluster]->Fill(ThisClusterCharge);
+
+      // Add to running averages for the PH vs time plots
+      PLTU::AddToRunningAverage(PulseHeightTimeAvg[0], PulseHeightTimeN[0], ThisClusterCharge);
+      NHitsInCluster > 2 ?    PLTU::AddToRunningAverage(PulseHeightTimeAvg[3], PulseHeightTimeN[3], ThisClusterCharge) :
+                              PLTU::AddToRunningAverage(PulseHeightTimeAvg[NHitsInCluster], PulseHeightTimeN[NHitsInCluster], ThisClusterCharge);
 
       // If the charge is not crazy use it in our running average
       if (ThisClusterCharge < 5000000 && ThisClusterCharge >= 0) {
@@ -340,6 +329,24 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   cOccupancy.cd();
   hOccupancy.Draw("colz");
   cOccupancy.SaveAs(TString(OutDir) + "/Occupancy.gif");
+
+  // Make the 1D Occupancy histogram
+  TCanvas cOccupancy1D;
+  cOccupancy1D.cd();
+  TH1F* hOccupancy1D = PLTU::HistFrom2D(&hOccupancy, "Occupancy1D_Junk", 50, true);
+  // Grab the quantile you're interested in here
+  Double_t QProbability[3] = { 0.1, 0.95, 0.97 };
+  Double_t QValue[3];
+  hOccupancy1D->GetQuantiles(2, QValue, QProbability);
+  delete hOccupancy1D;
+  float const XMinOccupancy = QValue[0];
+  float const XMaxOccupancy = QValue[1];
+
+  hOccupancy1D = PLTU::HistFrom2D(&hOccupancy, XMinOccupancy, XMaxOccupancy, "", 50, true);
+
+  hOccupancy1D->SetDirectory(&fOutRoot);
+  hOccupancy1D->Draw("hist");
+  cOccupancy1D.SaveAs(TString(OutDir) + "/Occupancy1D.gif");
 
 
 

@@ -43,15 +43,13 @@ namespace PLTU
 
 
 
-  TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins, bool const SkipZeroBins)
+  TH1F* HistFrom2D (TH2F* hIN, float const ZMin, float const ZMax, TString const NewName, int const NBins, bool const SkipZeroBins)
   {
     // This function returns a TH1F* and YOU are then the owner of
     // that memory.  please delete it when you are done!!!
 
     int const NBinsX = hIN->GetNbinsX();
     int const NBinsY = hIN->GetNbinsY();
-    float const ZMin = hIN->GetMinimum();
-    float const ZMax = hIN->GetMaximum() + 1;
 
     TString const hNAME = NewName == "" ? TString(hIN->GetName()) + "_1DZ" : NewName;
 
@@ -76,6 +74,18 @@ namespace PLTU
       }
     }
 
+    return h;
+  }
+  TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins, bool const SkipZeroBins)
+  {
+    // This function returns a TH1F* and YOU are then the owner of
+    // that memory.  please delete it when you are done!!!
+
+    float const ZMin = hIN->GetMinimum();
+    float const ZMax = hIN->GetMaximum() + 1;
+
+
+    TH1F* h = HistFrom2D(hIN, ZMin, ZMax, NewName, NBins, SkipZeroBins);
     return h;
   }
 
@@ -118,6 +128,14 @@ namespace PLTU
 
     float const Sum = KahanSummation(Vec.begin(), Vec.end());
     return Sum / (float) Vec.size();
+  }
+
+
+  void AddToRunningAverage (double& Average, int& N, double const NewValue)
+  {
+    Average = Average * ((double) N / ((double) N + 1.)) + NewValue / ((double) N + 1.);
+    ++N;
+
   }
 
 
