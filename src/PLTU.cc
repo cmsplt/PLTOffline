@@ -43,6 +43,99 @@ namespace PLTU
 
 
 
+  float GetMeanBinContentSkipEmptyBins (TH2F& h)
+  {
+    int MyNotEmptyBinCount = 0;
+    double Sum = 0;
+    for (int i = 1; i <= h.GetNbinsX(); ++i) {
+      for (int j = 1; j <= h.GetNbinsY(); ++j) {
+        if (h.GetBinContent(i, j) != 0) {
+          ++MyNotEmptyBinCount;
+          Sum += h.GetBinContent(i, j);
+        }
+      }
+    }
+
+    if (MyNotEmptyBinCount == 0) {
+      return 0;
+    }
+
+    return ((float) Sum) / (float) MyNotEmptyBinCount;
+  }
+
+
+
+  TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol, int const FirstRow, int const LastRow)
+  {
+    // This will creat a new TH2 which YOU are the owner of.
+
+    // This function calculates the average of neighboring bins, excluding bins with no
+    // entries and bins outside a specified range.  The bin in question is then divided
+    // by that average
+    //
+    // If all neighbor bins are empty and so is this bin we set the 3x3Efficiency to 0
+    // If all neighbor bins are empty but this bin has content we set 3x3Efficiency to 1
+
+
+    // Get the same format histogram and clear it.  This is where we have created memory that
+    // YOU are responsible for!!!
+    TH2F* HistEff = (TH2F*) HistIn.Clone(HistIn.GetName() + TString("_3x3Efficiency"));
+    HistEff->Reset();
+
+    // Loop over all columns
+    for (int icol = 1; icol <= HistIn.GetNbinsX(); ++icol) {
+
+      // What pixel column is this?  If it's outside the range skip it
+      int const PixCol = (int) HistEff->GetXaxis()->GetBinLowEdge(icol);
+      if (PixCol < FirstCol || PixCol > LastCol) {
+        continue;
+      }
+
+      // Loop over all rows
+      for (int irow = 1; irow <= HistIn.GetNbinsY(); ++irow) {
+
+        // What row is this?  If it's outside the range skip it
+        int const PixRow = (int) HistEff->GetYaxis()->GetBinLowEdge(irow);
+        if (PixRow < FirstRow || PixRow > LastRow) {
+          continue;
+        }
+
+
+        // For *this* pixel get the 3x3 surrounding values..  If a neighbor is outside of bounds we skip it
+        std::vector<float> HitsNearThisPixel;
+        for (int i = -1; i <= 1; ++i) {
+          for (int j = -1; j <= 1; ++j) {
+            if (PixCol + i >= FirstCol && PixCol + i <= LastCol && PixRow + j >= FirstRow && PixRow + j <= LastRow) {
+              if ( (i != 0 || j != 0) && HistIn.GetBinContent(icol + i, irow + j) > 0) {
+                HitsNearThisPixel.push_back( HistIn.GetBinContent(icol + i, irow + j));
+
+              }
+            }
+          }
+        }
+
+
+        // If we have neighbor hits let's dvide, if not ask if this bin is empty.  If empty set to 0, if not empty set to 1
+        if (HitsNearThisPixel.size() > 0) {
+          // Calcluate average neighbor occupancy
+          float const NeighborsMean = Average(HitsNearThisPixel);
+          HistEff->SetBinContent(icol, irow, HistIn.GetBinContent(icol, irow) / NeighborsMean);
+
+        } else if (HistIn.GetBinContent(icol, irow) == 0) {
+          HistEff->SetBinContent(icol, irow, 0);
+        } else {
+          HistEff->SetBinContent(icol, irow, 1);
+        }
+
+      }
+    }
+
+    return HistEff;
+  }
+
+
+
+
   TH1F* HistFrom2D (TH2F* hIN, float const ZMin, float const ZMax, TString const NewName, int const NBins, bool const SkipZeroBins)
   {
     // This function returns a TH1F* and YOU are then the owner of
@@ -76,6 +169,8 @@ namespace PLTU
 
     return h;
   }
+
+
   TH1F* HistFrom2D (TH2F* hIN, TString const NewName, int const NBins, bool const SkipZeroBins)
   {
     // This function returns a TH1F* and YOU are then the owner of
@@ -83,6 +178,7 @@ namespace PLTU
 
     float const ZMin = hIN->GetMinimum();
     float const ZMax = hIN->GetMaximum() + 1;
+
 
 
     TH1F* h = HistFrom2D(hIN, ZMin, ZMax, NewName, NBins, SkipZeroBins);

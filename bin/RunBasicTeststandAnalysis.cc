@@ -18,6 +18,9 @@
 
 
 
+void WriteHTML (TString const);
+
+
 
 int TestStandTest (std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
 {
@@ -325,37 +328,205 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   hChargeAvg2D.Write();
   cChargeAvg2D.SaveAs(TString(OutDir) + "/ChargeAvg.gif");
 
-  TCanvas cOccupancy;
-  cOccupancy.cd();
-  hOccupancy.Draw("colz");
-  cOccupancy.SaveAs(TString(OutDir) + "/Occupancy.gif");
-
   // Make the 1D Occupancy histogram
-  TCanvas cOccupancy1D;
-  cOccupancy1D.cd();
-  TH1F* hOccupancy1D = PLTU::HistFrom2D(&hOccupancy, "Occupancy1D_Junk", 50, true);
+  TCanvas cOccupancy1D_All;
+  cOccupancy1D_All.cd();
+  TH1F* hOccupancy1D_All = PLTU::HistFrom2D(&hOccupancy, "Occupancy1D_All", 50, true);
+  hOccupancy1D_All->SetDirectory(&fOutRoot);
+  hOccupancy1D_All->Draw("hist");
+  cOccupancy1D_All.SaveAs(TString(OutDir) + "/Occupancy1D_All.gif");
+
   // Grab the quantile you're interested in here
-  Double_t QProbability[3] = { 0.1, 0.95, 0.97 };
-  Double_t QValue[3];
-  hOccupancy1D->GetQuantiles(2, QValue, QProbability);
-  delete hOccupancy1D;
+  Double_t QProbability[2] = { 0.0, 0.95 };
+  Double_t QValue[2];
+  hOccupancy1D_All->GetQuantiles(2, QValue, QProbability);
   float const XMinOccupancy = QValue[0];
   float const XMaxOccupancy = QValue[1];
 
-  hOccupancy1D = PLTU::HistFrom2D(&hOccupancy, XMinOccupancy, XMaxOccupancy, "", 50, true);
+  // Make the zoomed in plot of 1D occupancy
+  TCanvas cOccupancy1D_Zoom;
+  cOccupancy1D_Zoom.cd();
+  TH1F* hOccupancy1D_Zoom = PLTU::HistFrom2D(&hOccupancy, XMinOccupancy, XMaxOccupancy, "Occupancy1D_Zoom", 50, true);
+  hOccupancy1D_Zoom->SetDirectory(&fOutRoot);
+  hOccupancy1D_Zoom->Draw("hist");
+  cOccupancy1D_Zoom.SaveAs(TString(OutDir) + "/Occupancy1D_Zoom.gif");
 
-  hOccupancy1D->SetDirectory(&fOutRoot);
-  hOccupancy1D->Draw("hist");
-  cOccupancy1D.SaveAs(TString(OutDir) + "/Occupancy1D.gif");
+  // Draw the 2D Occupancy plot
+  TCanvas cOccupancy;
+  cOccupancy.cd();
+  hOccupancy.SetXTitle("Column");
+  hOccupancy.SetYTitle("Row");
+  hOccupancy.Draw("colz");
+  cOccupancy.SaveAs(TString(OutDir) + "/Occupancy.gif");
 
+  // Draw the 2D Occupancy plot Zoomed
+  TCanvas cOccupancy_Zoom;
+  cOccupancy_Zoom.cd();
+  TH2F* hOccupancy_Zoom = (TH2F*) hOccupancy.Clone("Occupancy_Zoom");
+  hOccupancy_Zoom->SetXTitle("Column");
+  hOccupancy_Zoom->SetYTitle("Row");
+  hOccupancy_Zoom->SetTitle("Occupancy Zoom");
+  hOccupancy_Zoom->SetMinimum(XMinOccupancy);
+  hOccupancy_Zoom->SetMaximum(XMaxOccupancy);
+  hOccupancy_Zoom->Draw("colz");
+  cOccupancy_Zoom.SaveAs(TString(OutDir) + "/Occupancy_Zoom.gif");
+
+
+  // Make the 2D occupancy divided by mean
+  TCanvas cOccupancy_wrtMean;
+  cOccupancy_wrtMean.cd();
+  TH2F* hOccupancy_wrtMean = (TH2F*) hOccupancy.Clone("Occupancy_wrtMean");
+  hOccupancy_wrtMean->SetDirectory(&fOutRoot);
+  hOccupancy_wrtMean->SetTitle("Occupancy wrt Mean Occupancy");
+  float const MeanOccupancy = PLTU::GetMeanBinContentSkipEmptyBins(hOccupancy);
+  hOccupancy_wrtMean->Scale(1.0 / MeanOccupancy);
+  hOccupancy_wrtMean->SetMinimum(0);
+  hOccupancy_wrtMean->SetMaximum(3);
+  hOccupancy_wrtMean->SetXTitle("Column");
+  hOccupancy_wrtMean->SetYTitle("Row");
+  hOccupancy_wrtMean->Draw("colz");
+  cOccupancy_wrtMean.SaveAs(TString(OutDir) + "/Occupancy_wrtMean.gif");
+
+  // Make the 1D Occupancy histogram divided by the mean
+  TCanvas cOccupancy1D_wrtMean;
+  cOccupancy1D_wrtMean.cd();
+  TH1F* hOccupancy1D_wrtMean = PLTU::HistFrom2D(hOccupancy_wrtMean, 0, 3, "Occupancy1D_wrtMean", 50, true);
+  hOccupancy1D_wrtMean->SetDirectory(&fOutRoot);
+  hOccupancy1D_wrtMean->SetXTitle("Occupancy w.r.t. Mean Occupancy");
+  hOccupancy1D_wrtMean->Draw("hist");
+  cOccupancy1D_wrtMean.SaveAs(TString(OutDir) + "/Occupancy1D_wrtMean.gif");
+
+
+
+  // 3x3 Occupancy Efficiency
+  TCanvas cOccupancy3x3Efficiency;
+  cOccupancy3x3Efficiency.cd();
+  TH2F* hOccupancy3x3Efficiency = PLTU::Get3x3EfficiencyHist(hOccupancy, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
+  hOccupancy3x3Efficiency->SetDirectory(&fOutRoot);
+  hOccupancy3x3Efficiency->SetTitle("Occupancy 3x3 Efficiency");
+  hOccupancy3x3Efficiency->SetMinimum(0);
+  hOccupancy3x3Efficiency->SetMaximum(3);
+  hOccupancy3x3Efficiency->SetXTitle("Column");
+  hOccupancy3x3Efficiency->SetYTitle("Row");
+  hOccupancy3x3Efficiency->Draw("colz");
+  cOccupancy3x3Efficiency.SaveAs(TString(OutDir) + "/Occupancy3x3Efficiency.gif");
+
+  // 3x3 Occupancy Efficiency 1D histogram
+  TCanvas cOccupancy3x3Efficiency_1D;
+  cOccupancy3x3Efficiency_1D.cd();
+  TH1F* hOccupancy3x3Efficiency_1D = PLTU::HistFrom2D(hOccupancy3x3Efficiency, 0, 3, "Occupancy3x3Efficiency_1D", 50, true);
+  hOccupancy3x3Efficiency_1D->SetDirectory(&fOutRoot);
+  hOccupancy3x3Efficiency_1D->SetTitle("Occupancy 3x3 Efficiency 1D");
+  hOccupancy3x3Efficiency_1D->SetXTitle("Occupancy w.r.t. 3x3 Neighbors");
+  hOccupancy3x3Efficiency_1D->Draw("hist");
+  cOccupancy3x3Efficiency_1D.SaveAs(TString(OutDir) + "/Occupancy3x3Efficiency_1D.gif");
+
+
+  // Dead pixels map
+  TCanvas cDeadPixels;
+  cDeadPixels.cd();
+  TH2F* hDeadPixels = (TH2F*) hOccupancy.Clone("DeadPixels");
+  hDeadPixels->Reset();
+  int NumberOfDeadPixels = 0;
+  for (int i = 1; i <= hOccupancy.GetNbinsX(); ++i) {
+    for (int j = 1; j <= hOccupancy.GetNbinsY(); ++j) {
+      if (hOccupancy.GetBinContent(i, j) == 0) {
+        hDeadPixels->SetBinContent(i, j, 1);
+        ++NumberOfDeadPixels;
+      }
+    }
+  }
+  hDeadPixels->SetMinimum(0);
+  hDeadPixels->SetMaximum(1);
+  hDeadPixels->SetTitle( TString::Format("Dead Pixel Map.  Number Dead = %i", NumberOfDeadPixels) );
+  hDeadPixels->SetXTitle("Column");
+  hDeadPixels->SetYTitle("Row");
+  hDeadPixels->Draw("colz");
+  cDeadPixels.SaveAs(TString(OutDir) + "/DeadPixels.gif");
+
+
+  // Low Efficiency w.r.t. neighbors pixel map
+  TCanvas cLowEfficiencyPixels;
+  cLowEfficiencyPixels.cd();
+  TH2F* hLowEfficiencyPixels = (TH2F*) hOccupancy3x3Efficiency->Clone("LowEfficiencyPixels");
+  hLowEfficiencyPixels->SetDirectory(&fOutRoot);
+  hLowEfficiencyPixels->Reset();
+  int NumberOfLowEfficiencyPixels = 0;
+  for (int i = 1; i <= hOccupancy3x3Efficiency->GetNbinsX(); ++i) {
+    for (int j = 1; j <= hOccupancy3x3Efficiency->GetNbinsY(); ++j) {
+      if (hOccupancy3x3Efficiency->GetBinContent(i, j) != 0 && hOccupancy3x3Efficiency->GetBinContent(i, j) < 0.75 ) {
+        hLowEfficiencyPixels->SetBinContent(i, j, 0.5);
+        ++NumberOfLowEfficiencyPixels;
+      }
+    }
+  }
+  hLowEfficiencyPixels->SetMinimum(0);
+  hLowEfficiencyPixels->SetMaximum(1);
+  hLowEfficiencyPixels->SetTitle( TString::Format("Low Efficiency Pixel Map.  Number Low = %i", NumberOfLowEfficiencyPixels) );
+  hLowEfficiencyPixels->SetXTitle("Column");
+  hLowEfficiencyPixels->SetYTitle("Row");
+  hLowEfficiencyPixels->Draw("colz");
+  cLowEfficiencyPixels.SaveAs(TString(OutDir) + "/LowEfficiencyPixels.gif");
 
 
   fOutRoot.Write();
   fOutRoot.Close();
   OutFile.close();
 
+
+  WriteHTML(OutDir);
+
   return 0;
 }
+
+
+
+
+
+
+
+
+
+void WriteHTML (TString const OutDirName)
+{
+  // This function writes the HTML in the output folder
+
+  std::ofstream f(OutDirName + "/index.html");
+  if (!f.is_open()) {
+    std::cerr << "ERROR: cannot open output file for writing: " << OutDirName << "/index.html" << std::endl;
+    throw;
+  }
+
+  f << "<html>\n";
+  f << "<body>\n";
+
+  f << "<img width=\"300\" src=\"Occupancy.gif\"><img width=\"300\" src=\"Occupancy_Zoom.gif\"><img width=\"300\" src=\"Occupancy_wrtMean.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"Occupancy1D_All.gif\"><img width=\"300\" src=\"Occupancy1D_Zoom.gif\"><img width=\"300\" src=\"Occupancy1D_wrtMean.gif\"><br>\n";
+
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"Occupancy3x3Efficiency.gif\"><img width=\"300\" src=\"DeadPixels.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"Occupancy3x3Efficiency_1D.gif\"><img width=\"300\" src=\"LowEfficiencyPixels.gif\"><br>\n";
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"PulseHeightAvg.gif\"><img width=\"300\" src=\"PulseHeight.gif\"><img width=\"300\" src=\"PHVsTime.gif\"><br>\n";
+
+  f.close();
+
+  return;
+}
+
+
+
+
+
+
+
+
 
 
 int main (int argc, char* argv[])

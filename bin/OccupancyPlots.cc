@@ -67,57 +67,6 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 }
 
 
-TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol, int const FirstRow, int const LastRow)
-{
-  TH2F* HistEff = (TH2F*) HistIn.Clone(HistIn.GetName() + TString("_3x3Efficiency"));
-  HistEff->Reset();
-
-  for (int icol = 1; icol <= HistIn.GetNbinsX(); ++icol) {
-
-    // What pixel column is this?  If it's outside the range skip it
-    int const PixCol = (int) HistEff->GetXaxis()->GetBinLowEdge(icol);
-    if (PixCol < FirstCol || PixCol > LastCol) {
-      continue;
-    }
-
-    for (int irow = 1; irow <= HistIn.GetNbinsY(); ++irow) {
-
-      // What row is this?  If it's outside the range skip it
-      int const PixRow = (int) HistEff->GetYaxis()->GetBinLowEdge(irow);
-      if (PixRow < FirstRow || PixRow > LastRow) {
-        continue;
-      }
-
-
-      // For *this* pixel get the 3x3 surrounding values..  If a neighbor is outside of bounds we skip it
-      std::vector<int> HitsNearThisPixel;
-      for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
-          if (PixCol + i >= FirstCol && PixCol + i <= LastCol && PixRow + j >= FirstRow && PixRow + j <= LastRow) {
-            if ( (i != 0 || j != 0)) {
-              //std::cout << "here " << HistIn.GetBinContent(icol + i, irow + j) << std::endl;
-            }
-            if ( (i != 0 || j != 0) && HistIn.GetBinContent(icol + i, irow + j) > 0) {
-              HitsNearThisPixel.push_back( HistIn.GetBinContent(icol + i, irow + j));
-            }
-          }
-        }
-      }
-
-      // Calcluate average neighbor occupancy
-      float const NeighborsMean = std::accumulate(HitsNearThisPixel.begin(), HitsNearThisPixel.end(), 0) / (float) HitsNearThisPixel.size();
-
-      // Set the content to itself divided by the average in neighbors
-      if (NeighborsMean > 0) {
-        HistEff->SetBinContent(icol, irow, HistIn.GetBinContent(icol, irow) / NeighborsMean);
-        //printf("Efficiency: %2i %2i   %12.3f\n", PixCol, PixRow, HistIn.GetBinContent(icol, irow) / NeighborsMean);
-      }
-
-    }
-  }
-
-  return HistEff;
-}
 
 
 
@@ -412,7 +361,7 @@ int OccupancyPlots (std::string const DataFileName)
    
 
     // 2D Occupancy efficiency plots wrt 3x3
-    hEfficiencyMap[it->first] = Get3x3EfficiencyHist(*hQuantileMap[it->first], PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
+    hEfficiencyMap[it->first] = PLTU::Get3x3EfficiencyHist(*hQuantileMap[it->first], PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
     hEfficiencyMap[it->first]->SetTitle( TString::Format("Occupancy 3x3Eff Ch%i ROC%i", Channel, ROC));
     hEfficiencyMap[it->first]->SetXTitle("Column");
     hEfficiencyMap[it->first]->SetYTitle("Row");

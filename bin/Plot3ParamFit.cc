@@ -31,7 +31,7 @@ int Plot3ParamFit (float const a, float const b, float const c)
 
 int Plot5ParamFit (float const a, float const b, float const c, float const d, float const e)
 {
-  TF1 f("FitFunc", "[0]*x*x + [1]*x + [2] + TMath::Exp( (x-[3]) / [4]  )", 150, 400);
+  TF1 f("FitFunc", "[0]*x*x + [1]*x + [2] + TMath::Exp( (x-[3]) / [4]  )", 195, 214);
   f.SetParameter(0, a);
   f.SetParameter(1, b);
   f.SetParameter(2, c);
