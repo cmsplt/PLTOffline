@@ -52,6 +52,10 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   TH2F hOccupancy("Occupancy", "Occupancy", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
   hOccupancy.SetDirectory(&fOutRoot);
 
+  // Define histogram for highest charge pixel in each event
+  TH1F hHighestChargePixel("HighestChargePixel", "Highest Charge Pixel", 50, XMin, XMax);
+  hHighestChargePixel.SetDirectory(&fOutRoot);
+
   // The PH 2D plot is done using a running average for each pixel using these two arrays
   // MUST set these ALL to zero.  Different systems default differently in this case
   double PulseHeightAvg2D[PLTU::NCOL][PLTU::NROW];
@@ -196,6 +200,11 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
     }
 
+
+
+    // For the highest charge pixel in each event
+    float HighestChargePixel = -999999999;
+
     // This loop is over all hits in the event.  This includes unclustered hits.  Depending on the clustering algorithm
     // you may or may not have unclustered hits, but these would need to be dealt elsewhere (not in this loop)
     for (size_t ihit = 0; ihit != Event.NHits(); ++ihit) {
@@ -216,7 +225,19 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
         PLTU::AddToRunningAverage(ChargeAvg2D[col][row], ChargeN2D[col][row], ThisHitCharge);
       }
 
+      // If this hit has more charge than a previous one, save the charge
+      if (ThisHitCharge > HighestChargePixel) {
+        HighestChargePixel = ThisHitCharge;
+      }
+
     }
+
+    // Fill histogram with highest charge pixel
+    if (Event.NHits() > 0) {
+      hHighestChargePixel.Fill(HighestChargePixel);
+    }
+
+
 
   } // END OF MAIN EVENT LOOP
 
@@ -428,6 +449,15 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
 
 
+  // Draw the highest charge pixel charge distribution
+  TCanvas cHighestChargePixel;
+  cHighestChargePixel.cd();
+  hHighestChargePixel.SetXTitle("Charge (electrons)");
+  hHighestChargePixel.Draw("hist");
+  cHighestChargePixel.SaveAs(TString(OutDir) + "/HighestChargePixel.gif");
+
+
+
 
 
 
@@ -625,7 +655,8 @@ void WriteHTML (TString const OutDirName)
 
 
   f << "<hr>\n";
-  f << "<img width=\"300\" src=\"PulseHeightAvg.gif\"><img width=\"300\" src=\"PulseHeight.gif\"><img width=\"300\" src=\"PHVsTime.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"PulseHeightAvg.gif\"><img width=\"300\" src=\"PulseHeight.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"PHVsTime.gif\"><img width=\"300\" src=\"HighestChargePixel.gif\"><br>\n";
 
 
 
