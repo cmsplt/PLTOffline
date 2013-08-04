@@ -48,7 +48,7 @@ class PLTTesterReader
 
     int LevelsROC[6];
     int EventData[205];
-    static int const UBThreshold = 1200;
+    static int const UBThreshold = 1000;
     static int const NMAXUB = 6;
 
     TString fOutDir;

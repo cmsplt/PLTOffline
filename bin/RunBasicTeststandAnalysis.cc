@@ -328,6 +328,111 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   hChargeAvg2D.Write();
   cChargeAvg2D.SaveAs(TString(OutDir) + "/ChargeAvg.gif");
 
+  // Make the 1D charge Avg distribution
+  TCanvas cChargeAvg1D;
+  cChargeAvg1D.cd();
+  TH1F* hChargeAvg1D = PLTU::HistFrom2D(&hChargeAvg2D, XMin, XMax, "ChargeAvg1D", 50, true);
+  hChargeAvg1D->SetDirectory(&fOutRoot);
+  hChargeAvg1D->Draw("hist");
+  cChargeAvg1D.SaveAs(TString(OutDir) + "/ChargeAvg1D.gif");
+
+
+
+  // Plot charge divided by mean charge
+  TCanvas cChargeAvg2D_wrtMean;
+  cChargeAvg2D_wrtMean.cd();
+  TH2F* hChargeAvg2D_wrtMean = (TH2F*) hChargeAvg2D.Clone("ChargeAvg2D_wrtMean");
+  hChargeAvg2D_wrtMean->SetDirectory(&fOutRoot);
+  hChargeAvg2D_wrtMean->SetTitle("Charge per Pixel w.r.t. Mean Charge");
+  float const MeanCharge = PLTU::GetMeanBinContentSkipEmptyBins(hChargeAvg2D);
+  hChargeAvg2D_wrtMean->Scale(1.0 / MeanCharge);
+  hChargeAvg2D_wrtMean->SetMinimum(0);
+  hChargeAvg2D_wrtMean->SetMaximum(3);
+  hChargeAvg2D_wrtMean->Draw("colz");
+  cChargeAvg2D_wrtMean.SaveAs(TString(OutDir) + "/ChargeAvg2D_wrtMean.gif");
+
+  // Now the 1D dirtrubution of charge wrt mean
+  TCanvas cChargeAvg1D_wrtMean;
+  cChargeAvg1D_wrtMean.cd();
+  TH1F* hChargeAvg1D_wrtMean = PLTU::HistFrom2D(hChargeAvg2D_wrtMean, 0, 3, "ChargeAvg1D_wrtMean", 50, true);
+  hChargeAvg1D_wrtMean->SetDirectory(&fOutRoot);
+  hChargeAvg1D_wrtMean->SetTitle("Charge w.r.t. Mean Charge");
+  hChargeAvg1D_wrtMean->SetXTitle("Charge w.r.t. Mean Charge");
+  hChargeAvg1D_wrtMean->Draw("hist");
+  cChargeAvg1D_wrtMean.SaveAs(TString(OutDir) + "/ChargeAvg1D_wrtMean.gif");
+
+
+  // Let's look at the charge relative to 3x3 neighbors
+  TCanvas cCharge3x3;
+  cCharge3x3.cd();
+  TH2F* hCharge3x3 = PLTU::Get3x3EfficiencyHist(hChargeAvg2D, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::FIRSTROW, PLTU::LASTROW);
+  hCharge3x3->SetDirectory(&fOutRoot);
+  hCharge3x3->SetTitle("Charge w.r.t. 3x3 neighbors");
+  hCharge3x3->SetMinimum(0);
+  hCharge3x3->SetMaximum(3);
+  hCharge3x3->SetXTitle("Column");
+  hCharge3x3->SetYTitle("Row");
+  hCharge3x3->Draw("colz");
+  cCharge3x3.SaveAs(TString(OutDir) + "/Charge3x3.gif");
+
+  // And get the 1D distribution for the charge wrt 3x3
+  TCanvas cCharge3x31D;
+  cCharge3x31D.cd();
+  TH1F* hCharge3x31D = PLTU::HistFrom2D(hCharge3x3, 0, 3, "Charge3x31D", 50, true);
+  hCharge3x31D->SetDirectory(&fOutRoot);
+  hCharge3x31D->SetTitle("Charge w.r.t. 3x3 neighbors 1D");
+  hCharge3x31D->SetXTitle("Charge w.r.t. 3x3 neighbors 1D");
+  hCharge3x31D->Draw("hist");
+  cCharge3x31D.SaveAs(TString(OutDir) + "/Charge3x31D.gif");
+
+
+  // Find Low and High charge collecting pixels
+  TH2F* hLowChargePixels = (TH2F*) hCharge3x3->Clone("LowChargePixels");
+  hLowChargePixels->Reset();
+  hLowChargePixels->SetDirectory(&fOutRoot);
+  TH2F* hHighChargePixels = (TH2F*) hCharge3x3->Clone("HighChargePixels");
+  hHighChargePixels->Reset();
+  hHighChargePixels->SetDirectory(&fOutRoot);
+  int NumberOfLowChargePixels = 0;
+  int NumberOfHighChargePixels = 0;
+  for (int i = 1; i <= hCharge3x3->GetNbinsX(); ++i) {
+    for (int j = 1; j <= hCharge3x3->GetNbinsY(); ++j) {
+      if (hCharge3x3->GetBinContent(i, j) != 0 && hCharge3x3->GetBinContent(i, j) < 0.75 ) {
+        hLowChargePixels->SetBinContent(i, j, 0.5);
+        ++NumberOfLowChargePixels;
+      } else if (hCharge3x3->GetBinContent(i, j) != 0 && hCharge3x3->GetBinContent(i, j) > 1.25 ) {
+        hHighChargePixels->SetBinContent(i, j, 1);
+        ++NumberOfHighChargePixels;
+      }
+    }
+  }
+
+  // Draw the Low and High charge pixels
+  TCanvas cLowChargePixels;
+  cLowChargePixels.cd();
+  hLowChargePixels->SetTitle(TString::Format("Low Charge Pixels  nLow = %i", NumberOfLowChargePixels));
+  hLowChargePixels->SetXTitle("Column");
+  hLowChargePixels->SetYTitle("Row");
+  hLowChargePixels->Draw("colz");
+  cLowChargePixels.SaveAs(TString(OutDir) + "/LowChargePixels.gif");
+
+  TCanvas cHighChargePixels;
+  cHighChargePixels.cd();
+  hHighChargePixels->SetTitle(TString::Format("High Charge Pixels  nHigh = %i", NumberOfHighChargePixels));
+  hHighChargePixels->SetXTitle("Column");
+  hHighChargePixels->SetYTitle("Row");
+  hHighChargePixels->Draw("colz");
+  cHighChargePixels.SaveAs(TString(OutDir) + "/HighChargePixels.gif");
+
+
+
+
+
+
+
+
+
+
   // Make the 1D Occupancy histogram
   TCanvas cOccupancy1D_All;
   cOccupancy1D_All.cd();
@@ -500,6 +605,13 @@ void WriteHTML (TString const OutDirName)
   f << "<html>\n";
   f << "<body>\n";
 
+
+  f << "<img width=\"300\" src=\"CL_LevelsROC.gif\"><img width=\"300\" src=\"CL_LevelsTBM.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"CL_LevelsROCUB.gif\"><img width=\"300\" src=\"CL_LevelsTBMUB.gif\"><br>\n";
+
+
+
+  f << "<hr>\n";
   f << "<img width=\"300\" src=\"Occupancy.gif\"><img width=\"300\" src=\"Occupancy_Zoom.gif\"><img width=\"300\" src=\"Occupancy_wrtMean.gif\"><br>\n";
   f << "<img width=\"300\" src=\"Occupancy1D_All.gif\"><img width=\"300\" src=\"Occupancy1D_Zoom.gif\"><img width=\"300\" src=\"Occupancy1D_wrtMean.gif\"><br>\n";
 
@@ -514,6 +626,20 @@ void WriteHTML (TString const OutDirName)
 
   f << "<hr>\n";
   f << "<img width=\"300\" src=\"PulseHeightAvg.gif\"><img width=\"300\" src=\"PulseHeight.gif\"><img width=\"300\" src=\"PHVsTime.gif\"><br>\n";
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"ChargeAvg.gif\"><img width=\"300\" src=\"ChargeAvg2D_wrtMean.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"ChargeAvg1D.gif\"><img width=\"300\" src=\"ChargeAvg1D_wrtMean.gif\"><br>\n";
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"Charge3x3.gif\"><img width=\"300\" src=\"LowChargePixels.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"Charge3x31D.gif\"><img width=\"300\" src=\"HighChargePixels.gif\"><br>\n";
+
+
 
   f.close();
 
