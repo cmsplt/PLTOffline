@@ -14,21 +14,47 @@
 #include "TFile.h"
 #include "TSystem.h"
 #include "TGraphErrors.h"
+#include "TFitResult.h"
 #include "TH2F.h"
+#include "TDatime.h"
+#include "TLegend.h"
+#include "TLegendEntry.h"
 
 
 
-void WriteHTML (TString const);
+// THIS IS THE BASE PATH!!!!!
+// Please put a trailing '/'
+TString const kDATAPATH = "/Users/dhidas/TeststandData/";
+TString const kOUTPUTPATH = "/Users/dhidas/TeststandData/output/";
 
 
 
-int TestStandTest (std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
+
+
+void WriteHTML_Analysis(TString const, TString const, TString const, TString const);
+void WriteHTML_Calibration (TString const, TString const, TString const);
+
+
+
+int TestStandTest (TString const PlaneNumber, TString const RunNumber, TString const CalibrationNumber)
 {
+//    std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
+
+  // Input data file
+  TString const DataFileName = TString::Format("%s/data/sr90-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
 
   // Get rootfile name and make directory for output files
+  TString const OutDir = TString::Format(kOUTPUTPATH + PlaneNumber + "/analysis/" + RunNumber + "/");
   std::cout << "Output will be sent to: " << OutDir << std::endl;
-  TString const OutRootFileName = OutDir + "/TestOut.root";
-  gSystem->mkdir(OutDir.c_str(), true);
+
+  // gaincal file name
+  TString const GainCalFileName = TString::Format(kOUTPUTPATH + "%s/calibration/%s/calibration_coeficients_s%s_run%s.txt", PlaneNumber.Data(), CalibrationNumber.Data(), PlaneNumber.Data(), CalibrationNumber.Data());
+  std::cout << "GainCal filename: " << GainCalFileName << std::endl;
+
+  // Output root file
+  TString const OutRootFileName = OutDir + "/output_s" + PlaneNumber + "_run" + RunNumber + ".root";
+  gSystem->mkdir(OutDir.Data(), true);
+
 
   // Some basic graphics style
   PLTU::SetStyle();
@@ -38,7 +64,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   std::ofstream OutFile("TestOut.txt");
 
   // Initalize the Event object and decide what kind of clustering you want
-  PLTTesterEvent Event(DataFileName, GainCalFileName, OutDir, &fOutRoot);
+  PLTTesterEvent Event(DataFileName.Data(), GainCalFileName.Data(), OutDir.Data(), &fOutRoot);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_Diamond);
 
 
@@ -52,9 +78,19 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   TH2F hOccupancy("Occupancy", "Occupancy", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
   hOccupancy.SetDirectory(&fOutRoot);
 
+  // Define one and two pixel occupancy histograms and attach it to the root file
+  TH2F hOccupancy1Pix("Occupancy1Pix", "Occupancy for 1-pixel Clusters", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+  hOccupancy1Pix.SetDirectory(&fOutRoot);
+
+  // Define one and two pixel occupancy histograms and attach it to the root file
+  TH2F hOccupancy2Pix("Occupancy2Pix", "Occupancy for 2-piexl Clusters", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL + 1, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW + 1);
+  hOccupancy2Pix.SetDirectory(&fOutRoot);
+
   // Define histogram for highest charge pixel in each event
   TH1F hHighestChargePixel("HighestChargePixel", "Highest Charge Pixel", 50, XMin, XMax);
   hHighestChargePixel.SetDirectory(&fOutRoot);
+
+
 
   // The PH 2D plot is done using a running average for each pixel using these two arrays
   // MUST set these ALL to zero.  Different systems default differently in this case
@@ -106,7 +142,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
   // Define the 4 PulseHeight plots, attach them to root file, and give them nice colours or colors.
   TH1F* hPulseHeight[4];
-  hPulseHeight[0] = new TH1F("PulseHeight_All", "Pulse Height for All Clusters", NBins, XMin, XMax);
+  hPulseHeight[0] = new TH1F("PulseHeight_All", "Pulse Height", NBins, XMin, XMax);
   hPulseHeight[0]->SetLineColor(HistColors[0]);
   hPulseHeight[0]->SetDirectory(&fOutRoot);
   for (int ih = 1; ih != 4; ++ih) {
@@ -166,6 +202,14 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
       // These are row and column indices for use in array
       int const col = PLTGainCal::ColIndex(Cluster->SeedHit()->Column());
       int const row = PLTGainCal::RowIndex(Cluster->SeedHit()->Row());
+
+      // Fill 1 and 2 pixel occupancy histograms
+      if (Cluster->NHits() == 1) {
+        hOccupancy1Pix.Fill(Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
+      } else if (Cluster->NHits() == 2) {
+        hOccupancy2Pix.Fill(Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
+        hOccupancy2Pix.Fill(Cluster->Hit(1)->Column(), Cluster->Hit(1)->Row());
+      }
 
       // Grab this cluster charge
       float const ThisClusterCharge = Cluster->Charge();
@@ -285,11 +329,20 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
   // Draw the pulse height 1D distributions
   TCanvas cPH("PH", "PH");
+  hPulseHeight[0]->SetStats(kFALSE);
+  hPulseHeight[0]->GetXaxis()->SetTitle("PH (electrons)");
   hPulseHeight[0]->Draw("Hist");
   hPulseHeight[1]->Draw("SameHist");
   hPulseHeight[2]->Draw("SameHist");
   hPulseHeight[3]->Draw("SameHist");
-  hPulseHeight[0]->GetXaxis()->SetTitle("PH (electrons)");
+  TLegend lPulseHeight(0.6, 0.6, 0.82, 0.9, "Mean:");
+  lPulseHeight.SetTextAlign(32);
+  lPulseHeight.SetFillStyle(0);
+  lPulseHeight.AddEntry( "PH0PMean", TString::Format("%8.0f", hPulseHeight[0]->GetMean()), "")->SetTextColor(HistColors[0]);
+  lPulseHeight.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeight[1]->GetMean()), "")->SetTextColor(HistColors[1]);
+  lPulseHeight.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeight[2]->GetMean()), "")->SetTextColor(HistColors[2]);
+  lPulseHeight.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeight[3]->GetMean()), "")->SetTextColor(HistColors[3]);
+  lPulseHeight.Draw("same");
   cPH.Write();
   cPH.SaveAs(TString(OutDir) + "/PulseHeight.gif");
 
@@ -533,6 +586,79 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
 
 
+
+  // One pixel occupancy plot
+  TCanvas cOccupancy1Pix;
+  cOccupancy1Pix.cd();
+  hOccupancy1Pix.SetXTitle("Column");
+  hOccupancy1Pix.SetYTitle("Row");
+  hOccupancy1Pix.Draw("colz");
+  cOccupancy1Pix.SaveAs(TString(OutDir) + "/Occupancy1Pix.gif");
+
+  // The 1D distribution for 1-pix clusters
+  TCanvas cOccupancy1Pix1D;
+  cOccupancy1Pix1D.cd();
+  TH1F* hOccupancy1Pix1D = PLTU::HistFrom2D(&hOccupancy1Pix, "Occupancy1Pix1D", 50, true);
+  hOccupancy1Pix1D->SetDirectory(&fOutRoot);
+  hOccupancy1Pix1D->SetTitle("Pixel Occupancy 1-pixel Clusters");
+  hOccupancy1Pix1D->Draw("hist");
+  cOccupancy1Pix1D.SaveAs(TString(OutDir) + "/Occupancy1Pix1D.gif");
+
+
+
+  // Two pixel occupancy plot
+  TCanvas cOccupancy2Pix;
+  cOccupancy2Pix.cd();
+  hOccupancy2Pix.SetXTitle("Column");
+  hOccupancy2Pix.SetYTitle("Row");
+  hOccupancy2Pix.Draw("colz");
+  cOccupancy2Pix.SaveAs(TString(OutDir) + "/Occupancy2Pix.gif");
+
+  // The 1D distribution for 1-pix clusters
+  TCanvas cOccupancy2Pix1D;
+  cOccupancy2Pix1D.cd();
+  TH1F* hOccupancy2Pix1D = PLTU::HistFrom2D(&hOccupancy2Pix, "Occupancy2Pix1D", 50, true);
+  hOccupancy2Pix1D->SetDirectory(&fOutRoot);
+  hOccupancy2Pix1D->SetTitle("Pixel Occupancy 2-pixel Clusters");
+  hOccupancy2Pix1D->Draw("hist");
+  cOccupancy2Pix1D.SaveAs(TString(OutDir) + "/Occupancy2Pix1D.gif");
+
+
+
+
+  // Ration of One pixel clusters to Two pixel clusters
+  TCanvas cOccupancyRatio2to1;
+  cOccupancyRatio2to1.cd();
+  TH2F* hOccupancyRatio2to1 = (TH2F*) hOccupancy2Pix.Clone("OccupancyRatio2to1");
+  hOccupancyRatio2to1->SetDirectory(&fOutRoot);
+  hOccupancyRatio2to1->SetTitle("Ratio of 2-pixel to 1-pixel clusters");
+  hOccupancyRatio2to1->Divide(&hOccupancy1Pix);
+  hOccupancyRatio2to1->SetMinimum(0);
+  hOccupancyRatio2to1->SetMaximum(3);
+  hOccupancyRatio2to1->Draw("colz");
+  cOccupancyRatio2to1.SaveAs(TString(OutDir) + "/OccupancyRatio2to1.gif");
+
+  // The 1D distribution for the ratio of 1,2 pixel clusters
+  TCanvas cOccupancyRatio2to11D;
+  cOccupancyRatio2to11D.cd();
+  TH1F* hOccupancyRatio2to11D = PLTU::HistFrom2D(hOccupancyRatio2to1, "OccupancyRatio2to11D", 50, true);
+  hOccupancyRatio2to11D->SetDirectory(&fOutRoot);
+  hOccupancyRatio2to11D->SetTitle("Ration of 2 to 1 Pixel Clusters");
+  hOccupancyRatio2to11D->Draw("hist");
+  cOccupancyRatio2to11D.SaveAs(TString(OutDir) + "/OccupancyRatio2to11D.gif");
+
+
+
+
+
+
+
+
+
+
+
+
+
   // 3x3 Occupancy Efficiency
   TCanvas cOccupancy3x3Efficiency;
   cOccupancy3x3Efficiency.cd();
@@ -609,7 +735,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
   OutFile.close();
 
 
-  WriteHTML(OutDir);
+  WriteHTML_Analysis(OutDir, PlaneNumber, RunNumber, CalibrationNumber);
 
   return 0;
 }
@@ -622,7 +748,7 @@ int TestStandTest (std::string const DataFileName, std::string const GainCalFile
 
 
 
-void WriteHTML (TString const OutDirName)
+void WriteHTML_Analysis (TString const OutDirName, TString const PlaneNumber, TString const RunNumber, TString const CalibrationNumber)
 {
   // This function writes the HTML in the output folder
 
@@ -635,6 +761,10 @@ void WriteHTML (TString const OutDirName)
   f << "<html>\n";
   f << "<body>\n";
 
+  f << "<h1>Analysis - Plane s" << PlaneNumber << " Run " << RunNumber << " using calibration run " << CalibrationNumber << "</h1><br>\n";
+
+  f << "<a href=\"../../calibration/" << CalibrationNumber << "/index.html\">Calibration reference: Run " << CalibrationNumber << "</a><br>\n";
+  f << "<a href=\"output_s" << PlaneNumber << "_run" << RunNumber << ".root\">Analysis Root File</a><br>\n";
 
   f << "<img width=\"300\" src=\"CL_LevelsROC.gif\"><img width=\"300\" src=\"CL_LevelsTBM.gif\"><br>\n";
   f << "<img width=\"300\" src=\"CL_LevelsROCUB.gif\"><img width=\"300\" src=\"CL_LevelsTBMUB.gif\"><br>\n";
@@ -644,6 +774,9 @@ void WriteHTML (TString const OutDirName)
   f << "<hr>\n";
   f << "<img width=\"300\" src=\"Occupancy.gif\"><img width=\"300\" src=\"Occupancy_Zoom.gif\"><img width=\"300\" src=\"Occupancy_wrtMean.gif\"><br>\n";
   f << "<img width=\"300\" src=\"Occupancy1D_All.gif\"><img width=\"300\" src=\"Occupancy1D_Zoom.gif\"><img width=\"300\" src=\"Occupancy1D_wrtMean.gif\"><br>\n";
+  f << "<br /><br />\n";
+  f << "<img width=\"300\" src=\"Occupancy1Pix.gif\"><img width=\"300\" src=\"Occupancy2Pix.gif\"><img width=\"300\" src=\"OccupancyRatio2to1.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"Occupancy1Pix1D.gif\"><img width=\"300\" src=\"Occupancy2Pix1D.gif\"><img width=\"300\" src=\"OccupancyRatio2to11D.gif\"><br>\n";
 
 
 
@@ -671,8 +804,246 @@ void WriteHTML (TString const OutDirName)
   f << "<img width=\"300\" src=\"Charge3x31D.gif\"><img width=\"300\" src=\"HighChargePixels.gif\"><br>\n";
 
 
+  TDatime d;
+  f << "<address>Created on: " << d.AsSQLString() << "</address>\n";
+
+
+  f << "</body>\n";
+  f << "<hhtml>\n";
+
 
   f.close();
+
+  return;
+}
+
+
+
+
+
+void GainCalibrationAnalysisAndFits (TString const PlaneNumber, TString const RunNumber)
+{
+  // This function will produce the calibration coefficients (gain cal)
+  // text file and root file.
+
+  // Get rootfile name and make directory for output files
+  TString const OutDir = TString::Format(kOUTPUTPATH + PlaneNumber + "/calibration/" + RunNumber + "/");
+  std::cout << "Output will be sent to: " << OutDir << std::endl;
+
+  // Output root file
+  TString const OutRootFileName = OutDir + "/calibration_s" + PlaneNumber + "_run" + RunNumber + ".root";
+  gSystem->mkdir(OutDir.Data(), true);
+
+  // Input data file
+  TString const DataFileName = TString::Format("%s/data/vcal-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
+
+  // Some basic graphics style
+  PLTU::SetStyle();
+
+  // Open the root file and output file
+  TFile fOutRoot(OutRootFileName, "recreate");
+  FILE* OutFile = fopen(TString::Format(OutDir + "/calibration_coeficients_s%s_run%s.txt", PlaneNumber.Data(), RunNumber.Data()).Data(), "w");
+
+  //
+
+  // Initalize the Event object and decide what kind of clustering you want
+  PLTTesterEvent Event(DataFileName.Data(), "", OutDir, &fOutRoot);
+  Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_Diamond);
+
+
+
+  // For keeping track of gain cal vcal and PH information
+  // I'm using PLTU::LASTCOL etc just to be safe for the indices
+  // The 'key' for the map is col*100+row
+  //std::map<int, double> GainAvg[PLTU::LASTCOL][PLTU::LASTROW];
+  //std::map<int, int>      GainN[PLTU::LASTCOL][PLTU::LASTROW];
+  int const MAXCOL = 52;
+  int const MAXROW = 80;
+
+  std::map<int, double> GainAvg[MAXCOL][MAXROW];
+  std::map<int, int>      GainN[MAXCOL][MAXROW];
+
+  std::map<int, TGraph> VCalVsADCGraph;
+
+  // This is the main event loop
+  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    if (ientry % 10000 == 0) {
+      std::cout << "Processing entry: " << ientry << " time: " << Event.Time() << std::endl;
+    }
+
+    for (size_t ihit = 0; ihit != Event.NHits(); ++ihit) {
+      PLTHit* Hit = Event.Hit(ihit);
+
+      // Just check that this pixel is within the array limits
+      if (Hit->Column() >= MAXCOL || Hit->Row() >= MAXROW) {
+        printf("Skipping: This pixel is out of bounds: %2i %2i\n", Hit->Column(), Hit->Row());
+        continue;
+      }
+
+      // Add this hit to the running average for this vcal
+      PLTU::AddToRunningAverage(GainAvg[ Hit->Column()][Hit->Row()][Event.VCal()], GainN[Hit->Column()][Hit->Row()][Event.VCal()], (double) Hit->ADC());
+
+      // Add a point for this hit on the graph of all readouts
+      int const id = Hit->Column() * 100 + Hit->Row();
+      int const NPoints = VCalVsADCGraph[id].GetN() + 1;
+      VCalVsADCGraph[id].Set(NPoints);
+      VCalVsADCGraph[id].SetPoint(NPoints - 1, Hit->ADC(), Event.VCal());
+    }
+
+
+  } // END MAIN EVENT LOOP
+
+
+
+
+  // Plot for the Chi2 and Chi2/ndf of fits
+  TH2F hChi2ndf("chi2ndf_2d", "Chi2/ndf", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+  TH2F hChi2("chi2_2d", "Chi2", PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+  hChi2.SetDirectory(&fOutRoot);
+  hChi2ndf.SetDirectory(&fOutRoot);
+
+
+  // Now time to do the fitting!
+  for (int i = 0; i != MAXCOL; ++i) {
+    for (int j = 0; j != MAXROW; ++j) {
+      if (GainAvg[i][j].empty()) {
+        continue;
+      }
+
+      // This graph is a graph of the average of readouts.  Used for the gaincal fit
+      TGraphErrors g((int) GainAvg[i][j].size());
+      g.SetName( TString::Format("ic_%i_ir_%i_adc_vs_vcal_graph", i, j).Data() );
+
+      // We'll record the min and max adc to try to gauge where the fit range should be from and to
+      float ADCMin = 99999;
+      float ADCMax = 0;
+
+      // p is just to count the number of points in this graph
+      int p = 0;
+
+      // Loop over all vcal entries for this pixel
+      for (std::map<int, double>::iterator It = GainAvg[i][j].begin(); It != GainAvg[i][j].end(); ++It) {
+
+        // Set this points in this graph
+        g.SetPoint(p++, It->second, It->first);
+
+        // Record me if I am a min or a max
+        if (It->second > ADCMax) {
+          ADCMax = It->second;
+        }
+        if (It->second < ADCMin) {
+          ADCMin = It->second;
+        }
+      }
+
+      // Here we fit the resulting graph with a 3-parameter function
+      TString const FitName = TString::Format("f1_%i_%i", i, j);
+      TF1 FitFunction(FitName, "[0]+[1]*x+[2]*x*x", 1000, 5000);
+      FitFunction.SetParameter(0, 2.51747e+06);
+      FitFunction.SetParameter(1, -1.80594e+03);
+      FitFunction.SetParameter(2, 3.24677e-01);
+      TFitResultPtr FitResultPtr = g.Fit(FitName, "QS", "", ADCMin, ADCMin + 0.7 * (ADCMax - ADCMin));
+      TFitResult* FitResult = FitResultPtr.Get();
+
+      // Grab the Chi2 values and add them to the 2D plots
+      hChi2ndf.Fill(i, j, FitResult->Chi2() / FitResult->Ndf());
+      hChi2.Fill(i, j, FitResult->Chi2());
+
+      // Make sure to save this graph (with it) to the root file
+      g.Write();
+
+      // Make a plot of the residuals for the points and fit
+      TH1F hResiduals( TString::Format("ic_%i_ir_%i_residual", i, j), TString::Format("ic_%i_ir_%i_residual", i, j), 100, -50, 50);
+      hResiduals.SetDirectory(&fOutRoot);
+      int const NPoints = g.GetN();
+      Double_t x, y;
+      for (int ip = 0; ip != NPoints; ++ip) {
+        g.GetPoint(ip, x, y);
+        hResiduals.Fill( y - FitFunction.Eval(x) );
+      }
+      hResiduals.Write(); // I should not have to do this...
+
+      // Print the parameters from the fit to the calibration coficients file
+      float const P0 = FitFunction.GetParameter(0);
+      float const P1 = FitFunction.GetParameter(1);
+      float const P2 = FitFunction.GetParameter(2);
+      fprintf(OutFile,"%d %d %f %f %f\n", i, j, P0, P1, P2);
+    }
+  }
+
+
+
+  // This makes levels histograms
+  Event.MakePlots();
+
+
+  // Draw Chi2 distributions
+  TCanvas cChi2;
+  cChi2.cd();
+  hChi2.SetXTitle("Column");
+  hChi2.SetYTitle("Row");
+  hChi2.SetMaximum(3000);
+  hChi2.Draw("colz");
+  cChi2.SaveAs(OutDir + "/Chi2.gif");
+
+  // And the 1D distribution
+  TCanvas cChi21D;
+  cChi21D.cd();
+  TH1F* hChi21D = PLTU::HistFrom2D(&hChi2, 0, 3000, "Chi21D", 300, true);
+  hChi21D->SetDirectory(&fOutRoot);
+  hChi21D->SetTitle("Chi2/ndf");
+  hChi21D->SetXTitle("Chi2/ndf");
+  hChi21D->Draw("hist");
+  cChi21D.SaveAs(OutDir + "/Chi21D.gif");
+
+
+  // Draw Chi2 distributions
+  TCanvas cChi2ndf;
+  cChi2ndf.cd();
+  hChi2ndf.SetXTitle("Column");
+  hChi2ndf.SetYTitle("Row");
+  hChi2ndf.SetMaximum(100);
+  hChi2ndf.Draw("colz");
+  cChi2ndf.SaveAs(OutDir + "/Chi2ndf.gif");
+
+  // And the 1D distribution
+  TCanvas cChi2ndf1D;
+  cChi2ndf1D.cd();
+  TH1F* hChi2ndf1D = PLTU::HistFrom2D(&hChi2ndf, 0, 100, "Chi2ndf1D", 100, true);
+  hChi2ndf1D->SetDirectory(&fOutRoot);
+  hChi2ndf1D->SetTitle("Chi2ndf/ndf");
+  hChi2ndf1D->SetXTitle("Chi2ndf/ndf");
+  hChi2ndf1D->Draw("hist");
+  cChi2ndf1D.SaveAs(OutDir + "/Chi2ndf1D.gif");
+
+
+
+  // Save each adc vcal graph and calculate residual plot for each
+  for (std::map<int, TGraph>::iterator It = VCalVsADCGraph.begin(); It != VCalVsADCGraph.end(); ++It) {
+
+    // Get Column and Row
+    int const col = It->first / 100;
+    int const row = It->first % 100;
+
+    // Grab the graph
+    TGraph& Graph = It->second;
+
+    // Name the graph
+    Graph.SetName( TString::Format("ic_%i_ir_%i_adc_vs_vcal", col, row) );
+    Graph.SetTitle( TString::Format("ADC vs VCal: Col %i  Row %i", col, row) );
+
+    Graph.Write();
+
+  }
+
+
+
+  // close the output text file if we're all done
+  fclose(OutFile);
+
+  WriteHTML_Calibration(OutDir, PlaneNumber, RunNumber);
+
+  fOutRoot.Write();
 
   return;
 }
@@ -685,15 +1056,69 @@ void WriteHTML (TString const OutDirName)
 
 
 
+void WriteHTML_Calibration (TString const OutDirName, TString const PlaneNumber, TString const RunNumber)
+{
+  // This function writes the HTML in the output folder
+
+  std::ofstream f(OutDirName + "/index.html");
+  if (!f.is_open()) {
+    std::cerr << "ERROR: cannot open output file for writing: " << OutDirName << "/index.html" << std::endl;
+    throw;
+  }
+
+  f << "<html>\n";
+  f << "<body>\n";
+
+  f << "<h1>Calibration - Plane s" << PlaneNumber << " Run " << RunNumber << "</h1><br>\n";
+
+  f << "<a href=\"calibration_coeficients_s" << PlaneNumber << "_run" << RunNumber << ".txt\">Calibration Coeficients</a><br>\n";
+  f << "<a href=\"calibration_s" << PlaneNumber << "_run" << RunNumber << ".root\">Calibration Root File</a><br>\n";
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"CL_LevelsROC.gif\"><img width=\"300\" src=\"CL_LevelsTBM.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"CL_LevelsROCUB.gif\"><img width=\"300\" src=\"CL_LevelsTBMUB.gif\"><br>\n";
+
+
+
+  f << "<hr>\n";
+  f << "<img width=\"300\" src=\"Chi2.gif\"><img width=\"300\" src=\"Chi2ndf.gif\"><br>\n";
+  f << "<img width=\"300\" src=\"Chi21D.gif\"><img width=\"300\" src=\"Chi2ndf1D.gif\"><br>\n";
+
+  TDatime d;
+  f << "<address>Created on: " << d.AsSQLString() << "</address>\n";
+
+
+  f << "</body>\n";
+  f << "</html>\n";
+
+  return;
+}
+
+
+
+
+
+
+
+
 
 int main (int argc, char* argv[])
 {
-  if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [OutDir]" << std::endl;
+  if (argc == 4 && TString(argv[1]) == "calibration") {
+    printf("I think you want to do a calibration of plane s%s calibration run %s\n", argv[2], argv[3]);
+    GainCalibrationAnalysisAndFits(argv[2], argv[3]);
+  } else if (argc == 5 && TString(argv[1]) == "analysis") {
+    printf("I think you want run the analysis on plane s%s run %s using calibration run %s\n", argv[2], argv[3], argv[4]);
+    TestStandTest(argv[2], argv[3], argv[4]);
+  } else {
+    std::cerr << "Usage: " << argv[0] << " [calibration] [plane #] [run #]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [analysis]    [plane #] [run #] [calibration run #]" << std::endl;
     return 1;
   }
 
-  TestStandTest(argv[1], argv[2], argv[3]);
+  //TestStandTest(argv[1], argv[2], argv[3]);
 
   return 0;
 }

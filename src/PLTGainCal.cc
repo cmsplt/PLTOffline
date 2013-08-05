@@ -535,12 +535,6 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
   int ich;
   int iroc;
 
-  ifstream f(GainCalFileName.c_str());
-  if (!f) {
-    std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
-    throw;
-  }
-
   for (int i = 0; i != NCHNS; ++i) {
     for (int j = 0; j != NROCS; ++j) {
       for (int k = 0; k != PLTU::NCOL; ++k) {
@@ -551,6 +545,21 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
         }
       }
     }
+  }
+
+  // If you supply a blank name you did so on purpose (or should have!!)
+  if (GainCalFileName == "") {
+    std::cout << "ReadTesterGainCalFile sees you have blank input filename.  All gain coefficients are set to zero." << std::endl;
+    fIsGood = true;
+    return;
+  }
+
+
+  // Open the gaincal file.  If I can't read it we are in trouble.. throw something ugly.
+  ifstream f(GainCalFileName.c_str());
+  if (!f) {
+    std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
+    throw;
   }
 
 

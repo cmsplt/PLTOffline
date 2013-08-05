@@ -40,6 +40,11 @@ class PLTTesterEvent : public PLTPlane
       return fTime;
     }
 
+    int VCal ()
+    {
+      return fVCal * fVCalMult;
+    }
+
 
 
   private:

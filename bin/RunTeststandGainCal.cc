@@ -364,7 +364,10 @@ int RunTeststandGainCal (std::string const InFileName)
         }
       }
       TString const FitName = TString::Format("f1_%i_%i", i, j);
-      TF1 FitFunction(FitName, "pol2");
+      TF1 FitFunction(FitName, "[0]+[1]*x+[2]*x*x", 1000, 5000);
+      FitFunction.SetParameter(0, 2.51747e+06);
+      FitFunction.SetParameter(1, -1.80594e+03);
+      FitFunction.SetParameter(2, 3.24677e-01);
       g.Fit(FitName, "Q", "", ADCMin, ADCMin + 0.7 * (ADCMax - ADCMin));
       g.Write();
 
