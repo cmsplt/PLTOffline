@@ -339,11 +339,6 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   //printf("Peak positions after sort\n");
   //printf(" %f %f %f %f %f %f\n", Peaks[0], Peaks[1], Peaks[2], Peaks[3], Peaks[4], Peaks[5]);
 
-  if (NPeaks != 6) {
-    std::cerr << "ERROR: NPeaks != 6.  NPeaks = "<< NPeaks << std::endl;
-    exit(1);
-  }
-
   TMarker pPoint[NPeaks];
   for (int i = 0; i < NPeaks; ++i) {
     pPoint[i].SetX(Peaks[i]);
@@ -390,6 +385,11 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   hCLROCUBLevels.Write();
   cCLROCUBLevels.SaveAs(fOutDir + "/CL_LevelsROCUB.gif");
   cCLROCUBLevels.Write();
+
+  if (NPeaks != 6) {
+    std::cerr << "ERROR: NPeaks != 6.  NPeaks = "<< NPeaks << std::endl;
+    exit(1);
+  }
 
   return 1;
 }

@@ -24,8 +24,10 @@
 
 // THIS IS THE BASE PATH!!!!!
 // Please put a trailing '/'
-TString const kDATAPATH = "/Users/dhidas/TeststandData/";
-TString const kOUTPUTPATH = "/Users/dhidas/TeststandData/output/";
+//TString const kDATAPATH = "/Users/dhidas/TeststandData/";
+//TString const kOUTPUTPATH = "/Users/dhidas/TeststandData/output/";
+TString const kDATAPATH = "/cms/pltdata/data/";
+TString const kOUTPUTPATH = "/cms/pltdata/plt_analysis/output/Test/";
 
 
 
@@ -41,7 +43,7 @@ int TestStandTest (TString const PlaneNumber, TString const RunNumber, TString c
 //    std::string const DataFileName, std::string const GainCalFileName, std::string const OutDir)
 
   // Input data file
-  TString const DataFileName = TString::Format("%s/data/sr90-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
+  TString const DataFileName = TString::Format("%s/sr90-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
 
   // Get rootfile name and make directory for output files
   TString const OutDir = TString::Format(kOUTPUTPATH + PlaneNumber + "/analysis/" + RunNumber + "/");
@@ -835,7 +837,7 @@ void GainCalibrationAnalysisAndFits (TString const PlaneNumber, TString const Ru
   gSystem->mkdir(OutDir.Data(), true);
 
   // Input data file
-  TString const DataFileName = TString::Format("%s/data/vcal-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
+  TString const DataFileName = TString::Format("%s/vcal-s%s-run%s.dat", kDATAPATH.Data(), PlaneNumber.Data(), RunNumber.Data());
 
   // Some basic graphics style
   PLTU::SetStyle();
@@ -991,8 +993,8 @@ void GainCalibrationAnalysisAndFits (TString const PlaneNumber, TString const Ru
   cChi21D.cd();
   TH1F* hChi21D = PLTU::HistFrom2D(&hChi2, 0, 3000, "Chi21D", 300, true);
   hChi21D->SetDirectory(&fOutRoot);
-  hChi21D->SetTitle("Chi2/ndf");
-  hChi21D->SetXTitle("Chi2/ndf");
+  hChi21D->SetTitle("Chi2");
+  hChi21D->SetXTitle("Chi2");
   hChi21D->Draw("hist");
   cChi21D.SaveAs(OutDir + "/Chi21D.gif");
 
@@ -1011,8 +1013,8 @@ void GainCalibrationAnalysisAndFits (TString const PlaneNumber, TString const Ru
   cChi2ndf1D.cd();
   TH1F* hChi2ndf1D = PLTU::HistFrom2D(&hChi2ndf, 0, 100, "Chi2ndf1D", 100, true);
   hChi2ndf1D->SetDirectory(&fOutRoot);
-  hChi2ndf1D->SetTitle("Chi2ndf/ndf");
-  hChi2ndf1D->SetXTitle("Chi2ndf/ndf");
+  hChi2ndf1D->SetTitle("Chi2/ndf");
+  hChi2ndf1D->SetXTitle("Chi2/ndf");
   hChi2ndf1D->Draw("hist");
   cChi2ndf1D.SaveAs(OutDir + "/Chi2ndf1D.gif");
 
@@ -1113,7 +1115,7 @@ int main (int argc, char* argv[])
     printf("I think you want run the analysis on plane s%s run %s using calibration run %s\n", argv[2], argv[3], argv[4]);
     TestStandTest(argv[2], argv[3], argv[4]);
   } else {
-    std::cerr << "Usage: " << argv[0] << " [calibration] [plane #] [run #]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [calibration] [plane #] [calibration run #]" << std::endl;
     std::cerr << "Usage: " << argv[0] << " [analysis]    [plane #] [run #] [calibration run #]" << std::endl;
     return 1;
   }
