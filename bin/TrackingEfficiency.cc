@@ -84,31 +84,6 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
   return h;
 }
 
-int SlopeSelection (int Channel, PLTTrack Track)
-{
-  //The selection window is set by looking at Slope{X,Y}_CH#.gif from MakeTracks.
-  return 1;//Remove this line to turn on the selection for CH 13,14,16,24
-  float slopeX = Track.fTVX/Track.fTVZ, slopeY = Track.fTVY/Track.fTVZ;
-  switch (Channel)
-    {
-    case 13:
-      if(slopeX>-0.013 && slopeX<-0.008 && slopeY>0.010 && slopeY<0.016) return 1;
-      break;
-    case 24:
-      if(slopeX>0.015 && slopeX<0.022 && slopeY>-0.003 && slopeY<0.004) return 1;
-      break;
-    case 14:
-      if(slopeX>-0.012 && slopeX<-0.005 && slopeY>-0.008 && slopeY<-0.005) return 1;
-      break;
-    case 16:
-      if(slopeX>0.002 && slopeX<0.004 && slopeY>-0.022 && slopeY<-0.015) return 1;
-      break;
-    default:
-      return 1;
-    }
-  return 0;
-}
-
 int TrackingEfficiency (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
@@ -223,7 +198,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       // Test of plane 2
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         if (Tracks[1].IsFiducial(Channel, 2, Alignment, FidRegionTrack) && Tracks[1].NHits() == 2) {
-          if(SlopeSelection(Channel,Tracks[1])) ++HC[Channel].NFiducial[2];
+          ++HC[Channel].NFiducial[2];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 2);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 2);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
@@ -244,7 +219,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 	      hEffMapSlopeYN[Channel * 10 + 2]->Fill(Tracks[1].fTVY/Tracks[1].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 2]->Fill(cluster_charge);
 	      hMapPulseHeights[Channel * 10 + 2]->Fill(cluster_charge);
-              if(SlopeSelection(Channel,Tracks[1])) ++HC[Channel].NFiducialAndHit[2];
+              ++HC[Channel].NFiducialAndHit[2];
             } else {
               static int ievent = 0;
               if (ievent < 20) {
@@ -259,7 +234,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       // Test of plane 1
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[2].IsFiducial(Channel, 1, Alignment, FidRegionTrack) && Tracks[2].NHits() == 2) {
-          if(SlopeSelection(Channel,Tracks[2])) ++HC[Channel].NFiducial[1];
+          ++HC[Channel].NFiducial[1];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 1);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 1);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
@@ -278,7 +253,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 	      hEffMapSlopeYN[Channel * 10 + 1]->Fill(Tracks[2].fTVY/Tracks[2].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 1]->Fill(cluster_charge);
 	      hMapPulseHeights[Channel * 10 + 1]->Fill(cluster_charge);
-              if(SlopeSelection(Channel,Tracks[2])) ++HC[Channel].NFiducialAndHit[1];
+              ++HC[Channel].NFiducialAndHit[1];
             } else hMapPulseHeights[Channel * 10 + 1]->Fill(0);
           }
         }
@@ -287,7 +262,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       // Test of plane 0
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[3].IsFiducial(Channel, 0, Alignment, FidRegionTrack) && Tracks[3].NHits() == 2) {
-          if(SlopeSelection(Channel,Tracks[3])) ++HC[Channel].NFiducial[0];
+          ++HC[Channel].NFiducial[0];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 0);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[3].TX( CP->LZ ), Tracks[3].TY( CP->LZ ), Channel, 0);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
@@ -306,7 +281,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 	      hEffMapSlopeYN[Channel * 10 + 0]->Fill(Tracks[3].fTVY/Tracks[3].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 0]->Fill(cluster_charge);
 	      hMapPulseHeights[Channel * 10 + 0]->Fill(cluster_charge);
-              if(SlopeSelection(Channel,Tracks[3])) ++HC[Channel].NFiducialAndHit[0];
+              ++HC[Channel].NFiducialAndHit[0];
             } else hMapPulseHeights[Channel * 10 + 0]->Fill(0);
           }
         }
