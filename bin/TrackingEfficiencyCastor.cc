@@ -19,6 +19,10 @@
 
 TFile *fTracking;
 
+int startEvent, endEvent;
+
+bool doSlopeSelection=kFALSE;
+
 class HitCounter
 {
   public:
@@ -91,7 +95,7 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 int SlopeSelection (int Channel, PLTTrack Track)
 {
   //The selection window is set by looking at Slope{X,Y}_CH#.gif from MakeTracks.
-  return 1;//Remove this line to turn on the selection for CH 13,14,16,24
+  if(!doSlopeSelection) return 1;
   float slopeX = Track.fTVX/Track.fTVZ, slopeY = Track.fTVY/Track.fTVZ;
   switch (Channel)
     {
@@ -124,7 +128,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_m2_m2;//kFiducialRegion_Diamond;
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m2_m2;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
@@ -153,13 +157,14 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   float const PixelDist = 3;
 
   //Create tree and branches
-  int eventNo, eventTime, roc1_trial_ch13, roc1_success_ch13, roc1_trial_ch14, roc1_success_ch14, roc1_trial_ch16, roc1_success_ch16, roc1_trial_ch24, roc1_success_ch24;
+  int eventNo, eventTime, BXNo, roc1_trial_ch13, roc1_success_ch13, roc1_trial_ch14, roc1_success_ch14, roc1_trial_ch16, roc1_success_ch16, roc1_trial_ch24, roc1_success_ch24;
   int roc1_trial_ch2, roc1_success_ch2, roc1_trial_ch3, roc1_success_ch3, roc1_trial_ch7, roc1_success_ch7, roc1_trial_ch8, roc1_success_ch8;
   float slopeX_ch13, slopeX_ch14, slopeX_ch16, slopeX_ch24, slopeY_ch13, slopeY_ch14, slopeY_ch16, slopeY_ch24; 
   float slopeX_ch2, slopeX_ch3, slopeX_ch7, slopeX_ch8, slopeY_ch2, slopeY_ch3, slopeY_ch7, slopeY_ch8; 
   TTree *data = new TTree("data","data");
   data->Branch("EventNo",&eventNo,"eventNo/I");
   data->Branch("EventTime",&eventTime,"eventTime/I");
+  data->Branch("BXNo",&BXNo,"BXNo/I");
   data->Branch("roc1_trial_ch13",&roc1_trial_ch13,"roc1_trial_ch13/I");
   data->Branch("roc1_trial_ch14",&roc1_trial_ch14,"roc1_trial_ch14/I");
   data->Branch("roc1_trial_ch16",&roc1_trial_ch16,"roc1_trial_ch16/I");
@@ -198,14 +203,19 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     if (ientry % 10000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
     }
+    if (startEvent >= 0 && endEvent > 0) {
+      if (ientry < startEvent) continue;
+      if (ientry > endEvent) break;
+    }
 
-    eventNo=eventTime=roc1_trial_ch13=roc1_success_ch13=roc1_trial_ch14=roc1_success_ch14=roc1_trial_ch16=roc1_success_ch16=roc1_trial_ch24=roc1_success_ch24=0;
+    eventNo=eventTime=BXNo=roc1_trial_ch13=roc1_success_ch13=roc1_trial_ch14=roc1_success_ch14=roc1_trial_ch16=roc1_success_ch16=roc1_trial_ch24=roc1_success_ch24=0;
     slopeX_ch13=slopeX_ch14=slopeX_ch16=slopeX_ch24=slopeY_ch13=slopeY_ch14=slopeY_ch16=slopeY_ch24=-99;
     roc1_trial_ch2=roc1_success_ch2=roc1_trial_ch3=roc1_success_ch3=roc1_trial_ch7=roc1_success_ch7=roc1_trial_ch8=roc1_success_ch8=0;
     slopeX_ch2=slopeX_ch3=slopeX_ch7=slopeX_ch8=slopeY_ch2=slopeY_ch3=slopeY_ch7=slopeY_ch8=-99;
 
     eventNo=Event.EventNumber();
     eventTime=Event.Time();
+    BXNo=Event.BX();
    
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -298,7 +308,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 2);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 2);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-          hEffMapD[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
+          if(SlopeSelection(Channel,Tracks[1])) hEffMapD[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
           hEffMapSlopeXD[Channel * 10 + 2]->Fill(Tracks[1].fTVX/Tracks[1].fTVZ);
           hEffMapSlopeYD[Channel * 10 + 2]->Fill(Tracks[1].fTVY/Tracks[1].fTVZ);
 	  float cluster_charge = 0;
@@ -310,7 +320,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
             //printf("ResXY: %15.9f   RPXY: %15.9f\n", ResXY.first, RPXY.first);
             if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
               //hEffMapN[Channel * 10 + 2]->Fill(Plane[2]->Cluster(0)->SeedHit()->Column(), Plane[2]->Cluster(0)->SeedHit()->Row());
-              hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
+              if(SlopeSelection(Channel,Tracks[1])) hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 2]->Fill(Tracks[1].fTVX/Tracks[1].fTVZ);
 	      hEffMapSlopeYN[Channel * 10 + 2]->Fill(Tracks[1].fTVY/Tracks[1].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 2]->Fill(cluster_charge);
@@ -371,7 +381,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 1);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 1);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-          hEffMapD[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
+          if(SlopeSelection(Channel,Tracks[2])) hEffMapD[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
           hEffMapSlopeXD[Channel * 10 + 1]->Fill(Tracks[2].fTVX/Tracks[2].fTVZ);
           hEffMapSlopeYD[Channel * 10 + 1]->Fill(Tracks[2].fTVY/Tracks[2].fTVZ);
 	  float cluster_charge = 0;
@@ -381,7 +391,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
             std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
-              hEffMapN[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
+              if(SlopeSelection(Channel,Tracks[2])) hEffMapN[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 1]->Fill(Tracks[2].fTVX/Tracks[2].fTVZ);
 	      hEffMapSlopeYN[Channel * 10 + 1]->Fill(Tracks[2].fTVY/Tracks[2].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 1]->Fill(cluster_charge);
@@ -412,7 +422,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 0);
           std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[3].TX( CP->LZ ), Tracks[3].TY( CP->LZ ), Channel, 0);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-          hEffMapD[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
+          if(SlopeSelection(Channel,Tracks[3])) hEffMapD[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
           hEffMapSlopeXD[Channel * 10 + 0]->Fill(Tracks[3].fTVX/Tracks[3].fTVZ);
           hEffMapSlopeYD[Channel * 10 + 0]->Fill(Tracks[3].fTVY/Tracks[3].fTVZ);
 	  float cluster_charge = 0;
@@ -422,7 +432,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
             std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
-              hEffMapN[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
+              if(SlopeSelection(Channel,Tracks[3])) hEffMapN[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 0]->Fill(Tracks[3].fTVX/Tracks[3].fTVZ);
 	      hEffMapSlopeYN[Channel * 10 + 0]->Fill(Tracks[3].fTVY/Tracks[3].fTVZ);
 	      hEffMapPulseHeightN[Channel * 10 + 0]->Fill(cluster_charge);
@@ -614,7 +624,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
 int main (int argc, char* argv[])
 {
-  if (argc != 4) {
+  if (argc != 4 && argc != 6) {
     std::cerr << "Usage: " << argv[0] << " [DataFile.dat] [GainCal.dat] [AlignmentFile.dat]" << std::endl;
     return 1;
   }
@@ -622,6 +632,15 @@ int main (int argc, char* argv[])
   std::string const DataFileName = argv[1];
   std::string const GainCalFileName = argv[2];
   std::string const AlignmentFileName = argv[3];
+
+  if (argc == 6){
+    startEvent = atoi(argv[4]);
+    endEvent = atoi(argv[5]);
+  }
+  else {
+    startEvent = -1;
+    endEvent = -1;
+  }
 
   fTracking = new TFile("hit_data.root","RECREATE");
   TrackingEfficiency(DataFileName, GainCalFileName, AlignmentFileName);
