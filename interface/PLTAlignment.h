@@ -90,6 +90,14 @@ class PLTAlignment
       float GRZ, GRY, GX, GY, GZ;
     };
 
+    void AddToLR (int const, int const, float);
+    void AddToLX (int const, int const, float);
+    void AddToLY (int const, int const, float);
+    void AddToLZ (int const, int const, float);
+    void AddToGX (int const, float);
+    void AddToGY (int const, float);
+    void AddToGZ (int const, float);
+
 
 
   private:

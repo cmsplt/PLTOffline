@@ -48,7 +48,7 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 
 
 
-  static int const NTracks = 2;//gRandom->Integer(10);
+  static int const NTracks = 1;//gRandom->Integer(10);
 
   for (int itrack = 0; itrack < NTracks; ++itrack) {
     int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
@@ -57,6 +57,93 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
 
     float const lx = 0.45 * (gRandom->Rndm() - 0.5);
     float const ly = 0.45 * (gRandom->Rndm() - 0.5);
+    //printf(" lx ly: %15E  %15E\n", lx, ly);
+
+    static std::vector<float> TXYZ;
+    Alignment.LtoTXYZ(TXYZ, lx, ly, Channel, ROC);
+    //printf(" TXYZ: %15E  %15E  %15E\n", TXYZ[0], TXYZ[1], TXYZ[2]);
+
+    static std::vector<float> GXYZ;
+    Alignment.TtoGXYZ(GXYZ, TXYZ[0], TXYZ[1], TXYZ[2], Channel, ROC);
+    //printf(" GXYZ: %15E  %15E  %15E\n", GXYZ[0], GXYZ[1], GXYZ[2]);
+
+    float const SlopeX = GXYZ[0] / GXYZ[2];
+    float const SlopeY = GXYZ[1] / GXYZ[2];
+    //if (Channel == 3)
+    //printf(" Slope X Y: %15E  %15E\n", SlopeX, SlopeY);
+
+    for (size_t iroc = 0; iroc != 3; ++iroc) {
+      std::vector<float> VP;
+      Alignment.LtoGXYZ(VP, 0, 0, Channel, iroc);
+      //printf("  VP XYZ: %15E  %15E  %15E\n", VP[0], VP[1], VP[2]);
+
+      float const GZ = VP[2];
+      float const GX = SlopeX * GZ;
+      float const GY = SlopeY * GZ;
+      //printf("ROC %1i  GXYZ: %15E  %15E  %15E\n", iroc, GX, GY, GZ);
+
+
+      std::vector<float> T;
+      Alignment.GtoTXYZ(T, GX, GY, GZ, Channel, iroc);
+      //if (Channel == 3) printf("HI %15E\n", GX - T[0]);
+      //if (Channel == 3)
+      //printf("ROC %1i TX TY TZ  %15E %15E %15E\n", iroc, T[0], T[1], T[2]);
+
+      std::pair<float, float> LXY = Alignment.TtoLXY(T[0], T[1], Channel, iroc);
+      std::pair<int, int>     PXY = Alignment.PXYfromLXY(LXY);
+
+      // Add some jitter
+      PXY.first  += (int) gRandom->Gaus(0, 1.2);
+      PXY.second += (int) gRandom->Gaus(0, 1.2);
+      int const PX = PXY.first;
+      int const PY = PXY.second;
+
+      // Just some random adc value
+      int const adc = gRandom->Poisson(150);
+
+      // Add it as a hit if it's in the range of the diamond
+      //printf("ROC %1i LX PX LY PY   %15E %2i  %15E %2i\n", iroc, LXY.first, PX, LXY.second, PY);
+      if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+        Hits.push_back( new PLTHit(Channel, iroc, PX, PY, adc) );
+      } else {
+        //printf("LX PX LY PY   %2i %6.2f %2i   %2i %6.2f %2i\n", LXY.first, PX, rXY.second, PY);
+      }
+    }
+
+
+
+
+  }
+
+
+  return;
+}
+
+
+
+void GetTracksCollisions2 (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // Grab list of telescopes
+  static std::vector<int> Channels = Alignment.GetListOfChannels();
+
+
+
+  static int const NTracks = 1;//gRandom->Integer(10);
+
+  for (int itrack = 0; itrack < NTracks; ++itrack) {
+    int const Channel = Channels[ gRandom->Integer(Channels.size()) ];
+    int const ROC     = gRandom->Integer(3);
+    //printf("Channel: %2i  ROC: %i\n", Channel, ROC);
+
+    // pick a starting point on the first ROC
+    int const StartCol = gRandom->Integer(PLTU::NCOL) + PLTU::FIRSTCOL;
+    int const StartRow = gRandom->Integer(PLTU::NROW) + PLTU::FIRSTROW;
+
+    //printf(" StartCol: %4i  StartRow: %4i\n", StartCol, StartRow);
+
+    float const lx = Alignment.PXtoLX(StartCol);
+    float const ly = Alignment.PYtoLY(StartRow);
+
     //printf(" lx ly: %15E  %15E\n", lx, ly);
 
     static std::vector<float> TXYZ;
@@ -609,20 +696,21 @@ int PLTMC ()
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
+  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
   //Alignment.ReadAlignmentFile("straight");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC_distorted.dat");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 100000;
+  int const NEvents = 10000000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (9) {
+    switch (11) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
@@ -656,6 +744,9 @@ int PLTMC ()
       case 10:
         GetPureNoise(Hits, Alignment);
         break;
+      case 11:
+	GetTracksCollisions2(Hits, Alignment);
+	break;
     }
 
 

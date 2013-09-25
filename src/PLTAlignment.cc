@@ -536,4 +536,59 @@ std::vector<int> PLTAlignment::GetListOfChannels ()
   return Channels;
 }
 
+void PLTAlignment::AddToLR (int const ch, int const roc, float val)
+{
+  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LR;
+  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LR = oldval+val;
+}
+
+
+void PLTAlignment::AddToLX (int const ch, int const roc, float val)
+{
+  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LX;
+  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LX = oldval+val;
+}
+
+
+void PLTAlignment::AddToLY (int const ch, int const roc, float val)
+{
+  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY;
+  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY = oldval+val;
+}
+
+
+void PLTAlignment::AddToLZ (int const ch, int const roc, float val)
+{
+  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ;
+  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ = oldval+val;
+}
+
+void PLTAlignment::AddToGX (int const ch, float val)
+{
+  float oldval = fTelescopeMap[ch].GX;
+  fTelescopeMap[ch].GX  = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GX = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GX = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GX = oldval+val;
+}
+
+
+void PLTAlignment::AddToGY (int const ch, float val)
+{
+  float oldval = fTelescopeMap[ch].GY;
+  fTelescopeMap[ch].GY  = val;
+  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GY = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GY = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GY = oldval+val;
+}
+
+
+void PLTAlignment::AddToGZ (int const ch, float val)
+{
+  float oldval = fTelescopeMap[ch].GZ;
+  fTelescopeMap[ch].GZ  = val;
+  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GZ = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GZ = oldval+val;
+  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
+}
 

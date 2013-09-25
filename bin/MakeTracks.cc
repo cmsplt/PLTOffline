@@ -12,7 +12,7 @@
 
 #include "PLTEvent.h"
 #include "PLTU.h"
-
+#include "TFile.h"
 
 
 
@@ -58,6 +58,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   std::map<int, TH1F*> MapSlopeY;
   std::map<int, TH1F*> MapSlopeX;
+  std::map<int, TH2F*> MapSlope2D;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -80,6 +81,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
         MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
         MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
+        Name = TString::Format("Slope2D_Ch%i", Telescope->Channel());
+        MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
+        MapSlope2D[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
+        MapSlope2D[Telescope->Channel()]->SetYTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
       }
 
 
@@ -99,6 +104,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
         MapSlopeY[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
         MapSlopeX[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ);
+        MapSlope2D[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ, Track->fTVY/Track->fTVZ);
 
       }
     }
@@ -130,7 +136,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
   Can.SaveAs("plots/BeamSpot.gif");
 
+  TFile *f = new TFile("histo_slopes.root","RECREATE");
+
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
+    it->second->Write();
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
@@ -139,12 +148,24 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   }
 
   for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
+    it->second->Write();
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
     Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
+
+  for (std::map<int, TH2F*>::iterator it = MapSlope2D.begin(); it != MapSlope2D.end(); ++it) {
+    it->second->Write();
+    //TCanvas Can;
+    //Can.cd();
+    //it->second->Draw("hist");
+    //Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    //delete it->second;
+  }
+
+  f->Close();
 
   return 0;
 }

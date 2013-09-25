@@ -17,8 +17,10 @@ int PrintEventNumbers (std::string const FileName)
   // Setup PLTEvent object
   PLTEvent Event(FileName);
 
+  int iPrint = 0;
   while (Event.GetNextEvent() >= 0) {
-    std::cout << Event.EventNumber() << std::endl;
+    if(iPrint++ % 1000000 == 0)
+    std::cout << Event.EventNumber() << ' ' << Event.Time() << std::endl;
   }
 
 

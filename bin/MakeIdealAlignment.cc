@@ -51,7 +51,7 @@ int MakeStraightAlignment (std::string const FileName)
     fprintf(f, "    %15E", Theta);
     fprintf(f, "    %15E", X);
     fprintf(f, "    %15E", Y);
-    fprintf(f, "    %15E", 174.); //1450. for castor set-up
+    fprintf(f, "    %15E", 171.41); //1450. for castor set-up
     fprintf(f, "\n");
     for (int iroc = 0; iroc != 3; ++iroc) {
       fprintf(f, "%2i  %2i ", ich, iroc);

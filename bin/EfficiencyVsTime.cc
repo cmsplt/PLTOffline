@@ -11,11 +11,15 @@
 #include "TTree.h"
 #include "TGraphErrors.h"
 #include "TMath.h"
+#include "TGaxis.h"
+#include "TStyle.h"
 using namespace std;
 
 bool reject;
 double x_min, x_max, y_min, y_max;
 int fit_dim;
+float subset1 = -1; //min
+float subset2 = -1; //min
 
 double fgaus(double*, double*);
 double fgaus2D(double*, double*);
@@ -91,16 +95,22 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   sprintf(branch_name,"slopeY_ch%i",channel);
   data->SetBranchAddress(branch_name,&slopeY);
 
-  for(int i=0; i<data->GetEntries(); ++i){
-    data->GetEntry(i);
-    if(i==0){
-      lowedge=eventTime;
-      highedge=eventTime;
-    }
-    if(eventTime<lowedge) lowedge = eventTime;
-    if(eventTime>highedge) highedge = eventTime;
+  if(subset1>0 && subset2>0){
+    lowedge = subset1*60.*1000.; highedge = subset2*60.*1000.;
   }
-  cout<<"The time duration is "<<highedge-lowedge<<endl;
+  else{
+    for(int i=0; i<data->GetEntries(); ++i){
+      data->GetEntry(i);
+      //if(eventTime > 41367800 + 60000000) continue;//!!!
+      if(i==0){
+	lowedge=eventTime;
+	highedge=eventTime;
+      }
+      if(eventTime<lowedge) lowedge = eventTime;
+      if(eventTime>highedge) highedge = eventTime;
+    }
+  }
+  cout<<"The time duration is from "<<lowedge<<" to "<<highedge<<", spanning "<<highedge-lowedge<<endl;
 
   TH1F *hTrial = new TH1F("hTrial","Trials",nbins,lowedge,highedge);
   TH1F *hSuccess = new TH1F("hSuccess","Successes",nbins,lowedge,highedge);
@@ -128,12 +138,18 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   cout<<"The signal region is ["<<x_min<<", "<<x_max<<"] x ["<<y_min<<", "<<y_max<<"]\n";
 
   float x1_fit=0.1, x2_fit=-0.1, y1_fit=0.1, y2_fit=-0.1;
+  int NeventsInSignalRegion = 0, NeventsTotal = 0;
   for(int i=0; i<data->GetEntries(); ++i){
     data->GetEntry(i);
+    //if(eventTime > 41367800 + 60000000) continue;//!!!
+    if(subset1>0 && subset2>0)
+      if(eventTime/1000./60. < subset1 || eventTime/1000./60. > subset2) continue;
     if(slopeX > x_min && slopeX < x_max && slopeY > y_min && slopeY < y_max){
       hTrial->Fill(eventTime,roc1_trial);
       hSuccess->Fill(eventTime,roc1_success);
+      NeventsInSignalRegion += roc1_trial;
     }
+    NeventsTotal += roc1_trial;
     int binNo = hTrial->FindBin(eventTime)-1;
     if(binNo>=0 && binNo<25 && roc1_trial > 0){
       if(slopeY > y_min && slopeY < y_max){
@@ -164,6 +180,8 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   y1_fit = hSlopeX[0]->GetBinLowEdge(hSlopeX[0]->FindBin(y1_fit+bw_offset));
   y2_fit = hSlopeX[0]->GetBinLowEdge(hSlopeX[0]->FindBin(y2_fit-bw_offset)+1);
   cout<<"The fit region is ["<<x1_fit<<", "<<x2_fit<<"] x ["<<y1_fit<<", "<<y2_fit<<"]\n";
+  cout<<"The signal region keeps "<<NeventsInSignalRegion<<" out of "<<NeventsTotal
+      <<", or "<<(float)NeventsInSignalRegion/NeventsTotal<<endl;
 
   float fit1=x1_fit, fit2=x2_fit;
   //if(fit_dim==1) {fit1=x1_fit; fit2=x2_fit;}
@@ -338,22 +356,34 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   cout<<"The signal efficiency is "<<eff_sigTotal<<" +/- "<<delta_eff_sigTotal<<endl;
 
 
-  TCanvas *c1 = new TCanvas("c1","Efficiencies vs. Time", 400,400);
+  TCanvas *c1 = new TCanvas("c1","Efficiencies vs. Time", 800,800);
 
+  float max_eff = 0.0; float min_eff=1.0;
   TGraphErrors *gEff = new TGraphErrors(nbins);
   for(int i=0; i<nbins; ++i){
-    float bin_center = hTrial->GetBinCenter(i+1);
-    float bin_error = hTrial->GetBinWidth(i+1)/2.0;
+    float bin_center = hTrial->GetBinCenter(i+1)/1000./60.;
+    float bin_error = hTrial->GetBinWidth(i+1)/2.0/1000./60.;
     if(Ntrial[i]>0) {
       gEff->SetPoint(i,bin_center,eff_sig[i]);
       gEff->SetPointError(i,bin_error,delta_eff_sig[i]);
+      if(eff_sig[i]>max_eff) max_eff = eff_sig[i];
+      if(eff_sig[i]<min_eff) min_eff = eff_sig[i];
     }
     else{
       gEff->SetPoint(i,bin_center,0.0);
       gEff->SetPointError(i,bin_error,0.25);
+      min_eff = 0;
     }
     //cout<<i<<' '<<bin_center<<' '<<bin_error<<' '<<eff_sig[i]<<endl;
   }
+
+  float min_gEff = 0; float max_gEff = 1.0;
+  min_gEff = min_eff - (max_eff-min_eff)/2.0;
+  max_gEff = max_eff + (max_eff-min_eff)/2.0;
+  if(min_gEff < 0) min_gEff = 0;
+  if(max_gEff > 1.0) max_gEff = 1.0;
+  gEff->SetMinimum(min_gEff);
+  gEff->SetMaximum(max_gEff);
 
   gEff->SetLineColor(2);
   gEff->SetLineWidth(3);
@@ -365,28 +395,36 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   else if(fit_dim==3) sprintf(title,"Signal Efficiency for Channel %i (Slope2D Fit)",channel);
   gEff->SetTitle(title);
   gEff->GetYaxis()->SetTitle("Signal Efficiency");
-  gEff->GetYaxis()->SetTitleOffset(1.3);
-  gEff->GetXaxis()->SetTitle("Time (ms)");
+  gEff->GetYaxis()->SetTitleOffset(1.45);
+  gEff->GetXaxis()->SetTitle("Time (min)");
+  //gEff->GetXaxis()->SetLabelSize(0.05);
+  //gEff->GetXaxis()->SetLabelFont(132);
+  //gEff->GetXaxis()->SetTitleSize(0.05);
+  //gEff->GetYaxis()->SetLabelSize(0.05);
+  //gEff->GetYaxis()->SetLabelFont(132);
+  //gEff->GetYaxis()->SetTitleSize(0.05);
+  //gStyle->SetTitleFont(132);
+  //gStyle->SetTitleSize(0.05);
   gEff->Draw("AP");
-  gEff->SetMinimum(0.0);
-  gEff->SetMaximum(1.0);
+  //gEff->SetMinimum(0.0);
+  //gEff->SetMaximum(1.0);
 
-  if(fit_dim==1) sprintf(title,"plots/EfficiencyVsTime_SlopeX_Ch%i.eps",channel);
-  else if(fit_dim==2) sprintf(title,"plots/EfficiencyVsTime_SlopeY_Ch%i.eps",channel);
-  else if(fit_dim==3) sprintf(title,"plots/EfficiencyVsTime_Slope2D_Ch%i.eps",channel);
+  if(fit_dim==1) sprintf(title,"plots/EfficiencyVsTime_SlopeX_Ch%i.png",channel);
+  else if(fit_dim==2) sprintf(title,"plots/EfficiencyVsTime_SlopeY_Ch%i.png",channel);
+  else if(fit_dim==3) sprintf(title,"plots/EfficiencyVsTime_Slope2D_Ch%i.png",channel);
   c1->SaveAs(title);
 
-  TCanvas *c2 = new TCanvas("c2","Cross Checks",400,800);
-  if(doBgdSubtraction){c2->SetWindowSize(800,800); c2->Divide(2,2); }
-  else {c2->SetWindowSize(400,800); c2->Divide(1,2);}
+  TCanvas *c2 = new TCanvas("c2","Cross Checks",800,800);
+  if(!doBgdSubtraction){c2->SetWindowSize(400,800); c2->Divide(1,2); }
+  else {c2->SetWindowSize(800,800); c2->Divide(2,2);}
 
   TGraphErrors *gNsuc = new TGraphErrors(nbins);
   TGraphErrors *gNbgd = new TGraphErrors(nbins);
   TGraphErrors *gNtri = new TGraphErrors(nbins);
   TGraphErrors *gBgdE = new TGraphErrors(nbins);
   for(int i=0; i<nbins; ++i){
-    float bin_center = hTrial->GetBinCenter(i+1);
-    float bin_error = hTrial->GetBinWidth(i+1)/2.0;
+    float bin_center = hTrial->GetBinCenter(i+1)/1000.;
+    float bin_error = hTrial->GetBinWidth(i+1)/2.0/1000.;
     gNsuc->SetPoint(i,bin_center,Nsuccess[i]);
     gNbgd->SetPoint(i,bin_center,Nbgd[i]);
     gNtri->SetPoint(i,bin_center,Ntrial[i]);
@@ -394,6 +432,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
     gBgdE->SetPointError(i,bin_error,delta_bgdEff[i]);
     //gEff->SetPointError(i,bin_error,delta_eff_sig[i]);
     //cout<<i<<' '<<bin_center<<' '<<bin_error<<' '<<eff_sig[i]<<endl;
+    //cout<<i<<' '<<Ntrial[i]<<endl;
   }
 
   c2->cd(1);
@@ -407,7 +446,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   gNsuc->SetTitle(title);
   gNsuc->GetYaxis()->SetTitle("N_{success}");
   gNsuc->GetYaxis()->SetTitleOffset(1.5);
-  gNsuc->GetXaxis()->SetTitle("Time (ms)");
+  gNsuc->GetXaxis()->SetTitle("Time (s)");
   gNsuc->Draw("AP");
 
   c2->cd(2);
@@ -422,7 +461,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
     gNbgd->SetTitle(title);
     gNbgd->GetYaxis()->SetTitle("N_{bgd}");
     gNbgd->GetYaxis()->SetTitleOffset(1.3);
-    gNbgd->GetXaxis()->SetTitle("Time (ms)");
+    gNbgd->GetXaxis()->SetTitle("Time (s)");
     gNbgd->Draw("AP");
     c2->cd(3);
   }
@@ -437,7 +476,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   gNtri->SetTitle(title);
   gNtri->GetYaxis()->SetTitle("N_{trial}");
   gNtri->GetYaxis()->SetTitleOffset(1.5);
-  gNtri->GetXaxis()->SetTitle("Time (ms)");
+  gNtri->GetXaxis()->SetTitle("Time (s)");
   gNtri->Draw("AP");
 
   if(doBgdSubtraction){
@@ -452,15 +491,15 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
     gBgdE->SetTitle(title);
     gBgdE->GetYaxis()->SetTitle("Background Efficiency");
     gBgdE->GetYaxis()->SetTitleOffset(1.3);
-    gBgdE->GetXaxis()->SetTitle("Time (ms)");
+    gBgdE->GetXaxis()->SetTitle("Time (s)");
     gBgdE->Draw("AP");
     gBgdE->SetMinimum(0.0);
     gBgdE->SetMaximum(1.0);
   }
 
-  if(fit_dim==1) sprintf(title,"plots/EfficiencyCrossChecks_SlopeX_Ch%i.eps",channel);
-  else if(fit_dim==2) sprintf(title,"plots/EfficiencyCrossChecks_SlopeY_Ch%i.eps",channel);
-  else if(fit_dim==3) sprintf(title,"plots/EfficiencyCrossChecks_Slope2D_Ch%i.eps",channel);
+  if(fit_dim==1) sprintf(title,"plots/EfficiencyCrossChecks_SlopeX_Ch%i.png",channel);
+  else if(fit_dim==2) sprintf(title,"plots/EfficiencyCrossChecks_SlopeY_Ch%i.png",channel);
+  else if(fit_dim==3) sprintf(title,"plots/EfficiencyCrossChecks_Slope2D_Ch%i.png",channel);
   c2->SaveAs(title);
 
   TCanvas *c3 = new TCanvas("c3","Slope Distributions",400,800);
@@ -470,7 +509,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   TH1F *hTotalSlopeX = new TH1F("hTotalSlopeX",title,100,-0.1,0.1);
   hTotalSlopeX->SetStats(0);
   sprintf(title,"Slope Y for Ch %i",channel);
-  TH1F *hTotalSlopeY = new TH1F("hTotalSlopeY",title,100,-0.1,0.1);
+  TH1F *hTotalSlopeY = new TH1F("hTotalSlopeY",title,50,-0.1,0.1);
   hTotalSlopeY->SetStats(0);
   char drawString[80];
   sprintf(drawString,"slopeX_ch%i>>hTotalSlopeX",channel);
@@ -480,7 +519,7 @@ void EfficiencyVsTime(int channel, int fit_dim_, int doBgdSubtraction=1) {
   sprintf(drawString,"slopeY_ch%i>>hTotalSlopeY",channel);
   data->Draw(drawString);
   hTotalSlopeY->Draw();
-  sprintf(title,"plots/SlopeDistributions_Ch%i.eps",channel);
+  sprintf(title,"plots/SlopeDistributions_Ch%i.png",channel);
   c3->SaveAs(title);
 
   f->Close();
