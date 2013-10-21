@@ -355,15 +355,22 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
       Track_3hit->AddCluster(Plane[2]->Cluster(0));
       Track_3hit->MakeTrack(Alignment);
 
-      std::vector<float> bsT;
-      Alignment.GtoTXYZ(bsT,bsGX,bsGY,bsGZ,Plane[0]->Channel(),Plane[0]->ROC());
+      //std::vector<float> bsT;
+      //Alignment.GtoTXYZ(bsT,bsGX,bsGY,bsGZ,Plane[0]->Channel(),Plane[0]->ROC());
+      //
+      //float deltaX = Track_3hit->fTOX+Track_3hit->fTVX/Track_3hit->fTVZ*(bsT[2]-Track_3hit->fTOZ)-bsT[0];
+      //float deltaY = Track_3hit->fTOY+Track_3hit->fTVY/Track_3hit->fTVZ*(bsT[2]-Track_3hit->fTOZ)-bsT[1];
+      //
+      //hMapGloX[Channel]->Fill(deltaX);
+      //hMapGloY[Channel]->Fill(deltaY);
+      //hMapGloRot[Channel]->Fill(deltaX,Track_3hit->fTOY);
 
-      float deltaX = Track_3hit->fTOX+Track_3hit->fTVX/Track_3hit->fTVZ*(bsT[2]-Track_3hit->fTOZ)-bsT[0];
-      float deltaY = Track_3hit->fTOY+Track_3hit->fTVY/Track_3hit->fTVZ*(bsT[2]-Track_3hit->fTOZ)-bsT[1];
+      float deltaX = bsGX+Track_3hit->fGVX/Track_3hit->fGVZ*(Track_3hit->fGOZ-bsGZ)-Track_3hit->fGOX;
+      float deltaY = bsGY+Track_3hit->fGVY/Track_3hit->fGVZ*(Track_3hit->fGOZ-bsGZ)-Track_3hit->fGOY;
 
       hMapGloX[Channel]->Fill(deltaX);
       hMapGloY[Channel]->Fill(deltaY);
-      hMapGloRot[Channel]->Fill(deltaX,Track_3hit->fTOY);
+      hMapGloRot[Channel]->Fill(deltaX,Track_3hit->fGOY);
     }
   }
 
