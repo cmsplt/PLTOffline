@@ -13,6 +13,7 @@
 #include "TString.h"
 #include "TFile.h"
 #include "TTree.h"
+#include <stdint.h>
 
 
 int ScalarTree (TString const InFileName, TString const OutFileName)
