@@ -95,11 +95,11 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 
     // First event time
-    static uint32_t const StartTime = Event.Time();
-    uint32_t const ThisTime = Event.Time();
-    //static uint32_t const StartTime = 0;
-    //uint32_t static ThisTime = 0;
-    //++ThisTime;
+    //static uint32_t const StartTime = Event.Time();
+    //uint32_t const ThisTime = Event.Time();
+    static uint32_t const StartTime = 0;
+    uint32_t static ThisTime = 0;
+    ++ThisTime;
 
     //if (ientry == 300000) break;
 
@@ -247,7 +247,6 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
           // Fill cluster size
           hClusterSizeMap[id]->Fill(NHits);
 
-          std::cout << ThisClusterCharge << std::endl;
           hMap[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
             hMap[id][1]->Fill( ThisClusterCharge );
