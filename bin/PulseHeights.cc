@@ -53,7 +53,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, true);
   Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m2_m2);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
@@ -67,8 +67,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   std::map<int, TH2F* >              hMap2D;
   std::map<int, TCanvas*>            cMap2D;
 
-  double Avg2D[250][PLTU::NCOL][PLTU::NROW];
-  int      N2D[250][PLTU::NCOL][PLTU::NROW];
+  //double Avg2D[250][PLTU::NCOL][PLTU::NROW];
+  std::map<int, std::vector< std::vector<double> > > Avg2D;
+  std::map<int, std::vector< std::vector<int> > > N2D;
+  //int      N2D[250][PLTU::NCOL][PLTU::NROW];
 
   // Bins and max for pulse height plots
   int   const NBins =     60;
@@ -162,6 +164,15 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         // ID the plane and roc by 3 digit number
         int const id = 10 * Channel + ROC;
 
+        if (!Avg2D.count(id)) {
+          Avg2D[id].resize(PLTU::NCOL);
+          N2D[id].resize(PLTU::NCOL);
+          for (size_t icol = 0; icol != PLTU::NCOL; ++icol) {
+            Avg2D[id][icol].resize(PLTU::NROW);
+            N2D[id][icol].resize(PLTU::NROW);
+          }
+        }
+
         if (!hMap.count(id)) {
           hMap[id].push_back( new TH1F( TString::Format("Pulse Height for Ch %02i ROC %1i Pixels All", Channel, ROC),
                 TString::Format("PulseHeight_Ch%02i_ROC%1i_All", Channel, ROC), NBins, XMin, XMax) );
@@ -236,6 +247,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
           // Fill cluster size
           hClusterSizeMap[id]->Fill(NHits);
 
+          std::cout << ThisClusterCharge << std::endl;
           hMap[id][0]->Fill( ThisClusterCharge );
           if (NHits == 1) {
             hMap[id][1]->Fill( ThisClusterCharge );
