@@ -81,7 +81,7 @@ int OccupancyPlots (std::string const DataFileName)
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName);
+  PLTEvent Event(DataFileName, true);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_All;
   //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
@@ -171,7 +171,7 @@ int OccupancyPlots (std::string const DataFileName)
 
             for (int icl = 0; icl != 3; ++icl) {
               sprintf(BUFF, "Occupancy Cluster npix=%i Ch%02i ROC%1i", icl + 1, Plane->Channel(), Plane->ROC());
-              hOccupancyClMap[id][icl] = new TH2F(BUFF, BUFF, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL+1, PLTU::NROW,PLTU::FIRSTROW, PLTU::LASTROW+1);
+              hOccupancyClMap[id].push_back( new TH2F(BUFF, BUFF, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL+1, PLTU::NROW,PLTU::FIRSTROW, PLTU::LASTROW+1) );
               hOccupancyClMap[id][icl]->SetXTitle("Column");
               hOccupancyClMap[id][icl]->SetYTitle("Row");
               hOccupancyClMap[id][icl]->SetZTitle("Number of Hits");
