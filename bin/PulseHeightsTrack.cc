@@ -83,7 +83,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName, true);
 
   PLTPlane::FiducialRegion FidRegionHits    = PLTPlane::kFiducialRegion_Diamond;
   PLTPlane::FiducialRegion FidRegionCluster = PLTPlane::kFiducialRegion_Diamond;
@@ -108,8 +108,10 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   std::map<int, TH1F*>               h2PixRatioMap;
   std::map<int, TCanvas*>            c2PixRatioMap;
 
-  double Avg2D[250][PLTU::NCOL][PLTU::NROW];
-  int      N2D[250][PLTU::NCOL][PLTU::NROW];
+  //double Avg2D[250][PLTU::NCOL][PLTU::NROW];
+  //int      N2D[250][PLTU::NCOL][PLTU::NROW];
+  std::map<int, std::vector< std::vector<double> > > Avg2D;
+  std::map<int, std::vector< std::vector<int> > > N2D;
   
 
   // Bins and max for pulse height plots
@@ -120,7 +122,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int NEventsInTime = 0;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 30;
+  int const TimeWidth = 10000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, float> NHitsSum;
   std::map<int, float> NTracksSum;
@@ -146,11 +148,11 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
 
     // First event time
-    static uint32_t const StartTime = Event.Time();
-    uint32_t const ThisTime = Event.Time();
-    //static uint32_t const StartTime = 0;
-    //uint32_t static ThisTime = 0;
-    //++ThisTime;
+    //static uint32_t const StartTime = Event.Time();
+    //uint32_t const ThisTime = Event.Time();
+    static uint32_t const StartTime = 0;
+    uint32_t static ThisTime = 0;
+    ++ThisTime;
 
 
 
@@ -330,6 +332,15 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
 
           // ID the plane and roc by 3 digit number
           int const id = 10 * Channel + ROC;
+
+          if (!Avg2D.count(id)) {
+            Avg2D[id].resize(PLTU::NCOL);
+            N2D[id].resize(PLTU::NCOL);
+            for (size_t icol = 0; icol != PLTU::NCOL; ++icol) {
+              Avg2D[id][icol].resize(PLTU::NROW);
+              N2D[id][icol].resize(PLTU::NROW);
+            }
+          }
 
           if (!hMap.count(id)) {
             hMap[id].push_back( new TH1F(
