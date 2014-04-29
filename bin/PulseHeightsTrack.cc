@@ -122,7 +122,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int NEventsInTime = 0;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 10000;
+  int const TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, float> NHitsSum;
   std::map<int, float> NTracksSum;

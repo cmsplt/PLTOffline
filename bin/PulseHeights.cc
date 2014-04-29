@@ -80,7 +80,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   // Time width in events for energy time dep plots
   // This is the time width in ms
   //int const TimeWidth = 1000 * (60 * 1);
-  int const TimeWidth = 1000 * 10;
+  int const TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
 
