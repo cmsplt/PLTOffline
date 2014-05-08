@@ -339,7 +339,11 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   //printf("Peak positions after sort\n");
   //printf(" %f %f %f %f %f %f\n", Peaks[0], Peaks[1], Peaks[2], Peaks[3], Peaks[4], Peaks[5]);
 
-  TMarker pPoint[NPeaks];
+  // Workaround for:
+  //  TMarker pPoint[NPeaks];
+  std::vector< TMarker > pPoint(NPeaks);
+
+
   for (int i = 0; i < NPeaks; ++i) {
     pPoint[i].SetX(Peaks[i]);
     pPoint[i].SetY(hCLROCLevels.GetBinContent(hCLROCLevels.FindBin(Peaks[i])));
@@ -348,7 +352,10 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
 
   float const hHistMaxY = hCLROCLevels.GetMaximum();
 
-  TLine lLine[NPeaks];
+  // Workaround for
+  //  TLine lLine[NPeaks];
+  std::vector< TLine > lLine(NPeaks);
+
   for (int i = 0; i < NPeaks - 1; ++i) {
     float xp = Peaks[i];
     float yp = Peaks[i + 1];
@@ -443,6 +450,3 @@ std::pair<int, int> PLTTesterReader::fill_pixel_info(int* evt , int ctr)
 
   return std::make_pair<int, int>(finalcol, finalrow);
 }
-
-
-

@@ -721,8 +721,8 @@ int PLTMC ()
     throw;
   }
 
-  uint32_t unsigned n;
-  uint32_t unsigned n2;
+  uint32_t  n;
+  uint32_t  n2;
 
   PLTAlignment Alignment;
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
