@@ -108,7 +108,7 @@ int PSIBinaryFileReader::nextBinaryHeader()
   while (1)
   {
     word = readBinaryWordFromFile();
-    
+
     if (fEOF) break;
 
     if (word == 0x8000)
@@ -371,7 +371,9 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
     float* Peaks = Spectrum.GetPositionX();
     std::sort(Peaks, Peaks + NPeaks);
 
-    TMarker pPoint[NPeaks];
+    // Workaround for:
+    //  TMarker pPoint[NPeaks];
+    std::vector< TMarker> pPoint(NPeaks);
     for (int i = 0; i < NPeaks; ++i) {
       pPoint[i].SetX(Peaks[i]);
       pPoint[i].SetY(hROCLevels[iroc]->GetBinContent(hROCLevels[iroc]->FindBin(Peaks[i])));
@@ -380,7 +382,10 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
 
     float const hHistMaxY = hROCLevels[iroc]->GetMaximum();
 
-    TLine lLine[NPeaks];
+    // Workaround for
+    // TLine lLine[NPeaks];
+    std::vector< TLine > lLine(NPeaks);
+
     printf("Levels calculated for ROC %i:\n", (int) iroc);
     for (int i = 0; i < NPeaks - 1; ++i) {
       float xp = Peaks[i];
@@ -636,7 +641,14 @@ void PSIBinaryFileReader::DrawTracksAndHits (std::string const Name)
   float CY[NC];
   float CZ[NC];
 
-  TLine Line[3][NT];
+  // Workaround for:
+  //  TLine Line[3][NT];
+  // which does not work in CLANG
+  std::vector< std::vector< TLine > > Line;
+  for (int i=0; i<3; i++){
+    std::vector <TLine> tmp(NT);
+    Line.push_back( tmp );
+  }
 
   TH2F* HistCharge[6];
   for (int i = 0; i != 6; ++i) {
