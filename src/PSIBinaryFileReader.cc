@@ -34,12 +34,12 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
     std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
     throw;
   }
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C0.dat.fit.dat");
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C1.dat.fit.dat");
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C2.dat.fit.dat");
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C3.dat.fit.dat");
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C4.dat.fit.dat");
-  fGainCal.ReadGainCalFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibration_C5.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C0.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C1.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C2.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C3.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C4.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C5.dat.fit.dat");
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C0.dat", 0);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C1.dat", 1);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C2.dat", 2);
