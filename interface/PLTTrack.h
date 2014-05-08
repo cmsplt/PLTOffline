@@ -67,8 +67,8 @@ class PLTTrack
     float fPlaner[3][3];
 
     // Residuals for each roc in X and Y in terms of pixels
-    float fLResidualX[3];
-    float fLResidualY[3];
+    float fLResidualX[6];
+    float fLResidualY[6];
 
     float fD2;
 

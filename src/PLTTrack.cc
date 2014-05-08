@@ -35,7 +35,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   float ZT[3] = {-1, -1, -1};
 
   // Set default for residuals
-  for (int i = 0; i != 3; ++i) {
+  for (int i = 0; i != 6; ++i) {
     fLResidualX[i] = -999;
     fLResidualY[i] = -999;
   }

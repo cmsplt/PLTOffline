@@ -640,7 +640,6 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
 {
   // This function to generate events hitting telescopes head on
 
-  int const NTelescopes = 1;
   for (int i = 15; i <= 15; ++i) {
 
     // pick a starting point on the first ROC
@@ -681,6 +680,37 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
   return;
 }
 
+void GetGausHitsOneROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+{
+  // This function to generate events hitting telescopes head on
+
+  int const Channel = 1;
+
+  float const ColOffset = 0;
+  float const RowOffset = 0;
+  float const ColWidth = 20;
+  float const RowWidth = 30;
+
+  // pick a starting point on the first ROC
+  int const PX = gRandom->Gaus( ((float) (PLTU::FIRSTCOL + PLTU::LASTCOL) + 1.0) / 2.0 + ColOffset, ColWidth);
+  int const PY = gRandom->Gaus( ((float) (PLTU::FIRSTROW + PLTU::LASTROW) + 1.0) / 2.0 + RowOffset, RowWidth);
+
+
+  int const ROC = 0;
+
+
+
+  // Just some random adc value
+  int const adc = gRandom->Poisson(150);
+
+  // Add it as a hit if it's in the range of the diamond
+  if (PX >= PLTU::FIRSTCOL && PX <= PLTU::LASTCOL && PY >= PLTU::FIRSTROW && PY <= PLTU::LASTROW) {
+    Hits.push_back( new PLTHit(Channel, ROC, PX, PY, adc) );
+  } else {
+    //printf("PX PY   %2i  %2i\n", PX, PY);
+  }
+  return;
+}
 
 int PLTMC ()
 {
@@ -703,14 +733,14 @@ int PLTMC ()
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 10000000;
+  int const NEvents = 250000;
   for (int ievent = 0; ievent != NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (11) {
+    switch (3) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
@@ -745,7 +775,9 @@ int PLTMC ()
         GetPureNoise(Hits, Alignment);
         break;
       case 11:
-	GetTracksCollisions2(Hits, Alignment);
+        GetTracksCollisions2(Hits, Alignment);
+      case 12:
+        GetGausHitsOneROC(Hits, Alignment);
 	break;
     }
 

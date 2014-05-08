@@ -64,7 +64,7 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
       fTelescopeMap[Channel].GX  = X;
       fTelescopeMap[Channel].GY  = Y;
       fTelescopeMap[Channel].GZ  = Z;
-    } else if (ROC == 0 || ROC == 1 || ROC == 2) {
+    } else if (ROC < 6) {
       if (fTelescopeMap.count(Channel) == 0) {
         std::cerr << "ERROR: Telescope coords not defined which must be defined before ROCs in alignment file" << std::endl;
         throw;
@@ -145,12 +145,12 @@ bool PLTAlignment::IsGood ()
 
 float PLTAlignment::PXtoLX (int const px)
 {
-  return PLTU::PIXELWIDTH * (25.5 - (px + 0.0000001));
+  return PLTU::PIXELWIDTH * (25.5 - (px + 0.00001));
 }
 
 float PLTAlignment::PYtoLY (int const py)
 {
-  return PLTU::PIXELHEIGHT * (59.5 - (py + 0.0000001));
+  return PLTU::PIXELHEIGHT * (59.5 - (py + 0.00001));
 }
 
 int PLTAlignment::PXfromLX (float const lx)

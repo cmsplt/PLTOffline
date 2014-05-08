@@ -35,6 +35,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   fAlignment.ReadAlignmentFile(AlignmentFileName);
+
   
   SetDefaults();
 

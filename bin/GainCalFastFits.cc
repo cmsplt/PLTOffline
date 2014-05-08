@@ -76,7 +76,7 @@ int GainCalFastFits (TString const InFileName)
 
 
   // Set some basic style
-  PLTU_karen::SetStyle();
+  PLTU::SetStyle();
 
 
   // Open the output root file

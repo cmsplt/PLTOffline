@@ -18,9 +18,10 @@
 
 int TestGainCal (std::string const GainCalFileName)
 {
+
   PLTGainCal GainCal(GainCalFileName);
 
-  std::cout << GainCal.GetCharge(22, 1, 16, 50, 200) << std::endl;
+  std::cout << GainCal.GetCharge(1, 1, 16, 50, 200) << std::endl;
 
   int const Begin = 200;
   int const End = 800;
@@ -36,12 +37,12 @@ int TestGainCal (std::string const GainCalFileName)
     exit(1);
   }
 
-  for (int iroc = 1; iroc != 4; ++iroc) {
-    for (int icol = 13; icol <= 38; ++icol) {
-      for (int irow = 40; irow <= 79; ++irow) {
-        for(int i = Begin; i < End; ++i) {
+  for (int iroc = 0; iroc != 4; ++iroc) {
+    for (int icol = 0; icol != 52; ++icol) {
+      for (int irow = 0; irow != 79; ++irow) {
+        for(int i = Begin; i < End; i += 20) {
           X[i-Begin] = i;
-          Y[i-Begin] = GainCal.GetCharge(22, iroc, icol, irow, i);
+          Y[i-Begin] = GainCal.GetCharge(1, iroc, icol, irow, i);
         }
 
         sprintf(BUFF, "GC_ROC%i_Col%02i_Row%02i", iroc, icol, irow);

@@ -33,7 +33,7 @@ class PLTTelescope
     void      FillAndOrderTelescope ();
 
 
-  private:
+  protected:
     std::vector<PLTPlane*> fPlanes;
     std::vector<PLTTrack*> fTracks;
     int fChannel;

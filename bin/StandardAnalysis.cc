@@ -193,11 +193,12 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName, true);
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_Diamond;
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_Diamond);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
-  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_All);
+  //Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_All);
+  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
   //Searching for treasure!!
   std::map<int, TH2F*>               hAllMap;
@@ -276,6 +277,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
   for ( ; Event.GetNextEvent() >= 0 ; ++ie) 
   {
+  exit(0);
 
     if (ie % 10000 == 0) 
     {
@@ -420,7 +422,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
             if (!cMap.count(Channel)) {
               // Create canvas with given name
               cMap[Channel] = new TCanvas( TString::Format("PulseHeightTrack_Ch%02i", Channel), TString::Format("%s/PulseHeightTrack_Ch%02i", OutDir.c_str(), Channel), 900, 900);
-              cMap[Channel]->Divide(3, 3);
+              cMap[Channel]->Divide(4, 3);
             }
           }
 
@@ -449,7 +451,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
             // One in three chance you'll need a new canvas for thnat =)
             if (!cClusterSizeMap.count(Channel)) {
               cClusterSizeMap[Channel] = new TCanvas( TString::Format("ClusterSizeTrack_Ch%02i", Channel), TString::Format("%s/ClusterSizeTrack_Ch%02i", OutDir.c_str(), Channel), 900, 300);
-              cClusterSizeMap[Channel]->Divide(3, 1);
+              cClusterSizeMap[Channel]->Divide(4, 1);
             }
           }
 
@@ -551,8 +553,8 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
         int const ROC = Plane->ROC();
 
         // Check Roc# 0, 1, 2
-        if (Plane->ROC() > 2) {
-          std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
+        if (Plane->ROC() > 3) {
+          std::cerr << "WARNING: ROC > 3 found: " << Plane->ROC() << std::endl;
           continue;
         }
         if (Plane->ROC() < 0) {
@@ -579,7 +581,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
           if (!cPulseHeightMap.count(Channel)) {
             // Create canvas with given name
             cPulseHeightMap[Channel] = new TCanvas( TString::Format("PulseHeight_Ch%02i", Channel), TString::Format("PulseHeight_Ch%02i", Channel), 900, 900);
-            cPulseHeightMap[Channel]->Divide(1, 3);
+            cPulseHeightMap[Channel]->Divide(1, 4);
           }
         }
 
@@ -591,7 +593,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
           size_t NHits = Cluster->NHits();
           float const ThisClusterCharge = Cluster->Charge();
 
-          if ( (Tele->HitPlaneBits() == 0x3 || Tele->HitPlaneBits() == 0x5 || Tele->HitPlaneBits() == 0x6 || Tele->HitPlaneBits() == 0x7)) {
+          if ( (Tele->HitPlaneBits() >= 3 )) {
             hPulseHeightMap[id][0]->Fill( ThisClusterCharge );
             if (NHits == 1) {
               hPulseHeightMap[id][1]->Fill( ThisClusterCharge );
@@ -611,7 +613,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
           // One in three chance you'll need a new canvas for thnat =)
           if (!cNClustersMap.count(Channel)) {
             cNClustersMap[Channel] = new TCanvas( TString::Format("NClusters_Ch%02i", Channel), TString::Format("%s/NClusters_Ch%02i", OutDir.c_str(), Channel), 900, 300);
-            cNClustersMap[Channel]->Divide(3, 1);
+            cNClustersMap[Channel]->Divide(4, 1);
           }
         }
         hNClustersMap[id]->Fill(Plane->NClusters());
@@ -660,23 +662,23 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
               // Create canvas with given name
               sprintf(BUFF, "Occupancy All Ch%02i", Plane->Channel());
               cAllMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
-              cAllMap[Plane->Channel()]->Divide(3,3);
+              cAllMap[Plane->Channel()]->Divide(4,3);
 
               sprintf(BUFF, "Occupancy Ch%02i", Plane->Channel());
               cOccupancyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
-              cOccupancyMap[Plane->Channel()]->Divide(3,3);
+              cOccupancyMap[Plane->Channel()]->Divide(4,3);
 
               sprintf(BUFF, "Occupancy w/ QuantilesCh%02i", Plane->Channel());
               cQuantileMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 800);
-              cQuantileMap[Plane->Channel()]->Divide(3,2);
+              cQuantileMap[Plane->Channel()]->Divide(4,2);
 
               sprintf(BUFF, "Occupancy Projection Ch%02i", Plane->Channel());
               cProjectionMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
-              cProjectionMap[Plane->Channel()]->Divide(3,3);
+              cProjectionMap[Plane->Channel()]->Divide(4,3);
 
               sprintf(BUFF, "Occupancy Efficiency Ch%02i", Plane->Channel());
               cEfficiencyMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 1200, 1200);
-              cEfficiencyMap[Plane->Channel()]->Divide(3,3);
+              cEfficiencyMap[Plane->Channel()]->Divide(4,3);
 
               sprintf(BUFF, "Planes hit in Ch%02i", Plane->Channel());
               cCoincidenceMap[Plane->Channel()] = new TCanvas(BUFF, BUFF, 400, 400);
@@ -750,10 +752,10 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     // Draw the 2D and 1D distribution on occupancy canvas
     cOccupancyMap[Channel]->cd(ROC+1);
     hOccupancyMap[id]->Draw("colz");
-    cOccupancyMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    cOccupancyMap[Channel]->cd(ROC+4+1)->SetLogy(1);
     hOccupancy1D->SetMinimum(0.5);
     hOccupancy1D->Clone()->Draw("hist");
-    cOccupancyMap[Channel]->cd(ROC+6+1);
+    cOccupancyMap[Channel]->cd(ROC+8+1);
     hOccupancy1D->Draw("hist");
 
 
@@ -773,7 +775,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     if(QValue[0] > 1 && it->second->GetMaximum() > QValue[0]) {
       hQuantileMap[it->first]->SetMaximum(QValue[0]);
     }
-    cQuantileMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    cQuantileMap[Channel]->cd(ROC+4+1)->SetLogy(1);
     hOccupancy1D->Draw("hist");
 
     // Grab a line and draw it on the plot
@@ -789,7 +791,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     it->second->Draw("colz");
 
     // Column projection
-    cProjectionMap[Channel]->cd(ROC+3+1);
+    cProjectionMap[Channel]->cd(ROC+4+1);
     TH1D* hProjectionX = it->second->ProjectionX();
     hProjectionX->SetYTitle("Number of Hits");
     hProjectionX->GetYaxis()->CenterTitle();
@@ -797,7 +799,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     hProjectionX->Draw("hist");
 
     // Row projection
-    cProjectionMap[Channel]->cd(ROC+6+1);
+    cProjectionMap[Channel]->cd(ROC+8+1);
     TH1D* hProjectionY = it->second->ProjectionY();
     hProjectionY->SetYTitle("Number of Hits");
     hProjectionY->GetYaxis()->CenterTitle();
@@ -833,19 +835,19 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     cEfficiencyMap[Channel]->cd(ROC+1);
     hEfficiencyMap[it->first]->Draw("colz");
 
-    cEfficiencyMap[Channel]->cd(ROC+3+1)->SetLogy(1);
+    cEfficiencyMap[Channel]->cd(ROC+4+1)->SetLogy(1);
     hEfficiency1DMap[it->first]->Clone()->Draw("");
 
 
-    cEfficiencyMap[Channel]->cd(ROC+6+1);
+    cEfficiencyMap[Channel]->cd(ROC+8+1);
     hEfficiency1DMap[it->first]->Draw("");
 
     // Summary canvas of your three favorite plots
     cAllMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
-    cAllMap[Channel]->cd(ROC+3+1);
+    cAllMap[Channel]->cd(ROC+4+1);
     hQuantileMap[id]->Draw("colz");
-    cAllMap[Channel]->cd(ROC+6+1);
+    cAllMap[Channel]->cd(ROC+8+1);
     hEfficiencyMap[id]->Draw("colz");
 
   }
@@ -1088,7 +1090,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
     Leg->Draw("same");
 
     // change to correct pad on canvas and draw the hist
-    cMap[Channel]->cd(ROC+3+1);
+    cMap[Channel]->cd(ROC+4+1);
     for (size_t ig = 3; ig != 0; --ig) {
 
       // Grab hist
@@ -1115,7 +1117,7 @@ int StandardAnalysis(std::string const DataFileName, std::string const GainCalFi
 
 
     // change to correct pad on canvas and draw the hist
-    cMap[Channel]->cd(ROC+6+1);
+    cMap[Channel]->cd(ROC+8+1);
 
     for (int ja = 0; ja != PLTU::NROW; ++ja) {
       for (int ia = 0; ia != PLTU::NCOL; ++ia) {

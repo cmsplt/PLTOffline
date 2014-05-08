@@ -21,7 +21,7 @@ int MakeIdealGainCal (std::string const OutFileName)
     return 1;
   }
 
-  int const NChannels = 36;
+  int const NChannels = 1;
 
  
   for (int ich = 1; ich <= NChannels; ++ich) {
@@ -33,7 +33,7 @@ int MakeIdealGainCal (std::string const OutFileName)
   for (int ich = 1; ich <= NChannels; ++ich) {
     for (int col = PLTU::FIRSTCOL; col <= PLTU::LASTCOL; ++col) {
       for (int row = PLTU::FIRSTROW; row <= PLTU::LASTROW; ++row) {
-        for (int roc = 0; roc <= 2; ++roc) {
+        for (int roc = 0; roc <= 3; ++roc) {
           fprintf(f, "%2i %1i %2i %2i %15E %15E %15E %15E %15E\n",
               ich,
               roc,

@@ -18,7 +18,8 @@ class PLTTracking
     enum TrackingAlgorithm {
       kTrackingAlgorithm_NoTracking = 0,
       kTrackingAlgorithm_01to2_All,
-      kTrackingAlgorithm_2PlaneTracks_All
+      kTrackingAlgorithm_2PlaneTracks_All,
+      kTrackingAlgorithm_6PlanesHit
     };
 
     PLTTracking ();
@@ -34,6 +35,8 @@ class PLTTracking
     void RunTracking (PLTTelescope&);
 
     void TrackFinder_01to2_All (PLTTelescope&);
+    void TrackFinder_6PlanesHit (PLTTelescope&);
+
     void SortOutTracksNoOverlapBestD2(std::vector<PLTTrack*>&);
 
 

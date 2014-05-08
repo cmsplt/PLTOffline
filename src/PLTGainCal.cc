@@ -4,12 +4,15 @@
 
 PLTGainCal::PLTGainCal ()
 {
+  ResetGC();
   fIsGood = false;
 }
 
 PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
 {
+  ResetGC();
   fIsGood = false;
+  fNParams = NParams;
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
   } else if (NParams == 3) {
@@ -77,9 +80,9 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
 {
   // Get charge, note roc number is 0, 1, 2
   int const adc = INadc;
-  if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS: %i\n", ch); };
-  if (row >= MAXROWS) { printf("ERROR: over MAXROWS: %i\n", row); };
-  if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS: %i\n", col); };
+  if (ChIndex(ch)   >= MAXCHNS) { printf("ERROR: over MAXCHNS: %i\n", ch); };
+  if (RowIndex(row) >= MAXROWS) { printf("ERROR: over MAXROWS: %i\n", row); };
+  if (ColIndex(col) >= MAXCOLS) { printf("ERROR: over MAXCOLS: %i\n", col); };
 
   int irow = RowIndex(row);
   int icol = ColIndex(col);
@@ -105,7 +108,7 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
           + (GC[ich][iroc][icol][irow][4] != 0 ? TMath::Exp( (adc - GC[ich][iroc][icol][irow][3]) / GC[ich][iroc][icol][irow][4] ) : 0)
           );
     } else {
-      std::cerr << "ERROR: PLTGainCal::GetCharge() I do not know of that number of fNParams" << std::endl;
+      std::cerr << "ERROR: PLTGainCal::GetCharge() I do not know of that number of fNParams: " << fNParams << std::endl;
       exit(1);
     }
   }
@@ -131,6 +134,7 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
   TString CheckFirstLine;
   CheckFirstLine.ReadLine(InFile);
   if (CheckFirstLine.BeginsWith("Parameters of the vcal vs. pulse height fits")) {
+    std::cout << "PLTGainCal setting fIsExternalFunction" << std::endl;
     fIsExternalFunction = true;
   }
 
@@ -188,6 +192,8 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   int icol;
   int ich;
 
+  std::cout << "Reading GainCal file with 5 parameters" << std::endl;
+
   ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
@@ -208,17 +214,6 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
   }
 
-  for (int i = 0; i != NCHNS; ++i) {
-    for (int j = 0; j != NROCS; ++j) {
-      for (int k = 0; k != PLTU::NCOL; ++k) {
-        for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 5; ++n) {
-            GC[i][j][k][m][n] = 0;
-          }
-        }
-      }
-    }
-  }
 
   std::string line;
   std::getline(f, line);
@@ -232,7 +227,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 
     // Just remember that on the plane tester it's channel 22
 
-    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS %i\n", ch); };
+    if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS %i\n", ch); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS %i\n", row); };
     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS %i\n", col); };
     if (roc >= MAXROCS) { printf("ERROR: over MAXROCS %i\n", roc); };
@@ -256,7 +251,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
-      for (int i = 0; i != 3; ++i) {
+      for (int i = 0; i != NROCS; ++i) {
         for (int j = 0; j != 5; ++j) {
           printf("%6.2E ", GC[ich][i][icol][irow][j]);
         }
@@ -274,18 +269,17 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 }
 
 
-void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
+void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName, int const roc)
 {
   int const ch = 1;
-  int const roc = 0;
   int row, col;
   int irow;
   int icol;
   int ich;
 
-  int const mf = 8, mfc = 1, hub = 5;
-  fHardwareMap[ch] = 1000*mf + 100*mfc + hub;
-  printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
+  //int const mf = 8, mfc = 1, hub = 5;
+  fHardwareMap[ch] = 1000*ch + roc;
+  printf("Adding ch %i as -> %i\n", ch, fHardwareMap[ch]);
 
   ifstream f(GainCalFileName.c_str());
   if (!f) {
@@ -308,18 +302,6 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
 
   
 
-  // Reset everything
-  for (int i = 0; i != NCHNS; ++i) {
-    for (int j = 0; j != NROCS; ++j) {
-      for (int k = 0; k != PLTU::NCOL; ++k) {
-        for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 5; ++n) {
-            GC[i][j][k][m][n] = 0;
-          }
-        }
-      }
-    }
-  }
 
   std::string line;
   std::getline(f, line);
@@ -366,7 +348,7 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
-      for (int i = 0; i != 3; ++i) {
+      for (int i = 0; i != NROCS; ++i) {
         for (int j = 0; j != 5; ++j) {
           printf("%6.2E ", GC[ich][i][icol][irow][j]);
         }
@@ -419,15 +401,49 @@ void PLTGainCal::CheckGainCalFile(std::string const GainCalFileName, int const C
 void PLTGainCal::PrintGainCal5 ()
 {
   // dude, you really don't want to do this..
-  for (int ich = 19; ich <= 23; ++ich) {
-    for (int iroc = 0; iroc != 3; ++iroc) {
-      for (int icol = 0; icol != 26; ++icol) {
-        for (int irow = 0; irow != 40; ++irow) {
+  for (int ich = 0; ich != MAXCHNS; ++ich) {
+    for (int iroc = 0; iroc != NROCS; ++iroc) {
+      for (int icol = 0; icol != 52; ++icol) {
+        for (int irow = 0; irow != 80; ++irow) {
 
           for (int j = 0; j != 5; ++j) {
             printf("%6.2E ", GC[ich][iroc][icol][irow][j]);
           }
           printf("\n");
+        }
+      }
+    }
+  }
+
+  return;
+}
+
+
+void PLTGainCal::PrintGainCal (FILE* f)
+{
+  // dude, you really don't want to do this..
+  for (int ich = 0; ich != MAXCHNS; ++ich) {
+    for (int iroc = 0; iroc != NROCS; ++iroc) {
+      for (int icol = 0; icol != 52; ++icol) {
+        for (int irow = 0; irow != 80; ++irow) {
+
+          if (f) {
+            fprintf(f, "%2i %2i %2i %2i ", ich+1, iroc, icol, irow);
+          } else {
+            printf("%2i %2i %2i %2i ", ich+1, iroc, icol, irow);
+          }
+          for (int j = 0; j != fNParams; ++j) {
+            if (f) {
+              fprintf(f, "%15.6E ", GC[ich][iroc][icol][irow][j]);
+            } else {
+              printf("%15.6E ", GC[ich][iroc][icol][irow][j]);
+            }
+          }
+          if (f) {
+            fprintf(f, "\n");
+          } else {
+            printf("\n");
+          }
         }
       }
     }
@@ -451,17 +467,6 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     throw;
   }
 
-  for (int i = 0; i != NCHNS; ++i) {
-    for (int j = 0; j != NROCS; ++j) {
-      for (int k = 0; k != PLTU::NCOL; ++k) {
-        for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 5; ++n) {
-            GC[i][j][k][m][n] = 0;
-          }
-        }
-      }
-    }
-  }
 
 
   // Loop over header lines in the input data file
@@ -499,7 +504,7 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
-      for (int i = 0; i != 3; ++i) {
+      for (int i = 0; i != NROCS; ++i) {
         printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
         for (int j = 0; j != 3; ++j) {
           printf(" %9.1E", GC[ich][i][icol][irow][j]);
@@ -535,17 +540,6 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
   int ich;
   int iroc;
 
-  for (int i = 0; i != NCHNS; ++i) {
-    for (int j = 0; j != NROCS; ++j) {
-      for (int k = 0; k != PLTU::NCOL; ++k) {
-        for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 5; ++n) {
-            GC[i][j][k][m][n] = 0;
-          }
-        }
-      }
-    }
-  }
 
   // If you supply a blank name you did so on purpose (or should have!!)
   if (GainCalFileName == "") {
@@ -591,7 +585,7 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
 
     // dude, you really don't want to do this..
     if (PLTGainCal::DEBUGLEVEL) {
-      for (int i = 0; i != 3; ++i) {
+      for (int i = 0; i != NROCS; ++i) {
         printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
         for (int j = 0; j != 3; ++j) {
           printf(" %9.1E", GC[ich][i][icol][irow][j]);
@@ -604,5 +598,24 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
   // Apparently this file was read no problem...
   fIsGood = true;
 
+  return;
+}
+
+
+
+void PLTGainCal::ResetGC ()
+{
+  // Reset everything
+  for (int i = 0; i != NCHNS; ++i) {
+    for (int j = 0; j != NROCS; ++j) {
+      for (int k = 0; k != PLTU::NCOL; ++k) {
+        for (int m = 0; m != PLTU::NROW; ++m) {
+          for (int n = 0; n != 5; ++n) {
+            GC[i][j][k][m][n] = 0;
+          }
+        }
+      }
+    }
+  }
   return;
 }
