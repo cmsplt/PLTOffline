@@ -55,7 +55,16 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   float CY[NC];
   float CZ[NC];
 
-  TLine Line[3][NT];
+  // Workaround for:
+  //  TLine Line[3][NT];
+  // which does not work in CLANG
+  std::vector< std::vector< TLine > > Line;
+  for (int i=0; i<3; i++){
+    std::vector <TLine> tmp(NT);
+    Line.push_back( tmp );
+  }
+
+
 
   TH2F* HistCharge[3];
   for (int i = 0; i != 3; ++i) {
@@ -354,5 +363,3 @@ void PLTTelescope::FillAndOrderTelescope ()
   fPlanes = Ordered;
   return;
 }
-
-

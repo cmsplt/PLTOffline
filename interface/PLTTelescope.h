@@ -10,6 +10,7 @@
 #include "TGraph.h"
 
 #include <stdint.h>
+#include <vector>
 
 class PLTTelescope
 {

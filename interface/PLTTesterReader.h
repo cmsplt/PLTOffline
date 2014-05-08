@@ -15,6 +15,7 @@
 #include <map>
 #include <cstdlib>
 #include <algorithm>
+#include <vector>
 
 #include "PLTHit.h"
 #include "PLTPlane.h"
