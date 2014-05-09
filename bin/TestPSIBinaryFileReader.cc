@@ -71,9 +71,9 @@ int TestPSIBinaryFileReader (std::string const InFileName)
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
-    static int ieventdraw = 0; 
-    if (ieventdraw < 20 && BFR.NClusters() > 3) { 
-      BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() ); 
+    static int ieventdraw = 0;
+    if (ieventdraw < 20 && BFR.NClusters() >= 2) { 
+      BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
 

@@ -243,6 +243,7 @@ void PSIBinaryFileReader::Clear()
 
   fPlaneMap.clear();
   fPlanes.clear();
+  fTracks.clear(); 
 
   return;
 }

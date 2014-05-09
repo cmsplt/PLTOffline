@@ -5,6 +5,9 @@
 #include <iostream>
 #include <math.h>
 
+#include "TGraph.h"
+#include "TF1.h"
+
 
 #include "PLTCluster.h"
 #include "PLTAlignment.h"
@@ -44,6 +47,9 @@ class PLTTrack
     std::vector<PLTCluster*> fClusters;
 
   public:
+
+    static int const nPlanes = 6;
+
     // Vector in *telescope* and *global* coords
     float fTVX;
     float fTVY;
@@ -63,7 +69,7 @@ class PLTTrack
     float fGOZ;
 
     // Where the track passes through the X=0(=0), Y=0(=1), and Z=0 planes
-    // Three corrds just because that's easy enough 
+    // Three corrds just because that's easy enough
     float fPlaner[3][3];
 
     // Residuals for each roc in X and Y in terms of pixels
@@ -72,15 +78,8 @@ class PLTTrack
 
     float fD2;
 
-    static bool const DEBUG = false;
+    static bool const DEBUG = true;
 
 };
-
-
-
-
-
-
-
 
 #endif

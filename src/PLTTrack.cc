@@ -24,15 +24,26 @@ void PLTTrack::AddCluster (PLTCluster* in)
 
 int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 {
+
+  if (DEBUG)
+    std::cout << "Entering PLTTrack::MakeTrack. fClusters.size()= " << fClusters.size() << std::endl;
+
   // Check we have enough clusters
-  if (fClusters.size() < 2) {
+  if (NClusters() < 2) {
     std::cerr << "WARNING in PLTTrack::MakeTrack: Not enough clusters to make a track" << std::endl;
     return 0;
   }
 
-  float XT[3] = {-1, -1, -1};
-  float YT[3] = {-1, -1, -1};
-  float ZT[3] = {-1, -1, -1};
+  // Points in telescope coords where line passes each plane
+  float XT[nPlanes];
+  float YT[nPlanes];
+  float ZT[nPlanes];
+  // Initialize the arrays
+  for (int iROC=0; iROC < nPlanes; iROC++){
+      XT[iROC] =1.;
+      YT[iROC] =1.;
+      ZT[iROC] =1.;
+  }
 
   // Set default for residuals
   for (int i = 0; i != 6; ++i) {
@@ -40,11 +51,11 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     fLResidualY[i] = -999;
   }
 
-
   float VX, VY, VZ;
 
   int const Channel = fClusters[0]->Channel();
 
+  // For ==2 clusters: Just use the direct line connecting them as a track
   if (NClusters() == 2) {
 
     // Vector components
@@ -68,25 +79,17 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     }
 
     // Compute the points in telescope coords where line passes each plane
-    //for (int ip = 0; ip != 3; ++ip) {
-    //  XT[ip] = (2.5 * ip - fClusters[0]->TZ()) * VX + fClusters[0]->TX();
-    //  YT[ip] = (2.5 * ip - fClusters[0]->TZ()) * VY + fClusters[0]->TY();
-    //  ZT[ip] =  2.5 * ip;
-    //}
-    for (int ip = 0; ip != 3; ++ip) {
-      int ROC = ip < 2 ? fClusters[ip]->ROC() : 3 - fClusters[0]->ROC() - fClusters[1]->ROC();
+    for (int iPlane = 0; iPlane < nPlanes; ++iPlane) {
 
-      PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
+      PLTAlignment::CP* C = Alignment.GetCP(Channel, iPlane);
 
-      XT[ROC] = (C->LZ - fClusters[0]->TZ()) * SlopeX + fClusters[0]->TX();
-      YT[ROC] = (C->LZ - fClusters[0]->TZ()) * SlopeY + fClusters[0]->TY();
-      ZT[ROC] =  C->LZ;
+      XT[iPlane] = (C->LZ - fClusters[0]->TZ()) * SlopeX + fClusters[0]->TX();
+      YT[iPlane] = (C->LZ - fClusters[0]->TZ()) * SlopeY + fClusters[0]->TY();
+      ZT[iPlane] =  C->LZ;
     }
+  }
+  else if (NClusters() == 3) {
 
-  } else if (NClusters() < 2) {
-    std::cerr << "WARNING: Cannot make track with < 2 clusters" << std::endl;
-    return -1;
-  } else if (NClusters() == 3) {
     float const SumX = fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX();
     float const SumY = fClusters[0]->TY() + fClusters[1]->TY() + fClusters[2]->TY();
     float const SumZ = fClusters[0]->TZ() + fClusters[1]->TZ() + fClusters[2]->TZ();
@@ -108,7 +111,6 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
 
     float const SlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
     float const SlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
-    //printf("SlopeDiff XY: %12.6E  %12.6E\n", MySlopeX - SlopeX, MySlopeY - SlopeY);
 
     VX = SlopeX;
     VY = SlopeY;
@@ -123,7 +125,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     VZ = VZ / Mod;
 
     if (DEBUG) {
-      printf("3P VXVYVZ %12.3f %12.3f %12.3f  %12.3f\n", VX, VY, VZ, Mod);
+      printf("3P VXVYVZ %12.3f %12.3f %12.3f %12.3f\n", VX, VY, VZ, Mod);
     }
 
     float const AvgX = (fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX()) / 3.0;
@@ -131,25 +133,60 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     float const AvgZ = (fClusters[0]->TZ() + fClusters[1]->TZ() + fClusters[2]->TZ()) / 3.0;
 
     // Compute the points in telescope coords where line passes each plane
-    //for (int ip = 0; ip != 3; ++ip) {
-    //  XT[ip] = (2.5 * ip - AvgZ) * VX + AvgX;
-    //  YT[ip] = (2.5 * ip - AvgZ) * VY + AvgY;
-    //  ZT[ip] =  2.5 * ip;
-    //}
-    for (int ip = 0; ip != 3; ++ip) {
-      int ROC = fClusters[ip]->ROC();
+    for (int ip = 0; ip < nPlanes ; ++ip) {
 
-      PLTAlignment::CP* C = Alignment.GetCP(Channel, ROC);
+      PLTAlignment::CP* C = Alignment.GetCP(Channel, ip);
 
+      XT[ip] = (C->LZ - AvgZ) * SlopeX + AvgX;
+      YT[ip] = (C->LZ - AvgZ) * SlopeY + AvgY;
+      ZT[ip] = C->LZ;
+    }
+  }
+  // >3 clusters
+  else{
 
-      XT[ROC] = (C->LZ - AvgZ) * SlopeX + AvgX;
-      YT[ROC] = (C->LZ - AvgZ) * SlopeY + AvgY;
-      ZT[ROC] =  C->LZ;
+    // Use Tgraphs to fit the x/y-coordinates
+    // Graph: 1st coord / 2nd coord:
+    // gX: Z / X
+    // gY: Z / Y
+    TGraph gX( NClusters() );
+    TGraph gY( NClusters() );
+
+    // Fill the graph with telescope coordinates
+    for (int iCl=0; iCl < NClusters(); iCl++){
+      gX.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TX() );
+      gY.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TY() );
     }
 
+    TF1 funX("funX","[0]*x+[1]");
+    TF1 funY("funY","[0]*x+[1]");
+
+    gX.Fit( &funX );
+    gY.Fit( &funY );
+
+    VX = funX.GetParameter(0);
+    VY = funY.GetParameter(0);
+    VZ = 1;
+
+    // Length
+    float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);
+
+    // Normalize vectors
+    VX = VX / Mod;
+    VY = VY / Mod;
+    VZ = VZ / Mod;
+
+    // Compute the points in telescope coords where line passes each plane
+    for (int ip = 0; ip < nPlanes ; ++ip) {
+
+      PLTAlignment::CP* C = Alignment.GetCP(Channel, ip);
+      
+        XT[ip] = (C->LZ ) * funX.GetParameter(0) + funX.GetParameter(1);
+        YT[ip] = (C->LZ ) * funY.GetParameter(0) + funY.GetParameter(1);
+        ZT[ip] = C->LZ;
+      }
 
   }
-
 
   // Set the vector and origin of track in telescope
   fTVX = VX;
@@ -218,6 +255,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
       fD2 += fLResidualX[i]*fLResidualX[i] + fLResidualY[i]*fLResidualY[i];
     }
   }
+
+  if (DEBUG)
+    std::cout << "Reached end of PLTTrack::MakeTrack" << std::endl;
 
   return 0;
 }
