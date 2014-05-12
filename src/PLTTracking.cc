@@ -130,7 +130,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
       PLTTrack Track01;
       Track01.AddCluster(P0->Cluster(iCL0));
       Track01.AddCluster(P1->Cluster(iCL1));
-      Track01.MakeTrack(*fAlignment);
+      Track01.MakeTrack(*fAlignment, Telescope.NPlanes() );
 
       float const ProjectionX2 = Track01.TX(P2->TZ());
       float const ProjectionY2 = Track01.TY(P2->TZ());
@@ -156,7 +156,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
           Track012->AddCluster(P0->Cluster(iCL0));
           Track012->AddCluster(P1->Cluster(iCL1));
           Track012->AddCluster(P2->Cluster(iCL2));
-          Track012->MakeTrack(*fAlignment);
+          Track012->MakeTrack(*fAlignment, Telescope.NPlanes());
           MyTracks.push_back(Track012);
         }
 
@@ -202,11 +202,8 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
   //  2: use plane for tracking (cluster is required)
   int UsePlanesForTracking[] = {1,1,1,1,1,1};
 
-  // Total number of planes
-  int NPlanes = 6;
-
   // Check if all the planes with mandatory clusters also have a cluster
-  for (int iPlane=0; iPlane < NPlanes; iPlane++){
+  for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
     if ( (UsePlanesForTracking[iPlane]==2)
       && (Telescope.Plane(iPlane)->NClusters()==0)){
         return;
@@ -218,7 +215,7 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
   // Need to have UsePlanesForTracking of either 1 or 2
   //  and > 0 hits
   std::vector< std::vector< PLTCluster* > > ClustersForTracking;
-  for (int iPlane=0; iPlane < NPlanes; iPlane++){
+  for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
     if ( (UsePlanesForTracking[iPlane]>0)
       && (Telescope.Plane(iPlane)->NClusters()>0)){
 
@@ -265,7 +262,7 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
     for(Vd::const_iterator it = vd.begin(); it != vd.end(); it++)
         Track->AddCluster(*(it->me));
 
-    Track->MakeTrack(*fAlignment);
+    Track->MakeTrack(*fAlignment, Telescope.NPlanes() );
     MyTracks.push_back(Track);
 
 

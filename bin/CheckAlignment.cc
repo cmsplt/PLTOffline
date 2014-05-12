@@ -353,7 +353,7 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
       Track_3hit->AddCluster(Plane[0]->Cluster(0));
       Track_3hit->AddCluster(Plane[1]->Cluster(0));
       Track_3hit->AddCluster(Plane[2]->Cluster(0));
-      Track_3hit->MakeTrack(Alignment);
+      Track_3hit->MakeTrack(Alignment, Telescope->NPlanes());
 
       //std::vector<float> bsT;
       //Alignment.GtoTXYZ(bsT,bsGX,bsGY,bsGZ,Plane[0]->Channel(),Plane[0]->ROC());
@@ -376,7 +376,7 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
 
   //Adjust alignment for the global displacements
   for (std::map<int, TH1F*>::iterator it = hMapTelXROC1.begin(); it != hMapTelXROC1.end(); ++it) {
-   
+
     int const id = it->first;
     int Channel = id;
 

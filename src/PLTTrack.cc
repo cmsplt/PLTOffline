@@ -22,7 +22,7 @@ void PLTTrack::AddCluster (PLTCluster* in)
 
 
 
-int PLTTrack::MakeTrack (PLTAlignment& Alignment)
+int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 {
 
   if (DEBUG)
@@ -35,20 +35,19 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   }
 
   // Points in telescope coords where line passes each plane
-  float XT[nPlanes];
-  float YT[nPlanes];
-  float ZT[nPlanes];
-  // Initialize the arrays
+  std::vector<float> XT;
+  std::vector<float> YT;
+  std::vector<float> ZT;
   for (int iROC=0; iROC < nPlanes; iROC++){
-      XT[iROC] =1.;
-      YT[iROC] =1.;
-      ZT[iROC] =1.;
+      XT.push_back(-1.);
+      YT.push_back(-1.);
+      ZT.push_back(-1.);
   }
 
   // Set default for residuals
-  for (int i = 0; i != 6; ++i) {
-    fLResidualX[i] = -999;
-    fLResidualY[i] = -999;
+  for (int i = 0; i != nPlanes; ++i) {
+    fLResidualX.push_back(-999);
+    fLResidualY.push_back(-999);
   }
 
   float VX, VY, VZ;
@@ -180,7 +179,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     for (int ip = 0; ip < nPlanes ; ++ip) {
 
       PLTAlignment::CP* C = Alignment.GetCP(Channel, ip);
-      
+
         XT[ip] = (C->LZ ) * funX.GetParameter(0) + funX.GetParameter(1);
         YT[ip] = (C->LZ ) * funY.GetParameter(0) + funY.GetParameter(1);
         ZT[ip] = C->LZ;

@@ -175,24 +175,24 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
         Tracks[0].AddCluster(Plane[0]->Cluster(0));
         Tracks[0].AddCluster(Plane[1]->Cluster(0));
         Tracks[0].AddCluster(Plane[2]->Cluster(0));
-        Tracks[0].MakeTrack(Alignment);
+        Tracks[0].MakeTrack(Alignment, Telescope->NPlanes());
       }
 
       // 2-plane tracks
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         Tracks[1].AddCluster(Plane[0]->Cluster(0));
         Tracks[1].AddCluster(Plane[1]->Cluster(0));
-        Tracks[1].MakeTrack(Alignment);
+        Tracks[1].MakeTrack(Alignment, Telescope->NPlanes());
       }
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
         Tracks[2].AddCluster(Plane[0]->Cluster(0));
         Tracks[2].AddCluster(Plane[2]->Cluster(0));
-        Tracks[2].MakeTrack(Alignment);
+        Tracks[2].MakeTrack(Alignment, Telescope->NPlanes());
       }
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
         Tracks[3].AddCluster(Plane[1]->Cluster(0));
         Tracks[3].AddCluster(Plane[2]->Cluster(0));
-        Tracks[3].MakeTrack(Alignment);
+        Tracks[3].MakeTrack(Alignment, Telescope->NPlanes());
       }
 
       // Test of plane 2
@@ -371,7 +371,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     hMapPulseHeights[id]->SetFillColor(40);
     gStyle->SetOptStat(10);
     hMapPulseHeights[id]->Draw();
-    
+
     Name = TString::Format("plots/ExtrapolatedTrackPulseHeights_Ch%i_ROC%i", Channel, ROC);
     Can3.SaveAs(Name + ".gif");
 

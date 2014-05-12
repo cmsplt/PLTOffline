@@ -159,8 +159,8 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   //Create tree and branches
   int eventNo, eventTime, BXNo, roc1_trial_ch13, roc1_success_ch13, roc1_trial_ch14, roc1_success_ch14, roc1_trial_ch16, roc1_success_ch16, roc1_trial_ch24, roc1_success_ch24;
   int roc1_trial_ch2, roc1_success_ch2, roc1_trial_ch3, roc1_success_ch3, roc1_trial_ch7, roc1_success_ch7, roc1_trial_ch8, roc1_success_ch8;
-  float slopeX_ch13, slopeX_ch14, slopeX_ch16, slopeX_ch24, slopeY_ch13, slopeY_ch14, slopeY_ch16, slopeY_ch24; 
-  float slopeX_ch2, slopeX_ch3, slopeX_ch7, slopeX_ch8, slopeY_ch2, slopeY_ch3, slopeY_ch7, slopeY_ch8; 
+  float slopeX_ch13, slopeX_ch14, slopeX_ch16, slopeX_ch24, slopeY_ch13, slopeY_ch14, slopeY_ch16, slopeY_ch24;
+  float slopeX_ch2, slopeX_ch3, slopeX_ch7, slopeX_ch8, slopeY_ch2, slopeY_ch3, slopeY_ch7, slopeY_ch8;
   TTree *data = new TTree("data","data");
   data->Branch("EventNo",&eventNo,"eventNo/I");
   data->Branch("EventTime",&eventTime,"eventTime/I");
@@ -216,7 +216,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     eventNo=Event.EventNumber();
     eventTime=Event.Time();
     BXNo=Event.BX();
-   
+
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
       PLTTelescope* Telescope = Event.Telescope(it);
@@ -281,24 +281,24 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
         Tracks[0].AddCluster(Plane[0]->Cluster(0));
         Tracks[0].AddCluster(Plane[1]->Cluster(0));
         Tracks[0].AddCluster(Plane[2]->Cluster(0));
-        Tracks[0].MakeTrack(Alignment);
+        Tracks[0].MakeTrack(Alignment, Telescope->NPlanes());
       }
 
       // 2-plane tracks
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         Tracks[1].AddCluster(Plane[0]->Cluster(0));
         Tracks[1].AddCluster(Plane[1]->Cluster(0));
-        Tracks[1].MakeTrack(Alignment);
+        Tracks[1].MakeTrack(Alignment, Telescope->NPlanes());
       }
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
         Tracks[2].AddCluster(Plane[0]->Cluster(0));
         Tracks[2].AddCluster(Plane[2]->Cluster(0));
-        Tracks[2].MakeTrack(Alignment);
+        Tracks[2].MakeTrack(Alignment, Telescope->NPlanes());
       }
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
         Tracks[3].AddCluster(Plane[1]->Cluster(0));
         Tracks[3].AddCluster(Plane[2]->Cluster(0));
-        Tracks[3].MakeTrack(Alignment);
+        Tracks[3].MakeTrack(Alignment, Telescope->NPlanes());
       }
 
       // Test of plane 2
@@ -550,7 +550,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
     hMapPulseHeights[id]->SetFillColor(40);
     gStyle->SetOptStat(10);
     hMapPulseHeights[id]->Draw();
-    
+
     Name = TString::Format("plots/ExtrapolatedTrackPulseHeights_Ch%i_ROC%i", Channel, ROC);
     Can3.SaveAs(Name + ".gif");
 

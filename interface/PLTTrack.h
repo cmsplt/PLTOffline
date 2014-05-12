@@ -22,7 +22,7 @@ class PLTTrack
     ~PLTTrack ();
 
     void AddCluster (PLTCluster*);
-    int  MakeTrack (PLTAlignment&);
+    int  MakeTrack (PLTAlignment&, int);
 
     size_t NClusters ();
     size_t NHits ();
@@ -48,8 +48,6 @@ class PLTTrack
 
   public:
 
-    static int const nPlanes = 6;
-
     // Vector in *telescope* and *global* coords
     float fTVX;
     float fTVY;
@@ -73,8 +71,8 @@ class PLTTrack
     float fPlaner[3][3];
 
     // Residuals for each roc in X and Y in terms of pixels
-    float fLResidualX[6];
-    float fLResidualY[6];
+    std::vector<float> fLResidualX;
+    std::vector<float> fLResidualY;
 
     float fD2;
 

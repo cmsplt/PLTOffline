@@ -76,7 +76,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
       }
 
       // Look for three planes in a telescope each having 1 cluster
-      if (Telescope->NPlanes() == 3 && 
+      if (Telescope->NPlanes() == 3 &&
           Telescope->Plane(0)->NHits() == 1 &&
           Telescope->Plane(1)->NHits() == 1 &&
           Telescope->Plane(2)->NHits() == 1
@@ -97,7 +97,7 @@ int TrackTest (std::string const DataFileName, std::string const GainCalFileName
         Tracks[0].AddCluster(Telescope->Plane(2)->Cluster(0));
 
         for (int i = 0; i != 4; ++i) {
-          Tracks[i].MakeTrack(Alignment);
+          Tracks[i].MakeTrack(Alignment, Telescope->NPlanes());
 
           for (int j = 0; j != 3; ++j) {
             PLTCluster* Cluster = Telescope->Plane(j)->Cluster(0);
