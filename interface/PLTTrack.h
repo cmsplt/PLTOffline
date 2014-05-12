@@ -76,7 +76,7 @@ class PLTTrack
 
     float fD2;
 
-    static bool const DEBUG = true;
+    static bool const DEBUG = false;
 
 };
 

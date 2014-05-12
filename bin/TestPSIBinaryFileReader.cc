@@ -14,7 +14,7 @@
 #include "PLTAlignment.h"
 
 #include "TLegend.h"
-
+#include "TString.h"
 
 int TestPSIBinaryFileReader (std::string const InFileName)
 {
@@ -34,13 +34,16 @@ int TestPSIBinaryFileReader (std::string const InFileName)
 
   int const HistColors[4] = { 1, 4, 28, 2 };
 
-  TH2F* hOccupancy[6];
-  hOccupancy[0] = new TH2F("Occupancy_ROC0", "Occupancy_ROC0", 52, 0, 52, 80, 0, 80);
-  hOccupancy[1] = new TH2F("Occupancy_ROC1", "Occupancy_ROC1", 52, 0, 52, 80, 0, 80);
-  hOccupancy[2] = new TH2F("Occupancy_ROC2", "Occupancy_ROC2", 52, 0, 52, 80, 0, 80);
-  hOccupancy[3] = new TH2F("Occupancy_ROC3", "Occupancy_ROC3", 52, 0, 52, 80, 0, 80);
-  hOccupancy[4] = new TH2F("Occupancy_ROC4", "Occupancy_ROC4", 52, 0, 52, 80, 0, 80);
-  hOccupancy[5] = new TH2F("Occupancy_ROC5", "Occupancy_ROC5", 52, 0, 52, 80, 0, 80);
+  // Prepare Occupancy and Residual histograms
+  std::vector< TH2F > hResidual;
+  std::vector< TH2F > hOccupancy;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
+                                Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+    hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
+                                Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
+  }
+
 
   TH1F* hPulseHeight[6][4];
   int const phMin = 0;
@@ -65,18 +68,32 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     }
   }
 
-
+  // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
     static int ieventdraw = 0;
-    if (ieventdraw < 20 && BFR.NClusters() >= 2) { 
+    if (ieventdraw < 20 && BFR.NClusters() >= 2) {
       BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
+    // Fill Residual histograms
+    for (int itrack = 0; itrack < BFR.NTracks(); itrack++){
+      // Need at least three hits for the residual to make sense
+      if (BFR.Track(itrack)->NClusters() > 2){
+          // Loop over clusters
+          for (int icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+          // Get the ROC in which this cluster was recorded and fill the
+          // corresponding residual.
+          int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
+          hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
+                               BFR.Track(itrack)->LResidualY( ROC ));
 
+        } // end of loop over clusters
+      } // end >2 clusters
+    } // end of loop over tracks
 
 
     for (size_t iplane = 0; iplane != BFR.NPlanes(); ++iplane) {
@@ -107,7 +124,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
         PLTHit* Hit = Plane->Hit(ihit);
 
         if (Hit->ROC() < 6) {
-          hOccupancy[Hit->ROC()]->Fill(Hit->Column(), Hit->Row());
+          hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
         } else {
           std::cerr << "Oops, ROC >= 6?" << std::endl;
         }
@@ -120,15 +137,33 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     }
 
 
-  }
+  } // End of Event Loop
 
   TCanvas Can;
   Can.cd();
-  for (int iroc = 0; iroc != 6; ++iroc) {
-    hOccupancy[iroc]->Draw("colz");
-    Can.SaveAs( TString(hOccupancy[iroc]->GetName()) + ".gif");
-    delete hOccupancy[iroc];
 
+  for (int iroc = 0; iroc != 6; ++iroc) {
+
+    // Draw Occupancy histograms
+    hOccupancy[iroc].Draw("colz");
+    Can.SaveAs( TString(hOccupancy[iroc].GetName()) + ".gif");
+
+    // Draw 2D Residuals
+    hResidual[iroc].Draw("colz");
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + ".gif");
+
+    // Draw Residual X-Projection
+    gStyle->SetOptStat(1111);
+    hResidual[iroc].ProjectionX()->Draw();
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_X.gif");
+
+    // Draw Residual Y-Projection
+    hResidual[iroc].ProjectionY()->Draw();
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_Y.gif");
+
+
+    // Draw the PulseHeights
+    gStyle->SetOptStat(0);
     TLegend* Leg = new TLegend(0.75, 0.7, 0.90, 0.88, "");
     Leg->SetFillColor(0);
     Leg->SetBorderSize(0);
@@ -144,7 +179,6 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hPulseHeight[iroc][3]->Draw("samehist");
     Leg->Draw("same");
     Can.SaveAs(TString::Format("PulseHeight_ROC%i.gif", iroc));
-    //delete hPulseHeight[iroc];
   }
 
 
