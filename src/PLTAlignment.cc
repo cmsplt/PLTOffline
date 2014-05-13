@@ -118,7 +118,7 @@ void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
     fprintf(Out, "\n");
     fprintf(Out, "%2i  -1        %15E      %15E  %15E  %15E  %15E\n", Channel, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ);
 
-    for (int iroc = 0; iroc != 3; ++iroc) {
+    for (int iroc = 0; iroc != 6; ++iroc) {
       std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, iroc);
 
       if (!fConstantMap.count(ChROC)) {
@@ -591,4 +591,3 @@ void PLTAlignment::AddToGZ (int const ch, float val)
   fConstantMap[ std::make_pair<int, int>(ch, 1) ].GZ = oldval+val;
   fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
 }
-

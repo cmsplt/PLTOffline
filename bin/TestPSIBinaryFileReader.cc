@@ -6,8 +6,10 @@
 //
 ////////////////////////////////////////////////////////////////////
 
-
 #include <iostream>
+#include <cmath>
+#include <stdlib.h>
+
 
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
@@ -18,21 +20,22 @@
 
 int TestPSIBinaryFileReader (std::string const InFileName)
 {
-  //PLTU::SetStyle();
+  /* TestPSIBinaryFileReaderAlign: Default run analysis.
+  */
+
   gStyle->SetOptStat(0);
 
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
+  BFR.SetTrackingAlignment(&Alignment);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
   BFR.CalculateLevels();
-  //BFR.ReadAddressesFromFile("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/addressParameters.dat");
-
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
-
-
-  int const HistColors[4] = { 1, 4, 28, 2 };
 
   // Prepare Occupancy and Residual histograms
   std::vector< TH2F > hResidual;
@@ -44,7 +47,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
                                 Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
   }
 
-
+  // Prepare PulseHeight histograms
   TH1F* hPulseHeight[6][4];
   int const phMin = 0;
   int const phMax = 50000;
@@ -60,6 +63,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hPulseHeight[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
 
+  int const HistColors[4] = { 1, 4, 28, 2 };
   for (int iroc = 0; iroc != 6; ++iroc) {
     for (int inpix = 0; inpix != 4; ++inpix) {
     hPulseHeight[iroc][inpix]->SetXTitle("Charge (electrons)");
@@ -70,10 +74,13 @@ int TestPSIBinaryFileReader (std::string const InFileName)
 
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
+    // draw tracks
     static int ieventdraw = 0;
     if (ieventdraw < 20 && BFR.NClusters() >= 2) {
       BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() );
@@ -161,7 +168,6 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hResidual[iroc].ProjectionY()->Draw();
     Can.SaveAs( TString(hResidual[iroc].GetName()) + "_Y.gif");
 
-
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
     TLegend* Leg = new TLegend(0.75, 0.7, 0.90, 0.88, "");
@@ -181,21 +187,96 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     Can.SaveAs(TString::Format("PulseHeight_ROC%i.gif", iroc));
   }
 
+  return 0;
+}
+
+int TestPSIBinaryFileReaderAlign (std::string const InFileName)
+{
+  /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
+  them to NewAlignment.dat
+  */
+
+  gStyle->SetOptStat(0);
+
+  // Start with initial Alignment (X,Y offsets and rotations set to zero)
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+
+  // Alignment loop
+  for (int ialign = 0; ialign < 30; ialign++){
+
+    PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
+    BFR.SetTrackingAlignment(&Alignment);
+    FILE* f = fopen("MyGainCal.dat", "w");
+    BFR.GetGainCal()->PrintGainCal(f);
+    fclose(f);
+    BFR.CalculateLevels();
+
+    // Prepare Residual histograms
+    std::vector< TH2F > hResidual;
+    for (int iroc = 0; iroc != 6; ++iroc)
+      hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
+                                  Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
+
+    // Event Loop
+    for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+      if (ievent % 10000 == 0)
+        std::cout << "Processing event: " << ievent << std::endl;
+
+      // Fill Residual histograms
+      for (int itrack = 0; itrack < BFR.NTracks(); itrack++){
+        // Need at least three hits for the residual to make sense
+        if (BFR.Track(itrack)->NClusters() > 2){
+            // Loop over clusters
+            for (int icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+            // Get the ROC in which this cluster was recorded and fill the
+            // corresponding residual.
+            int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
+            hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
+                                 BFR.Track(itrack)->LResidualY( ROC ));
+
+          } // end of loop over clusters
+        } // end >2 clusters
+      } // end of loop over tracks
+    } // end event loop
+
+    std::cout << "ROC 2: " << hResidual[2].GetMean(1) << " " << hResidual[2].GetMean(2) << std::endl;
+
+    for (int iroc = 0; iroc != 6; ++iroc) {
+      Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1)/2.);
+      Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2)/2.);
+
+      //float angle = atan( hResidual[iroc].GetCorrelationFactor() );
+      //std::cout << "Angle:" << iroc << "  " << angle << std::endl;
+      //Alignment.AddToLR( 1, iroc, angle/2.);
+    }
+  } // end alignment loop
+
+  Alignment.WriteAlignmentFile("NewAlignment.dat");
 
   return 0;
 }
 
 
+
 int main (int argc, char* argv[])
 {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName]" << std::endl;
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " [InFileName] [doAlign]" << std::endl;
+    std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
     return 1;
   }
 
   std::string const InFileName = argv[1];
 
-  TestPSIBinaryFileReader(InFileName);
+  int doAlign = atoi(argv[2]);
+
+  if (doAlign)
+    TestPSIBinaryFileReaderAlign(InFileName);
+  else
+    TestPSIBinaryFileReader(InFileName);
+
 
   return 0;
 }
