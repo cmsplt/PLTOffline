@@ -163,9 +163,9 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
   them to NewAlignment.dat
   */
 
-  // Just repeat N times for now
-  // TODO: break if values don't change anymore
-  int NAlignmentIterations = 50;
+  // Repeat up to 100 times. Cancel if the squared sum of residuals
+  // improves by less than 0.01%
+  int NMaxAlignmentIterations = 100;
 
   gStyle->SetOptStat(0);
 
@@ -181,8 +181,15 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
 
+  // Keep track of the squarted sum of residuals and use it as exit
+  // criterion
+  double sumResSquareCurrent = 0.;
+  double sumResSquareLast    = -1;
+
   // Alignment loop
-  for (int ialign = 0; ialign < NAlignmentIterations; ialign++){
+  for (int ialign = 0; ialign < NMaxAlignmentIterations; ialign++){
+
+    std::cout << "At iteration " << ialign << std::endl;
 
     PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
     BFR.SetTrackingAlignment(&Alignment);
@@ -203,6 +210,9 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
       hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
                                      Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
     }
+
+    sumResSquareCurrent = 0;
+
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
@@ -215,6 +225,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
         if (BFR.Track(itrack)->NClusters() > 2){
             // Loop over clusters
             for (int icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+
             // Get the ROC in which this cluster was recorded and fill the
             // corresponding residual.
             int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
@@ -229,21 +240,41 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
             hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
                                     BFR.Track(itrack)->LResidualX( ROC ));
 
+            // Also measure the squared sum of residuals
+            // check against self so we don't get NaNs
+            if (BFR.Track(itrack)->Cluster(icluster)->LX()==  BFR.Track(itrack)->Cluster(icluster)->LX())
+              sumResSquareCurrent +=  BFR.Track(itrack)->Cluster(icluster)->LX()* BFR.Track(itrack)->Cluster(icluster)->LX();
+            if (BFR.Track(itrack)->Cluster(icluster)->LY()==  BFR.Track(itrack)->Cluster(icluster)->LY())
+              sumResSquareCurrent +=  BFR.Track(itrack)->Cluster(icluster)->LY()* BFR.Track(itrack)->Cluster(icluster)->LY();
+
           } // end of loop over clusters
         } // end >2 clusters
       } // end of loop over tracks
     } // end event loop
 
+    // First iteration, init sumResSquareLast
+    if (ialign == 0){
+      sumResSquareLast = sumResSquareCurrent;
+    }
+    else{
+      // Improvement wrt/ last iteration of less than 0.01%. Quit.
+      if (fabs(sumResSquareLast-sumResSquareCurrent)/sumResSquareLast < 0.0001 ){
+        break;
+      }
+      // Otherwise: update last residual and try again
+      else{
+        sumResSquareLast = sumResSquareCurrent;
+      }
+    }
+
     // Loop over ROCs to update alignment
     // Dont move first and last plane
     for (int iroc = 0; iroc != 6; ++iroc) {
-
-      Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1)/2.);
-      Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2)/2.);
+      Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1));
+      Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2));
       float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
       Alignment.AddToLR( 1, iroc, angle/10. );
     }
-
   } // end alignment loop
 
   // Loop over ROCs to draw final per-plane histos
