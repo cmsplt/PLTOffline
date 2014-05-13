@@ -37,14 +37,11 @@ int TestPSIBinaryFileReader (std::string const InFileName)
   fclose(f);
   BFR.CalculateLevels();
 
-  // Prepare Occupancy and Residual histograms
-  std::vector< TH2F > hResidual;
+  // Prepare Occupancy histograms
   std::vector< TH2F > hOccupancy;
   for (int iroc = 0; iroc != 6; ++iroc){
     hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
                                 Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
-    hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
   }
 
   // Prepare PulseHeight histograms
@@ -85,23 +82,6 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     if (ieventdraw < 20 && BFR.NClusters() >= 2) {
       BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
-
-    // Fill Residual histograms
-    for (int itrack = 0; itrack < BFR.NTracks(); itrack++){
-      // Need at least three hits for the residual to make sense
-      if (BFR.Track(itrack)->NClusters() > 2){
-          // Loop over clusters
-          for (int icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
-          // Get the ROC in which this cluster was recorded and fill the
-          // corresponding residual.
-          int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
-          hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
-                               BFR.Track(itrack)->LResidualY( ROC ));
-
-        } // end of loop over clusters
-      } // end >2 clusters
-    } // end of loop over tracks
-
 
     for (size_t iplane = 0; iplane != BFR.NPlanes(); ++iplane) {
       PLTPlane* Plane = BFR.Plane(iplane);
@@ -155,19 +135,6 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hOccupancy[iroc].Draw("colz");
     Can.SaveAs( TString(hOccupancy[iroc].GetName()) + ".gif");
 
-    // Draw 2D Residuals
-    hResidual[iroc].Draw("colz");
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + ".gif");
-
-    // Draw Residual X-Projection
-    gStyle->SetOptStat(1111);
-    hResidual[iroc].ProjectionX()->Draw();
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_X.gif");
-
-    // Draw Residual Y-Projection
-    hResidual[iroc].ProjectionY()->Draw();
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_Y.gif");
-
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
     TLegend* Leg = new TLegend(0.75, 0.7, 0.90, 0.88, "");
@@ -196,14 +163,26 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
   them to NewAlignment.dat
   */
 
+  // Just repeat N times for now
+  // TODO: break if values don't change anymore
+  int NAlignmentIterations = 50;
+
   gStyle->SetOptStat(0);
 
   // Start with initial Alignment (X,Y offsets and rotations set to zero)
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
 
+  // Prepare Residual histograms
+  // hResidual:    x=dX / y=dY
+  // hResidualXdY: x=X  / y=dY
+  // hResidualYdX: x=Y  / y=dX
+  std::vector< TH2F > hResidual;
+  std::vector< TH2F > hResidualXdY;
+  std::vector< TH2F > hResidualYdX;
+
   // Alignment loop
-  for (int ialign = 0; ialign < 30; ialign++){
+  for (int ialign = 0; ialign < NAlignmentIterations; ialign++){
 
     PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
     BFR.SetTrackingAlignment(&Alignment);
@@ -212,12 +191,18 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
     fclose(f);
     BFR.CalculateLevels();
 
-    // Prepare Residual histograms
-    std::vector< TH2F > hResidual;
-    for (int iroc = 0; iroc != 6; ++iroc)
+    // Reset residual histograms
+    hResidual.clear();
+    hResidualXdY.clear();
+    hResidualYdX.clear();
+    for (int iroc = 0; iroc != 6; ++iroc){
       hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
                                   Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
-
+      hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
+                                     Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+      hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
+                                     Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+    }
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
@@ -233,26 +218,61 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
             // Get the ROC in which this cluster was recorded and fill the
             // corresponding residual.
             int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
+
+            // dX vs dY
             hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
                                  BFR.Track(itrack)->LResidualY( ROC ));
+            // X vs dY
+            hResidualXdY[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LX(),
+                                    BFR.Track(itrack)->LResidualY( ROC ));
+            // Y vs dX
+            hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
+                                    BFR.Track(itrack)->LResidualX( ROC ));
 
           } // end of loop over clusters
         } // end >2 clusters
       } // end of loop over tracks
     } // end event loop
 
-    std::cout << "ROC 2: " << hResidual[2].GetMean(1) << " " << hResidual[2].GetMean(2) << std::endl;
-
+    // Loop over ROCs to update alignment
+    // Dont move first and last plane
     for (int iroc = 0; iroc != 6; ++iroc) {
+
       Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1)/2.);
       Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2)/2.);
-
-      //float angle = atan( hResidual[iroc].GetCorrelationFactor() );
-      //std::cout << "Angle:" << iroc << "  " << angle << std::endl;
-      //Alignment.AddToLR( 1, iroc, angle/2.);
+      float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
+      Alignment.AddToLR( 1, iroc, angle/10. );
     }
+
   } // end alignment loop
 
+  // Loop over ROCs to draw final per-plane histos
+  for (int iroc = 0; iroc != 6; ++iroc) {
+    TCanvas Can;
+    Can.cd();
+
+    // 2D Residuals
+    hResidual[iroc].Draw("colz");
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + ".gif");
+
+    // Residual X-Projection
+    gStyle->SetOptStat(1111);
+    hResidual[iroc].ProjectionX()->Draw();
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_X.gif");
+
+    // Residual Y-Projection
+    hResidual[iroc].ProjectionY()->Draw();
+    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_Y.gif");
+
+    // 2D Residuals X/dY
+    hResidualXdY[iroc].Draw("colz");
+    Can.SaveAs( TString(hResidualXdY[iroc].GetName()) + ".gif");
+
+    // 2D Residuals Y/dX
+    hResidualYdX[iroc].Draw("colz");
+    Can.SaveAs( TString(hResidualYdX[iroc].GetName()) + ".gif");
+
+  } // end loop over ROCs
   Alignment.WriteAlignmentFile("NewAlignment.dat");
 
   return 0;
@@ -267,6 +287,18 @@ int main (int argc, char* argv[])
     std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
     return 1;
   }
+
+  /* There are now two useage modes: default and alignment
+
+  default uses the Alignment_ETHTelescope.dat file and analyzes the given run
+    producing Occupancy, PulseHeight and tracking plots.
+
+  alignment starts with all alignment constants zero and does several iterations
+    to minimize the residuals. All planes are shifted in x and y and rotated
+    around the z-axis. Residual plots of the last iteration are saved.
+    As output the file NewAlignment.dat is produced. To actually use it, do:
+    mv NewAlignment.dat ALIGNMENT/Alignment_ETHTelescope
+  */
 
   std::string const InFileName = argv[1];
 
