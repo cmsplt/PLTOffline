@@ -17,6 +17,10 @@
 
 #include "TLegend.h"
 #include "TString.h"
+#include "TSystem.h"
+#include "TGraphErrors.h"
+
+void WriteHTML (TString const);
 
 int TestPSIBinaryFileReader (std::string const InFileName)
 {
@@ -44,6 +48,86 @@ int TestPSIBinaryFileReader (std::string const InFileName)
                                 Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
+  // Coincidence histogram
+  TH1F hCoincidenceMap("CoincidenceMap", "CoincidenceMap", 0x3f, 0, 0x3f);
+  char *bin[0x40] = {
+      (char*)"000000"
+    , (char*)"000001"
+    , (char*)"000010"
+    , (char*)"000011"
+    , (char*)"000100"
+    , (char*)"000101"
+    , (char*)"000110"
+    , (char*)"000111"
+    , (char*)"001000"
+    , (char*)"001001"
+    , (char*)"001010"
+    , (char*)"001011"
+    , (char*)"001100"
+    , (char*)"001101"
+    , (char*)"001110"
+    , (char*)"001111"
+    , (char*)"010000"
+    , (char*)"010001"
+    , (char*)"010010"
+    , (char*)"010011"
+    , (char*)"010100"
+    , (char*)"010101"
+    , (char*)"010110"
+    , (char*)"010111"
+    , (char*)"011000"
+    , (char*)"011001"
+    , (char*)"011010"
+    , (char*)"011011"
+    , (char*)"011100"
+    , (char*)"011101"
+    , (char*)"011110"
+    , (char*)"011111"
+    , (char*)"100000"
+    , (char*)"100001"
+    , (char*)"100010"
+    , (char*)"100011"
+    , (char*)"100100"
+    , (char*)"100101"
+    , (char*)"100110"
+    , (char*)"100111"
+    , (char*)"101000"
+    , (char*)"101001"
+    , (char*)"101010"
+    , (char*)"101011"
+    , (char*)"101100"
+    , (char*)"101101"
+    , (char*)"101110"
+    , (char*)"101111"
+    , (char*)"110000"
+    , (char*)"110001"
+    , (char*)"110010"
+    , (char*)"110011"
+    , (char*)"110100"
+    , (char*)"110101"
+    , (char*)"110110"
+    , (char*)"110111"
+    , (char*)"111000"
+    , (char*)"111001"
+    , (char*)"111010"
+    , (char*)"111011"
+    , (char*)"111100"
+    , (char*)"111101"
+    , (char*)"111110"
+    , (char*)"111111"
+  };
+  hCoincidenceMap.SetBit(TH1::kCanRebin);
+  for (int r = 0; r < 0x40; ++r) 
+  {
+    hCoincidenceMap.Fill(bin[r], 0);
+  }
+
+  hCoincidenceMap.LabelsDeflate();
+  hCoincidenceMap.SetFillColor(40);
+  hCoincidenceMap.SetYTitle("Number of Hits");
+  hCoincidenceMap.GetYaxis()->SetTitleOffset(1.9);
+  hCoincidenceMap.GetYaxis()->CenterTitle();
+
   // Prepare PulseHeight histograms
   TH1F* hPulseHeight[6][4];
   int const phMin = 0;
@@ -69,12 +153,61 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     }
   }
 
+
+
+  // Pulse height average counts and averages.  Also define TGraphs
+  int NAvgPH[6][4];
+  double AvgPH[6][4];
+  TGraphErrors gAvgPH[6][4];
+  for (int i = 0; i != 6; ++i) {
+    for (int j = 0; j != 4; ++j) {
+      NAvgPH[i][j] = 0;
+      AvgPH[i][j] = 0;
+      gAvgPH[i][j].SetName( Form("PulseHeightTime_ROC%i_NPix%i", i, j) );
+      gAvgPH[i][j].SetTitle( Form("Average Pulse Height ROC %i NPix %i", i, j) );
+      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
+      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      gAvgPH[i][j].SetLineColor(HistColors[j]);
+      gAvgPH[i][j].SetMarkerColor(HistColors[j]);
+      gAvgPH[i][j].SetMinimum(0);
+      gAvgPH[i][j].SetMaximum(60000);
+      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
+      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+    }
+  }
+
+  int const TimeWidth = 50000;
+  int NGraphPoints = 0;
+
+
+  // "times" for counting
+  int const StartTime = 0;
+  int ThisTime;
+
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+    ThisTime = ievent;
 
     // print progress
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    //if (BFR.HitPlaneBits() != 0x0) {
+      hCoincidenceMap.Fill(BFR.HitPlaneBits());
+    //}
+
+    if (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
+      for (int i = 0; i != 6; ++i) {
+        for (int j = 0; j != 4; ++j) {
+          gAvgPH[i][j].Set(NGraphPoints+1);
+          gAvgPH[i][j].SetPoint(NGraphPoints, ThisTime - TimeWidth/2, AvgPH[i][j]);
+          gAvgPH[i][j].SetPointError(NGraphPoints, TimeWidth/2, AvgPH[i][j]/sqrt((float) NAvgPH[i][j]));
+          NAvgPH[i][j] = 0;
+          AvgPH[i][j] = 0;
+        }
+      }
+      ++NGraphPoints;
     }
 
     // draw tracks
@@ -89,20 +222,24 @@ int TestPSIBinaryFileReader (std::string const InFileName)
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
 
-        printf("Event %6i   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
-            ievent, iplane, Cluster->NHits(), Cluster->Charge(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row());
-        for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
-          printf(" %5i", Cluster->Hit(ihit)->ADC());
-        }
-        printf("\n");
+        //printf("Event %6i   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
+        //    ievent, iplane, Cluster->NHits(), Cluster->Charge(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row());
+        //for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+        //  printf(" %5i", Cluster->Hit(ihit)->ADC());
+        //}
+        //printf("\n");
         if (iplane < 6) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
+          PLTU::AddToRunningAverage(AvgPH[iplane][0], NAvgPH[iplane][0], Cluster->Charge());
           if (Cluster->NHits() == 1) {
             hPulseHeight[iplane][1]->Fill(Cluster->Charge());
+            PLTU::AddToRunningAverage(AvgPH[iplane][1], NAvgPH[iplane][1], Cluster->Charge());
           } else if (Cluster->NHits() == 2) {
             hPulseHeight[iplane][2]->Fill(Cluster->Charge());
+            PLTU::AddToRunningAverage(AvgPH[iplane][2], NAvgPH[iplane][2], Cluster->Charge());
           } else if (Cluster->NHits() >= 3) {
             hPulseHeight[iplane][3]->Fill(Cluster->Charge());
+            PLTU::AddToRunningAverage(AvgPH[iplane][3], NAvgPH[iplane][3], Cluster->Charge());
           }
         }
       }
@@ -119,9 +256,6 @@ int TestPSIBinaryFileReader (std::string const InFileName)
 
 
     }
-    if (BFR.NHits() > 0) {
-      std::cout << std::endl;
-    }
 
 
   } // End of Event Loop
@@ -132,8 +266,52 @@ int TestPSIBinaryFileReader (std::string const InFileName)
   for (int iroc = 0; iroc != 6; ++iroc) {
 
     // Draw Occupancy histograms
+    hOccupancy[iroc].SetMinimum(0);
     hOccupancy[iroc].Draw("colz");
     Can.SaveAs( TString(hOccupancy[iroc].GetName()) + ".gif");
+
+    TH1F* hOccupancy1DZ = PLTU::HistFrom2D(&hOccupancy[iroc]);
+    Can.cd();
+    hOccupancy1DZ->Draw("hist");
+    if (hOccupancy1DZ->GetEntries() > 0) {
+      Can.SetLogy(1);
+    }
+    Can.SaveAs(TString(hOccupancy1DZ->GetName()) + ".gif");
+    Can.SetLogy(0);
+
+    // Grab the quantile you're interested in here
+    Double_t QProbability[1] = { 0.95 }; // Quantile positions in [0, 1]
+    Double_t QValue[1];                  // Quantile values
+    hOccupancy1DZ->GetQuantiles(1, QValue, QProbability);
+    if(QValue[0] > 1 && hOccupancy[iroc].GetMaximum() > QValue[0]) {
+      hOccupancy[iroc].SetMaximum(QValue[0]);
+    }
+    Can.cd();
+    hOccupancy[iroc].Draw("colz");
+    Can.SaveAs( Form("Occupancy_ROC%i_Quantile.gif", iroc) );
+    delete hOccupancy1DZ;
+
+    Can.cd();
+    hOccupancy1DZ = PLTU::HistFrom2D(&hOccupancy[iroc], 0, QValue[0], TString::Format("Occupancy1DZ_ROC%i_Quantile", iroc), 20);
+    hOccupancy1DZ->Draw("hist");
+    Can.SaveAs(TString(hOccupancy1DZ->GetName()) + ".gif");
+    delete hOccupancy1DZ;
+
+
+    // Get 3x3 efficiency hists and draw
+    TH2F* h3x3 = PLTU::Get3x3EfficiencyHist(hOccupancy[iroc], 0, 51, 0, 79);
+    h3x3->SetTitle( TString::Format("Occupancy Efficiency 3x3 ROC%i", iroc) );
+    Can.cd();
+    h3x3->SetMinimum(0);
+    h3x3->SetMaximum(3);
+    h3x3->Draw("colz");
+    Can.SaveAs(TString(h3x3->GetName()) + ".gif");
+
+    Can.cd();
+    TH1F* h3x3_1DZ = PLTU::HistFrom2D(h3x3, "", 50);
+    h3x3_1DZ->Draw("hist");
+    Can.SaveAs(TString(h3x3_1DZ->GetName()) + ".gif");
+    delete h3x3;
 
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
@@ -152,7 +330,23 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hPulseHeight[iroc][3]->Draw("samehist");
     Leg->Draw("same");
     Can.SaveAs(TString::Format("PulseHeight_ROC%i.gif", iroc));
+
+    gAvgPH[iroc][0].SetTitle( TString::Format("Average Pulse Height ROC%i", iroc) );
+    gAvgPH[iroc][0].Draw("Ape");
+    gAvgPH[iroc][1].Draw("samepe");
+    gAvgPH[iroc][2].Draw("samepe");
+    gAvgPH[iroc][3].Draw("samepe");
+    Leg->Draw("same");
+    Can.SaveAs(TString::Format("PulseHeightTime_ROC%i.gif", iroc));
+
   }
+
+  TCanvas Can2("CoincidenceMap", "CoincidenceMap", 1200, 400);
+  Can2.cd();
+  hCoincidenceMap.Draw("");
+  Can2.SaveAs("Occupancy_Coincidence.gif");
+
+  WriteHTML("");
 
   return 0;
 }
@@ -220,11 +414,11 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
         std::cout << "Processing event: " << ievent << std::endl;
 
       // Fill Residual histograms
-      for (int itrack = 0; itrack < BFR.NTracks(); itrack++){
+      for (size_t itrack = 0; itrack < BFR.NTracks(); itrack++){
         // Need at least three hits for the residual to make sense
         if (BFR.Track(itrack)->NClusters() > 2){
             // Loop over clusters
-            for (int icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+            for (size_t icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
 
             // Get the ROC in which this cluster was recorded and fill the
             // corresponding residual.
@@ -308,6 +502,99 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
 
   return 0;
 }
+
+
+
+
+
+
+
+void WriteHTML (TString const OutDir)
+{
+  // This function to write the HTML output for a run
+
+  // Make output dir
+  if (gSystem->mkdir(OutDir, true) != 0) {
+    std::cerr << "WARNING: either OutDir exists or it is un-mkdir-able: " << OutDir << std::endl;
+  }
+
+  TString FileName;
+  if (OutDir.Length() == 0) {
+    FileName = "index.html";
+  } else {
+    FileName = OutDir + "/index.html";
+  }
+  std::ofstream f(FileName.Data());
+  if (!f.is_open()) {
+    std::cerr << "ERROR: Cannot open HTML file: " << FileName << std::endl;
+    return;
+  }
+
+
+  f << "<html><body>\n";
+  f << "<h1>Run Summary: </h1>\n";
+  //f << "DataFileName: " << DataFileName << "<br />\n";
+  //f << "GainCalFileName: " << GainCalFileName << "<br />\n";
+  //f << "AlignmentFileName: " << AlignmentFileName << "<br />\n";
+  //f << "Number of events: " << ie << "<br />\n";
+  //f << "<br />\n<a href=\"" << OutFileName << "\">" << OutFileName << "</a><br />\n";
+
+  f << "<hr />\n";
+  f << "<h2>Levels</h2>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Levels_ROC%i.gif\"><img width=\"150\" src=\"Levels_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+
+  f << "<hr />\n";
+  f << "<h2>Occupancy</h2>" << std::endl;
+  f << "<a href=\"Occupancy_Coincidence.gif\"><img width=\"900\" src=\"Occupancy_Coincidence.gif\"></a>\n<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy_ROC%i.gif\"><img width=\"150\" src=\"Occupancy_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy_ROC%i_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_1DZ.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy_ROC%i_Quantile.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_Quantile.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy1DZ_ROC%i_Quantile.gif\"><img width=\"150\" src=\"Occupancy1DZ_ROC%i_Quantile.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
+
+
+  f << "<hr />\n";
+  f << "<h2>Pulse Height</h2>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeight_ROC%i.gif\"><img width=\"150\" src=\"PulseHeight_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightTime_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTime_ROC%i.gif\"></a>\n", i, i);
+  }
+
+
+  f << "</body></html>";
+  f.close();
+  return;
+}
+
+
+
+
 
 
 

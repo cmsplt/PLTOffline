@@ -40,6 +40,12 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C3.dat.fit.dat");
   fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C4.dat.fit.dat");
   fGainCal.ReadGainCalFile("Telescope_Recalib_08052014/phCalibration_C5.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C0.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C1.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C2.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C3.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C4.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C5.dat.fit.dat");
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C0.dat", 0);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C1.dat", 1);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C2.dat", 2);
@@ -313,9 +319,9 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
     int const NROCs = UBCount - 5;
     //std::cout << "fBufferSize: " << fBufferSize << std::endl;
     //std::cout << "NROCs: " << NROCs << std::endl;
-    if (NROCs > NMAXROCS) {
-      std::cerr << "ERROR: NROCs > NMAXROCS in levels calculation" << std::endl;
-      exit(1);
+    if (NROCs != NMAXROCS) {
+      std::cerr << "WARNING: NROCs != NMAXROCS in levels calculation.  Skipping event" << std::endl;
+      continue;
     }
     if (NROCs <= 0) {
       std::cerr << "ERROR: bad event with NROCs <= 0" << std::endl;
@@ -348,9 +354,9 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
     for (int iroc = 0; iroc != NROCs; ++iroc) {
       UBPositionROC[iroc] = UBPosition[3+iroc];
       NHitsROC[iroc] = (UBPosition[3+iroc+1] - UBPosition[3+iroc] - 3) / 6;
-      if (NHitsROC[iroc] > 0) {
-        printf("ievent: %5i  roc %2i  NHits: %5i\n", ievent, iroc, NHitsROC[iroc]);
-      }
+      //if (NHitsROC[iroc] > 0) {
+      //  printf("ievent: %5i  roc %2i  NHits: %5i\n", ievent, iroc, NHitsROC[iroc]);
+      //}
 
       for (int ihit = 0; ihit != NHitsROC[iroc]; ++ihit) {
         hROCLevels[iroc]->Fill( fData[ UBPositionROC[iroc] +  + 2 + 1 + ihit * 6]);
@@ -447,12 +453,19 @@ void PSIBinaryFileReader::DecodeHits ()
   int const NROCs = UBCount - 5;
   //std::cout << "fBufferSize: " << fBufferSize << std::endl;
   //std::cout << "NROCs: " << NROCs << std::endl;
+  static int iBadData = 0;
+  static int iGoodData = 0;
   if (NROCs > NMAXROCS) {
-    std::cerr << "ERROR: NROCs > NMAXROCS in levels calculation" << std::endl;
-    exit(1);
+    //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
+    std::cerr << "WARNING: NROCs > NMAXROCS.  Too many UBs.  Skipping this event" << std::endl;
+  } else if (NROCs != NMAXROCS) {
+    //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
+    std::cerr << "WARNING: NROCs != NMAXROCS.  Skipping this event" << std::endl;
+    return;
   }
+  //DrawWaveform(TString::Format("GoodWave_%i.gif", iGoodData++));
   if (NROCs <= 0) {
-    std::cerr << "ERROR: bad event with NROCs <= 0" << std::endl;
+    std::cerr << "WARNING: bad event with NROCs <= 0" << std::endl;
     return;
   }
 
@@ -827,6 +840,24 @@ void PSIBinaryFileReader::DrawTracksAndHits (std::string const Name)
     delete HistCharge[i];
     delete HistChargeUnclustered[i];
   }
+
+  return;
+}
+
+
+
+
+void PSIBinaryFileReader::DrawWaveform (TString const OutFileName)
+{
+  int X[fBufferSize];
+  for (int i = 0; i != fBufferSize; ++i) {
+    X[i] = i;
+  }
+  TGraph g(fBufferSize, X, fData);
+  TCanvas c;
+  c.cd();
+  g.Draw("AC*");
+  c.SaveAs(OutFileName);
 
   return;
 }

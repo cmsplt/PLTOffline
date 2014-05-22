@@ -36,6 +36,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     void DecodeHits ();
 
     void DrawTracksAndHits (std::string const);
+    void DrawWaveform(TString const);
 
     size_t NHits ();
     PLTHit* Hit (size_t);
@@ -50,7 +51,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
   private:
     int fHeader;
     int fNextHeader;
-    static int const NMAXROCS = 16;
+    static int const NMAXROCS = 6;
     static int const MAXNDATA = 2000;
     int fBuffer[MAXNDATA];
     int fBufferSize;
@@ -60,7 +61,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     unsigned int fLowerTime;
     long long fTime;
     int fData[MAXNDATA];
-    static int const UBLevel = -450;
+    static int const UBLevel = -680;
     float fLevelsROC[NMAXROCS][6];
     std::set<int> fPixelMask;
     std::vector<PLTHit*> fHits;
