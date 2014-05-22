@@ -20,10 +20,17 @@
 #include "TSystem.h"
 #include "TGraphErrors.h"
 
+
+
 void WriteHTML (TString const);
 
-int TestPSIBinaryFileReader (std::string const InFileName)
+int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumber)
 {
+
+	TString const PlotsDir = "plots/";
+	TString const OutDir = PlotsDir + RunNumber + "/";
+
+	std::cout<<OutDir<<std::endl;
   /* TestPSIBinaryFileReaderAlign: Default run analysis.
   */
 
@@ -268,7 +275,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     // Draw Occupancy histograms
     hOccupancy[iroc].SetMinimum(0);
     hOccupancy[iroc].Draw("colz");
-    Can.SaveAs( TString(hOccupancy[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+TString(hOccupancy[iroc].GetName()) + ".gif");
 
     TH1F* hOccupancy1DZ = PLTU::HistFrom2D(&hOccupancy[iroc]);
     Can.cd();
@@ -276,7 +283,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     if (hOccupancy1DZ->GetEntries() > 0) {
       Can.SetLogy(1);
     }
-    Can.SaveAs(TString(hOccupancy1DZ->GetName()) + ".gif");
+    Can.SaveAs(OutDir+TString(hOccupancy1DZ->GetName()) + ".gif");
     Can.SetLogy(0);
 
     // Grab the quantile you're interested in here
@@ -288,13 +295,13 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     }
     Can.cd();
     hOccupancy[iroc].Draw("colz");
-    Can.SaveAs( Form("Occupancy_ROC%i_Quantile.gif", iroc) );
+    Can.SaveAs( OutDir+Form("Occupancy_ROC%i_Quantile.gif", iroc) );
     delete hOccupancy1DZ;
 
     Can.cd();
     hOccupancy1DZ = PLTU::HistFrom2D(&hOccupancy[iroc], 0, QValue[0], TString::Format("Occupancy1DZ_ROC%i_Quantile", iroc), 20);
     hOccupancy1DZ->Draw("hist");
-    Can.SaveAs(TString(hOccupancy1DZ->GetName()) + ".gif");
+    Can.SaveAs(OutDir+TString(hOccupancy1DZ->GetName()) + ".gif");
     delete hOccupancy1DZ;
 
 
@@ -305,12 +312,12 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     h3x3->SetMinimum(0);
     h3x3->SetMaximum(3);
     h3x3->Draw("colz");
-    Can.SaveAs(TString(h3x3->GetName()) + ".gif");
+    Can.SaveAs(OutDir+TString(h3x3->GetName()) + ".gif");
 
     Can.cd();
     TH1F* h3x3_1DZ = PLTU::HistFrom2D(h3x3, "", 50);
     h3x3_1DZ->Draw("hist");
-    Can.SaveAs(TString(h3x3_1DZ->GetName()) + ".gif");
+    Can.SaveAs(OutDir+TString(h3x3_1DZ->GetName()) + ".gif");
     delete h3x3;
 
     // Draw the PulseHeights
@@ -329,7 +336,7 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     hPulseHeight[iroc][2]->Draw("samehist");
     hPulseHeight[iroc][3]->Draw("samehist");
     Leg->Draw("same");
-    Can.SaveAs(TString::Format("PulseHeight_ROC%i.gif", iroc));
+    Can.SaveAs(OutDir+TString::Format("PulseHeight_ROC%i.gif", iroc));
 
     gAvgPH[iroc][0].SetTitle( TString::Format("Average Pulse Height ROC%i", iroc) );
     gAvgPH[iroc][0].Draw("Ape");
@@ -337,26 +344,29 @@ int TestPSIBinaryFileReader (std::string const InFileName)
     gAvgPH[iroc][2].Draw("samepe");
     gAvgPH[iroc][3].Draw("samepe");
     Leg->Draw("same");
-    Can.SaveAs(TString::Format("PulseHeightTime_ROC%i.gif", iroc));
+    Can.SaveAs(OutDir+TString::Format("PulseHeightTime_ROC%i.gif", iroc));
 
   }
 
   TCanvas Can2("CoincidenceMap", "CoincidenceMap", 1200, 400);
   Can2.cd();
   hCoincidenceMap.Draw("");
-  Can2.SaveAs("Occupancy_Coincidence.gif");
+  Can2.SaveAs(OutDir+"Occupancy_Coincidence.gif");
 
-  WriteHTML("");
+
+  WriteHTML(PlotsDir + RunNumber);
 
   return 0;
 }
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName)
+int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const RunNumber)
 {
   /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
   them to NewAlignment.dat
   */
 
+	TString const PlotsDir = "plots/";
+	TString const OutDir = PlotsDir + RunNumber;
   // Repeat up to 100 times. Cancel if the squared sum of residuals
   // improves by less than 0.01%
   int NMaxAlignmentIterations = 100;
@@ -478,24 +488,24 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName)
 
     // 2D Residuals
     hResidual[iroc].Draw("colz");
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + ".gif");
 
     // Residual X-Projection
     gStyle->SetOptStat(1111);
     hResidual[iroc].ProjectionX()->Draw();
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_X.gif");
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_X.gif");
 
     // Residual Y-Projection
     hResidual[iroc].ProjectionY()->Draw();
-    Can.SaveAs( TString(hResidual[iroc].GetName()) + "_Y.gif");
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_Y.gif");
 
     // 2D Residuals X/dY
     hResidualXdY[iroc].Draw("colz");
-    Can.SaveAs( TString(hResidualXdY[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+TString(hResidualXdY[iroc].GetName()) + ".gif");
 
     // 2D Residuals Y/dX
     hResidualYdX[iroc].Draw("colz");
-    Can.SaveAs( TString(hResidualYdX[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+TString(hResidualYdX[iroc].GetName()) + ".gif");
 
   } // end loop over ROCs
   Alignment.WriteAlignmentFile("NewAlignment.dat");
@@ -520,7 +530,7 @@ void WriteHTML (TString const OutDir)
 
   TString FileName;
   if (OutDir.Length() == 0) {
-    FileName = "index.html";
+    FileName = OutDir + "/index.html";
   } else {
     FileName = OutDir + "/index.html";
   }
@@ -619,13 +629,18 @@ int main (int argc, char* argv[])
   */
 
   std::string const InFileName = argv[1];
+	TString const FullRunName = InFileName;
+	Int_t const Index = FullRunName.Index("bt05r",0);
+	TString const RunNumber = FullRunName(Index+5,6);
+	gSystem->mkdir("./plots/" + RunNumber);	
+
 
   int doAlign = atoi(argv[2]);
 
   if (doAlign)
-    TestPSIBinaryFileReaderAlign(InFileName);
+    TestPSIBinaryFileReaderAlign(InFileName,RunNumber);
   else
-    TestPSIBinaryFileReader(InFileName);
+    TestPSIBinaryFileReader(InFileName,RunNumber);
 
 
   return 0;
