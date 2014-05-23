@@ -220,7 +220,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     // draw tracks
     static int ieventdraw = 0;
     if (ieventdraw < 20 && BFR.NClusters() >= 2) {
-      BFR.DrawTracksAndHits( TString::Format("plots/Tracks_Ev%i.gif", ++ieventdraw).Data() );
+      BFR.DrawTracksAndHits( TString::Format(OutDir + "/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
     for (size_t iplane = 0; iplane != BFR.NPlanes(); ++iplane) {
