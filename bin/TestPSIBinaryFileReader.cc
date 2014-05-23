@@ -46,7 +46,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.CalculateLevels();
+  BFR.CalculateLevels(10000, OutDir);
 
   // Prepare Occupancy histograms
   std::vector< TH2F > hOccupancy;
@@ -400,7 +400,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const Run
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.CalculateLevels();
+    BFR.CalculateLevels(10000 ,OutDir);
 
     // Reset residual histograms
     hResidual.clear();

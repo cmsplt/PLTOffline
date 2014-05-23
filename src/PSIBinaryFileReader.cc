@@ -282,7 +282,7 @@ int PSIBinaryFileReader::GetNextEvent ()
 
 
 
-int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
+int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents,TString const OutDir)
 {
   // Vector for ROC level histograms
   std::vector<TH1F*> hROCLevels;
@@ -420,13 +420,13 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents)
       pPoint[i].Draw("same");
       lLine[i].Draw("same");
     }
-    Can.SaveAs(TString(hROCLevels[iroc]->GetName()) + ".gif");
+    Can.SaveAs(OutDir + "/" + TString(hROCLevels[iroc]->GetName()) + ".gif");
   }
 
   TCanvas Can;
   Can.cd();
   hTBMLevels.Draw("hist");
-  Can.SaveAs("LevelsTBM.gif");
+  Can.SaveAs(OutDir + "LevelsTBM.gif");
 
   // Reset the file
   std::cout << "Reset the file!" << std::endl;
