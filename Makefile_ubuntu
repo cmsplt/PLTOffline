@@ -1,7 +1,7 @@
 CC = g++
 LD = g++
-CFLAGS = -O3 -fPIC -Wall `root-config --cflags`
-LIBS = -shared `root-config --libs` -Llib -lMinuit -lSpectrum -lEve -lGeom
+CFLAGS = -fPIC -Wall `root-config --cflags`
+LIBS =  `root-config --libs` -Llib -lMinuit -lSpectrum -lGeom
 INCLUDE = -Iinterface -Idict
 OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
 EXECS = $(patsubst bin/%.cc,%,$(wildcard bin/*.cc))
@@ -29,7 +29,7 @@ dict/%_dict.cc : include/%.h dict/%_linkdef.h
 	rootcint -f $@ -c $<
 
 % : $(OBJS) lib/%.o
-	$(LD) $(LIBS) $(OBJS) $(LINKDEFOBJ) lib/$@.o -o $@
+	$(LD) $(OBJS) $(LINKDEFOBJ) lib/$@.o -o $@ $(LIBS)
 
 
 
