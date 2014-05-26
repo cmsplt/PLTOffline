@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 
 #include "TString.h"
 #include "TGraph.h"
