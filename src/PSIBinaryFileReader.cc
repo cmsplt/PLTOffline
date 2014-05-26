@@ -34,18 +34,18 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
     std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
     throw;
   }
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C0.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C1.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C2.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C3.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C4.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C5.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C0.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C1.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C2.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C3.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C4.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("/Users/dhidas//Telescope_NewBoards_18052014_1418/phCalibration_C5.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C0.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C1.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C2.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C3.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C4.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C5.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C0.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C1.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C2.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C3.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C4.dat.fit.dat");
+  fGainCal.ReadGainCalFile("/Users/dhidas/Telescope_NewBoards_18052014_1418/phCalibration_C5.dat.fit.dat");
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C0.dat", 0);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C1.dat", 1);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C2.dat", 2);
@@ -458,6 +458,7 @@ void PSIBinaryFileReader::DecodeHits ()
   if (NROCs > NMAXROCS) {
     //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
     std::cerr << "WARNING: NROCs > NMAXROCS.  Too many UBs.  Skipping this event" << std::endl;
+    return;
   } else if (NROCs != NMAXROCS) {
     //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
     std::cerr << "WARNING: NROCs != NMAXROCS.  Skipping this event" << std::endl;
