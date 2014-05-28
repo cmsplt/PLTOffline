@@ -1,0 +1,7 @@
+/home/ethz/PSI_Testbeam/DHidasPLT
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C0.dat.fit.dat
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C1.dat.fit.dat
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C2.dat.fit.dat
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C3.dat.fit.dat
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C11.dat.fit.dat
+Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C4.dat.fit.dat
