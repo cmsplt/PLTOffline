@@ -83,6 +83,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
                                 Form("NHitsPerCluster_ROC%i",iroc), 10, 0, 10));
   }
 
+  std::vector<TH1F> hNClusters;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hNClusters.push_back( TH1F( Form("NClusters_ROC%i",iroc),
+                                Form("NClusters_ROC%i",iroc), 10, 0, 10));
+  }
+
 
   // Coincidence histogram
   TH1F hCoincidenceMap("CoincidenceMap", "CoincidenceMap", 0x3f, 0, 0x3f);
@@ -299,6 +305,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     for (size_t iplane = 0; iplane != BFR.NPlanes(); ++iplane) {
       PLTPlane* Plane = BFR.Plane(iplane);
 
+      hNClusters[Plane->ROC()].Fill(Plane->NClusters());
+
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
 
@@ -335,6 +343,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
 
       for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
         PLTHit* Hit = Plane->Hit(ihit);
+
 
         if (Hit->ROC() < 6) {
           hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
@@ -454,6 +463,13 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     h3x3_1DZ->Draw("hist");
     Can.SaveAs(OutDir+TString(h3x3_1DZ->GetName()) + ".gif");
     delete h3x3;
+
+    Can.cd();
+    hNClusters[iroc].SetMinimum(0);
+    hNClusters[iroc].SetXTitle("Number of clusters per event");
+    hNClusters[iroc].SetYTitle("Events");
+    hNClusters[iroc].Draw("hist");
+    Can.SaveAs( OutDir+TString(hNClusters[iroc].GetName()) + ".gif");
 
     // Draw Hits per cluster histograms
     Can.cd();
@@ -800,6 +816,11 @@ void WriteHTML (TString const OutDir)
     f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"></a>\n", i, i);
   }
 
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"NClusters_ROC%i.gif\"><img width=\"150\" src=\"NClusters_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>" << std::endl;
   f << "<br>" << std::endl;
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"NHitsPerCluster_ROC%i.gif\"><img width=\"150\" src=\"NHitsPerCluster_ROC%i.gif\"></a>\n", i, i);
