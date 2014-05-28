@@ -43,6 +43,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
   BFR.SetTrackingAlignment(&Alignment);
+  //BFR.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
@@ -54,6 +55,29 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
                                 Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
+
+  // Track slope plots
+  TH1F hTrackSlopeX("TrackSlopeX", "TrackSlopeX", 50, -0.05, 0.05);
+  TH1F hTrackSlopeY("TrackSlopeY", "TrackSlopeY", 50, -0.05, 0.05);
+
+  std::vector<TH2F> hOccupancyTrack6;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancyTrack6.push_back( TH2F( Form("OccupancyTrack6_ROC%i",iroc),
+                                Form("OccupancyTrack6_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+  }
+
+  std::vector<TH2F> hOccupancyLowPH;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancyLowPH.push_back( TH2F( Form("OccupancyLowPH_ROC%i",iroc),
+                                Form("OccupancyLowPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+  }
+  std::vector<TH2F> hOccupancyHighPH;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancyHighPH.push_back( TH2F( Form("OccupancyHighPH_ROC%i",iroc),
+                                Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+  }
+
+
 
   // Coincidence histogram
   TH1F hCoincidenceMap("CoincidenceMap", "CoincidenceMap", 0x3f, 0, 0x3f);
@@ -150,6 +174,29 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     Name = TString::Format("PulseHeight_ROC%i_NPix3Plus", iroc);
     hPulseHeight[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
+  TH1F* hPulseHeightTrack6[6][4];
+  for (int iroc = 0; iroc != 6; ++iroc) {
+    TString Name = TString::Format("PulseHeightTrack6_ROC%i_All", iroc);
+    hPulseHeightTrack6[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightTrack6_ROC%i_NPix1", iroc);
+    hPulseHeightTrack6[iroc][1] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightTrack6_ROC%i_NPix2", iroc);
+    hPulseHeightTrack6[iroc][2] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightTrack6_ROC%i_NPix3Plus", iroc);
+    hPulseHeightTrack6[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
+  }
+  TH1F* hPulseHeightLong[6][4];
+  int const phLongMax = 300000;
+  for (int iroc = 0; iroc != 6; ++iroc) {
+    TString Name = TString::Format("PulseHeightLong_ROC%i_All", iroc);
+    hPulseHeightLong[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
+    Name = TString::Format("PulseHeightLong_ROC%i_NPix1", iroc);
+    hPulseHeightLong[iroc][1] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
+    Name = TString::Format("PulseHeightLong_ROC%i_NPix2", iroc);
+    hPulseHeightLong[iroc][2] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
+    Name = TString::Format("PulseHeightLong_ROC%i_NPix3Plus", iroc);
+    hPulseHeightLong[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
+  }
 
   int const HistColors[4] = { 1, 4, 28, 2 };
   for (int iroc = 0; iroc != 6; ++iroc) {
@@ -157,10 +204,30 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     hPulseHeight[iroc][inpix]->SetXTitle("Charge (electrons)");
     hPulseHeight[iroc][inpix]->SetYTitle("Number of Clusters");
     hPulseHeight[iroc][inpix]->SetLineColor(HistColors[inpix]);
+    hPulseHeightTrack6[iroc][inpix]->SetXTitle("Charge (electrons)");
+    hPulseHeightTrack6[iroc][inpix]->SetYTitle("Number of Clusters");
+    hPulseHeightTrack6[iroc][inpix]->SetLineColor(HistColors[inpix]);
+    hPulseHeightLong[iroc][inpix]->SetXTitle("Charge (electrons)");
+    hPulseHeightLong[iroc][inpix]->SetYTitle("Number of Clusters");
+    hPulseHeightLong[iroc][inpix]->SetLineColor(HistColors[inpix]);
     }
   }
 
-
+  // 2D Pulse Height maps for All and Track6
+  double AvgPH2D[6][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2D[6][PLTU::NCOL][PLTU::NROW];
+  double AvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
+  for (int i = 0; i != 6; ++i) {
+    for (int icol = 0; icol != PLTU::NCOL; ++icol) {
+      for (int irow = 0; irow != PLTU::NROW; ++irow) {
+        AvgPH2D[i][icol][irow] = 0;
+        NAvgPH2D[i][icol][irow] = 0;
+        AvgPH2DTrack6[i][icol][irow] = 0;
+        NAvgPH2DTrack6[i][icol][irow] = 0;
+      }
+    }
+  }
 
   // Pulse height average counts and averages.  Also define TGraphs
   int NAvgPH[6][4];
@@ -210,6 +277,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
           gAvgPH[i][j].Set(NGraphPoints+1);
           gAvgPH[i][j].SetPoint(NGraphPoints, ThisTime - TimeWidth/2, AvgPH[i][j]);
           gAvgPH[i][j].SetPointError(NGraphPoints, TimeWidth/2, AvgPH[i][j]/sqrt((float) NAvgPH[i][j]));
+          printf("AvgCharge: %i %i N:%9i : %13.3E\n", i, j, NAvgPH[i][j], AvgPH[i][j]);
           NAvgPH[i][j] = 0;
           AvgPH[i][j] = 0;
         }
@@ -219,7 +287,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
 
     // draw tracks
     static int ieventdraw = 0;
-    if (ieventdraw < 20 && BFR.NClusters() >= 2) {
+    if (ieventdraw < 20 && BFR.NClusters() >= 6) {
       BFR.DrawTracksAndHits( TString::Format(OutDir + "/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
@@ -237,15 +305,24 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
         //printf("\n");
         if (iplane < 6) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
+          hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
+          if (Cluster->Charge() > 300000) {
+              //printf("High Charge: %13.3E\n", Cluster->Charge());
+              continue;
+          }
+          PLTU::AddToRunningAverage(AvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
           PLTU::AddToRunningAverage(AvgPH[iplane][0], NAvgPH[iplane][0], Cluster->Charge());
           if (Cluster->NHits() == 1) {
             hPulseHeight[iplane][1]->Fill(Cluster->Charge());
+            hPulseHeightLong[iplane][1]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][1], NAvgPH[iplane][1], Cluster->Charge());
           } else if (Cluster->NHits() == 2) {
             hPulseHeight[iplane][2]->Fill(Cluster->Charge());
+            hPulseHeightLong[iplane][2]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][2], NAvgPH[iplane][2], Cluster->Charge());
           } else if (Cluster->NHits() >= 3) {
             hPulseHeight[iplane][3]->Fill(Cluster->Charge());
+            hPulseHeightLong[iplane][3]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][3], NAvgPH[iplane][3], Cluster->Charge());
           }
         }
@@ -261,8 +338,60 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
         }
       }
 
+      for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
+        PLTCluster* Cluster = Plane->Cluster(icluster);
+        if (Cluster->Charge() > 50000) {
+          for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+            hOccupancyHighPH[Cluster->ROC()].Fill( Cluster->Hit(ihit)->Column(), Cluster->Hit(ihit)->Row() );
+          }
+        } else if (Cluster->Charge() > 10000 && Cluster->Charge() < 40000) {
+          for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+            hOccupancyLowPH[Cluster->ROC()].Fill( Cluster->Hit(ihit)->Column(), Cluster->Hit(ihit)->Row() );
+          }
+        }
+      }
+
 
     }
+
+    if (BFR.NTracks() == 1 &&
+        BFR.Track(0)->NClusters() == 6 &&
+        BFR.Track(0)->Cluster(0)->Charge() < 300000 &&
+        BFR.Track(0)->Cluster(1)->Charge() < 300000 &&
+        BFR.Track(0)->Cluster(2)->Charge() < 300000 &&
+        BFR.Track(0)->Cluster(3)->Charge() < 300000 &&
+        BFR.Track(0)->Cluster(4)->Charge() < 300000 &&
+        BFR.Track(0)->Cluster(5)->Charge() < 300000 ) {
+
+        PLTTrack* Track = BFR.Track(0);
+        hTrackSlopeX.Fill(Track->fTVX / Track->fTVZ);
+        hTrackSlopeY.Fill(Track->fTVY / Track->fTVZ);
+
+        for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
+          PLTCluster* Cluster = Track->Cluster(icluster);
+
+          if (Cluster->Charge() > 300000) {
+              //printf("High Charge: %13.3E\n", Cluster->Charge());
+              continue;
+          }
+          PLTU::AddToRunningAverage(AvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
+
+          if (Track->IsFiducial(1, 5, Alignment, PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
+            hOccupancyTrack6[Cluster->ROC()].Fill(Cluster->PX(), Cluster->PY());
+          }
+          hPulseHeightTrack6[Cluster->ROC()][0]->Fill(Cluster->Charge());
+          if (Cluster->NHits() == 1) {
+            hPulseHeightTrack6[Cluster->ROC()][1]->Fill(Cluster->Charge());
+          } else if (Cluster->NHits() == 2) {
+            hPulseHeightTrack6[Cluster->ROC()][2]->Fill(Cluster->Charge());
+          } else if (Cluster->NHits() >= 3) {
+            hPulseHeightTrack6[Cluster->ROC()][3]->Fill(Cluster->Charge());
+          }
+        }
+
+    }
+    //for (size_t itrack = 0; itrack != BFR.NTracks(); ++itrack) {
+    //}
 
 
   } // End of Event Loop
@@ -320,6 +449,23 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     Can.SaveAs(OutDir+TString(h3x3_1DZ->GetName()) + ".gif");
     delete h3x3;
 
+    Can.cd();
+    hOccupancyHighPH[iroc].SetMinimum(0);
+    hOccupancyHighPH[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hOccupancyHighPH[iroc].GetName()) + ".gif");
+
+    hOccupancyLowPH[iroc].SetMinimum(0);
+    hOccupancyLowPH[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hOccupancyLowPH[iroc].GetName()) + ".gif");
+
+
+    // Draw OccupancyTrack6 histograms
+    hOccupancyTrack6[iroc].SetMinimum(0);
+    hOccupancyTrack6[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hOccupancyTrack6[iroc].GetName()) + ".gif");
+
+
+
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
     TLegend* Leg = new TLegend(0.75, 0.7, 0.90, 0.88, "");
@@ -338,6 +484,25 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     Leg->Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeight_ROC%i.gif", iroc));
 
+    Can.cd();
+    hPulseHeightTrack6[iroc][0]->SetTitle( TString::Format("Pulse Height Track6 ROC%i", iroc) );
+    hPulseHeightTrack6[iroc][0]->Draw("hist");
+    hPulseHeightTrack6[iroc][1]->Draw("samehist");
+    hPulseHeightTrack6[iroc][2]->Draw("samehist");
+    hPulseHeightTrack6[iroc][3]->Draw("samehist");
+    Leg->Draw("same");
+    Can.SaveAs(OutDir+TString::Format("PulseHeightTrack6_ROC%i.gif", iroc));
+
+    Can.cd();
+    hPulseHeightLong[iroc][0]->SetTitle( TString::Format("Pulse Height ROC%i", iroc) );
+    hPulseHeightLong[iroc][0]->Draw("hist");
+    hPulseHeightLong[iroc][1]->Draw("samehist");
+    hPulseHeightLong[iroc][2]->Draw("samehist");
+    hPulseHeightLong[iroc][3]->Draw("samehist");
+    Leg->Draw("same");
+    Can.SaveAs(OutDir+TString::Format("PulseHeightLong_ROC%i.gif", iroc));
+
+    Can.cd();
     gAvgPH[iroc][0].SetTitle( TString::Format("Average Pulse Height ROC%i", iroc) );
     gAvgPH[iroc][0].Draw("Ape");
     gAvgPH[iroc][1].Draw("samepe");
@@ -346,12 +511,49 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     Leg->Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeightTime_ROC%i.gif", iroc));
 
+
+    // Use AvgPH2D to draw PH 2D maps
+    TString Name = TString::Format("PulseHeightAvg2D_ROC%i", iroc);
+    TH2F hPulseHeightAvg2D(Name, Name, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+    for (int icol = 0; icol != PLTU::NCOL; ++icol) {
+      for (int irow = 0; irow != PLTU::NROW; ++irow) {
+        hPulseHeightAvg2D.SetBinContent(icol+1, irow+1, AvgPH2D[iroc][icol][irow]);
+      }
+    }
+    Can.cd();
+    hPulseHeightAvg2D.SetMinimum(0);
+    hPulseHeightAvg2D.SetMaximum(100000);
+    hPulseHeightAvg2D.Draw("colz");
+    Can.SaveAs(OutDir+hPulseHeightAvg2D.GetName() + ".gif");
+
+    // Use AvgPH2D Track6 to draw PH 2D maps
+    Name = TString::Format("PulseHeightAvg2DTrack6_ROC%i", iroc);
+    TH2F hPulseHeightAvg2DTrack6(Name, Name, PLTU::NCOL, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW, PLTU::FIRSTROW, PLTU::LASTROW);
+    for (int icol = 0; icol != PLTU::NCOL; ++icol) {
+      for (int irow = 0; irow != PLTU::NROW; ++irow) {
+        hPulseHeightAvg2DTrack6.SetBinContent(icol+1, irow+1, AvgPH2DTrack6[iroc][icol][irow]);
+      }
+    }
+    Can.cd();
+    hPulseHeightAvg2DTrack6.SetMinimum(0);
+    hPulseHeightAvg2DTrack6.SetMaximum(100000);
+    hPulseHeightAvg2DTrack6.Draw("colz");
+    Can.SaveAs(OutDir+hPulseHeightAvg2DTrack6.GetName() + ".gif");
+
   }
 
   TCanvas Can2("CoincidenceMap", "CoincidenceMap", 1200, 400);
   Can2.cd();
   hCoincidenceMap.Draw("");
   Can2.SaveAs(OutDir+"Occupancy_Coincidence.gif");
+
+  Can.cd();
+  hTrackSlopeX.Draw("hist");
+  Can.SaveAs(OutDir+"TrackSlopeX.gif");
+
+  Can.cd();
+  hTrackSlopeY.Draw("hist");
+  Can.SaveAs(OutDir+"TrackSlopeY.gif");
 
 
   WriteHTML(PlotsDir + RunNumber);
@@ -488,24 +690,24 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const Run
 
     // 2D Residuals
     hResidual[iroc].Draw("colz");
-    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + ".gif");
 
     // Residual X-Projection
     gStyle->SetOptStat(1111);
     hResidual[iroc].ProjectionX()->Draw();
-    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_X.gif");
+    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_X.gif");
 
     // Residual Y-Projection
     hResidual[iroc].ProjectionY()->Draw();
-    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_Y.gif");
+    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_Y.gif");
 
     // 2D Residuals X/dY
     hResidualXdY[iroc].Draw("colz");
-    Can.SaveAs( OutDir+TString(hResidualXdY[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+"/"+TString(hResidualXdY[iroc].GetName()) + ".gif");
 
     // 2D Residuals Y/dX
     hResidualYdX[iroc].Draw("colz");
-    Can.SaveAs( OutDir+TString(hResidualYdX[iroc].GetName()) + ".gif");
+    Can.SaveAs( OutDir+"/"+TString(hResidualYdX[iroc].GetName()) + ".gif");
 
   } // end loop over ROCs
   Alignment.WriteAlignmentFile("NewAlignment.dat");
@@ -593,9 +795,44 @@ void WriteHTML (TString const OutDir)
   }
   f << "<br>\n";
   for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightLong_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightLong_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"PulseHeightTime_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTime_ROC%i.gif\"></a>\n", i, i);
   }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightAvg2D_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2D_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"OccupancyLowPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyLowPH_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"OccupancyHighPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHighPH_ROC%i.gif\"></a>\n", i, i);
+  }
 
+
+  f << "<h2>Tracking</h2>\n";
+  f << "<a href=\"TrackSlopeX.gif\"><img width=\"150\" src=\"TrackSlopeX.gif\"></a>\n";
+  f << "<a href=\"TrackSlopeY.gif\"><img width=\"150\" src=\"TrackSlopeY.gif\"></a>\n";
+
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"OccupancyTrack6_ROC%i.gif\"><img width=\"150\" src=\"OccupancyTrack6_ROC%i.gif\"></a>\n", i, i);
+  }
+
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTrack6_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightAvg2DTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2DTrack6_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
 
   f << "</body></html>";
   f.close();

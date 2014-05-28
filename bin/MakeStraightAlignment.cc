@@ -21,7 +21,7 @@ int MakeStraightAlignment (std::string const FileName)
 
   fprintf(f, "# numbers are:\n");
   fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
-  for (int ich = 1; ich <= 36; ++ich) {
+  for (int ich = 1; ich <= 1; ++ich) {
     fprintf(f, "%2i  %2i ", ich, -1);
     fprintf(f, "    %12E", 0.);
     fprintf(f, "    %12E", 0.);
@@ -29,13 +29,13 @@ int MakeStraightAlignment (std::string const FileName)
     fprintf(f, "    %12E", 0.);
     fprintf(f, "    %12E", 0.);
     fprintf(f, "\n");
-    for (int iroc = 0; iroc != 3; ++iroc) {
+    for (int iroc = 0; iroc != 6; ++iroc) {
       fprintf(f, "%2i  %2i ", ich, iroc);
       fprintf(f, "                ", 0.);
       fprintf(f, "    %12E", 0.);
       fprintf(f, "    %12E", 0.);
       fprintf(f, "    %12E", 0.);
-      fprintf(f, "    %12E", 3.77 * iroc);
+      fprintf(f, "    %12E", 2.032 * iroc);
       fprintf(f, "\n");
     }
     fprintf(f, "\n");

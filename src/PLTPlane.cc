@@ -348,6 +348,15 @@ bool PLTPlane::IsFiducial (FiducialRegion const FidR, int const Col, int const R
       }
       return false;
       break;
+    case kFiducialRegion_Diamond_m2_m2:
+      if (Row >= PLTU::FIRSTROW_DIAMOND + 2 &&
+          Row <= PLTU::LASTROW_DIAMOND  - 2 &&
+          Col >= PLTU::FIRSTCOL_DIAMOND + 2 &&
+          Col <= PLTU::LASTCOL_DIAMOND  - 2) {
+        return true;
+      }
+      return false;
+      break;
     default:
       std::cerr << "ERROR in PLTPlane::IsFiducial" << std::endl;
       return false;

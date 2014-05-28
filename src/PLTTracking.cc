@@ -200,7 +200,7 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
   //  0: ignore plane for tracking (use for DUT)
   //  1: use plane for tracking (cluster is optional)
   //  2: use plane for tracking (cluster is required)
-  int UsePlanesForTracking[] = {1,1,1,1,1,1};
+  int UsePlanesForTracking[] = {2,2,2,2,2,2};
 
   // Check if all the planes with mandatory clusters also have a cluster
   for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){

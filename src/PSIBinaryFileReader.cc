@@ -40,12 +40,18 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C3.dat.fit.dat");
   //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C4.dat.fit.dat");
   //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C5.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C0.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C1.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C2.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C3.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C4.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C5.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C0.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C1.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C2.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C3.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C4.dat.fit.dat");
+  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C5.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C0.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C1.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C2.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C3.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C11.dat.fit.dat");
+  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C4.dat.fit.dat");
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C0.dat", 0);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C1.dat", 1);
   //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C2.dat", 2);
@@ -497,7 +503,9 @@ void PSIBinaryFileReader::DecodeHits ()
     AddPlane( &(it->second) );
   }
 
-  RunTracking( *((PLTTelescope*) this));
+  if (NClusters() == 6 && HitPlaneBits() == 0x3f) {
+    RunTracking( *((PLTTelescope*) this));
+  }
 
   return;
 }
@@ -722,23 +730,23 @@ void PSIBinaryFileReader::DrawTracksAndHits (std::string const Name)
 
     // XZ
     Line[0][i].SetX1(0);
-    Line[0][i].SetX2(5.0);
+    Line[0][i].SetX2(10.16);
     Line[0][i].SetY1(T->TX(0));
-    Line[0][i].SetY2(T->TX(5.0));
+    Line[0][i].SetY2(T->TX(10.16));
     Line[0][i].SetLineColor(i+1);
 
     // YZ
     Line[1][i].SetX1(0);
-    Line[1][i].SetX2(5.0);
+    Line[1][i].SetX2(10.16);
     Line[1][i].SetY1(T->TY(0));
-    Line[1][i].SetY2(T->TY(5.0));
+    Line[1][i].SetY2(T->TY(10.16));
     Line[1][i].SetLineColor(i+1);
 
     // XY
     Line[2][i].SetX1(T->TX(0));
-    Line[2][i].SetX2(T->TX(5.0));
+    Line[2][i].SetX2(T->TX(10.16));
     Line[2][i].SetY1(T->TY(0));
-    Line[2][i].SetY2(T->TY(5.0));
+    Line[2][i].SetY2(T->TY(10.16));
     Line[2][i].SetLineColor(i+1);
 
     //printf("XY 0 7: %9.3f %9.3f   %9.3f %9.3f\n", T->TX(0), T->TY(0), T->TX(7), T->TY(7));
@@ -763,7 +771,7 @@ void PSIBinaryFileReader::DrawTracksAndHits (std::string const Name)
   gXZ.GetXaxis()->SetTitleOffset(0.7);
   gXZ.GetYaxis()->SetTitleOffset(0.5);
   gXZ.SetMarkerColor(40);
-  gXZ.GetXaxis()->SetLimits(-0.5, 5.5);
+  gXZ.GetXaxis()->SetLimits(-0.5, 11.0);
   gXZ.SetMinimum(-0.5);
   gXZ.SetMaximum( 0.5);
   if (NC) {
@@ -783,7 +791,7 @@ void PSIBinaryFileReader::DrawTracksAndHits (std::string const Name)
   gYZ.GetXaxis()->SetTitleOffset(0.7);
   gYZ.GetYaxis()->SetTitleOffset(0.5);
   gYZ.SetMarkerColor(40);
-  gYZ.GetXaxis()->SetLimits(-0.5, 5.5);
+  gYZ.GetXaxis()->SetLimits(-0.5, 11.0);
   gYZ.SetMinimum(-0.5);
   gYZ.SetMaximum( 0.5);
   if (NC) {

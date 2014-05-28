@@ -160,8 +160,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     TF1 funX("funX","[0]*x+[1]");
     TF1 funY("funY","[0]*x+[1]");
 
-    gX.Fit( &funX );
-    gY.Fit( &funY );
+    gX.Fit( &funX, "Q" );
+    gY.Fit( &funY, "Q" );
 
     VX = funX.GetParameter(0);
     VY = funY.GetParameter(0);
@@ -226,8 +226,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   //printf("TEST: %f %f %f %f\n", fTOX, fTOY, fTOZ, fGOZ);
 
   // Compute where the line passes in each planes coords
-  float XL[3];
-  float YL[3];
+  float XL[6];
+  float YL[6];
 
   for (size_t ic = 0; ic != NClusters(); ++ic) {
     PLTCluster* Cluster = fClusters[ic];

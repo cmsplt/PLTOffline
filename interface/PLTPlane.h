@@ -43,7 +43,8 @@ class PLTPlane
       kFiducialRegion_m2_m2,
       kFiducialRegion_m3_m3,
       kFiducialRegion_m4_m4,
-      kFiducialRegion_m5_m5
+      kFiducialRegion_m5_m5,
+      kFiducialRegion_Diamond_m2_m2
     };
 
     void    AddHit (PLTHit*);
