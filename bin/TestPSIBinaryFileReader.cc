@@ -77,6 +77,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
                                 Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
+  std::vector<TH1F> hNHitsPerCluster;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hNHitsPerCluster.push_back( TH1F( Form("NHitsPerCluster_ROC%i",iroc),
+                                Form("NHitsPerCluster_ROC%i",iroc), 10, 0, 10));
+  }
 
 
   // Coincidence histogram
@@ -340,6 +345,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
 
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
+        hNHitsPerCluster[Cluster->ROC()].Fill(Cluster->NHits());
         if (Cluster->Charge() > 50000) {
           for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
             hOccupancyHighPH[Cluster->ROC()].Fill( Cluster->Hit(ihit)->Column(), Cluster->Hit(ihit)->Row() );
@@ -448,6 +454,14 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
     h3x3_1DZ->Draw("hist");
     Can.SaveAs(OutDir+TString(h3x3_1DZ->GetName()) + ".gif");
     delete h3x3;
+
+    // Draw Hits per cluster histograms
+    Can.cd();
+    hNHitsPerCluster[iroc].SetMinimum(0);
+    hNHitsPerCluster[iroc].SetXTitle("Number of hits per cluster");
+    hNHitsPerCluster[iroc].SetYTitle("Number of Clusters");
+    hNHitsPerCluster[iroc].Draw("hist");
+    Can.SaveAs( OutDir+TString(hNHitsPerCluster[iroc].GetName()) + ".gif");
 
     Can.cd();
     hOccupancyHighPH[iroc].SetMinimum(0);
@@ -784,6 +798,11 @@ void WriteHTML (TString const OutDir)
   f << "<br>" << std::endl;
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"></a>\n", i, i);
+  }
+
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"NHitsPerCluster_ROC%i.gif\"><img width=\"150\" src=\"NHitsPerCluster_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
 
