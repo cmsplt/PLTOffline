@@ -22,9 +22,9 @@
 
 
 
-void WriteHTML (TString const);
+void WriteHTML (TString const, TString const);
 
-int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumber)
+int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
 
 	TString const PlotsDir = "plots/";
@@ -41,7 +41,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
 
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
   //BFR.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   FILE* f = fopen("MyGainCal.dat", "w");
@@ -586,12 +586,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TString const RunNumb
   Can.SaveAs(OutDir+"TrackSlopeY.gif");
 
 
-  WriteHTML(PlotsDir + RunNumber);
+  WriteHTML(PlotsDir + RunNumber, CalibrationList);
 
   return 0;
 }
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const RunNumber)
+int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
   /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
   them to NewAlignment.dat
@@ -627,7 +627,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const Run
 
     std::cout << "At iteration " << ialign << std::endl;
 
-    PSIBinaryFileReader BFR(InFileName, "/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat");
+    PSIBinaryFileReader BFR(InFileName, CalibrationList);
     BFR.SetTrackingAlignment(&Alignment);
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
@@ -751,7 +751,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName,TString const Run
 
 
 
-void WriteHTML (TString const OutDir)
+void WriteHTML (TString const OutDir, TString const CalFile)
 {
   // This function to write the HTML output for a run
 
@@ -773,13 +773,20 @@ void WriteHTML (TString const OutDir)
   }
 
 
+
   f << "<html><body>\n";
   f << "<h1>Run Summary: </h1>\n";
-  //f << "DataFileName: " << DataFileName << "<br />\n";
-  //f << "GainCalFileName: " << GainCalFileName << "<br />\n";
-  //f << "AlignmentFileName: " << AlignmentFileName << "<br />\n";
-  //f << "Number of events: " << ie << "<br />\n";
-  //f << "<br />\n<a href=\"" << OutFileName << "\">" << OutFileName << "</a><br />\n";
+  std::ifstream fCL(CalFile.Data());
+  if (!fCL.is_open()) {
+      std::cerr << "ERROR: cannot open calibratin list: " << CalFile << std::endl;
+      throw;
+  }
+  std::string line;
+  while (!fCL.eof()) {
+      std::getline(fCL, line);
+    f << line << "<br>\n";
+  }
+  fCL.close();
 
   f << "<hr />\n";
   f << "<h2>Levels</h2>" << std::endl;
@@ -887,8 +894,8 @@ void WriteHTML (TString const OutDir)
 
 int main (int argc, char* argv[])
 {
-  if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [doAlign]" << std::endl;
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [doAlign]" << std::endl;
     std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
     return 1;
   }
@@ -906,18 +913,20 @@ int main (int argc, char* argv[])
   */
 
   std::string const InFileName = argv[1];
-	TString const FullRunName = InFileName;
-	Int_t const Index = FullRunName.Index("bt05r",0);
-	TString const RunNumber = FullRunName(Index+5,6);
-	gSystem->mkdir("./plots/" + RunNumber);	
+  TString const FullRunName = InFileName;
+  Int_t const Index = FullRunName.Index("bt05r",0);
+  TString const RunNumber = FullRunName(Index+5,6);
+  gSystem->mkdir("./plots/" + RunNumber);
+
+  std::string CalibrationList = argv[2];
 
 
-  int doAlign = atoi(argv[2]);
+  int doAlign = atoi(argv[3]);
 
   if (doAlign)
-    TestPSIBinaryFileReaderAlign(InFileName,RunNumber);
+    TestPSIBinaryFileReaderAlign(InFileName, CalibrationList, RunNumber);
   else
-    TestPSIBinaryFileReader(InFileName,RunNumber);
+    TestPSIBinaryFileReader(InFileName, CalibrationList, RunNumber);
 
 
   return 0;

@@ -25,7 +25,7 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName)
 }
 
 
-PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::string const InGainCalFileName)
+PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList)
 {
   // constructor
   fEOF = 0;
@@ -34,30 +34,29 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
     std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
     throw;
   }
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C0.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C1.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C2.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C3.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C4.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_Recalib_09052014_1718pm/phCalibration_C5.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C0.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C1.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C2.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C3.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C4.dat.fit.dat");
-  //fGainCal.ReadGainCalFile("Telescope_NewBoards_27052014_0145/phCalibration_C5.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C0.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C1.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C2.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C3.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C11.dat.fit.dat");
-  fGainCal.ReadGainCalFile("Telescope_Silicon0_4_S112_Address_11-20140528_1348/phCalibration_C4.dat.fit.dat");
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C0.dat", 0);
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C1.dat", 1);
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C2.dat", 2);
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C3.dat", 3);
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C4.dat", 4);
-  //fGainCal.ReadGainCalFileExt("/Users/dhidas/PSITelescope_Cosmics/Telescope_test/phCalibrationFitTan_C5.dat", 5);
+
+
+  std::ifstream fCL(CalibrationList.c_str());
+  if (!fCL.is_open()) {
+      std::cerr << "ERROR: cannot open calibration list file: " << CalibrationList << std::endl;
+      throw;
+  }
+
+  fCL >> fBaseCalDir;
+  fCL >> fCalibrationFile[0];
+  fCL >> fCalibrationFile[1];
+  fCL >> fCalibrationFile[2];
+  fCL >> fCalibrationFile[3];
+  fCL >> fCalibrationFile[4];
+  fCL >> fCalibrationFile[5];
+
+
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[0]);
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[1]);
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[2]);
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[3]);
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
+  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
 
   fAlignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
   SetTrackingAlignment(&fAlignment);

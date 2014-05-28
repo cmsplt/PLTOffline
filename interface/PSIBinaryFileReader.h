@@ -71,6 +71,8 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
 
     std::map<int, PLTPlane> fPlaneMap;
 
+    std::string fBaseCalDir;
+    std::string fCalibrationFile[6];
 
 
 
