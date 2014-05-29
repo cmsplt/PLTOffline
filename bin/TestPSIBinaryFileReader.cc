@@ -261,6 +261,24 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     }
   }
 
+  // Prepare Residual histograms
+  // hResidual:    x=dX / y=dY
+  // hResidualXdY: x=X  / y=dY
+  // hResidualYdX: x=Y  / y=dX
+  std::vector< TH2F > hResidual;
+  std::vector< TH2F > hResidualXdY;
+  std::vector< TH2F > hResidualYdX;
+
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
+				Form("Residual_ROC%i",iroc), 100, -.15, .15, 100, -.15, .15));
+    hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
+				   Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+    hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
+				   Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+  }
+
+
   int const TimeWidth = 50000;
   int NGraphPoints = 0;
 
@@ -405,9 +423,31 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
         }
 
     }
-    //for (size_t itrack = 0; itrack != BFR.NTracks(); ++itrack) {
-    //}
 
+    // Fill Residual histograms
+    for (size_t itrack = 0; itrack < BFR.NTracks(); itrack++){
+      // Need at least three hits for the residual to make sense
+      if (BFR.Track(itrack)->NClusters() > 2){
+          // Loop over clusters
+          for (size_t icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+
+          // Get the ROC in which this cluster was recorded and fill the
+          // corresponding residual.
+          int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
+
+          // dX vs dY
+          hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
+                               BFR.Track(itrack)->LResidualY( ROC ));
+          // X vs dY
+          hResidualXdY[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LX(),
+                                  BFR.Track(itrack)->LResidualY( ROC ));
+          // Y vs dX
+          hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
+                                  BFR.Track(itrack)->LResidualX( ROC ));
+
+        } // end of loop over clusters
+      } // end >2 clusters
+    } // end of loop over tracks (filling Residial histograms)
 
   } // End of Event Loop
 
@@ -570,7 +610,36 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightAvg2DTrack6.Draw("colz");
     Can.SaveAs(OutDir+hPulseHeightAvg2DTrack6.GetName() + ".gif");
 
-  }
+
+    // 2D Residuals
+    Can.cd();
+    hResidual[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + ".gif");
+
+    // 2D Residuals X/dY
+    gStyle->SetOptStat(1111);
+    hResidualXdY[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hResidualXdY[iroc].GetName()) + ".gif");
+
+    // 2D Residuals Y/dX
+    gStyle->SetOptStat(1111);
+    hResidualYdX[iroc].Draw("colz");
+    Can.SaveAs( OutDir+TString(hResidualYdX[iroc].GetName()) + ".gif");
+
+    // Residual X-Projection
+    Can.cd();
+    hResidual[iroc].ProjectionX()->Draw();
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_X.gif");
+
+    // Residual Y-Projection
+    Can.cd();
+    hResidual[iroc].ProjectionY()->Draw();
+    Can.SaveAs( OutDir+TString(hResidual[iroc].GetName()) + "_Y.gif");
+
+
+
+  } // end of loop over ROCs
+
 
   TCanvas Can2("CoincidenceMap", "CoincidenceMap", 1200, 400);
   Can2.cd();
@@ -640,7 +709,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
     hResidualYdX.clear();
     for (int iroc = 0; iroc != 6; ++iroc){
       hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                  Form("Residual_ROC%i",iroc), 100, -.5, .5, 100, -.5, .5));
+                                  Form("Residual_ROC%i",iroc), 100, -.2, .2, 100, -.2, .2));
       hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
                                      Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
       hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
@@ -704,7 +773,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
     }
 
     // Loop over ROCs to update alignment
-    // Dont move first and last plane
     for (int iroc = 0; iroc != 6; ++iroc) {
       Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1));
       Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2));
@@ -775,6 +843,8 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
 
   f << "<html><body>\n";
+
+  // RUN SUMMARY
   f << "<h1>Run Summary: </h1>\n";
   std::ifstream fCL(CalFile.Data());
   if (!fCL.is_open()) {
@@ -788,6 +858,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   fCL.close();
 
+  // LEVELS
   f << "<hr />\n";
   f << "<h2>Levels</h2>" << std::endl;
   for (int i = 0; i != 6; ++i) {
@@ -795,6 +866,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   f << "<br>" << std::endl;
 
+  // OCCUPANCY
   f << "<hr />\n";
   f << "<h2>Occupancy</h2>" << std::endl;
   f << "<a href=\"Occupancy_Coincidence.gif\"><img width=\"900\" src=\"Occupancy_Coincidence.gif\"></a>\n<br>" << std::endl;
@@ -834,7 +906,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   f << "<br>" << std::endl;
 
-
+  // PULSE HEIGHT
   f << "<hr />\n";
   f << "<h2>Pulse Height</h2>" << std::endl;
   for (int i = 0; i != 6; ++i) {
@@ -861,7 +933,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
     f << Form("<a href=\"OccupancyHighPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHighPH_ROC%i.gif\"></a>\n", i, i);
   }
 
-
+  // TRACKING
   f << "<h2>Tracking</h2>\n";
   f << "<a href=\"TrackSlopeX.gif\"><img width=\"150\" src=\"TrackSlopeX.gif\"></a>\n";
   f << "<a href=\"TrackSlopeY.gif\"><img width=\"150\" src=\"TrackSlopeY.gif\"></a>\n";
@@ -870,7 +942,6 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"OccupancyTrack6_ROC%i.gif\"><img width=\"150\" src=\"OccupancyTrack6_ROC%i.gif\"></a>\n", i, i);
   }
-
   f << "<br>\n";
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"PulseHeightTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTrack6_ROC%i.gif\"></a>\n", i, i);
@@ -878,6 +949,31 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"PulseHeightAvg2DTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2DTrack6_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+
+  // TRACK RESIDUALS
+  f << "<h2>Track Residuals</h2>\n";
+
+  f << "<br>" << std::endl;
+  for (int i = 0; i != 6; i++)
+    f << Form("<a href=\"Residual_ROC%i_X.gif\"><img width=\"150\" src=\"Residual_ROC%i_X.gif\"></a>\n", i, i);    
+  f << "<br>\n";
+
+  for (int i = 0; i != 6; i++)
+    f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);    
+  f << "<br>\n";
+
+  // EVENT DISPLAYS
+  f << "<h2>Event Displays</h2>\n";
+
+  f << "<br>" << std::endl;
+  for (int irow = 0; irow != 4; irow++){
+    for (int icol = 1; icol != 6; ++icol) {
+      int i = irow*5+icol;
+      f << Form("<a href=\"Tracks_Ev%i.gif\"><img width=\"150\" src=\"Tracks_Ev%i.gif\"></a>\n", i, i);
+    }
+    f << "<br>\n";
   }
   f << "<br>\n";
 

@@ -68,3 +68,6 @@ dumpPixffil_orig
 splitintoev
 tree1
 TestPSIBinaryFileReader
+PSIGainCalFits
+plots/*
+lib/DHidasPLT.so
