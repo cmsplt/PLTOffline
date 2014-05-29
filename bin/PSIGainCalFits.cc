@@ -42,13 +42,32 @@ int PSIGainCalFits (TString const InFileName, int const roc)
   fprintf(OutFits, "8 1 5 %i\n\n", channel);
 
   std::string OneLine;
+  std::string LowRangeLine;
+  std::string HighRangeLine;
   std::getline(f, OneLine);
-  std::getline(f, OneLine);
-  std::getline(f, OneLine);
+  std::getline(f, LowRangeLine);
+  std::getline(f, HighRangeLine);
   std::getline(f, OneLine);
 
-  int VCAL[10] =  {50, 100, 150, 200, 250, 30*7,  50*7,  70*7,  90*7, 200*7};
-  int X[10], Y[10];
+  int VCalValue;
+  std::istringstream is;
+
+  std::vector<int> VCAL;
+  is.str(LowRangeLine);
+  is >> OneLine >> OneLine;
+  while (is >> VCalValue) {
+    VCAL.push_back(VCalValue);
+  }
+  is.clear();
+  is.str(HighRangeLine);
+  is >> OneLine >> OneLine;
+  while (is >> VCalValue) {
+    VCAL.push_back(7*VCalValue);
+  }
+
+  size_t const NPoints = VCAL.size();
+  std::cout << "NPoints = " << NPoints << std::endl;
+  int X[NPoints], Y[NPoints];
 
   // Define the function we will fit for each pixel
   TF1 FitFunc("FitFunc", "[0]*x*x + [1]*x + [2] + TMath::Exp( (x-[3]) / [4]  )", 150, 400);
@@ -68,7 +87,7 @@ int PSIGainCalFits (TString const InFileName, int const roc)
     std::string adcstring;
     int adc;
     int n = 0;
-    for (int i = 0; i != 10; ++i) {
+    for (int i = 0; i != NPoints; ++i) {
       s >> adcstring;
       if (adcstring != "N/A") {
         adc = atoi(adcstring.c_str());
