@@ -775,6 +775,8 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
 
   f << "<html><body>\n";
+
+  // RUN SUMMARY
   f << "<h1>Run Summary: </h1>\n";
   std::ifstream fCL(CalFile.Data());
   if (!fCL.is_open()) {
@@ -788,6 +790,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   fCL.close();
 
+  // LEVELS
   f << "<hr />\n";
   f << "<h2>Levels</h2>" << std::endl;
   for (int i = 0; i != 6; ++i) {
@@ -795,6 +798,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   f << "<br>" << std::endl;
 
+  // OCCUPANCY
   f << "<hr />\n";
   f << "<h2>Occupancy</h2>" << std::endl;
   f << "<a href=\"Occupancy_Coincidence.gif\"><img width=\"900\" src=\"Occupancy_Coincidence.gif\"></a>\n<br>" << std::endl;
@@ -834,7 +838,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   f << "<br>" << std::endl;
 
-
+  // PULSE HEIGHT
   f << "<hr />\n";
   f << "<h2>Pulse Height</h2>" << std::endl;
   for (int i = 0; i != 6; ++i) {
@@ -861,7 +865,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
     f << Form("<a href=\"OccupancyHighPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHighPH_ROC%i.gif\"></a>\n", i, i);
   }
 
-
+  // TRACKING
   f << "<h2>Tracking</h2>\n";
   f << "<a href=\"TrackSlopeX.gif\"><img width=\"150\" src=\"TrackSlopeX.gif\"></a>\n";
   f << "<a href=\"TrackSlopeY.gif\"><img width=\"150\" src=\"TrackSlopeY.gif\"></a>\n";
@@ -870,7 +874,6 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"OccupancyTrack6_ROC%i.gif\"><img width=\"150\" src=\"OccupancyTrack6_ROC%i.gif\"></a>\n", i, i);
   }
-
   f << "<br>\n";
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"PulseHeightTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTrack6_ROC%i.gif\"></a>\n", i, i);
@@ -878,6 +881,19 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
   for (int i = 0; i != 6; ++i) {
     f << Form("<a href=\"PulseHeightAvg2DTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2DTrack6_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+
+  // EVENT DISPLAYS
+  f << "<h2>Event Displays</h2>\n";
+
+  f << "<br>" << std::endl;
+  for (int irow = 0; irow != 4; irow++){
+    for (int icol = 1; icol != 6; ++icol) {
+      int i = irow*5+icol;
+      f << Form("<a href=\"Tracks_Ev%i.gif\"><img width=\"150\" src=\"Tracks_Ev%i.gif\"></a>\n", i, i);
+    }
+    f << "<br>\n";
   }
   f << "<br>\n";
 
