@@ -599,7 +599,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeight[iroc][1]->Draw("samehist");
     hPulseHeight[iroc][2]->Draw("samehist");
     hPulseHeight[iroc][3]->Draw("samehist");
-    TLegend lPulseHeight(0.11, 0.64, 0.24, 0.89, "Mean:");
+    TLegend lPulseHeight(0.75, 0.4, 0.90, 0.7, "Mean:");
     lPulseHeight.SetTextAlign(11);
     lPulseHeight.SetFillStyle(0);
     lPulseHeight.SetBorderSize(0);
@@ -623,7 +623,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightTrack6[iroc][1]->Draw("samehist");
     hPulseHeightTrack6[iroc][2]->Draw("samehist");
     hPulseHeightTrack6[iroc][3]->Draw("samehist");
-    TLegend lPulseHeightTrack6(0.11, 0.64, 0.24, 0.89, "Mean:");
+    TLegend lPulseHeightTrack6(0.75, 0.4, 0.90, 0.7, "Mean:");
     lPulseHeightTrack6.SetTextAlign(11);
     lPulseHeightTrack6.SetFillStyle(0);
     lPulseHeightTrack6.SetBorderSize(0);
@@ -646,7 +646,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightLong[iroc][1]->Draw("samehist");
     hPulseHeightLong[iroc][2]->Draw("samehist");
     hPulseHeightLong[iroc][3]->Draw("samehist");
-    TLegend lPulseHeightLong(0.11, 0.64, 0.24, 0.89, "Mean:");
+    TLegend lPulseHeightLong(0.75, 0.4, 0.90, 0.7, "Mean:");
     lPulseHeightLong.SetTextAlign(11);
     lPulseHeightLong.SetFillStyle(0);
     lPulseHeightLong.SetBorderSize(0);
