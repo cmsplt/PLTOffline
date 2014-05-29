@@ -16,6 +16,7 @@
 #include "PLTAlignment.h"
 
 #include "TLegend.h"
+#include "TLegendEntry.h"
 #include "TString.h"
 #include "TSystem.h"
 #include "TGraphErrors.h"
@@ -572,20 +573,29 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
-    TLegend* Leg = new TLegend(0.75, 0.7, 0.90, 0.88, "");
-    Leg->SetFillColor(0);
-    Leg->SetBorderSize(0);
-    Leg->AddEntry(hPulseHeight[iroc][0], "All", "l");
-    Leg->AddEntry(hPulseHeight[iroc][1], "1 Pix", "l");
-    Leg->AddEntry(hPulseHeight[iroc][2], "2 Pix", "l");
-    Leg->AddEntry(hPulseHeight[iroc][3], "3+ Pix", "l");
+    TLegend Leg(0.75, 0.7, 0.90, 0.88, "");
+    Leg.SetFillColor(0);
+    Leg.SetBorderSize(0);
+    Leg.AddEntry(hPulseHeight[iroc][0], "All", "l");
+    Leg.AddEntry(hPulseHeight[iroc][1], "1 Pix", "l");
+    Leg.AddEntry(hPulseHeight[iroc][2], "2 Pix", "l");
+    Leg.AddEntry(hPulseHeight[iroc][3], "3+ Pix", "l");
 
     hPulseHeight[iroc][0]->SetTitle( TString::Format("Pulse Height ROC%i", iroc) );
     hPulseHeight[iroc][0]->Draw("hist");
     hPulseHeight[iroc][1]->Draw("samehist");
     hPulseHeight[iroc][2]->Draw("samehist");
     hPulseHeight[iroc][3]->Draw("samehist");
-    Leg->Draw("same");
+    TLegend lPulseHeight(0.11, 0.64, 0.24, 0.89, "Mean:");
+    lPulseHeight.SetTextAlign(11);
+    lPulseHeight.SetFillStyle(0);
+    lPulseHeight.SetBorderSize(0);
+    lPulseHeight.AddEntry( "PH0PMean", TString::Format("%8.0f", hPulseHeight[iroc][0]->GetMean()), "")->SetTextColor(HistColors[0]);
+    lPulseHeight.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeight[iroc][1]->GetMean()), "")->SetTextColor(HistColors[1]);
+    lPulseHeight.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeight[iroc][2]->GetMean()), "")->SetTextColor(HistColors[2]);
+    lPulseHeight.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeight[iroc][3]->GetMean()), "")->SetTextColor(HistColors[3]);
+    lPulseHeight.Draw("same");
+    Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeight_ROC%i.gif", iroc));
 
     Can.cd();
@@ -594,7 +604,16 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightTrack6[iroc][1]->Draw("samehist");
     hPulseHeightTrack6[iroc][2]->Draw("samehist");
     hPulseHeightTrack6[iroc][3]->Draw("samehist");
-    Leg->Draw("same");
+    TLegend lPulseHeightTrack6(0.11, 0.64, 0.24, 0.89, "Mean:");
+    lPulseHeightTrack6.SetTextAlign(11);
+    lPulseHeightTrack6.SetFillStyle(0);
+    lPulseHeightTrack6.SetBorderSize(0);
+    lPulseHeightTrack6.AddEntry( "PH0PMean", TString::Format("%8.0f", hPulseHeightTrack6[iroc][0]->GetMean()), "")->SetTextColor(HistColors[0]);
+    lPulseHeightTrack6.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeightTrack6[iroc][1]->GetMean()), "")->SetTextColor(HistColors[1]);
+    lPulseHeightTrack6.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeightTrack6[iroc][2]->GetMean()), "")->SetTextColor(HistColors[2]);
+    lPulseHeightTrack6.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeightTrack6[iroc][3]->GetMean()), "")->SetTextColor(HistColors[3]);
+    lPulseHeightTrack6.Draw("same");
+    Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeightTrack6_ROC%i.gif", iroc));
 
     Can.cd();
@@ -603,7 +622,16 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightLong[iroc][1]->Draw("samehist");
     hPulseHeightLong[iroc][2]->Draw("samehist");
     hPulseHeightLong[iroc][3]->Draw("samehist");
-    Leg->Draw("same");
+    TLegend lPulseHeightLong(0.11, 0.64, 0.24, 0.89, "Mean:");
+    lPulseHeightLong.SetTextAlign(11);
+    lPulseHeightLong.SetFillStyle(0);
+    lPulseHeightLong.SetBorderSize(0);
+    lPulseHeightLong.AddEntry( "PH0PMean", TString::Format("%8.0f", hPulseHeightLong[iroc][0]->GetMean()), "")->SetTextColor(HistColors[0]);
+    lPulseHeightLong.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeightLong[iroc][1]->GetMean()), "")->SetTextColor(HistColors[1]);
+    lPulseHeightLong.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeightLong[iroc][2]->GetMean()), "")->SetTextColor(HistColors[2]);
+    lPulseHeightLong.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeightLong[iroc][3]->GetMean()), "")->SetTextColor(HistColors[3]);
+    lPulseHeightLong.Draw("same");
+    Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeightLong_ROC%i.gif", iroc));
 
     Can.cd();
@@ -612,7 +640,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     gAvgPH[iroc][1].Draw("samepe");
     gAvgPH[iroc][2].Draw("samepe");
     gAvgPH[iroc][3].Draw("samepe");
-    Leg->Draw("same");
+    Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeightTime_ROC%i.gif", iroc));
 
 
