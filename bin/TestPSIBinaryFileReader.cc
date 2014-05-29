@@ -19,6 +19,7 @@
 #include "TLegendEntry.h"
 #include "TString.h"
 #include "TSystem.h"
+#include "TFile.h"
 #include "TGraphErrors.h"
 
 
@@ -28,10 +29,14 @@ void WriteHTML (TString const, TString const);
 int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
 
-	TString const PlotsDir = "plots/";
-	TString const OutDir = PlotsDir + RunNumber + "/";
 
-	std::cout<<OutDir<<std::endl;
+
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  TFile out_f( OutDir + "histos.root","new");
+  
+  std::cout<<OutDir<<std::endl;
   /* TestPSIBinaryFileReaderAlign: Default run analysis.
   */
 
@@ -501,6 +506,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hOccupancy[iroc].SetMinimum(0);
     hOccupancy[iroc].Draw("colz");
     Can.SaveAs( OutDir+TString(hOccupancy[iroc].GetName()) + ".gif");
+    hOccupancy[iroc].Write();
 
     TH1F* hOccupancy1DZ = PLTU::HistFrom2D(&hOccupancy[iroc]);
     Can.cd();
@@ -509,6 +515,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
       Can.SetLogy(1);
     }
     Can.SaveAs(OutDir+TString(hOccupancy1DZ->GetName()) + ".gif");
+    hOccupancy1DZ->Write();
     Can.SetLogy(0);
 
     // Grab the quantile you're interested in here
@@ -604,6 +611,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeight_ROC%i.gif", iroc));
 
+    hPulseHeight[iroc][0]->Write();
+    hPulseHeight[iroc][1]->Write();
+    hPulseHeight[iroc][2]->Write();
+    hPulseHeight[iroc][3]->Write();
+
+
     Can.cd();
     hPulseHeightTrack6[iroc][0]->SetTitle( TString::Format("Pulse Height Track6 ROC%i", iroc) );
     hPulseHeightTrack6[iroc][0]->Draw("hist");
@@ -622,6 +635,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeightTrack6_ROC%i.gif", iroc));
 
+    hPulseHeightTrack6[iroc][0]->Write();
+    hPulseHeightTrack6[iroc][1]->Write();
+    hPulseHeightTrack6[iroc][2]->Write();
+    hPulseHeightTrack6[iroc][3]->Write();
+    
     Can.cd();
     hPulseHeightLong[iroc][0]->SetTitle( TString::Format("Pulse Height ROC%i", iroc) );
     hPulseHeightLong[iroc][0]->Draw("hist");
@@ -1152,6 +1170,8 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
   f << "</body></html>";
   f.close();
+
+
   return;
 }
 
