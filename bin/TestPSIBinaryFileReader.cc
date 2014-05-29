@@ -79,6 +79,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
                                 Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
+  std::vector<TH2F> hOccupancyHot;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancyHot.push_back( TH2F( Form("OccupancyHot_ROC%i",iroc),
+				      Form("OccupancyHot_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+  }
+
   std::vector<TH1F> hNHitsPerCluster;
   for (int iroc = 0; iroc != 6; ++iroc){
     hNHitsPerCluster.push_back( TH1F( Form("NHitsPerCluster_ROC%i",iroc),
@@ -740,13 +746,14 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   	  PLTHit* Hit = Plane->Hit(ihit);
   	  if ( (Hit->Column()== (*hot)[0]) and (Hit->Row()==(*hot)[1]) ){
   	    hPulseHeightHot[iplane]->Fill( Hit->Charge() );
+	    hOccupancyHot[iplane].Fill( Hit->Column(), Hit->Row(),1);
   	  }
   	}
         }
       }
     } 
     
-    // Produce the histograms
+    // Produce the HOT histograms
     for (int iroc = 0; iroc != 6; ++iroc){
       Can.cd();
       hPulseHeightHot[iroc]->SetTitle( TString::Format("Hot Pixel Pulse Height ROC%i (N_{Hot}=%i)", 
@@ -754,6 +761,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 						       hot_pixels[iroc].size()) );
       hPulseHeightHot[iroc]->Draw("hist");
       Can.SaveAs(OutDir+TString::Format("PulseHeightHot_ROC%i.gif", iroc));
+
+      // Draw OccupancyHot histograms
+      hOccupancyHot[iroc].SetMinimum(0);
+      hOccupancyHot[iroc].Draw("colz");
+      Can.SaveAs( OutDir+TString(hOccupancyHot[iroc].GetName()) + ".gif");
+
     }
 
   } // end of hotpixels>0
@@ -1088,6 +1101,11 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>" << std::endl;
   for (int i = 0; i != 6; i++)
     f << Form("<a href=\"PulseHeightHot_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightHot_ROC%i.gif\"></a>\n", i, i);    
+  f << "<br>\n";
+
+
+  for (int i = 0; i != 6; i++)
+    f << Form("<a href=\"OccupancyHot_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHot_ROC%i.gif\"></a>\n", i, i);    
   f << "<br>\n";
 
   f << "</body></html>";
