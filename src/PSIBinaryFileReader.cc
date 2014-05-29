@@ -266,7 +266,7 @@ int PSIBinaryFileReader::GetNextEvent ()
 
   // Simple cheat to always have 6 planes
   for (int i = 0; i != 6; ++i) {
-    fPlaneMap[i];
+    fPlaneMap[i].SetROC(i);;
   }
 
   while (nextBinaryHeader() >= 0) {
