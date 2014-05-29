@@ -279,7 +279,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   }
 
 
-  int const TimeWidth = 50000;
+  int const TimeWidth = 20000;
   int NGraphPoints = 0;
 
 
@@ -449,6 +449,20 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     } // end of loop over tracks (filling Residial histograms)
 
   } // End of Event Loop
+
+
+  // Catch up on PH by time graph
+    for (int i = 0; i != 6; ++i) {
+      for (int j = 0; j != 4; ++j) {
+        gAvgPH[i][j].Set(NGraphPoints+1);
+        gAvgPH[i][j].SetPoint(NGraphPoints, NGraphPoints*TimeWidth + TimeWidth/2, AvgPH[i][j]);
+        gAvgPH[i][j].SetPointError(NGraphPoints, TimeWidth/2, AvgPH[i][j]/sqrt((float) NAvgPH[i][j]));
+        printf("AvgCharge: %i %i N:%9i : %13.3E\n", i, j, NAvgPH[i][j], AvgPH[i][j]);
+        NAvgPH[i][j] = 0;
+        AvgPH[i][j] = 0;
+      }
+    }
+    ++NGraphPoints;
 
   TCanvas Can;
   Can.cd();
