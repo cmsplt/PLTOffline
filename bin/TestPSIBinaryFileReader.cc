@@ -290,7 +290,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
     ThisTime = ievent;
-
     // print progress
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
