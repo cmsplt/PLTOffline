@@ -725,7 +725,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     gStyle->SetOptStat(0);
 
     // Looking for Hot Pixels
-    //
+    //asdasd<--suck it dean
     // Calculate mean occupancy of nonzero pixels
     double sum = 0;
     int n_nonzero_pixels = 0;

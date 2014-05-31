@@ -51,7 +51,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
   private:
     int fHeader;
     int fNextHeader;
-    static int const NMAXROCS = 6;
+    static int const NMAXROCS = 2;
     static int const MAXNDATA = 2000;
     int fBuffer[MAXNDATA];
     int fBufferSize;
