@@ -71,3 +71,4 @@ TestPSIBinaryFileReader
 PSIGainCalFits
 plots/*
 lib/DHidasPLT.so
+python/plots
