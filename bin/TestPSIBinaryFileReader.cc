@@ -35,7 +35,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   TString const OutDir = PlotsDir + RunNumber + "/";
 
   TFile out_f( OutDir + "histos.root","new");
-  
+
   std::cout<<OutDir<<std::endl;
   /* TestPSIBinaryFileReaderAlign: Default run analysis.
   */
@@ -53,7 +53,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
+  BFR.ReadPixelMask( "hotPixelMask.txt");
   BFR.CalculateLevels(10000, OutDir);
+
 
   // Prepare Occupancy histograms
   // x == columns
@@ -173,7 +175,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     , (char*)"111111"
   };
   hCoincidenceMap.SetBit(TH1::kCanRebin);
-  for (int r = 0; r < 0x40; ++r) 
+  for (int r = 0; r < 0x40; ++r)
   {
     hCoincidenceMap.Fill(bin[r], 0);
   }
@@ -189,6 +191,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   int const phMin = 0;
   int const phMax = 50000;
   int const phNBins = 50;
+  // Standard
   for (int iroc = 0; iroc != 6; ++iroc) {
     TString Name = TString::Format("PulseHeight_ROC%i_All", iroc);
     hPulseHeight[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
@@ -199,6 +202,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Name = TString::Format("PulseHeight_ROC%i_NPix3Plus", iroc);
     hPulseHeight[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
+  // For Tracks
   TH1F* hPulseHeightTrack6[6][4];
   for (int iroc = 0; iroc != 6; ++iroc) {
     TString Name = TString::Format("PulseHeightTrack6_ROC%i_All", iroc);
@@ -210,6 +214,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Name = TString::Format("PulseHeightTrack6_ROC%i_NPix3Plus", iroc);
     hPulseHeightTrack6[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
+  // Long Histogram (see the Protons)
   TH1F* hPulseHeightLong[6][4];
   int const phLongMax = 300000;
   for (int iroc = 0; iroc != 6; ++iroc) {
@@ -222,11 +227,23 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Name = TString::Format("PulseHeightLong_ROC%i_NPix3Plus", iroc);
     hPulseHeightLong[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
   }
-
+  // For Hot Pixels
   TH1F* hPulseHeightHot[6];
   for (int iroc = 0; iroc != 6; ++iroc) {
     TString Name = TString::Format("PulseHeightHot_ROC%i", iroc);
     hPulseHeightHot[iroc] = new TH1F(Name, Name, phNBins, phMin, phMax);
+  }
+  // For Tracks, using additional selections
+  TH1F* hPulseHeightOffline[6][4];
+  for (int iroc = 0; iroc != 6; ++iroc) {
+    TString Name = TString::Format("PulseHeightOffline_ROC%i_All", iroc);
+    hPulseHeightOffline[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightOffline_ROC%i_NPix1", iroc);
+    hPulseHeightOffline[iroc][1] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightOffline_ROC%i_NPix2", iroc);
+    hPulseHeightOffline[iroc][2] = new TH1F(Name, Name, phNBins, phMin, phMax);
+    Name = TString::Format("PulseHeightOffline_ROC%i_NPix3Plus", iroc);
+    hPulseHeightOffline[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
 
 
@@ -246,6 +263,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightHot[inpix]->SetXTitle("Charge (electrons)");
     hPulseHeightHot[inpix]->SetYTitle("Number of Hits");
     hPulseHeightHot[inpix]->SetLineColor(HistColors[inpix]);
+    hPulseHeightOffline[iroc][inpix]->SetXTitle("Charge (electrons)");
+    hPulseHeightOffline[iroc][inpix]->SetYTitle("Number of Clusters");
+    hPulseHeightOffline[iroc][inpix]->SetLineColor(HistColors[inpix]);
     }
   }
 
@@ -494,12 +514,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
   // Hot Pixels
   // Per ROC: [ [row, col], [row,col], ... ]
-  std::vector< std::vector< std::vector<int> > > hot_pixels; 
+  std::vector< std::vector< std::vector<int> > > hot_pixels;
   for (int iroc = 0; iroc != 6; ++iroc) {
     std::vector< std::vector<int> > tmp;
-    hot_pixels.push_back( tmp );    
+    hot_pixels.push_back( tmp );
   }
-  
+
   for (int iroc = 0; iroc != 6; ++iroc) {
 
     // Draw Occupancy histograms
@@ -639,7 +659,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightTrack6[iroc][1]->Write();
     hPulseHeightTrack6[iroc][2]->Write();
     hPulseHeightTrack6[iroc][3]->Write();
-    
+
     Can.cd();
     hPulseHeightLong[iroc][0]->SetTitle( TString::Format("Pulse Height ROC%i", iroc) );
     hPulseHeightLong[iroc][0]->Draw("hist");
@@ -729,24 +749,24 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     // Calculate mean occupancy of nonzero pixels
     double sum = 0;
     int n_nonzero_pixels = 0;
-    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){ 	
+    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
       for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
- 	
+
 	if (hOccupancy[iroc].GetBinContent(icol, irow) > 0){
 	  sum += hOccupancy[iroc].GetBinContent( icol, irow);
 	  n_nonzero_pixels++;
-	}	
+	}
       }
-    }    
+    }
     float mean_occupancy;
     if (n_nonzero_pixels>0)
       mean_occupancy = sum/n_nonzero_pixels;
     else
       mean_occupancy = -1;
 
-    
+
     // Look for pixels with an occupancy of more than 10 times the mean
-    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){ 	
+    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
       for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
 
 	if (hOccupancy[iroc].GetBinContent(icol, irow) > 10*mean_occupancy){
@@ -754,6 +774,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 	  colrow.push_back( icol );
 	  colrow.push_back( irow );
 	  hot_pixels[iroc].push_back( colrow );
+    // ALso print the ROCs so we can make a hot pixel mask (real vs bin-number are off by 1)
+    std::cout << "HOT: 1 " <<  iroc << " " << icol-1 << " " << irow-1 << std::endl;
 	}
       }
     }
@@ -789,19 +811,19 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     BFR2.GetGainCal()->PrintGainCal(f);
     fclose(f);
     BFR2.CalculateLevels(10000, OutDir);
-  
-    // Event Loop  
+
+    // Event Loop
     for (int ievent = 0; BFR2.GetNextEvent() >= 0; ++ievent) {
-  
+
       if (ievent % 10000 == 0)
         std::cout << "Processing event: " << ievent << std::endl;
-      
+
       for (size_t iplane = 0; iplane != BFR2.NPlanes(); ++iplane) {
         PLTPlane* Plane = BFR2.Plane(iplane);
-              
-        for ( std::vector< std::vector< int > >::iterator hot = hot_pixels[iplane].begin(); 
-  	    hot != hot_pixels[iplane].end(); 
-  	    ++hot){			
+
+        for ( std::vector< std::vector< int > >::iterator hot = hot_pixels[iplane].begin();
+  	    hot != hot_pixels[iplane].end();
+  	    ++hot){
   	for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
   	  PLTHit* Hit = Plane->Hit(ihit);
   	  if ( (Hit->Column()== (*hot)[0]) and (Hit->Row()==(*hot)[1]) ){
@@ -811,12 +833,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   	}
         }
       }
-    } 
-    
+    } // end Event Loop
+
     // Produce the HOT histograms
     for (int iroc = 0; iroc != 6; ++iroc){
       Can.cd();
-      hPulseHeightHot[iroc]->SetTitle( TString::Format("Hot Pixel Pulse Height ROC%i (N_{Hot}=%i)", 
+      hPulseHeightHot[iroc]->SetTitle( TString::Format("Hot Pixel Pulse Height ROC%i (N_{Hot}=%i)",
 						       iroc,
 						       hot_pixels[iroc].size()) );
       hPulseHeightHot[iroc]->Draw("hist");
@@ -827,7 +849,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
       hOccupancyHot[iroc].Draw("colz");
       Can.SaveAs( OutDir+TString(hOccupancyHot[iroc].GetName()) + ".gif");
 
+
+
     }
+
+
 
   } // end of hotpixels>0
 
@@ -879,6 +905,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
+    BFR.ReadPixelMask( "hotPixelMask.txt");
     BFR.CalculateLevels(10000 ,OutDir);
 
     // Reset residual histograms
@@ -1135,11 +1162,11 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
   f << "<br>" << std::endl;
   for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"Residual_ROC%i_X.gif\"><img width=\"150\" src=\"Residual_ROC%i_X.gif\"></a>\n", i, i);    
+    f << Form("<a href=\"Residual_ROC%i_X.gif\"><img width=\"150\" src=\"Residual_ROC%i_X.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);    
+    f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   // EVENT DISPLAYS
@@ -1160,12 +1187,12 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
   f << "<br>" << std::endl;
   for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"PulseHeightHot_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightHot_ROC%i.gif\"></a>\n", i, i);    
+    f << Form("<a href=\"PulseHeightHot_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightHot_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
 
   for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"OccupancyHot_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHot_ROC%i.gif\"></a>\n", i, i);    
+    f << Form("<a href=\"OccupancyHot_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHot_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   f << "</body></html>";

@@ -254,7 +254,7 @@ void PSIBinaryFileReader::Clear()
 
   fPlaneMap.clear();
   fPlanes.clear();
-  fTracks.clear(); 
+  fTracks.clear();
 
   return;
 }
@@ -477,6 +477,9 @@ void PSIBinaryFileReader::DecodeHits ()
 
 
 
+
+
+
   std::vector<int> UBPositionROC(NROCs, -1);
   std::vector<int> NHitsROC(NROCs, 0);
   for (int iroc = 0; iroc != NROCs; ++iroc) {
@@ -486,12 +489,17 @@ void PSIBinaryFileReader::DecodeHits ()
 
     for (int ihit = 0; ihit != NHitsROC[iroc]; ++ihit) {
       std::pair<int, int> colrow = fill_pixel_info(fData, UBPosition[3 + iroc] + 2 + 0 + ihit * 6, iroc);
-      //printf("Hit iroc %2i  col %2i  row %2i  PH: %4i\n", iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
-      PLTHit* Hit = new PLTHit(1, iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
-      fGainCal.SetCharge(*Hit);
-      fAlignment.AlignHit(*Hit);
-      fHits.push_back(Hit);
-      fPlaneMap[Hit->ROC()].AddHit(Hit);
+
+      // Ignore masked pixels
+      // Important: Assume Channel==1 !!!!
+      if (!IsPixelMasked( 1*100000 + iroc*10000 + colrow.first*100 + colrow.second)){
+        //printf("Hit iroc %2i  col %2i  row %2i  PH: %4i\n", iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
+        PLTHit* Hit = new PLTHit(1, iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
+        fGainCal.SetCharge(*Hit);
+        fAlignment.AlignHit(*Hit);
+        fHits.push_back(Hit);
+        fPlaneMap[Hit->ROC()].AddHit(Hit);
+      }
     }
 
   }
@@ -578,12 +586,14 @@ void PSIBinaryFileReader::ReadPixelMask (std::string const InFileName)
     }
   }
 
-  std::istringstream linestream;
-  int ch, roc, col, row;
   for (std::string line; std::getline(InFile, line); ) {
+    int ch=0, roc=0, col=0, row=0;
+    std::istringstream linestream;
+
     linestream.str(line);
     linestream >> ch >> roc >> col >> row;
 
+    std::cout << "Masking: " << ch << " " << roc << " " << col << " " << row << std::endl;
     fPixelMask.insert( ch*100000 + roc*10000 + col*100 + row );
   }
 
