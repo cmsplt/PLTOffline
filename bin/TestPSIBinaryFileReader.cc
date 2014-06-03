@@ -584,8 +584,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
         BFR.Track(0)->Cluster(5)->Charge() < 300000 ) {
 
         PLTTrack* Track = BFR.Track(0);
-        hTrackSlopeX.Fill(Track->fTVX / Track->fTVZ);
-        hTrackSlopeY.Fill(Track->fTVY / Track->fTVZ);
+        double slopeX = Track->fTVX / Track->fTVZ;
+        double slopeY = Track->fTVY / Track->fTVZ;
+
+        hTrackSlopeX.Fill( slopeX);
+        hTrackSlopeY.Fill( slopeY);
 
         for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
           PLTCluster* Cluster = Track->Cluster(icluster);
@@ -599,6 +602,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
           if (Track->IsFiducial(1, 5, Alignment, PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
             hOccupancyTrack6[Cluster->ROC()].Fill(Cluster->PX(), Cluster->PY());
           }
+
+          // Fill the Track6 PulseHeights
           hPulseHeightTrack6[Cluster->ROC()][0]->Fill(Cluster->Charge());
           if (Cluster->NHits() == 1) {
             hPulseHeightTrack6[Cluster->ROC()][1]->Fill(Cluster->Charge());
@@ -607,6 +612,19 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
           } else if (Cluster->NHits() >= 3) {
             hPulseHeightTrack6[Cluster->ROC()][3]->Fill(Cluster->Charge());
           }
+
+          // Fill the Offline PulseHeights (Track6+|Slope| < 0.01 in x and y )
+          if ( (fabs(slopeX)< 0.01) && (fabs(slopeY)<0.01) ){
+            hPulseHeightOffline[Cluster->ROC()][0]->Fill(Cluster->Charge());
+            if (Cluster->NHits() == 1) {
+              hPulseHeightOffline[Cluster->ROC()][1]->Fill(Cluster->Charge());
+            } else if (Cluster->NHits() == 2) {
+              hPulseHeightOffline[Cluster->ROC()][2]->Fill(Cluster->Charge());
+            } else if (Cluster->NHits() >= 3) {
+              hPulseHeightOffline[Cluster->ROC()][3]->Fill(Cluster->Charge());
+            }
+          }
+
         }
 
     }
@@ -795,6 +813,30 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightTrack6[iroc][1]->Write();
     hPulseHeightTrack6[iroc][2]->Write();
     hPulseHeightTrack6[iroc][3]->Write();
+
+    Can.cd();
+    hPulseHeightOffline[iroc][0]->SetTitle( TString::Format("Pulse Height Offline ROC%i", iroc) );
+    hPulseHeightOffline[iroc][0]->Draw("hist");
+    hPulseHeightOffline[iroc][1]->Draw("samehist");
+    hPulseHeightOffline[iroc][2]->Draw("samehist");
+    hPulseHeightOffline[iroc][3]->Draw("samehist");
+    TLegend lPulseHeightOffline(0.75, 0.4, 0.90, 0.7, "Mean:");
+    lPulseHeightOffline.SetTextAlign(11);
+    lPulseHeightOffline.SetFillStyle(0);
+    lPulseHeightOffline.SetBorderSize(0);
+    lPulseHeightOffline.AddEntry( "PH0PMean", TString::Format("%8.0f", hPulseHeightOffline[iroc][0]->GetMean()), "")->SetTextColor(HistColors[0]);
+    lPulseHeightOffline.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeightOffline[iroc][1]->GetMean()), "")->SetTextColor(HistColors[1]);
+    lPulseHeightOffline.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeightOffline[iroc][2]->GetMean()), "")->SetTextColor(HistColors[2]);
+    lPulseHeightOffline.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeightOffline[iroc][3]->GetMean()), "")->SetTextColor(HistColors[3]);
+    lPulseHeightOffline.Draw("same");
+    Leg.Draw("same");
+    Can.SaveAs(OutDir+TString::Format("PulseHeightOffline_ROC%i.gif", iroc));
+
+    hPulseHeightOffline[iroc][0]->Write();
+    hPulseHeightOffline[iroc][1]->Write();
+    hPulseHeightOffline[iroc][2]->Write();
+    hPulseHeightOffline[iroc][3]->Write();
+
 
     Can.cd();
     hPulseHeightLong[iroc][0]->SetTitle( TString::Format("Pulse Height ROC%i", iroc) );
@@ -1194,6 +1236,16 @@ void WriteHTML (TString const OutDir, TString const CalFile)
     f << Form("<a href=\"PulseHeightAvg2DTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2DTrack6_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
+
+  // OFFLINE
+  f << "<h2>Straight Tracks</h2>\n";
+
+  f << "<br>\n";
+  for (int i = 0; i != 6; ++i) {
+    f << Form("<a href=\"PulseHeightOffline_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightOffline_ROC%i.gif\"></a>\n", i, i);
+  }
+  f << "<br>\n";
+
 
   // TRACK RESIDUALS
   f << "<h2>Track Residuals</h2>\n";
