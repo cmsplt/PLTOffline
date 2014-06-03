@@ -26,10 +26,157 @@
 
 void WriteHTML (TString const, TString const);
 
+int FindHotPixels (std::string const InFileName,
+                   std::string const CalibrationList,
+                   TString const RunNumber,
+                   std::vector< std::vector< std::vector<int> > > & hot_pixels
+                   )
+{
+  // FindHotPixels
+  // Loop over the event and add pixels with > 10xmean occupancy (per ROC)
+  // to the hot_pixels matrix.
+    std::cout << "Entering FindHotPixels" << std::endl;
+
+  gStyle->SetOptStat(0);
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+
+  FILE* f = fopen("MyGainCal.dat", "w");
+  BFR.GetGainCal()->PrintGainCal(f);
+  fclose(f);
+
+  // Mask four extra rows on each boundary of the diamond sensors
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  // Add hot pixels we are given to mask
+  // Since we now do multiple iterations in the histograms in one FindHotPixels call
+  // instead of multiple FindHotPixels calls this should not be necessary anymore.
+  for (int iroc=0; iroc != 6; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      std::cout << "HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
+  }
+
+  BFR.CalculateLevels(10000, OutDir);
+
+  // Prepare Occupancy histograms
+  // x == columns
+  // y == rows
+  std::vector< TH2F > hOccupancy;
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
+                                Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
+  }
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
+    if (ievent % 10000 == 0) {
+      std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    // loop over planes and fill occupancy histograms
+    for (size_t iplane = 0; iplane != BFR.NPlanes(); ++iplane) {
+
+      PLTPlane* Plane = BFR.Plane(iplane);
+
+      for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
+        PLTHit* Hit = Plane->Hit(ihit);
+
+        if (Hit->ROC() < 6) {
+          hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
+        }
+        else {
+          std::cerr << "Oops, ROC >= 6?" << std::endl;
+        }
+      } // End of loop over hits
+    } // End of loop over planes
+  } // End of Event Loop
+
+
+  int total_hot_pixels=0;
+
+  while (1){
+
+    int new_hot_pixels = 0;
+
+    // Look for new hot pixels
+    for (int iroc = 0; iroc != 6; ++iroc) {
+
+      // Calculate mean occupancy of nonzero pixels
+      double sum = 0;
+      int n_nonzero_pixels = 0;
+      for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
+        for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
+
+          if (hOccupancy[iroc].GetBinContent(icol, irow) > 0){
+            sum += hOccupancy[iroc].GetBinContent( icol, irow);
+            n_nonzero_pixels++;
+          }
+        }
+      }
+      float mean_occupancy;
+      if (n_nonzero_pixels>0)
+        mean_occupancy = sum/n_nonzero_pixels;
+      else
+        mean_occupancy = -1;
+
+      // Find with an occupancy of more than 10 times the meanm
+      for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
+        for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
+
+          if (hOccupancy[iroc].GetBinContent(icol, irow) > 10*mean_occupancy){
+
+            new_hot_pixels++;
+            std::vector<int> colrow;
+            // Store column and row
+            // decrement by one (histogram bins vs real location)
+            colrow.push_back( icol-1 );
+            colrow.push_back( irow-1 );
+            hOccupancy[iroc].SetBinContent( icol, irow, 0);
+            hot_pixels[iroc].push_back( colrow );
+          }
+        }
+      }
+    } // end of loop over ROCs
+
+    total_hot_pixels += new_hot_pixels;
+
+    if (new_hot_pixels==0)
+      break;
+
+  }
+
+  std::cout << "Leaving FindHotPixels, found: " << total_hot_pixels << std::endl;
+  return 0;
+}
+
+
 int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
 
+  // Mask hot pixels in offline analysis
+  // pixels are considered hot if they have > 10 times the number of mean hits of
+  // other (filled) pixels in the ROC
+  // Call the hot finder repeatedly until no new hot pixels can be found
+  std::vector< std::vector< std::vector<int> > > hot_pixels;
+  for (int iroc = 0; iroc != 6; ++iroc) {
+    std::vector< std::vector<int> > tmp;
+    hot_pixels.push_back( tmp );
+  }
 
+  // Look for hot pixels
+  FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
@@ -53,7 +200,18 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.ReadPixelMask( "hotPixelMask.txt");
+
+  // Mask additional outer four layer on all diamonds
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  //Add hot pixels we found to mask
+  for (int iroc=0; iroc != 6; iroc++){
+   for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+     std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
+     BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+   }
+  }
+
   BFR.CalculateLevels(10000, OutDir);
 
 
@@ -85,12 +243,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   for (int iroc = 0; iroc != 6; ++iroc){
     hOccupancyHighPH.push_back( TH2F( Form("OccupancyHighPH_ROC%i",iroc),
                                 Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
-  }
-
-  std::vector<TH2F> hOccupancyHot;
-  for (int iroc = 0; iroc != 6; ++iroc){
-    hOccupancyHot.push_back( TH2F( Form("OccupancyHot_ROC%i",iroc),
-				      Form("OccupancyHot_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
   std::vector<TH1F> hNHitsPerCluster;
@@ -227,12 +379,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Name = TString::Format("PulseHeightLong_ROC%i_NPix3Plus", iroc);
     hPulseHeightLong[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
   }
-  // For Hot Pixels
-  TH1F* hPulseHeightHot[6];
-  for (int iroc = 0; iroc != 6; ++iroc) {
-    TString Name = TString::Format("PulseHeightHot_ROC%i", iroc);
-    hPulseHeightHot[iroc] = new TH1F(Name, Name, phNBins, phMin, phMax);
-  }
   // For Tracks, using additional selections
   TH1F* hPulseHeightOffline[6][4];
   for (int iroc = 0; iroc != 6; ++iroc) {
@@ -260,9 +406,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     hPulseHeightLong[iroc][inpix]->SetXTitle("Charge (electrons)");
     hPulseHeightLong[iroc][inpix]->SetYTitle("Number of Clusters");
     hPulseHeightLong[iroc][inpix]->SetLineColor(HistColors[inpix]);
-    hPulseHeightHot[inpix]->SetXTitle("Charge (electrons)");
-    hPulseHeightHot[inpix]->SetYTitle("Number of Hits");
-    hPulseHeightHot[inpix]->SetLineColor(HistColors[inpix]);
     hPulseHeightOffline[iroc][inpix]->SetXTitle("Charge (electrons)");
     hPulseHeightOffline[iroc][inpix]->SetYTitle("Number of Clusters");
     hPulseHeightOffline[iroc][inpix]->SetLineColor(HistColors[inpix]);
@@ -316,11 +459,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
   for (int iroc = 0; iroc != 6; ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-				Form("Residual_ROC%i",iroc), 100, -.15, .15, 100, -.15, .15));
+        Form("Residual_ROC%i",iroc), 100, -.15, .15, 100, -.15, .15));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
-				   Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+           Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
     hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
-				   Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
+           Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
   }
 
 
@@ -512,13 +655,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   TCanvas Can;
   Can.cd();
 
-  // Hot Pixels
-  // Per ROC: [ [row, col], [row,col], ... ]
-  std::vector< std::vector< std::vector<int> > > hot_pixels;
-  for (int iroc = 0; iroc != 6; ++iroc) {
-    std::vector< std::vector<int> > tmp;
-    hot_pixels.push_back( tmp );
-  }
 
   for (int iroc = 0; iroc != 6; ++iroc) {
 
@@ -744,41 +880,6 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
     gStyle->SetOptStat(0);
 
-    // Looking for Hot Pixels
-    //
-    // Calculate mean occupancy of nonzero pixels
-    double sum = 0;
-    int n_nonzero_pixels = 0;
-    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
-      for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
-
-	if (hOccupancy[iroc].GetBinContent(icol, irow) > 0){
-	  sum += hOccupancy[iroc].GetBinContent( icol, irow);
-	  n_nonzero_pixels++;
-	}
-      }
-    }
-    float mean_occupancy;
-    if (n_nonzero_pixels>0)
-      mean_occupancy = sum/n_nonzero_pixels;
-    else
-      mean_occupancy = -1;
-
-
-    // Look for pixels with an occupancy of more than 10 times the mean
-    for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
-      for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
-
-	if (hOccupancy[iroc].GetBinContent(icol, irow) > 10*mean_occupancy){
-	  std::vector<int> colrow;
-	  colrow.push_back( icol );
-	  colrow.push_back( irow );
-	  hot_pixels[iroc].push_back( colrow );
-    // ALso print the ROCs so we can make a hot pixel mask (real vs bin-number are off by 1)
-    std::cout << "HOT: 1 " <<  iroc << " " << icol-1 << " " << irow-1 << std::endl;
-	}
-      }
-    }
 
   } // end of loop over ROCs
 
@@ -795,74 +896,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   hTrackSlopeY.Draw("hist");
   Can.SaveAs(OutDir+"TrackSlopeY.gif");
 
-  // Count the total number of hot pixels
-  int total_hotpixels = 0;
-  for (int iroc = 0; iroc != 6; ++iroc){
-    total_hotpixels += hot_pixels[iroc].size();
-  }
-
-  // Now do a second look and measure the charges of hot pixel
-  if (total_hotpixels >0){
-
-    // Re- Initialize Reader
-    PSIBinaryFileReader  BFR2(InFileName, CalibrationList);
-    BFR2.SetTrackingAlignment(&Alignment);
-    f = fopen("MyGainCal.dat", "w");
-    BFR2.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR2.CalculateLevels(10000, OutDir);
-
-    // Event Loop
-    for (int ievent = 0; BFR2.GetNextEvent() >= 0; ++ievent) {
-
-      if (ievent % 10000 == 0)
-        std::cout << "Processing event: " << ievent << std::endl;
-
-      for (size_t iplane = 0; iplane != BFR2.NPlanes(); ++iplane) {
-        PLTPlane* Plane = BFR2.Plane(iplane);
-
-        for ( std::vector< std::vector< int > >::iterator hot = hot_pixels[iplane].begin();
-  	    hot != hot_pixels[iplane].end();
-  	    ++hot){
-  	for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
-  	  PLTHit* Hit = Plane->Hit(ihit);
-  	  if ( (Hit->Column()== (*hot)[0]) and (Hit->Row()==(*hot)[1]) ){
-  	    hPulseHeightHot[iplane]->Fill( Hit->Charge() );
-	    hOccupancyHot[iplane].Fill( Hit->Column(), Hit->Row(),1);
-  	  }
-  	}
-        }
-      }
-    } // end Event Loop
-
-    // Produce the HOT histograms
-    for (int iroc = 0; iroc != 6; ++iroc){
-      Can.cd();
-      hPulseHeightHot[iroc]->SetTitle( TString::Format("Hot Pixel Pulse Height ROC%i (N_{Hot}=%i)",
-						       iroc,
-						       hot_pixels[iroc].size()) );
-      hPulseHeightHot[iroc]->Draw("hist");
-      Can.SaveAs(OutDir+TString::Format("PulseHeightHot_ROC%i.gif", iroc));
-
-      // Draw OccupancyHot histograms
-      hOccupancyHot[iroc].SetMinimum(0);
-      hOccupancyHot[iroc].Draw("colz");
-      Can.SaveAs( OutDir+TString(hOccupancyHot[iroc].GetName()) + ".gif");
-
-
-
-    }
-
-
-
-  } // end of hotpixels>0
-
-
-
   WriteHTML(PlotsDir + RunNumber, CalibrationList);
 
   return 0;
 }
+
 
 int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
@@ -1183,17 +1221,17 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
 
   // HOT PIXELS
-  f << "<h2>Hot Pixels</h2>\n";
-
-  f << "<br>" << std::endl;
-  for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"PulseHeightHot_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightHot_ROC%i.gif\"></a>\n", i, i);
-  f << "<br>\n";
-
-
-  for (int i = 0; i != 6; i++)
-    f << Form("<a href=\"OccupancyHot_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHot_ROC%i.gif\"></a>\n", i, i);
-  f << "<br>\n";
+  // f << "<h2>Hot Pixels</h2>\n";
+  //
+  // f << "<br>" << std::endl;
+  // for (int i = 0; i != 6; i++)
+  //   f << Form("<a href=\"PulseHeightHot_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightHot_ROC%i.gif\"></a>\n", i, i);
+  // f << "<br>\n";
+  //
+  //
+  // for (int i = 0; i != 6; i++)
+  //   f << Form("<a href=\"OccupancyHot_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHot_ROC%i.gif\"></a>\n", i, i);
+  // f << "<br>\n";
 
   f << "</body></html>";
   f.close();
