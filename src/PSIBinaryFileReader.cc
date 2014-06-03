@@ -568,6 +568,11 @@ std::pair<int, int> PSIBinaryFileReader::fill_pixel_info(int* evt , int ctr, int
 }
 
 
+void PSIBinaryFileReader::AddToPixelMask(int ch, int roc, int col, int row)
+{
+  fPixelMask.insert( ch*100000 + roc*10000 + col*100 + row );
+}
+
 
 void PSIBinaryFileReader::ReadPixelMask (std::string const InFileName)
 {

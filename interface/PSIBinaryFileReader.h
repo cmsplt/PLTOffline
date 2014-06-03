@@ -21,6 +21,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     void Clear ();
 
     void ReadPixelMask (std::string const);
+    void AddToPixelMask( int, int, int, int);
     bool IsPixelMasked (int const);
 
     bool ReadAddressesFromFile (std::string const);
@@ -73,16 +74,6 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
 
     std::string fBaseCalDir;
     std::string fCalibrationFile[6];
-
-
-
-
-
-
-
-
-
-
 
 };
 
