@@ -985,7 +985,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.ReadPixelMask( "hotPixelMask.txt");
+    BFR.ReadPixelMask( "outerPixelMask.txt");
     BFR.CalculateLevels(10000 ,OutDir);
 
     // Reset residual histograms
