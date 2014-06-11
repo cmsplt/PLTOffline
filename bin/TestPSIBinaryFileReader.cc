@@ -466,6 +466,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
            Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
   }
 
+	int onepc = 0;
+	int twopc = 0;
+	int threepc = 0;
 
   int const TimeWidth = 20000;
   int NGraphPoints = 0;
@@ -532,15 +535,18 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
           PLTU::AddToRunningAverage(AvgPH[iplane][0], NAvgPH[iplane][0], Cluster->Charge());
           if (Cluster->NHits() == 1) {
             hPulseHeight[iplane][1]->Fill(Cluster->Charge());
+						onepc++;
             hPulseHeightLong[iplane][1]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][1], NAvgPH[iplane][1], Cluster->Charge());
           } else if (Cluster->NHits() == 2) {
             hPulseHeight[iplane][2]->Fill(Cluster->Charge());
-            hPulseHeightLong[iplane][2]->Fill(Cluster->Charge());
+            twopc++;
+						hPulseHeightLong[iplane][2]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][2], NAvgPH[iplane][2], Cluster->Charge());
           } else if (Cluster->NHits() >= 3) {
             hPulseHeight[iplane][3]->Fill(Cluster->Charge());
-            hPulseHeightLong[iplane][3]->Fill(Cluster->Charge());
+            threepc++;
+						hPulseHeightLong[iplane][3]->Fill(Cluster->Charge());
             PLTU::AddToRunningAverage(AvgPH[iplane][3], NAvgPH[iplane][3], Cluster->Charge());
           }
         }
@@ -757,6 +763,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     Can.SaveAs( OutDir+TString(hOccupancyTrack6[iroc].GetName()) + ".gif");
 
 
+		double oneovertwo,oneoverthree,twooverthree;
+
+		oneovertwo = onepc/twopc;
+		oneoverthree = onepc/threepc;
+		twooverthree = twopc/threepc;
 
     // Draw the PulseHeights
     gStyle->SetOptStat(0);
@@ -781,6 +792,14 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     lPulseHeight.AddEntry( "PH1PMean", TString::Format("%8.0f", hPulseHeight[iroc][1]->GetMean()), "")->SetTextColor(HistColors[1]);
     lPulseHeight.AddEntry( "PH2PMean", TString::Format("%8.0f", hPulseHeight[iroc][2]->GetMean()), "")->SetTextColor(HistColors[2]);
     lPulseHeight.AddEntry( "PH3PMean", TString::Format("%8.0f", hPulseHeight[iroc][3]->GetMean()), "")->SetTextColor(HistColors[3]);
+    TLegend lRatio(0.75, 0.1, 0.90, 0.7, "Ratio:");
+    lRatio.SetTextAlign(11);
+    lRatio.SetFillStyle(0);
+    lRatio.SetBorderSize(0);
+    lRatio.AddEntry( "oneovertwo", TString::Format("%8.0f", oneovertwo, "")+" 1 over 2");
+    lRatio.AddEntry( "oneoverthree", TString::Format("%8.0f", oneoverthree, ""));
+    lRatio.AddEntry( "twooverthree", TString::Format("%8.0f", twooverthree, ""));
+    lRatio.Draw("same");
     lPulseHeight.Draw("same");
     Leg.Draw("same");
     Can.SaveAs(OutDir+TString::Format("PulseHeight_ROC%i.gif", iroc));
