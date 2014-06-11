@@ -797,8 +797,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     lRatio.SetFillStyle(0);
     lRatio.SetBorderSize(0);
     lRatio.AddEntry( "oneovertwo", TString::Format("%8.0f", oneovertwo, "")+" 1 over 2");
-    lRatio.AddEntry( "oneoverthree", TString::Format("%8.0f", oneoverthree, ""));
-    lRatio.AddEntry( "twooverthree", TString::Format("%8.0f", twooverthree, ""));
+    lRatio.AddEntry( "oneoverthree", TString::Format("%8.0f", oneoverthree, "")+" 1 over 3");
+    lRatio.AddEntry( "twooverthree", TString::Format("%8.0f", twooverthree, "")+" 2 over 3");
     lRatio.Draw("same");
     lPulseHeight.Draw("same");
     Leg.Draw("same");
