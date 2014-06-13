@@ -179,6 +179,9 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   */
 
+  // Track/Cluster matching distance [cm]
+  float max_dr = 0.1;
+
 
   gStyle->SetOptStat(0);
   TString const PlotsDir = "plots/";
@@ -205,6 +208,17 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   BFR.CalculateLevels(10000, OutDir);
 
+  // Prepare Occupancy histograms
+  // Telescope coordinates
+  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   60, -0.2, 0.2, 60, -0.2, 0.2);
+  TH2F hOccupancyDenom = TH2F( "denom", "denom", 60, -0.2, 0.2, 60, -0.2, 0.2);
+
+  TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
+  TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
+  TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
+
+  double tz = Alignment.GetTZ(1, plane_under_test);
+  std::cout << "Got TZ: " << tz << std::endl;
 
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -216,21 +230,60 @@ void TestPlaneEfficiency (std::string const InFileName,
 
     // require one track
     if (BFR.NTracks() == 1){
-      1;
-      //for (int iplane=0;iplane!=6;iplane++)
-      //  std::cout << BFR.Plane(iplane)->NClusters();
-      //std::cout << std::endl;
-      // and check the plane under test
-      //PLTPlane* Plane = BFR.Plane( plane_under_test );
 
-      //if (Plane->NHits()==0)
-      //  std::cout << "YAAy: " << Plane->NHits() << std::endl;
+      // Get the intersection of track and plane under test and fill
+      // denominator histogram
+      double tx = BFR.Track(0)->TX( tz );
+      double ty = BFR.Track(0)->TY( tz );
+
+      hOccupancyDenom.Fill( tx, ty );
+
+      // Now look for a close hit in the plane under test
+      PLTPlane* Plane = BFR.Plane( plane_under_test );
+      bool matched = false;
+
+      // loop over all clusters and check distance to intersection
+      for (int icl = 0; icl != Plane->NClusters(); icl++){
+             float dtx = (tx - Plane->Cluster(icl)->TX());
+             float dty = (ty - Plane->Cluster(icl)->TY());
+             float dtr = sqrt( dtx*dtx + dty*dty );
+
+             hdtx.Fill( dtx );
+             hdty.Fill( dty );
+             hdtr.Fill( dtr );
+
+             if (sqrt( dtx*dtx + dty*dty ) < max_dr)
+               matched=true;
+
+       } // end of loop over clusters
+
+       // if there was at least one match: fill denominator
+       if (matched)
+         hOccupancyNum.Fill( tx, ty );
 
     } // end of having one track
-
-        //  hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
-
   } // End of Event Loop
+
+
+  // Prepare drawing
+  TCanvas Can;
+  Can.cd();
+
+  // Draw ratio of Occupancy histograms
+  hOccupancyNum.Divide( &hOccupancyDenom );
+  hOccupancyNum.SetMinimum(0);
+  hOccupancyNum.Draw("colz");
+  Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
+
+  hdtx.Draw();
+  Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".gif");
+
+  hdty.Draw();
+  Can.SaveAs(OutDir+ TString(hdty.GetName()) +".gif");
+
+  hdtr.Draw();
+  Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".gif");
+
 
 }
 
@@ -255,7 +308,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
 
   // Study single planes
-  TestPlaneEfficiency(InFileName, CalibrationList, RunNumber, hot_pixels,3);
+  for (int iplane=1; iplane!=5;iplane++)
+    TestPlaneEfficiency(InFileName, CalibrationList, RunNumber, hot_pixels,iplane);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
@@ -1353,6 +1407,27 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
   for (int i = 0; i != 6; i++)
     f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  // Single Plane Studies
+  f << "<h2>Single Plane Studies</h2>\n";
+  f << "<br>" << std::endl;
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"PlaneEfficiency_ROC%i.gif\"><img width=\"150\" src=\"PlaneEfficiency_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestDX_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDX_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestDY_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDY_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestDR_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDR_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   // EVENT DISPLAYS
