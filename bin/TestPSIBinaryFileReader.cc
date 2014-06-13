@@ -14,7 +14,6 @@
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
 #include "PLTAlignment.h"
-
 #include "TLegend.h"
 #include "TLegendEntry.h"
 #include "TString.h"
@@ -49,9 +48,10 @@ int FindHotPixels (std::string const InFileName,
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
 
-  FILE* f = fopen("MyGainCal.dat", "w");
-  BFR.GetGainCal()->PrintGainCal(f);
-  fclose(f);
+
+  //FILE* f = fopen("MyGainCal.dat", "w");
+  //BFR.GetGainCal()->PrintGainCal(f);
+  //fclose(f);
 
   // Mask four extra rows on each boundary of the diamond sensors
   BFR.ReadPixelMask( "outerPixelMask.txt");
@@ -162,8 +162,84 @@ int FindHotPixels (std::string const InFileName,
 }
 
 
+
+void TestPlaneEfficiency (std::string const InFileName,
+                         std::string const CalibrationList,
+                         TString const RunNumber,
+                         std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                         int plane_under_test)
+{
+  /* TestPlaneEfficiency
+
+  o) Consider one plane to be the plane under test
+  o) Require exactly one hit in all other planes
+  o) This gives one track
+  o) Then check if a hit was registered in the plane under test (within a given
+      radius around the expected passing of the track)
+
+  */
+
+
+  gStyle->SetOptStat(0);
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+  BFR.SetPlaneUnderTest( plane_under_test );
+
+  // Mask four extra rows on each boundary of the diamond sensors
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  // Add additional hot pixels (from FindHotPixels to mask)
+  for (int iroc=0; iroc != 6; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
+  }
+
+  BFR.CalculateLevels(10000, OutDir);
+
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
+    if (ievent % 10000 == 0) {
+      std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    // require one track
+    if (BFR.NTracks() == 1){
+      1;
+      //for (int iplane=0;iplane!=6;iplane++)
+      //  std::cout << BFR.Plane(iplane)->NClusters();
+      //std::cout << std::endl;
+      // and check the plane under test
+      //PLTPlane* Plane = BFR.Plane( plane_under_test );
+
+      //if (Plane->NHits()==0)
+      //  std::cout << "YAAy: " << Plane->NHits() << std::endl;
+
+    } // end of having one track
+
+        //  hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
+
+  } // End of Event Loop
+
+}
+
+
+
+
 int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
+  // Run default analysis
 
   // Mask hot pixels in offline analysis
   // pixels are considered hot if they have > 10 times the number of mean hits of
@@ -178,14 +254,15 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   // Look for hot pixels
   FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
 
+  // Study single planes
+  TestPlaneEfficiency(InFileName, CalibrationList, RunNumber, hot_pixels,3);
+
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
   TFile out_f( OutDir + "histos.root","new");
 
   std::cout<<OutDir<<std::endl;
-  /* TestPSIBinaryFileReaderAlign: Default run analysis.
-  */
 
   gStyle->SetOptStat(0);
 
@@ -207,7 +284,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   //Add hot pixels we found to mask
   for (int iroc=0; iroc != 6; iroc++){
    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
-     std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
+     // std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
    }
   }
