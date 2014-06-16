@@ -20,6 +20,8 @@
 #include "TSystem.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
+#include "TH3F.h"
+
 
 
 
@@ -179,7 +181,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   */
 
-  // Track/Cluster matching distance [cm]
+  // Track/Hit matching distance [cm]
   float max_dr = 0.03;
 
 
@@ -213,6 +215,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
   TH2F hOccupancyDenom = TH2F( "denom", "denom", 52, 0, 52, 80, 0, 80);
 
+  TH3F hCharge01       = TH3F( Form("Charge01_ROC%i", plane_under_test), "Charge01", 52,0,52, 80,0,80,50,0,50000);
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
@@ -261,10 +264,10 @@ void TestPlaneEfficiency (std::string const InFileName,
       PLTPlane* Plane = BFR.Plane( plane_under_test );
       bool matched = false;
 
-      // loop over all clusters and check distance to intersection
-      for (int icl = 0; icl != Plane->NClusters(); icl++){
-             float dtx = (tx - Plane->Cluster(icl)->TX());
-             float dty = (ty - Plane->Cluster(icl)->TY());
+      // loop over all hits and check distance to intersection
+      for (int ih = 0; ih != Plane->NHits(); ih++){
+             float dtx = (tx - Plane->Hit(ih)->TX());
+             float dty = (ty - Plane->Hit(ih)->TY());
              float dtr = sqrt( dtx*dtx + dty*dty );
 
              hdtx.Fill( dtx );
@@ -274,7 +277,7 @@ void TestPlaneEfficiency (std::string const InFileName,
              if (sqrt( dtx*dtx + dty*dty ) < max_dr)
                matched=true;
 
-       } // end of loop over clusters
+       } // end of loop over hits
 
        // if there was at least one match: fill denominator
        if (matched)
