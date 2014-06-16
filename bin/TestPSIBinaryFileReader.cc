@@ -214,12 +214,12 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Prepare Occupancy histograms
   // Telescope coordinates
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
-  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), "denom", 52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
-  TH3F hCharge01       = TH3F( Form("Charge_ROC%i", plane_under_test), "Charge01", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge02       = TH3F( Form("Charge02_ROC%i", plane_under_test), "Charge02", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge03       = TH3F( Form("Charge03_ROC%i", plane_under_test), "Charge03", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge04       = TH3F( Form("Charge04_ROC%i", plane_under_test), "Charge04", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge01       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Mean Charge within #Delta R < 0.01 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge02       = TH3F( Form("Charge02_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.02 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge03       = TH3F( Form("Charge03_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.03 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge04       = TH3F( Form("Charge04_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.04 cm", 52,0,52, 80,0,80,50,0,50000);
 
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
@@ -1572,11 +1572,37 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>" << std::endl;
 
   for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"TracksPassing_ROC%i.gif\"><img width=\"150\" src=\"TracksPassing_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
     f << Form("<a href=\"PlaneEfficiency_ROC%i.gif\"><img width=\"150\" src=\"PlaneEfficiency_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"SinglePlaneTestDX_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDX_ROC%i.gif\"></a>\n", i, i);
+    f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"Charge_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"Charge02_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge02_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"Charge03_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge03_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"Charge04_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge04_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestChi2_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
