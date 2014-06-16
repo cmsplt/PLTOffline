@@ -180,7 +180,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Cluster matching distance [cm]
-  float max_dr = 0.1;
+  float max_dr = 0.04;
 
 
   gStyle->SetOptStat(0);
@@ -263,6 +263,51 @@ void TestPlaneEfficiency (std::string const InFileName,
 
     } // end of having one track
   } // End of Event Loop
+
+
+  // Remove masked areas from Occupancy Histograms
+  const std::set<int> * pixelMask = BFR.GetPixelMask();
+
+  // Loop over all masked pixels
+  for (std::set<int>::const_iterator ipix = pixelMask->begin();
+       ipix != pixelMask->end();
+       ipix++){
+
+         // Decode the integer
+         int ch   = *ipix /  100000;
+         int roc  = (*ipix % 100000) / 10000;
+         int col  = (*ipix % 10000 ) / 100;
+         int row  = (*ipix % 100);
+
+         // Make sure this concerns the plane under test
+         if (roc == plane_under_test){
+
+             // Convert pixel row/column to Telescope coordinates
+             // First get the local coords.
+             float lx = Alignment.PXtoLX( col);
+             float ly = Alignment.PYtoLY( row);
+             // And then convert local to telescope
+             std::vector<float> txyz;
+             Alignment.LtoTXYZ( txyz, lx, ly, 1, roc);
+
+             // Loop over the TH2
+             for (int ibin_x = 1; ibin_x != hOccupancyNum.GetNbinsX()+2; ibin_x++){
+               for (int ibin_y = 1; ibin_y != hOccupancyNum.GetNbinsY()+2; ibin_y++){
+
+                 // Get the bin-centers
+                 float cx =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
+                 float cy =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
+
+                 // And check if they are within matching-distance of a masked pixel
+                 if (sqrt( (cx-txyz[0])*(cx-txyz[0]) + (cy-txyz[1])*(cy-txyz[1]) ) < max_dr){
+                   // If yes: set numerator and denominator to zero
+                   hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
+                   hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
+                 }
+               }
+             }
+        }
+   } // end loop over pixels
 
 
   // Prepare drawing

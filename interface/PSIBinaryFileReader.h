@@ -47,6 +47,9 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
       return &fGainCal;
     }
 
+    const std::set<int> * GetPixelMask(){
+      return &fPixelMask;
+    }
 
 
   private:
