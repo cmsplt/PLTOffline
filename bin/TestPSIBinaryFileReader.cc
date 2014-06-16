@@ -22,6 +22,7 @@
 #include "TGraphErrors.h"
 #include "TH3F.h"
 
+#include "TProfile2D.h"
 
 
 
@@ -213,9 +214,13 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Prepare Occupancy histograms
   // Telescope coordinates
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
-  TH2F hOccupancyDenom = TH2F( "denom", "denom", 52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), "denom", 52, 0, 52, 80, 0, 80);
 
-  TH3F hCharge01       = TH3F( Form("Charge01_ROC%i", plane_under_test), "Charge01", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge01       = TH3F( Form("Charge_ROC%i", plane_under_test), "Charge01", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge02       = TH3F( Form("Charge02_ROC%i", plane_under_test), "Charge02", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge03       = TH3F( Form("Charge03_ROC%i", plane_under_test), "Charge03", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge04       = TH3F( Form("Charge04_ROC%i", plane_under_test), "Charge04", 52,0,52, 80,0,80,50,0,50000);
+
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
@@ -274,6 +279,18 @@ void TestPlaneEfficiency (std::string const InFileName,
              hdty.Fill( dty );
              hdtr.Fill( dtr );
 
+             if (sqrt( dtx*dtx + dty*dty ) < 0.01)
+               hCharge01.Fill( px, py, Plane->Hit(ih)->Charge());
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.02)
+               hCharge02.Fill( px, py, Plane->Hit(ih)->Charge());
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.03)
+               hCharge03.Fill( px, py, Plane->Hit(ih)->Charge());
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.04)
+               hCharge04.Fill( px, py, Plane->Hit(ih)->Charge());
+
              if (sqrt( dtx*dtx + dty*dty ) < max_dr)
                matched=true;
 
@@ -325,6 +342,14 @@ void TestPlaneEfficiency (std::string const InFileName,
                    // If yes: set numerator and denominator to zero
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
+
+                   for (int ibin_z = 1; ibin_z != hCharge01.GetNbinsZ()+2; ibin_z++){
+                     hCharge01.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge02.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge03.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge04.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   }
+
                  }
                }
              }
@@ -335,6 +360,10 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Prepare drawing
   TCanvas Can;
   Can.cd();
+
+  hOccupancyDenom.SetMinimum(0);
+  hOccupancyDenom.Draw("colz");
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
 
   // Draw ratio of Occupancy histograms
   hOccupancyNum.Divide( &hOccupancyDenom );
@@ -353,6 +382,57 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   hChi2.Draw();
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
+
+
+  TH1* h01 = hCharge01.Project3D("Z");
+  TH1* h02 = hCharge02.Project3D("Z");
+  TH1* h03 = hCharge03.Project3D("Z");
+  TH1* h04 = hCharge04.Project3D("Z");
+
+  float hmax =h04->GetMaximum()*1.1;
+
+  h01->SetAxisRange(0,hmax,"Y");
+  h02->SetAxisRange(0,hmax,"Y");
+  h03->SetAxisRange(0,hmax,"Y");
+  h04->SetAxisRange(0,hmax,"Y");
+
+  h01->SetLineColor(1);
+  h02->SetLineColor(2);
+  h03->SetLineColor(3);
+  h04->SetLineColor(4);
+
+  h01->GetXaxis()->SetTitle("Charge (Electrons)");
+  h01->GetYaxis()->SetTitle("Number of Hits");
+
+  TLegend Leg(0.7, 0.7, 0.90, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.03);
+  Leg.AddEntry(h01, "#Delta R < 0.01 cm", "l");
+  Leg.AddEntry(h02, "#Delta R < 0.02 cm", "l");
+  Leg.AddEntry(h03, "#Delta R < 0.03 cm", "l");
+  Leg.AddEntry(h04, "#Delta R < 0.04 cm", "l");
+
+  h01->Draw();
+  h02->Draw("SAME");
+  h03->Draw("SAME");
+  h04->Draw("SAME");
+  Leg.Draw();
+
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
+
+
+  hCharge01.Project3DProfile("yx")->Draw("COLZ");
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
+
+  hCharge02.Project3DProfile("yx")->Draw("COLZ");
+  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
+
+  hCharge03.Project3DProfile("yx")->Draw("COLZ");
+  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
+
+  hCharge04.Project3DProfile("yx")->Draw("COLZ");
+  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
 
 
 }
