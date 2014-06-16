@@ -180,7 +180,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Cluster matching distance [cm]
-  float max_dr = 0.04;
+  float max_dr = 0.03;
 
 
   gStyle->SetOptStat(0);
@@ -210,8 +210,9 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   // Prepare Occupancy histograms
   // Telescope coordinates
-  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   60, -0.2, 0.2, 60, -0.2, 0.2);
-  TH2F hOccupancyDenom = TH2F( "denom", "denom", 60, -0.2, 0.2, 60, -0.2, 0.2);
+  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F( "denom", "denom", 52, 0, 52, 80, 0, 80);
+
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
@@ -248,7 +249,13 @@ void TestPlaneEfficiency (std::string const InFileName,
       double tx = BFR.Track(0)->TX( tz );
       double ty = BFR.Track(0)->TY( tz );
 
-      hOccupancyDenom.Fill( tx, ty );
+      double lx = Alignment.TtoLX( tx, ty, 1, plane_under_test);
+      double ly = Alignment.TtoLY( tx, ty, 1, plane_under_test);
+
+      int px = Alignment.PXfromLX( lx );
+      int py = Alignment.PYfromLY( ly );
+
+      hOccupancyDenom.Fill( px, py );
 
       // Now look for a close hit in the plane under test
       PLTPlane* Plane = BFR.Plane( plane_under_test );
@@ -271,7 +278,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
        // if there was at least one match: fill denominator
        if (matched)
-         hOccupancyNum.Fill( tx, ty );
+         hOccupancyNum.Fill( px, py );
 
     } // end of having one track
   } // End of Event Loop
@@ -294,24 +301,24 @@ void TestPlaneEfficiency (std::string const InFileName,
          // Make sure this concerns the plane under test
          if (roc == plane_under_test){
 
-             // Convert pixel row/column to Telescope coordinates
-             // First get the local coords.
-             float lx = Alignment.PXtoLX( col);
-             float ly = Alignment.PYtoLY( row);
-             // And then convert local to telescope
-             std::vector<float> txyz;
-             Alignment.LtoTXYZ( txyz, lx, ly, 1, roc);
+             // Convert pixel row/column to local coordinates
+             // deltaR(local) should be == deltaR(telescope) (within a plane)
+             float masked_lx = Alignment.PXtoLX( col);
+             float masked_ly = Alignment.PYtoLY( row);
 
              // Loop over the TH2
              for (int ibin_x = 1; ibin_x != hOccupancyNum.GetNbinsX()+2; ibin_x++){
                for (int ibin_y = 1; ibin_y != hOccupancyNum.GetNbinsY()+2; ibin_y++){
 
                  // Get the bin-centers
-                 float cx =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
-                 float cy =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
+                 int px =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
+                 int py =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
+
+                 float lx = Alignment.PXtoLX( px);
+                 float ly = Alignment.PYtoLY( py);
 
                  // And check if they are within matching-distance of a masked pixel
-                 if (sqrt( (cx-txyz[0])*(cx-txyz[0]) + (cy-txyz[1])*(cy-txyz[1]) ) < max_dr){
+                 if (sqrt( (lx-masked_lx)*(lx-masked_lx)+(ly-masked_ly)*(ly-masked_ly) ) < max_dr){
                    // If yes: set numerator and denominator to zero
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
