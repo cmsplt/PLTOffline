@@ -25,6 +25,27 @@ void PLTTrack::AddCluster (PLTCluster* in)
 int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 {
 
+  // Use the residuals as uncertainties
+
+  std::vector<float> UncertsX;
+  UncertsX.push_back( 0.015);
+  UncertsX.push_back( 0.003);
+  UncertsX.push_back( 0.010);
+  UncertsX.push_back( 0.011);
+  UncertsX.push_back( 0.004);
+  UncertsX.push_back( 0.014);
+
+  std::vector<float> UncertsY;
+  UncertsY.push_back( 0.014);
+  UncertsY.push_back( 0.002);
+  UncertsY.push_back( 0.019);
+  UncertsY.push_back( 0.010);
+  UncertsY.push_back( 0.004);
+  UncertsY.push_back( 0.014);
+
+
+
+
   if (DEBUG)
     std::cout << "Entering PLTTrack::MakeTrack. fClusters.size()= " << fClusters.size() << std::endl;
 
@@ -53,6 +74,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   float VX, VY, VZ;
 
   int const Channel = fClusters[0]->Channel();
+
+  fChi2 = 0;
 
   // For ==2 clusters: Just use the direct line connecting them as a track
   if (NClusters() == 2) {
@@ -148,13 +171,16 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     // Graph: 1st coord / 2nd coord:
     // gX: Z / X
     // gY: Z / Y
-    TGraph gX( NClusters() );
-    TGraph gY( NClusters() );
+    TGraphErrors gX( NClusters() );
+    TGraphErrors gY( NClusters() );
 
     // Fill the graph with telescope coordinates
     for (int iCl=0; iCl < NClusters(); iCl++){
-      gX.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TX() );
-      gY.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TY() );
+      gX.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TX());
+      gY.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TY());
+
+      gX.SetPointError( iCl, 0, UncertsX[ fClusters[iCl]->ROC() ] );
+      gY.SetPointError( iCl, 0, UncertsY[ fClusters[iCl]->ROC() ] );
     }
 
     TF1 funX("funX","[0]*x+[1]");
@@ -166,6 +192,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     VX = funX.GetParameter(0);
     VY = funY.GetParameter(0);
     VZ = 1;
+
+    fChi2 = funX.GetChisquare() + funY.GetChisquare();
 
     // Length
     float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);

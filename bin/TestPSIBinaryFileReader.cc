@@ -217,6 +217,10 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
   TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
 
+
+  TH1F hChi2 = TH1F( Form("SinglePlaneTestChi2_ROC%i",plane_under_test),   "SinglePlaneTest_Chi2",   100, 0, 20 );
+
+
   double tz = Alignment.GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
 
@@ -228,8 +232,16 @@ void TestPlaneEfficiency (std::string const InFileName,
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
-    // require one track
+    // require exactly one track
     if (BFR.NTracks() == 1){
+
+      // Look at the 90% quantile
+      // for 5 planes we should have a chi2 with n=6
+      // this means the 90% are at 10.64
+      if (BFR.Track(0)->Chi2() > 10.64)
+        continue;
+
+      hChi2.Fill( BFR.Track(0)->Chi2());
 
       // Get the intersection of track and plane under test and fill
       // denominator histogram
@@ -328,6 +340,9 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   hdtr.Draw();
   Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".gif");
+
+  hChi2.Draw();
+  Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
 
 
 }
@@ -625,6 +640,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     }
   }
 
+  // Track Chi2 Distribution
+  TH1F hChi2("Chi2", "Chi2", 200, 0., 20.);
+
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
   // hResidualXdY: x=X  / y=dY
@@ -769,8 +787,30 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
         double slopeX = Track->fTVX / Track->fTVZ;
         double slopeY = Track->fTVY / Track->fTVZ;
 
+        hChi2.Fill( Track->Chi2() );
+
         hTrackSlopeX.Fill( slopeX);
         hTrackSlopeY.Fill( slopeY);
+
+        // Fill Residuals
+        // Loop over clusters
+        for (size_t icluster = 0; icluster < Track->NClusters(); icluster++){
+
+          // Get the ROC in which this cluster was recorded and fill the
+          // corresponding residual.
+          int ROC = Track->Cluster(icluster)->ROC();
+
+          // dX vs dY
+          hResidual[ROC].Fill( Track->LResidualX( ROC ),
+                               Track->LResidualY( ROC ));
+          // X vs dY
+          hResidualXdY[ROC].Fill( Track->Cluster(icluster)->LX(),
+                                  Track->LResidualY( ROC ));
+          // Y vs dX
+          hResidualYdX[ROC].Fill( Track->Cluster(icluster)->LY(),
+                                  Track->LResidualX( ROC ));
+
+        } // end of loop over clusters
 
         for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
           PLTCluster* Cluster = Track->Cluster(icluster);
@@ -811,30 +851,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
     }
 
-    // Fill Residual histograms
-    for (size_t itrack = 0; itrack < BFR.NTracks(); itrack++){
-      // Need at least three hits for the residual to make sense
-      if (BFR.Track(itrack)->NClusters() > 2){
-          // Loop over clusters
-          for (size_t icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
 
-          // Get the ROC in which this cluster was recorded and fill the
-          // corresponding residual.
-          int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
 
-          // dX vs dY
-          hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
-                               BFR.Track(itrack)->LResidualY( ROC ));
-          // X vs dY
-          hResidualXdY[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LX(),
-                                  BFR.Track(itrack)->LResidualY( ROC ));
-          // Y vs dX
-          hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
-                                  BFR.Track(itrack)->LResidualX( ROC ));
-
-        } // end of loop over clusters
-      } // end >2 clusters
-    } // end of loop over tracks (filling Residial histograms)
 
   } // End of Event Loop
 
@@ -1132,6 +1150,10 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   Can.cd();
   hTrackSlopeY.Draw("hist");
   Can.SaveAs(OutDir+"TrackSlopeY.gif");
+
+  Can.cd();
+  hChi2.Draw("hist");
+  Can.SaveAs(OutDir+"Chi2.gif");
 
   WriteHTML(PlotsDir + RunNumber, CalibrationList);
 
