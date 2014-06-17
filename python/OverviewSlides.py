@@ -19,9 +19,14 @@ di_runs = {
     348 : 1.5,
     350 : 20809.2,
     352 : 21387.3,
-    353 : 21965.3,
-}
+    }
 
+roc_names={
+  1:"Poly A",
+  2:"Poly D",
+  3:"s86",
+  4:"s105",
+}
 roc_name1 = "Poly A"
 roc_name2 = "Poly D"
 roc_name3 = "s86"
@@ -42,7 +47,7 @@ latex_preamble = r"""
 
 \begin{document}
 
-  \title{Plots for runs 322 -- 353}
+  \title{Plots for runs 322 -- 352}
   \author{GK}
   \date{17. June 2014}
 
@@ -71,6 +76,21 @@ def section( name, file):
   f.write(s)
 
 
+def overview( run, roc, file):
+  s = r"""\begin{figure}
+          \subfloat[$\varepsilon$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/PlaneEfficiency_NROC.pdf}}
+          \subfloat[R $<$ 0.01 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC_profile.pdf}}
+          \subfloat[R $<$ 0.02 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge02_NROC_profile.pdf}} \\
+          \subfloat[1D]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC.pdf}}
+          \subfloat[R $<$ 0.03 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge03_NROC_profile.pdf}}
+          \subfloat[R $<$ 0.04 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge04_NROC_profile.pdf}}
+          \end{figure}
+          """
+  s = s.replace("NROC", "ROC"+str(roc))
+  s = s.replace("RUN", str(run))
+  f.write(s)
+
+
 def effs(run, file):
   s = r"""\begin{figure}
           \subfloat[NROC1]{\includegraphics[width = .45\textwidth]{../plots/000RUN/PlaneEfficiency_ROC1.pdf}}
@@ -79,10 +99,10 @@ def effs(run, file):
           \subfloat[NROC4]{\includegraphics[width = .45\textwidth]{../plots/000RUN/PlaneEfficiency_ROC4.pdf}}
           \end{figure}
           """
-  s = s.replace("NROC1", roc_name1)
-  s = s.replace("NROC2", roc_name2)
-  s = s.replace("NROC3", roc_name3)
-  s = s.replace("NROC4", roc_name4)
+  s = s.replace("NROC1", roc_names[1])
+  s = s.replace("NROC2", roc_names[2])
+  s = s.replace("NROC3", roc_names[3])
+  s = s.replace("NROC4", roc_names[4])
   s = s.replace("RUN", str(run))
   f.write(s)
 
@@ -95,10 +115,11 @@ def trans1d(run, file):
           \subfloat[NROC4]{\includegraphics[width = .45\textwidth]{../plots/000RUN/Charge_ROC4.pdf}}
           \end{figure}
           """
-  s = s.replace("NROC1", roc_name1)
-  s = s.replace("NROC2", roc_name2)
-  s = s.replace("NROC3", roc_name3)
-  s = s.replace("NROC4", roc_name4)
+
+  s = s.replace("NROC1", roc_names[1])
+  s = s.replace("NROC2", roc_names[2])
+  s = s.replace("NROC3", roc_names[3])
+  s = s.replace("NROC4", roc_names[4])
   s = s.replace("RUN", str(run))
   f.write(s)
 
@@ -110,10 +131,10 @@ def trans2d(run, radius, file):
           \subfloat[NROC4]{\includegraphics[width = .45\textwidth]{../plots/000RUN/ChargeRRR_ROC4_profile.pdf}}
           \end{figure}
           """
-  s = s.replace("NROC1", roc_name1)
-  s = s.replace("NROC2", roc_name2)
-  s = s.replace("NROC3", roc_name3)
-  s = s.replace("NROC4", roc_name4)
+  s = s.replace("NROC1", roc_names[1])
+  s = s.replace("NROC2", roc_names[2])
+  s = s.replace("NROC3", roc_names[3])
+  s = s.replace("NROC4", roc_names[4])
   s = s.replace("RUN", str(run))
 
   if radius == 1:
@@ -132,50 +153,56 @@ def trans2d(run, radius, file):
 f = open ("Overview.tex","w")
 f.write( latex_preamble)
 
-# Efficiencies
-section("Efficiencies", f)
-for run in sorted(di_runs):
-  newframe( "Efficiency, Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  effs(run,f)
-  endframe(f)
+# # Efficiencies
+# section("Efficiencies", f)
+# for run in sorted(di_runs):
+#   newframe( "Efficiency, Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   effs(run,f)
+#   endframe(f)
+#
+#
+# # Transparent, 1D
+# section("Transparent Analysis", f)
+# for run in sorted(di_runs):
+#   newframe( "Transparent, Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   trans1d(run,f)
+#   endframe(f)
+#
+# # Transparent
+# section(r"Transparent Analysis, Charge within R$<$0.01cm", f)
+# for run in sorted(di_runs):
+#   newframe( r"Transparent R$<$0.01, " +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   trans2d(run,1,f)
+#   endframe(f)
+#
+# # Transparent
+# section(r"Transparent Analysis, Charge within R$<$0.02cm", f)
+# for run in sorted(di_runs):
+#   newframe( r"Transparent R$<$0.02, " +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   trans2d(run,2,f)
+#   endframe(f)
+#
+# # Transparent
+# section(r"Transparent Analysis, Charge within R$<$0.03cm", f)
+# for run in sorted(di_runs):
+#   newframe( r"Transparent R$<$0.03, " +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   trans2d(run,3,f)
+#   endframe(f)
+#
+# # Transparent
+# section(r"Transparent Analysis, Charge within R$<$0.04cm", f)
+# for run in sorted(di_runs):
+#   newframe( r"Transparent R$<$0.04, " +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+#   trans2d(run,4,f)
+#   endframe(f)
 
 
-# Transparent, 1D
-section("Transparent Analysis", f)
-for run in sorted(di_runs):
-  newframe( "Transparent, Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  trans1d(run,f)
-  endframe(f)
-
-# Transparent
-section(r"Transparent Analysis, Charge within R$<$0.01cm", f)
-for run in sorted(di_runs):
-  newframe( r"Transparent R$<$0.01," +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  trans2d(run,1,f)
-  endframe(f)
-
-# Transparent
-section(r"Transparent Analysis, Charge within R$<$0.02cm", f)
-for run in sorted(di_runs):
-  newframe( r"Transparent R$<$0.02," +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  trans2d(run,2,f)
-  endframe(f)
-
-# Transparent
-section(r"Transparent Analysis, Charge within R$<$0.03cm", f)
-for run in sorted(di_runs):
-  newframe( r"Transparent R$<$0.03," +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  trans2d(run,3,f)
-  endframe(f)
-
-# Transparent
-section(r"Transparent Analysis, Charge within R$<$0.04cm", f)
-for run in sorted(di_runs):
-  newframe( r"Transparent R$<$0.04," +"Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
-  trans2d(run,4,f)
-  endframe(f)
-
-
+for roc in [1,2,3,4]:
+  section( roc_names[roc], f)
+  for run in sorted(di_runs):
+    newframe( roc_names[roc]+ ", Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)
+    overview(run,roc,f)
+    endframe(f)
 
 
 
