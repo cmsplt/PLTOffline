@@ -47,6 +47,11 @@ class PLTTrack
 
     float Chi2(){return fChi2;}
 
+    float Chi2X(){return fChi2X;}
+
+    float Chi2Y(){return fChi2Y;}
+
+
   private:
     std::vector<PLTCluster*> fClusters;
 
@@ -78,7 +83,7 @@ class PLTTrack
     std::vector<float> fLResidualX;
     std::vector<float> fLResidualY;
 
-    float fD2, fChi2;
+    float fD2, fChi2, fChi2X, fChi2Y;
 
     static bool const DEBUG = false;
 

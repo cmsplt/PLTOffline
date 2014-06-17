@@ -247,8 +247,8 @@ void TestPlaneEfficiency (std::string const InFileName,
       // Look at the 90% quantile
       // for 5 planes we should have a chi2 with n=6
       // this means the 90% are at 10.64
-      if (BFR.Track(0)->Chi2() > 10.64)
-        continue;
+      //if (BFR.Track(0)->Chi2() > 10.64)
+      //  continue;
 
       hChi2.Fill( BFR.Track(0)->Chi2());
 
@@ -506,6 +506,93 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
 
+void TestPlaneEfficiencySilicon (std::string const InFileName,
+                                 std::string const CalibrationList,
+                                 TString const RunNumber,
+                                 std::vector< std::vector< std::vector<int> > > & hot_pixels)
+{
+  /* TestPlaneEfficiencySilicon
+
+  o) Consider one plane to be the plane under test
+  o) Require at least one hit in both silicon planes
+  o) Check if we have a hit in the other planes
+  */
+
+  gStyle->SetOptStat(0);
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+
+  // Mask four extra rows on each boundary of the diamond sensors
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  // Add additional hot pixels (from FindHotPixels to mask)
+  for (int iroc=0; iroc != 6; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
+  }
+
+  BFR.CalculateLevels(10000, OutDir);
+
+  // numerators and denominators for efficiency calculation
+  std::vector<int> nums;
+  std::vector<int> denoms;
+  for (int i = 0; i != 6; i++){
+    nums.push_back(0);
+    denoms.push_back(0);
+  }
+
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
+    if (ievent % 10000 == 0) {
+      std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    // Initializes all planes as un-hit
+    std::vector<bool> plane_is_hit;
+    for (int i=0;i!=6;i++)
+      plane_is_hit.push_back(false);
+
+    // then loop and see where we have a hit
+    for (int ihit = 0; ihit != BFR.NHits(); ++ihit)
+      plane_is_hit[ BFR.Hit(ihit)->ROC() ] = true;
+
+    // Check for Coincidence of silicon hits
+    if (plane_is_hit[0] && plane_is_hit[5]){
+
+      // Increment denominators
+      for (int i = 0; i != 6; i++)
+        denoms[i]++;
+
+      // Increment numerators
+      for (int i = 0; i != 6; i++)
+        if (plane_is_hit[i])
+          nums[i]++;
+    }
+
+  } // End of Event Loop
+
+  for (int i = 0; i != 6; i++){
+    float eff = 1. * nums[i]/denoms[i];
+    std::cout << "EFFICIENCY " << i << ": " << eff << std::endl;
+  }
+
+
+
+}
+
+
 
 int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
 {
@@ -523,6 +610,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
   // Look for hot pixels
   FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
+
+  TestPlaneEfficiencySilicon(InFileName, CalibrationList, RunNumber, hot_pixels);
+
 
   // Study single planes
   for (int iplane=1; iplane!=5;iplane++)
@@ -798,7 +888,15 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   }
 
   // Track Chi2 Distribution
-  TH1F hChi2("Chi2", "Chi2", 200, 0., 20.);
+  TH1F hChi2("Chi2", "Chi2", 240, 0., 60.);
+
+  // Track Chi2 Distribution
+  TH1F hChi2X("Chi2X", "Chi2X", 240, 0., 60.);
+
+  // Track Chi2 Distribution
+  TH1F hChi2Y("Chi2Y", "Chi2Y", 240, 0., 60.);
+
+
 
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
@@ -944,6 +1042,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
         double slopeX = Track->fTVX / Track->fTVZ;
         double slopeY = Track->fTVY / Track->fTVZ;
 
+        hChi2X.Fill( Track->Chi2X() );
+        hChi2Y.Fill( Track->Chi2Y() );
         hChi2.Fill( Track->Chi2() );
 
         hTrackSlopeX.Fill( slopeX);
@@ -1309,8 +1409,27 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   Can.SaveAs(OutDir+"TrackSlopeY.gif");
 
   Can.cd();
+  gStyle->SetOptStat(000001111);
+
   hChi2.Draw("hist");
   Can.SaveAs(OutDir+"Chi2.gif");
+  gStyle->SetOptStat(0);
+  hChi2X.Scale( 1/hChi2X.Integral());
+
+
+  TF1 fun_chi2_3dof("chi2_3dof", "exp(-x/2.)*sqrt(x)/(4*sqrt(7))");
+  fun_chi2_3dof.SetRange(0.,60.);
+  fun_chi2_3dof.SetNpx(1000);
+  fun_chi2_3dof.Draw();
+  hChi2X.Draw("hist SAME");
+
+  Can.SaveAs(OutDir+"Chi2X.gif");
+  gStyle->SetOptStat(0);
+
+  hChi2Y.Draw("hist");
+  Can.SaveAs(OutDir+"Chi2Y.gif");
+  gStyle->SetOptStat(0);
+
 
   WriteHTML(PlotsDir + RunNumber, CalibrationList);
 

@@ -75,7 +75,9 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 
   int const Channel = fClusters[0]->Channel();
 
-  fChi2 = 0;
+  fChi2  = 0;
+  fChi2X = 0;
+  fChi2Y = 0;
 
   // For ==2 clusters: Just use the direct line connecting them as a track
   if (NClusters() == 2) {
@@ -193,6 +195,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     VY = funY.GetParameter(0);
     VZ = 1;
 
+    fChi2X = funX.GetChisquare();
+    fChi2Y = funY.GetChisquare();
     fChi2 = funX.GetChisquare() + funY.GetChisquare();
 
     // Length
