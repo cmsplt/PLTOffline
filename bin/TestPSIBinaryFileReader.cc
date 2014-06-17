@@ -269,6 +269,11 @@ void TestPlaneEfficiency (std::string const InFileName,
       PLTPlane* Plane = BFR.Plane( plane_under_test );
       bool matched = false;
 
+      float sum01 = 0;
+      float sum02 = 0;
+      float sum03 = 0;
+      float sum04 = 0;
+
       // loop over all hits and check distance to intersection
       for (int ih = 0; ih != Plane->NHits(); ih++){
              float dtx = (tx - Plane->Hit(ih)->TX());
@@ -280,21 +285,26 @@ void TestPlaneEfficiency (std::string const InFileName,
              hdtr.Fill( dtr );
 
              if (sqrt( dtx*dtx + dty*dty ) < 0.01)
-               hCharge01.Fill( px, py, Plane->Hit(ih)->Charge());
+               sum01 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < 0.02)
-               hCharge02.Fill( px, py, Plane->Hit(ih)->Charge());
+               sum02 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < 0.03)
-               hCharge03.Fill( px, py, Plane->Hit(ih)->Charge());
+               sum03 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < 0.04)
-               hCharge04.Fill( px, py, Plane->Hit(ih)->Charge());
+               sum04 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < max_dr)
                matched=true;
 
        } // end of loop over hits
+
+       hCharge01.Fill( px, py, sum01);
+       hCharge02.Fill( px, py, sum02);
+       hCharge03.Fill( px, py, sum03);
+       hCharge04.Fill( px, py, sum04);
 
        // if there was at least one match: fill denominator
        if (matched)
@@ -364,24 +374,32 @@ void TestPlaneEfficiency (std::string const InFileName,
   hOccupancyDenom.SetMinimum(0);
   hOccupancyDenom.Draw("colz");
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
+
 
   // Draw ratio of Occupancy histograms
   hOccupancyNum.Divide( &hOccupancyDenom );
   hOccupancyNum.SetMinimum(0);
   hOccupancyNum.Draw("colz");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
+  Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".pdf");
 
   hdtx.Draw();
   Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".pdf");
+
 
   hdty.Draw();
   Can.SaveAs(OutDir+ TString(hdty.GetName()) +".gif");
+  Can.SaveAs(OutDir+ TString(hdty.GetName()) +".pdf");
 
   hdtr.Draw();
   Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".pdf");
 
   hChi2.Draw();
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".pdf");
 
 
   TH1* h01 = hCharge01.Project3D("Z");
@@ -389,7 +407,9 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1* h03 = hCharge03.Project3D("Z");
   TH1* h04 = hCharge04.Project3D("Z");
 
-  float hmax =h04->GetMaximum()*1.1;
+  float hmax = 1.1 * std::max( h01->GetMaximum(),
+                 std::max( h02->GetMaximum(),
+                   std::max( h03->GetMaximum(), h04->GetMaximum() )));
 
   h01->SetAxisRange(0,hmax,"Y");
   h02->SetAxisRange(0,hmax,"Y");
@@ -420,20 +440,26 @@ void TestPlaneEfficiency (std::string const InFileName,
   Leg.Draw();
 
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
 
 
   hCharge01.Project3DProfile("yx")->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
 
   hCharge02.Project3DProfile("yx")->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
 
   hCharge03.Project3DProfile("yx")->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
+
+
 
   hCharge04.Project3DProfile("yx")->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
-
+  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
 
 }
 
