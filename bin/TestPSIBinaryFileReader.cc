@@ -372,6 +372,11 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.cd();
 
   hOccupancyDenom.SetMinimum(0);
+  hOccupancyNum.SetAxisRange(18,34,"X");
+  hOccupancyNum.SetAxisRange(45,76,"Y");
+  hOccupancyDenom.SetAxisRange(18,34,"X");
+  hOccupancyDenom.SetAxisRange(45,76,"Y");
+
   hOccupancyDenom.Draw("colz");
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
@@ -380,6 +385,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Draw ratio of Occupancy histograms
   hOccupancyNum.Divide( &hOccupancyDenom );
   hOccupancyNum.SetMinimum(0);
+
   hOccupancyNum.Draw("colz");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".pdf");
@@ -443,23 +449,35 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
 
 
-  hCharge01.Project3DProfile("yx")->Draw("COLZ");
+
+  TProfile2D * ph01 = hCharge01.Project3DProfile("yx");
+  ph01->SetAxisRange(18,34,"X");
+  ph01->SetAxisRange(45,76,"Y");
+  ph01->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
 
-  hCharge02.Project3DProfile("yx")->Draw("COLZ");
+  TProfile2D * ph02 = hCharge02.Project3DProfile("yx");
+  ph02->SetAxisRange(18,34,"X");
+  ph02->SetAxisRange(45,76,"Y");
+  ph02->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
 
-  hCharge03.Project3DProfile("yx")->Draw("COLZ");
+  TProfile2D * ph03 = hCharge03.Project3DProfile("yx");
+  ph03->SetAxisRange(18,34,"X");
+  ph03->SetAxisRange(45,76,"Y");
+  ph03->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
 
-
-
-  hCharge04.Project3DProfile("yx")->Draw("COLZ");
+  TProfile2D * ph04 = hCharge04.Project3DProfile("yx");
+  ph04->SetAxisRange(18,34,"X");
+  ph04->SetAxisRange(45,76,"Y");
+  ph04->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
+
 
 }
 
