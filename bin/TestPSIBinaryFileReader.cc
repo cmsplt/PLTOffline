@@ -385,6 +385,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Draw ratio of Occupancy histograms
   hOccupancyNum.Divide( &hOccupancyDenom );
   hOccupancyNum.SetMinimum(0);
+  hOccupancyNum.SetMaximum(1.2);
 
   hOccupancyNum.Draw("colz");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
@@ -427,13 +428,18 @@ void TestPlaneEfficiency (std::string const InFileName,
   h03->SetLineColor(3);
   h04->SetLineColor(4);
 
+  h01->SetLineWidth(2);
+  h02->SetLineWidth(2);
+  h03->SetLineWidth(2);
+  h04->SetLineWidth(2);
+
   h01->GetXaxis()->SetTitle("Charge (Electrons)");
   h01->GetYaxis()->SetTitle("Number of Hits");
 
-  TLegend Leg(0.7, 0.7, 0.90, 0.88, "");
+  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
   Leg.SetFillColor(0);
   Leg.SetBorderSize(0);
-  Leg.SetTextSize(0.03);
+  Leg.SetTextSize(0.05);
   Leg.AddEntry(h01, "#Delta R < 0.01 cm", "l");
   Leg.AddEntry(h02, "#Delta R < 0.02 cm", "l");
   Leg.AddEntry(h03, "#Delta R < 0.03 cm", "l");
@@ -448,11 +454,22 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
 
+  float maxz;
+  if (plane_under_test==1)
+    maxz = 30000;
+  if (plane_under_test==2)
+    maxz = 30000;
+  if (plane_under_test==3)
+    maxz = 30000;
+  if (plane_under_test==4)
+    maxz = 50000;
 
 
   TProfile2D * ph01 = hCharge01.Project3DProfile("yx");
   ph01->SetAxisRange(18,34,"X");
   ph01->SetAxisRange(45,76,"Y");
+  ph01->SetMinimum(0);
+  ph01->SetMaximum(maxz);
   ph01->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
@@ -460,6 +477,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   TProfile2D * ph02 = hCharge02.Project3DProfile("yx");
   ph02->SetAxisRange(18,34,"X");
   ph02->SetAxisRange(45,76,"Y");
+  ph02->SetMinimum(0);
+  ph02->SetMaximum(maxz);
   ph02->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
@@ -467,6 +486,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   TProfile2D * ph03 = hCharge03.Project3DProfile("yx");
   ph03->SetAxisRange(18,34,"X");
   ph03->SetAxisRange(45,76,"Y");
+  ph03->SetMinimum(0);
+  ph03->SetMaximum(maxz);
   ph03->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
@@ -474,6 +495,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   TProfile2D * ph04 = hCharge04.Project3DProfile("yx");
   ph04->SetAxisRange(18,34,"X");
   ph04->SetAxisRange(45,76,"Y");
+  ph04->SetMinimum(0);
+  ph04->SetMaximum(maxz);
   ph04->Draw("COLZ");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
