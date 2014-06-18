@@ -21,8 +21,8 @@
 #include "TFile.h"
 #include "TGraphErrors.h"
 #include "TH3F.h"
-
 #include "TProfile2D.h"
+#include "TParameter.h"
 
 
 void WriteHTML (TString const, TString const);
@@ -560,11 +560,11 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
   BFR.CalculateLevels(10000, OutDir);
 
   // numerators and denominators for efficiency calculation
-  std::vector<int> nums;
-  std::vector<int> denoms;
+  std::vector<int> nums(6);
+  std::vector<int> denoms(6);
   for (int i = 0; i != 6; i++){
-    nums.push_back(0);
-    denoms.push_back(0);
+    nums[i]   = 0;
+    denoms[i] = 0;
   }
 
 
@@ -600,12 +600,20 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
 
   } // End of Event Loop
 
-  for (int i = 0; i != 6; i++){
-    float eff = 1. * nums[i]/denoms[i];
-    std::cout << "EFFICIENCY " << i << ": " << eff << std::endl;
+  // Store the numerators and denominators to the file
+  for (int i=0; i!=6; i++){
+
+    // Numerator
+    TParameter<int> n;
+    n.SetVal( nums[i]);
+    n.Write( Form("SiliconEfficiencyNumeratorROC%i",i));
+
+    // denominator
+    TParameter<int> d;
+    d.SetVal( denoms[i]);
+    d.Write( Form("SiliconEfficiencyDenominatorROC%i",i));
+
   }
-
-
 
 }
 
