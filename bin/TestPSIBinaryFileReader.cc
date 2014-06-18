@@ -25,10 +25,10 @@
 #include "TProfile2D.h"
 
 
-
 void WriteHTML (TString const, TString const);
 
 int FindHotPixels (std::string const InFileName,
+                   TFile * out_f,
                    std::string const CalibrationList,
                    TString const RunNumber,
                    std::vector< std::vector< std::vector<int> > > & hot_pixels
@@ -167,10 +167,11 @@ int FindHotPixels (std::string const InFileName,
 
 
 void TestPlaneEfficiency (std::string const InFileName,
-                         std::string const CalibrationList,
-                         TString const RunNumber,
-                         std::vector< std::vector< std::vector<int> > > & hot_pixels,
-                         int plane_under_test)
+                          TFile * out_f,
+                          std::string const CalibrationList,
+                          TString const RunNumber,
+                          std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                          int plane_under_test)
 {
   /* TestPlaneEfficiency
 
@@ -378,6 +379,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   hOccupancyDenom.SetAxisRange(45,76,"Y");
 
   hOccupancyDenom.Draw("colz");
+  hOccupancyDenom.Write();
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
 
@@ -388,23 +390,28 @@ void TestPlaneEfficiency (std::string const InFileName,
   hOccupancyNum.SetMaximum(1.2);
 
   hOccupancyNum.Draw("colz");
+  hOccupancyNum.Write();
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".pdf");
 
   hdtx.Draw();
+  hdtx.Write();
   Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".pdf");
 
 
   hdty.Draw();
+  hdty.Write();
   Can.SaveAs(OutDir+ TString(hdty.GetName()) +".gif");
   Can.SaveAs(OutDir+ TString(hdty.GetName()) +".pdf");
 
   hdtr.Draw();
+  hdtr.Write();
   Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".pdf");
 
   hChi2.Draw();
+  hChi2.Write();
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".pdf");
 
@@ -451,6 +458,11 @@ void TestPlaneEfficiency (std::string const InFileName,
   h04->Draw("SAME");
   Leg.Draw();
 
+  h01->Write();
+  h02->Write();
+  h03->Write();
+  h04->Write();
+
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
 
@@ -471,6 +483,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   ph01->SetMinimum(0);
   ph01->SetMaximum(maxz);
   ph01->Draw("COLZ");
+  ph01->Write();
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
 
@@ -480,6 +493,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   ph02->SetMinimum(0);
   ph02->SetMaximum(maxz);
   ph02->Draw("COLZ");
+  ph02->Write();
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
 
@@ -489,6 +503,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   ph03->SetMinimum(0);
   ph03->SetMaximum(maxz);
   ph03->Draw("COLZ");
+  ph03->Write();
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
 
@@ -498,6 +513,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   ph04->SetMinimum(0);
   ph04->SetMaximum(maxz);
   ph04->Draw("COLZ");
+  ph04->Write();
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
   Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
 
@@ -507,6 +523,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
 void TestPlaneEfficiencySilicon (std::string const InFileName,
+                                 TFile * out_f,
                                  std::string const CalibrationList,
                                  TString const RunNumber,
                                  std::vector< std::vector< std::vector<int> > > & hot_pixels)
@@ -594,7 +611,7 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
 
 
 
-int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
+int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
 {
   // Run default analysis
 
@@ -609,19 +626,17 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   }
 
   // Look for hot pixels
-  FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
+  FindHotPixels(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
 
-  TestPlaneEfficiencySilicon(InFileName, CalibrationList, RunNumber, hot_pixels);
+  TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
 
 
   // Study single planes
   for (int iplane=1; iplane!=5;iplane++)
-    TestPlaneEfficiency(InFileName, CalibrationList, RunNumber, hot_pixels,iplane);
+    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
-
-  TFile out_f( OutDir + "histos.root","new");
 
   std::cout<<OutDir<<std::endl;
 
@@ -1437,7 +1452,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 }
 
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
+int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
 {
   /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
   them to NewAlignment.dat
@@ -1867,12 +1882,18 @@ int main (int argc, char* argv[])
   std::string CalibrationList = argv[2];
 
 
+  // Open a ROOT file to store histograms in
+  // do it here and pass to all functions we call
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+  TFile out_f( OutDir + "histos.root","recreate");
+
   int doAlign = atoi(argv[3]);
 
   if (doAlign)
-    TestPSIBinaryFileReaderAlign(InFileName, CalibrationList, RunNumber);
+    TestPSIBinaryFileReaderAlign(InFileName, &out_f, CalibrationList, RunNumber);
   else
-    TestPSIBinaryFileReader(InFileName, CalibrationList, RunNumber);
+    TestPSIBinaryFileReader(InFileName, &out_f, CalibrationList, RunNumber);
 
 
   return 0;
