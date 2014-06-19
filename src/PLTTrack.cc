@@ -28,20 +28,20 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   // Use the residuals as uncertainties
 
   std::vector<float> UncertsX;
-  UncertsX.push_back( 0.015);
-  UncertsX.push_back( 0.003);
-  UncertsX.push_back( 0.010);
-  UncertsX.push_back( 0.011);
-  UncertsX.push_back( 0.004);
-  UncertsX.push_back( 0.014);
+  UncertsX.push_back( 0.005);
+  UncertsX.push_back( 0.005);
+  UncertsX.push_back( 0.005);
+  UncertsX.push_back( 0.005);
+  UncertsX.push_back( 0.005);
+  UncertsX.push_back( 0.005);
 
   std::vector<float> UncertsY;
-  UncertsY.push_back( 0.014);
-  UncertsY.push_back( 0.002);
-  UncertsY.push_back( 0.019);
-  UncertsY.push_back( 0.010);
-  UncertsY.push_back( 0.004);
-  UncertsY.push_back( 0.014);
+  UncertsY.push_back( 0.005);
+  UncertsY.push_back( 0.005);
+  UncertsY.push_back( 0.005);
+  UncertsY.push_back( 0.005);
+  UncertsY.push_back( 0.005);
+  UncertsY.push_back( 0.005);
 
 
 
@@ -270,8 +270,20 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     XL[ROC] = Alignment.TtoLX(XT[ROC], YT[ROC], Channel, ROC);
     YL[ROC] = Alignment.TtoLY(XT[ROC], YT[ROC], Channel, ROC);
 
-    fLResidualX[ROC] = XL[ROC] - Cluster->LX();
-    fLResidualY[ROC] = YL[ROC] - Cluster->LY();
+    float LX_h=-99;
+    float LY_h=-99;
+    float charge_h=0;
+    for (size_t ih=0; ih != Cluster->NHits(); ih++){
+      if (Cluster->Hit(ih)->Charge() > charge_h){
+        LX_h = Cluster->Hit(ih)->LX();
+        LY_h = Cluster->Hit(ih)->LY();
+        charge_h = Cluster->Hit(ih)->Charge();
+      }
+
+    }
+
+    fLResidualX[ROC] = XL[ROC] - LX_h;
+    fLResidualY[ROC] = YL[ROC] - LY_h;
 
     if (DEBUG) {
       printf("TESTLT: TX TY  LX LY: %1i  %1i  %12.3f %12.3f  %12.3f %12.3f\n", (int) NClusters(), ROC, XT[ROC], YT[ROC], XL[ROC], YL[ROC]);

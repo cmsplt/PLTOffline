@@ -1474,6 +1474,28 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
   gStyle->SetOptStat(0);
 
+  std::vector<float> x_align;
+  std::vector<float> y_align;
+  std::vector<float> z_align;
+  std::vector<float> r_align;
+
+  for (int i=0; i!=6;i++){
+    x_align.push_back(0);
+    y_align.push_back(0);
+    z_align.push_back(0);
+    r_align.push_back(0);
+  }
+
+  for (int iroc_align = 0; iroc_align != 6; ++iroc_align) {
+
+    float best_RMSx = 99999;
+
+    for (int iz=0;iz!=40;iz++){
+
+
+      float lz = -.6 + iz*0.03;
+      std::cout << "lz= " << lz << std::endl;
+
   // Start with initial Alignment (X,Y offsets and rotations set to zero)
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
@@ -1490,6 +1512,18 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
   // criterion
   double sumResSquareCurrent = 0.;
   double sumResSquareLast    = -1;
+
+  for (int iroc=0; iroc != 6; iroc++){
+    if (iroc != iroc_align){
+      Alignment.AddToLX (1, iroc, x_align[iroc]);
+      Alignment.AddToLY (1, iroc, y_align[iroc]);
+      Alignment.AddToLZ (1, iroc, z_align[iroc]);
+      Alignment.AddToLR (1, iroc, r_align[iroc]);
+    }
+  }
+
+  Alignment.AddToLZ (1, iroc_align, lz);
+
 
   // Alignment loop
   for (int ialign = 0; ialign < NMaxAlignmentIterations; ialign++){
@@ -1518,6 +1552,10 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     }
 
     sumResSquareCurrent = 0;
+
+
+
+
 
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -1565,6 +1603,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     else{
       // Improvement wrt/ last iteration of less than 0.01%. Quit.
       if (fabs(sumResSquareLast-sumResSquareCurrent)/sumResSquareLast < 0.0001 ){
+        std::cout << "BEST:" << sumResSquareLast << std::endl;
         break;
       }
       // Otherwise: update last residual and try again
@@ -1573,13 +1612,11 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
       }
     }
 
-    // Loop over ROCs to update alignment
-    for (int iroc = 0; iroc != 6; ++iroc) {
-      Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1));
-      Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2));
-      float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
-      Alignment.AddToLR( 1, iroc, angle/10. );
-    }
+      Alignment.AddToLX( 1, iroc_align, hResidual[iroc_align].GetMean(1));
+      Alignment.AddToLY( 1, iroc_align, hResidual[iroc_align].GetMean(2));
+      float angle = atan(hResidualXdY[iroc_align].GetCorrelationFactor()) ;
+      Alignment.AddToLR( 1, iroc_align, angle/10. );
+
   } // end alignment loop
 
   // Loop over ROCs to draw final per-plane histos
@@ -1611,6 +1648,27 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
   } // end loop over ROCs
   Alignment.WriteAlignmentFile("NewAlignment.dat");
 
+  if (hResidual[iroc_align].GetRMS(1) < best_RMSx){
+
+    x_align[iroc_align] = Alignment.LX(1, iroc_align);
+    y_align[iroc_align] = Alignment.LY(1, iroc_align);
+    z_align[iroc_align] = Alignment.LZ(1, iroc_align);
+    r_align[iroc_align] = Alignment.LR(1, iroc_align);
+
+    best_RMSx = hResidual[iroc_align].GetRMS(1);
+
+    std::cout << "New best: " << iroc_align << " " << best_RMSx << std::endl;
+  }
+
+  for (int i=0; i!=6;i++){
+
+
+    std::cout << i << " " << x_align[i] << " " << y_align[i] << " " << z_align[i] << " " << r_align[i] <<std::endl;
+  }
+
+
+} // end loop over z
+} // end loop over rocs
   return 0;
 }
 
