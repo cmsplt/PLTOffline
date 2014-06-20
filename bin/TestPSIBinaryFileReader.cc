@@ -249,10 +249,10 @@ void TestPlaneEfficiency (std::string const InFileName,
     if (BFR.NTracks() == 1){
 
       // Look at the 90% quantile
-      if (BFR.Track(0)->Chi2X() > 6.25)
-        continue;
-      if (BFR.Track(0)->Chi2Y() > 6.25)
-        continue;
+      //if (BFR.Track(0)->Chi2X() > 6.25)
+      //  continue;
+      //if (BFR.Track(0)->Chi2Y() > 6.25)
+      //  continue;
 
 
       hChi2.Fill( BFR.Track(0)->Chi2());
@@ -1533,12 +1533,8 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
   for (int iroc=0;iroc!=6;iroc++){
     Alignment.AddToLX( 1, iroc, x_align[iroc] );
     Alignment.AddToLY( 1, iroc, y_align[iroc] );
-    Alignment.AddToLR( 1, iroc, r_align[iroc] );
+    //Alignment.AddToLR( 1, iroc, r_align[iroc] );
   }
-
-
-  Alignment.AddToLZ( 1, 0, -0.5);
-
 
 
   for (int iroc_align = 0; iroc_align != 6; ++iroc_align) {
@@ -1654,7 +1650,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
   x_align[iroc_align] +=  hResidual[iroc_align].GetMean(1);
   y_align[iroc_align] +=  hResidual[iroc_align].GetMean(2);
-  r_align[iroc_align] +=  hResidual[iroc_align].GetMean(angle/10.);
+  r_align[iroc_align] +=  hResidualXdY[iroc_align].GetCorrelationFactor();
 
 
   std::cout << "After: " << Alignment.LX(1,iroc_align) << std::endl;
@@ -1718,11 +1714,11 @@ Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
 for (int iroc=0;iroc!=6;iroc++){
   Alignment.AddToLX( 1, iroc, x_align[iroc] );
   Alignment.AddToLY( 1, iroc, y_align[iroc] );
-  Alignment.AddToLR( 1, iroc, r_align[iroc] );
+  //Alignment.AddToLR( 1, iroc, r_align[iroc] );
 }
 
 
-for (int ialign=0; ialign!=2;ialign++){
+for (int ialign=0; ialign!=4;ialign++){
 
 
   float best_RMS = 99999;
@@ -1773,21 +1769,34 @@ for (int ialign=0; ialign!=2;ialign++){
 
     PLTTrack * Track = BFR.Track(0);
 
-    if (Track->Chi2()>12)
-      continue;
+    //if (Track->Chi2()>12)
+    //  continue;
 
     for (int iroc=0; iroc!=6; iroc++){
       float d_LX = Track->LResidualX(iroc);
       float d_LY = Track->LResidualY(iroc);
 
+      float cl_LX = -999;
+      float cl_LY = -999;
+
+      for (int icl=0; icl != Track->NClusters(); icl++){
+        if (Track->Cluster(icl)->ROC() == iroc){
+
+          cl_LX = Track->Cluster(icl)->LX();
+          cl_LY = Track->Cluster(icl)->LY();
+
+
+        }
+      }
+
       // dX vs dY
       hResidual[iroc].Fill( d_LX, d_LY);
 
-    // X vs dY
-    //hResidualXdY[iroc_align].Fill( h_LX, d_LY);
+      // X vs dY
+      hResidualXdY[iroc].Fill( cl_LX, d_LY);
 
-    // Y vs dX
-    //hResidualYdX[iroc_align].Fill( h_LY, d_LX);
+      // Y vs dX
+      hResidualYdX[iroc].Fill( cl_LY, d_LX);
 
 
     }
@@ -1800,7 +1809,11 @@ for (int ialign=0; ialign!=2;ialign++){
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
   Alignment.AddToLX(1, iroc, hResidual[iroc].GetMean(1));
-  Alignment.AddToLX(1, iroc, hResidual[iroc].GetMean(2));
+  Alignment.AddToLY(1, iroc, hResidual[iroc].GetMean(2));
+
+  float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
+  Alignment.AddToLR(1, iroc, angle/10.);
+
 
   TCanvas Can;
   Can.cd();

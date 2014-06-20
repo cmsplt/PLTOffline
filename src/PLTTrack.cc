@@ -26,23 +26,54 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 {
 
   // Use the residuals as uncertainties
-
   std::vector<float> UncertsX;
-  UncertsX.push_back( 0.005);
-  UncertsX.push_back( 0.005);
-  UncertsX.push_back( 0.005);
-  UncertsX.push_back( 0.005);
-  UncertsX.push_back( 0.005);
-  UncertsX.push_back( 0.005);
-
   std::vector<float> UncertsY;
-  UncertsY.push_back( 0.005);
-  UncertsY.push_back( 0.005);
-  UncertsY.push_back( 0.005);
-  UncertsY.push_back( 0.005);
-  UncertsY.push_back( 0.005);
-  UncertsY.push_back( 0.005);
 
+  if (false){
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+  }
+  else if (false){
+    UncertsX.push_back( 0.026);
+    UncertsX.push_back( 0.018);
+    UncertsX.push_back( 0.027);
+    UncertsX.push_back( 0.038);
+    UncertsX.push_back( 0.049);
+    UncertsX.push_back( 0.066);
+
+    UncertsY.push_back( 0.025);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.014);
+    UncertsY.push_back( 0.023);
+    UncertsY.push_back( 0.031);
+    UncertsY.push_back( 0.048);
+  }
+  else if (true){
+    UncertsX.push_back( 0.013);
+    UncertsX.push_back( 0.006);
+    UncertsX.push_back( 0.010);
+    UncertsX.push_back( 0.012);
+    UncertsX.push_back( 0.007);
+    UncertsX.push_back( 0.012);
+
+    UncertsY.push_back( 0.012);
+    UncertsY.push_back( 0.005);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.007);
+    UncertsY.push_back( 0.012);
+  }
 
 
 
@@ -270,20 +301,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     XL[ROC] = Alignment.TtoLX(XT[ROC], YT[ROC], Channel, ROC);
     YL[ROC] = Alignment.TtoLY(XT[ROC], YT[ROC], Channel, ROC);
 
-    float LX_h=-99;
-    float LY_h=-99;
-    float charge_h=0;
-    for (size_t ih=0; ih != Cluster->NHits(); ih++){
-      if (Cluster->Hit(ih)->Charge() > charge_h){
-        LX_h = Cluster->Hit(ih)->LX();
-        LY_h = Cluster->Hit(ih)->LY();
-        charge_h = Cluster->Hit(ih)->Charge();
-      }
-
-    }
-
-    fLResidualX[ROC] = XL[ROC] - LX_h;
-    fLResidualY[ROC] = YL[ROC] - LY_h;
+    fLResidualX[ROC] = XL[ROC] - Cluster->LX();
+    fLResidualY[ROC] = YL[ROC] - Cluster->LY();
 
     if (DEBUG) {
       printf("TESTLT: TX TY  LX LY: %1i  %1i  %12.3f %12.3f  %12.3f %12.3f\n", (int) NClusters(), ROC, XT[ROC], YT[ROC], XL[ROC], YL[ROC]);
