@@ -6,6 +6,8 @@
 #include <math.h>
 
 #include "TGraph.h"
+#include "TGraphErrors.h"
+
 #include "TF1.h"
 
 
@@ -43,6 +45,13 @@ class PLTTrack
 
     float D2 ();
 
+    float Chi2(){return fChi2;}
+
+    float Chi2X(){return fChi2X;}
+
+    float Chi2Y(){return fChi2Y;}
+
+
   private:
     std::vector<PLTCluster*> fClusters;
 
@@ -74,7 +83,7 @@ class PLTTrack
     std::vector<float> fLResidualX;
     std::vector<float> fLResidualY;
 
-    float fD2;
+    float fD2, fChi2, fChi2X, fChi2Y;
 
     static bool const DEBUG = false;
 

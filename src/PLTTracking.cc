@@ -19,7 +19,11 @@ typedef std::vector<Digits> Vd;
 
 PLTTracking::PLTTracking ()
 {
-  // Default constructor
+
+  for (int i=0;i!=6;i++){
+    fUsePlanesForTracking[i]=2;
+  }
+  fDoSinglePlaneEfficiency = false;
 }
 
 
@@ -27,6 +31,11 @@ PLTTracking::PLTTracking (PLTAlignment* Alignment, TrackingAlgorithm const Algor
 {
   SetTrackingAlignment(Alignment);
   SetTrackingAlgorithm(Algorithm);
+
+  for (int i=0;i!=6;i++){
+    fUsePlanesForTracking[i]=2;
+  }
+  fDoSinglePlaneEfficiency = false;
 }
 
 
@@ -60,6 +69,25 @@ int PLTTracking::GetTrackingAlgorithm ()
   return fTrackingAlgorithm;
 }
 
+
+void PLTTracking::SetPlaneUnderTest( int put){
+
+    fDoSinglePlaneEfficiency = true;
+
+    // The default is 222222 -> require at least one hit in all planes
+    // (there and an additional condition before calling tracking that
+    //  requires exactly 6 hits)
+
+    // For single-plane efficiency we want (for example): 333033
+    for (int i=0;i!=6;i++){
+      if (i==put){
+        fUsePlanesForTracking[i] = 0;
+      }
+      else {
+        fUsePlanesForTracking[i] = 3;
+      }
+    }
+}
 
 
 void PLTTracking::RunTracking (PLTTelescope& Telescope)
@@ -193,30 +221,30 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
     return;
   }
 
-  // Array which planes to use for tracking
-  // hard-code here for now, properly pass when things are working
-  // one int per plane (0..5)
-  // Decoding:
-  //  0: ignore plane for tracking (use for DUT)
-  //  1: use plane for tracking (cluster is optional)
-  //  2: use plane for tracking (cluster is required)
-  int UsePlanesForTracking[] = {2,2,2,2,2,2};
-
   // Check if all the planes with mandatory clusters also have a cluster
   for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
-    if ( (UsePlanesForTracking[iPlane]==2)
+    if ( (fUsePlanesForTracking[iPlane]==2)
       && (Telescope.Plane(iPlane)->NClusters()==0)){
+        return;
+    }
+  }
+
+  
+  // Check if all the planes which require exactly one cluster have that
+  for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
+    if ((fUsePlanesForTracking[iPlane]==3) &&
+        (Telescope.Plane(iPlane)->NClusters() != 1 )){
         return;
     }
   }
 
   // Put all the clusters we actually use for
   // tracking into a matrix.
-  // Need to have UsePlanesForTracking of either 1 or 2
+  // Need to have fUsePlanesForTracking of either 1 or 2
   //  and > 0 hits
   std::vector< std::vector< PLTCluster* > > ClustersForTracking;
   for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
-    if ( (UsePlanesForTracking[iPlane]>0)
+    if ( (fUsePlanesForTracking[iPlane]>0)
       && (Telescope.Plane(iPlane)->NClusters()>0)){
 
         std::vector< PLTCluster* > VClusters;

@@ -25,6 +25,58 @@ void PLTTrack::AddCluster (PLTCluster* in)
 int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 {
 
+  // Use the residuals as uncertainties
+  std::vector<float> UncertsX;
+  std::vector<float> UncertsY;
+
+  if (false){
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+    UncertsX.push_back( 0.015);
+
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.010);
+  }
+  else if (false){
+    UncertsX.push_back( 0.026);
+    UncertsX.push_back( 0.018);
+    UncertsX.push_back( 0.027);
+    UncertsX.push_back( 0.038);
+    UncertsX.push_back( 0.049);
+    UncertsX.push_back( 0.066);
+
+    UncertsY.push_back( 0.025);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.014);
+    UncertsY.push_back( 0.023);
+    UncertsY.push_back( 0.031);
+    UncertsY.push_back( 0.048);
+  }
+  else if (true){
+    UncertsX.push_back( 0.013);
+    UncertsX.push_back( 0.006);
+    UncertsX.push_back( 0.010);
+    UncertsX.push_back( 0.012);
+    UncertsX.push_back( 0.007);
+    UncertsX.push_back( 0.012);
+
+    UncertsY.push_back( 0.012);
+    UncertsY.push_back( 0.005);
+    UncertsY.push_back( 0.010);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.007);
+    UncertsY.push_back( 0.012);
+  }
+
+
+
   if (DEBUG)
     std::cout << "Entering PLTTrack::MakeTrack. fClusters.size()= " << fClusters.size() << std::endl;
 
@@ -53,6 +105,10 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   float VX, VY, VZ;
 
   int const Channel = fClusters[0]->Channel();
+
+  fChi2  = 0;
+  fChi2X = 0;
+  fChi2Y = 0;
 
   // For ==2 clusters: Just use the direct line connecting them as a track
   if (NClusters() == 2) {
@@ -148,13 +204,16 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     // Graph: 1st coord / 2nd coord:
     // gX: Z / X
     // gY: Z / Y
-    TGraph gX( NClusters() );
-    TGraph gY( NClusters() );
+    TGraphErrors gX( NClusters() );
+    TGraphErrors gY( NClusters() );
 
     // Fill the graph with telescope coordinates
     for (int iCl=0; iCl < NClusters(); iCl++){
-      gX.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TX() );
-      gY.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TY() );
+      gX.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TX());
+      gY.SetPoint( iCl, fClusters[iCl]->TZ(), fClusters[iCl]->TY());
+
+      gX.SetPointError( iCl, 0, UncertsX[ fClusters[iCl]->ROC() ] );
+      gY.SetPointError( iCl, 0, UncertsY[ fClusters[iCl]->ROC() ] );
     }
 
     TF1 funX("funX","[0]*x+[1]");
@@ -166,6 +225,10 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     VX = funX.GetParameter(0);
     VY = funY.GetParameter(0);
     VZ = 1;
+
+    fChi2X = funX.GetChisquare();
+    fChi2Y = funY.GetChisquare();
+    fChi2 = funX.GetChisquare() + funY.GetChisquare();
 
     // Length
     float const Mod = sqrt(VX*VX + VY*VY + VZ*VZ);

@@ -14,19 +14,21 @@
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
 #include "PLTAlignment.h"
-
 #include "TLegend.h"
 #include "TLegendEntry.h"
 #include "TString.h"
 #include "TSystem.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
-
+#include "TH3F.h"
+#include "TProfile2D.h"
+#include "TParameter.h"
 
 
 void WriteHTML (TString const, TString const);
 
 int FindHotPixels (std::string const InFileName,
+                   TFile * out_f,
                    std::string const CalibrationList,
                    TString const RunNumber,
                    std::vector< std::vector< std::vector<int> > > & hot_pixels
@@ -49,9 +51,10 @@ int FindHotPixels (std::string const InFileName,
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
 
-  FILE* f = fopen("MyGainCal.dat", "w");
-  BFR.GetGainCal()->PrintGainCal(f);
-  fclose(f);
+
+  //FILE* f = fopen("MyGainCal.dat", "w");
+  //BFR.GetGainCal()->PrintGainCal(f);
+  //fclose(f);
 
   // Mask four extra rows on each boundary of the diamond sensors
   BFR.ReadPixelMask( "outerPixelMask.txt");
@@ -162,8 +165,504 @@ int FindHotPixels (std::string const InFileName,
 }
 
 
-int TestPSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
+
+void TestPlaneEfficiency (std::string const InFileName,
+                          TFile * out_f,
+                          std::string const CalibrationList,
+                          TString const RunNumber,
+                          std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                          int plane_under_test)
 {
+  /* TestPlaneEfficiency
+
+  o) Consider one plane to be the plane under test
+  o) Require exactly one hit in all other planes
+  o) This gives one track
+  o) Then check if a hit was registered in the plane under test (within a given
+      radius around the expected passing of the track)
+
+  */
+
+  // Track/Hit matching distance [cm]
+  float max_dr = 0.03;
+
+
+  gStyle->SetOptStat(0);
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+  BFR.SetPlaneUnderTest( plane_under_test );
+
+  // Mask four extra rows on each boundary of the diamond sensors
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  // Add additional hot pixels (from FindHotPixels to mask)
+  for (int iroc=0; iroc != 6; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
+  }
+
+  BFR.CalculateLevels(10000, OutDir);
+
+  // Prepare Occupancy histograms
+  // Telescope coordinates
+  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
+
+  TH3F hCharge01       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Mean Charge within #Delta R < 0.01 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge02       = TH3F( Form("Charge02_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.02 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge03       = TH3F( Form("Charge03_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.03 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge04       = TH3F( Form("Charge04_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.04 cm", 52,0,52, 80,0,80,50,0,50000);
+
+
+  TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
+  TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
+  TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
+
+
+  TH1F hChi2  = TH1F( Form("SinglePlaneTestChi2_ROC%i",plane_under_test),   "SinglePlaneTest_Chi2",    200, 0, 50 );
+  TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
+  TH1F hChi2Y = TH1F( Form("SinglePlaneTestChi2Y_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2Y",   100, 0, 20 );
+
+
+
+  double tz = Alignment.GetTZ(1, plane_under_test);
+  std::cout << "Got TZ: " << tz << std::endl;
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
+    if (ievent % 10000 == 0) {
+      std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    // require exactly one track
+    if (BFR.NTracks() == 1){
+
+      // Look at the 90% quantile
+      //if (BFR.Track(0)->Chi2X() > 6.25)
+      //  continue;
+      //if (BFR.Track(0)->Chi2Y() > 6.25)
+      //  continue;
+
+
+      hChi2.Fill( BFR.Track(0)->Chi2());
+      hChi2X.Fill( BFR.Track(0)->Chi2X());
+      hChi2Y.Fill( BFR.Track(0)->Chi2Y());
+
+      // Get the intersection of track and plane under test and fill
+      // denominator histogram
+      double tx = BFR.Track(0)->TX( tz );
+      double ty = BFR.Track(0)->TY( tz );
+
+      double lx = Alignment.TtoLX( tx, ty, 1, plane_under_test);
+      double ly = Alignment.TtoLY( tx, ty, 1, plane_under_test);
+
+      int px = Alignment.PXfromLX( lx );
+      int py = Alignment.PYfromLY( ly );
+
+      hOccupancyDenom.Fill( px, py );
+
+      // Now look for a close hit in the plane under test
+      PLTPlane* Plane = BFR.Plane( plane_under_test );
+      bool matched = false;
+
+      float sum01 = 0;
+      float sum02 = 0;
+      float sum03 = 0;
+      float sum04 = 0;
+
+      // loop over all hits and check distance to intersection
+      for (int ih = 0; ih != Plane->NHits(); ih++){
+             float dtx = (tx - Plane->Hit(ih)->TX());
+             float dty = (ty - Plane->Hit(ih)->TY());
+             float dtr = sqrt( dtx*dtx + dty*dty );
+
+             hdtx.Fill( dtx );
+             hdty.Fill( dty );
+             hdtr.Fill( dtr );
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.01)
+               sum01 += Plane->Hit(ih)->Charge();
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.02)
+               sum02 += Plane->Hit(ih)->Charge();
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.03)
+               sum03 += Plane->Hit(ih)->Charge();
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.04)
+               sum04 += Plane->Hit(ih)->Charge();
+
+             if (sqrt( dtx*dtx + dty*dty ) < max_dr)
+               matched=true;
+
+       } // end of loop over hits
+
+       hCharge01.Fill( px, py, sum01);
+       hCharge02.Fill( px, py, sum02);
+       hCharge03.Fill( px, py, sum03);
+       hCharge04.Fill( px, py, sum04);
+
+       // if there was at least one match: fill denominator
+       if (matched)
+         hOccupancyNum.Fill( px, py );
+
+    } // end of having one track
+  } // End of Event Loop
+
+
+  // Remove masked areas from Occupancy Histograms
+  const std::set<int> * pixelMask = BFR.GetPixelMask();
+
+  // Loop over all masked pixels
+  for (std::set<int>::const_iterator ipix = pixelMask->begin();
+       ipix != pixelMask->end();
+       ipix++){
+
+         // Decode the integer
+         int ch   = *ipix /  100000;
+         int roc  = (*ipix % 100000) / 10000;
+         int col  = (*ipix % 10000 ) / 100;
+         int row  = (*ipix % 100);
+
+         // Make sure this concerns the plane under test
+         if (roc == plane_under_test){
+
+             // Convert pixel row/column to local coordinates
+             // deltaR(local) should be == deltaR(telescope) (within a plane)
+             float masked_lx = Alignment.PXtoLX( col);
+             float masked_ly = Alignment.PYtoLY( row);
+
+             // Loop over the TH2
+             for (int ibin_x = 1; ibin_x != hOccupancyNum.GetNbinsX()+2; ibin_x++){
+               for (int ibin_y = 1; ibin_y != hOccupancyNum.GetNbinsY()+2; ibin_y++){
+
+                 // Get the bin-centers
+                 int px =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
+                 int py =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
+
+                 float lx = Alignment.PXtoLX( px);
+                 float ly = Alignment.PYtoLY( py);
+
+                 // And check if they are within matching-distance of a masked pixel
+                 if (sqrt( (lx-masked_lx)*(lx-masked_lx)+(ly-masked_ly)*(ly-masked_ly) ) < max_dr){
+                   // If yes: set numerator and denominator to zero
+                   hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
+                   hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
+
+                   for (int ibin_z = 1; ibin_z != hCharge01.GetNbinsZ()+2; ibin_z++){
+                     hCharge01.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge02.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge03.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge04.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   }
+
+                 }
+               }
+             }
+        }
+   } // end loop over pixels
+
+
+  // Prepare drawing
+  TCanvas Can;
+  Can.cd();
+
+  hOccupancyDenom.SetMinimum(0);
+  hOccupancyNum.SetAxisRange(18,34,"X");
+  hOccupancyNum.SetAxisRange(45,76,"Y");
+  hOccupancyDenom.SetAxisRange(18,34,"X");
+  hOccupancyDenom.SetAxisRange(45,76,"Y");
+
+  hOccupancyDenom.Draw("colz");
+  hOccupancyDenom.Write();
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
+
+
+  // Draw ratio of Occupancy histograms
+  hOccupancyNum.Divide( &hOccupancyDenom );
+  hOccupancyNum.SetMinimum(0);
+  hOccupancyNum.SetMaximum(1.2);
+
+  hOccupancyNum.Draw("colz");
+  hOccupancyNum.Write();
+  Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
+  Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".pdf");
+
+  hdtx.Draw();
+  hdtx.Write();
+  Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hdtx.GetName()) +".pdf");
+
+
+  hdty.Draw();
+  hdty.Write();
+  Can.SaveAs(OutDir+ TString(hdty.GetName()) +".gif");
+  Can.SaveAs(OutDir+ TString(hdty.GetName()) +".pdf");
+
+  hdtr.Draw();
+  hdtr.Write();
+  Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hdtr.GetName()) +".pdf");
+
+
+  TF1 fun_chi2_6dof("chi2_6dof", "exp(-x/2.)*x*x/(4*16)");
+  fun_chi2_6dof.SetRange(0.,50.);
+  fun_chi2_6dof.SetNpx(1000);
+  fun_chi2_6dof.Draw("SAME");
+
+  hChi2.Scale(1/hChi2.Integral());
+  hChi2.Draw();
+  fun_chi2_6dof.Draw("SAME");
+  hChi2.Write();
+  Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".pdf");
+
+
+
+  hChi2X.Scale( 1/ hChi2X.Integral());
+
+  hChi2X.Draw("hist");
+
+
+  TF1 fun_chi2_3dof("chi2_3dof", "exp(-x/2.)*sqrt(x)/(5*sqrt(2*3.1415))");
+  fun_chi2_3dof.SetRange(0.,20.);
+  fun_chi2_3dof.SetNpx(1000);
+  fun_chi2_3dof.Draw("SAME");
+
+
+  hChi2X.Write();
+  Can.SaveAs( OutDir+ TString(hChi2X.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hChi2X.GetName()) +".pdf");
+
+
+  hChi2Y.Scale(1/hChi2Y.Integral());
+  hChi2Y.Draw();
+  fun_chi2_3dof.Draw("SAME");
+  hChi2Y.Write();
+  Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".pdf");
+
+
+  TH1* h01 = hCharge01.Project3D("Z");
+  TH1* h02 = hCharge02.Project3D("Z");
+  TH1* h03 = hCharge03.Project3D("Z");
+  TH1* h04 = hCharge04.Project3D("Z");
+
+  float hmax = 1.1 * std::max( h01->GetMaximum(),
+                 std::max( h02->GetMaximum(),
+                   std::max( h03->GetMaximum(), h04->GetMaximum() )));
+
+  h01->SetAxisRange(0,hmax,"Y");
+  h02->SetAxisRange(0,hmax,"Y");
+  h03->SetAxisRange(0,hmax,"Y");
+  h04->SetAxisRange(0,hmax,"Y");
+
+  h01->SetLineColor(1);
+  h02->SetLineColor(2);
+  h03->SetLineColor(3);
+  h04->SetLineColor(4);
+
+  h01->SetLineWidth(2);
+  h02->SetLineWidth(2);
+  h03->SetLineWidth(2);
+  h04->SetLineWidth(2);
+
+  h01->GetXaxis()->SetTitle("Charge (Electrons)");
+  h01->GetYaxis()->SetTitle("Number of Hits");
+
+  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.05);
+  Leg.AddEntry(h01, "#Delta R < 0.01 cm", "l");
+  Leg.AddEntry(h02, "#Delta R < 0.02 cm", "l");
+  Leg.AddEntry(h03, "#Delta R < 0.03 cm", "l");
+  Leg.AddEntry(h04, "#Delta R < 0.04 cm", "l");
+
+  h01->Draw();
+  h02->Draw("SAME");
+  h03->Draw("SAME");
+  h04->Draw("SAME");
+  Leg.Draw();
+
+  h01->Write();
+  h02->Write();
+  h03->Write();
+  h04->Write();
+
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
+
+  float maxz;
+  if (plane_under_test==1)
+    maxz = 30000;
+  if (plane_under_test==2)
+    maxz = 30000;
+  if (plane_under_test==3)
+    maxz = 30000;
+  if (plane_under_test==4)
+    maxz = 50000;
+
+
+  TProfile2D * ph01 = hCharge01.Project3DProfile("yx");
+  ph01->SetAxisRange(18,34,"X");
+  ph01->SetAxisRange(45,76,"Y");
+  ph01->SetMinimum(0);
+  ph01->SetMaximum(maxz);
+  ph01->Draw("COLZ");
+  ph01->Write();
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
+
+  TProfile2D * ph02 = hCharge02.Project3DProfile("yx");
+  ph02->SetAxisRange(18,34,"X");
+  ph02->SetAxisRange(45,76,"Y");
+  ph02->SetMinimum(0);
+  ph02->SetMaximum(maxz);
+  ph02->Draw("COLZ");
+  ph02->Write();
+  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
+
+  TProfile2D * ph03 = hCharge03.Project3DProfile("yx");
+  ph03->SetAxisRange(18,34,"X");
+  ph03->SetAxisRange(45,76,"Y");
+  ph03->SetMinimum(0);
+  ph03->SetMaximum(maxz);
+  ph03->Draw("COLZ");
+  ph03->Write();
+  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
+
+  TProfile2D * ph04 = hCharge04.Project3DProfile("yx");
+  ph04->SetAxisRange(18,34,"X");
+  ph04->SetAxisRange(45,76,"Y");
+  ph04->SetMinimum(0);
+  ph04->SetMaximum(maxz);
+  ph04->Draw("COLZ");
+  ph04->Write();
+  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
+
+
+}
+
+
+
+void TestPlaneEfficiencySilicon (std::string const InFileName,
+                                 TFile * out_f,
+                                 std::string const CalibrationList,
+                                 TString const RunNumber,
+                                 std::vector< std::vector< std::vector<int> > > & hot_pixels)
+{
+  /* TestPlaneEfficiencySilicon
+
+  o) Consider one plane to be the plane under test
+  o) Require at least one hit in both silicon planes
+  o) Check if we have a hit in the other planes
+  */
+
+  gStyle->SetOptStat(0);
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+
+  // Open Alignment
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+
+  // Mask four extra rows on each boundary of the diamond sensors
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+
+  // Add additional hot pixels (from FindHotPixels to mask)
+  for (int iroc=0; iroc != 6; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
+  }
+
+  //BFR.AddToPixelMask(1,0,0,0);
+
+  BFR.CalculateLevels(10000, OutDir);
+
+  // numerators and denominators for efficiency calculation
+  std::vector<int> nums(6);
+  std::vector<int> denoms(6);
+  for (int i = 0; i != 6; i++){
+    nums[i]   = 0;
+    denoms[i] = 0;
+  }
+
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    // print progress
+    if (ievent % 10000 == 0) {
+      std::cout << "Processing event: " << ievent << std::endl;
+    }
+
+    // Initializes all planes as un-hit
+    std::vector<bool> plane_is_hit;
+    for (int i=0;i!=6;i++)
+      plane_is_hit.push_back(false);
+
+    // then loop and see where we have a hit
+    for (int ihit = 0; ihit != BFR.NHits(); ++ihit)
+      plane_is_hit[ BFR.Hit(ihit)->ROC() ] = true;
+
+    // Check for Coincidence of silicon hits
+    if (plane_is_hit[0] && plane_is_hit[5]){
+
+      // Increment denominators
+      for (int i = 0; i != 6; i++)
+        denoms[i]++;
+
+      // Increment numerators
+      for (int i = 0; i != 6; i++)
+        if (plane_is_hit[i])
+          nums[i]++;
+    }
+
+  } // End of Event Loop
+
+  // Store the numerators and denominators to the file
+  for (int i=0; i!=6; i++){
+
+    // Numerator
+    TParameter<int> n;
+    n.SetVal( nums[i]);
+    n.Write( Form("SiliconEfficiencyNumeratorROC%i",i));
+
+    // denominator
+    TParameter<int> d;
+    d.SetVal( denoms[i]);
+    d.Write( Form("SiliconEfficiencyDenominatorROC%i",i));
+
+  }
+
+}
+
+
+
+int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+{
+  // Run default analysis
 
   // Mask hot pixels in offline analysis
   // pixels are considered hot if they have > 10 times the number of mean hits of
@@ -176,16 +675,19 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   }
 
   // Look for hot pixels
-  FindHotPixels(InFileName, CalibrationList, RunNumber, hot_pixels);
+  FindHotPixels(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+
+  TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+
+
+  // Study single planes
+  for (int iplane=1; iplane!=5;iplane++)
+    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
-  TFile out_f( OutDir + "histos.root","new");
-
   std::cout<<OutDir<<std::endl;
-  /* TestPSIBinaryFileReaderAlign: Default run analysis.
-  */
 
   gStyle->SetOptStat(0);
 
@@ -207,7 +709,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   //Add hot pixels we found to mask
   for (int iroc=0; iroc != 6; iroc++){
    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
-     std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
+     // std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
    }
   }
@@ -449,6 +951,17 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
     }
   }
 
+  // Track Chi2 Distribution
+  TH1F hChi2("Chi2", "Chi2", 240, 0., 60.);
+
+  // Track Chi2 Distribution
+  TH1F hChi2X("Chi2X", "Chi2X", 240, 0., 60.);
+
+  // Track Chi2 Distribution
+  TH1F hChi2Y("Chi2Y", "Chi2Y", 240, 0., 60.);
+
+
+
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
   // hResidualXdY: x=X  / y=dY
@@ -594,8 +1107,32 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
         double slopeX = Track->fTVX / Track->fTVZ;
         double slopeY = Track->fTVY / Track->fTVZ;
 
+        hChi2X.Fill( Track->Chi2X() );
+        hChi2Y.Fill( Track->Chi2Y() );
+        hChi2.Fill( Track->Chi2() );
+
         hTrackSlopeX.Fill( slopeX);
         hTrackSlopeY.Fill( slopeY);
+
+        // Fill Residuals
+        // Loop over clusters
+        for (size_t icluster = 0; icluster < Track->NClusters(); icluster++){
+
+          // Get the ROC in which this cluster was recorded and fill the
+          // corresponding residual.
+          int ROC = Track->Cluster(icluster)->ROC();
+
+          // dX vs dY
+          hResidual[ROC].Fill( Track->LResidualX( ROC ),
+                               Track->LResidualY( ROC ));
+          // X vs dY
+          hResidualXdY[ROC].Fill( Track->Cluster(icluster)->LX(),
+                                  Track->LResidualY( ROC ));
+          // Y vs dX
+          hResidualYdX[ROC].Fill( Track->Cluster(icluster)->LY(),
+                                  Track->LResidualX( ROC ));
+
+        } // end of loop over clusters
 
         for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
           PLTCluster* Cluster = Track->Cluster(icluster);
@@ -636,30 +1173,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
 
     }
 
-    // Fill Residual histograms
-    for (size_t itrack = 0; itrack < BFR.NTracks(); itrack++){
-      // Need at least three hits for the residual to make sense
-      if (BFR.Track(itrack)->NClusters() > 2){
-          // Loop over clusters
-          for (size_t icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
 
-          // Get the ROC in which this cluster was recorded and fill the
-          // corresponding residual.
-          int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
 
-          // dX vs dY
-          hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
-                               BFR.Track(itrack)->LResidualY( ROC ));
-          // X vs dY
-          hResidualXdY[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LX(),
-                                  BFR.Track(itrack)->LResidualY( ROC ));
-          // Y vs dX
-          hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
-                                  BFR.Track(itrack)->LResidualX( ROC ));
-
-        } // end of loop over clusters
-      } // end >2 clusters
-    } // end of loop over tracks (filling Residial histograms)
 
   } // End of Event Loop
 
@@ -958,13 +1473,29 @@ int TestPSIBinaryFileReader (std::string const InFileName, std::string const Cal
   hTrackSlopeY.Draw("hist");
   Can.SaveAs(OutDir+"TrackSlopeY.gif");
 
+  Can.cd();
+  gStyle->SetOptStat(000001111);
+
+  hChi2.Draw("hist");
+  Can.SaveAs(OutDir+"Chi2.gif");
+  gStyle->SetOptStat(0);
+  hChi2X.Scale( 1/hChi2X.Integral());
+
+  Can.SaveAs(OutDir+"Chi2X.gif");
+  gStyle->SetOptStat(0);
+
+  hChi2Y.Draw("hist");
+  Can.SaveAs(OutDir+"Chi2Y.gif");
+  gStyle->SetOptStat(0);
+
+
   WriteHTML(PlotsDir + RunNumber, CalibrationList);
 
   return 0;
 }
 
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string const CalibrationList, TString const RunNumber)
+int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
 {
   /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
   them to NewAlignment.dat
@@ -978,9 +1509,220 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
 
   gStyle->SetOptStat(0);
 
+
+
+  std::vector<float> x_align;
+  std::vector<float> y_align;
+  std::vector<float> z_align;
+  std::vector<float> r_align;
+
+  for (int i=0; i!=6;i++){
+    x_align.push_back(0);
+    y_align.push_back(0);
+    z_align.push_back(0);
+    r_align.push_back(0);
+  }
+
+
+  for (int ialign=0; ialign!=2;ialign++){
+
+
   // Start with initial Alignment (X,Y offsets and rotations set to zero)
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+
+  for (int iroc=0;iroc!=6;iroc++){
+    Alignment.AddToLX( 1, iroc, x_align[iroc] );
+    Alignment.AddToLY( 1, iroc, y_align[iroc] );
+    //Alignment.AddToLR( 1, iroc, r_align[iroc] );
+  }
+
+
+  for (int iroc_align = 0; iroc_align != 6; ++iroc_align) {
+
+    std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
+
+    float best_RMS = 99999;
+
+    // Prepare Residual histograms
+    // hResidual:    x=dX / y=dY
+    // hResidualXdY: x=X  / y=dY
+    // hResidualYdX: x=Y  / y=dX
+    std::vector< TH2F > hResidual;
+    std::vector< TH2F > hResidualXdY;
+    std::vector< TH2F > hResidualYdX;
+
+    // Keep track of the squarted sum of residuals and use it as exit
+    // criterion
+    double sumResSquareCurrent = 0.;
+    double sumResSquareLast    = -1;
+
+    PSIBinaryFileReader BFR(InFileName, CalibrationList);
+    BFR.SetTrackingAlignment(&Alignment);
+    FILE* f = fopen("MyGainCal.dat", "w");
+    BFR.GetGainCal()->PrintGainCal(f);
+    fclose(f);
+    BFR.ReadPixelMask( "outerPixelMask.txt");
+    BFR.CalculateLevels(10000 ,OutDir);
+    BFR.SetPlaneUnderTest( iroc_align );
+
+
+    // Reset residual histograms
+    hResidual.clear();
+    hResidualXdY.clear();
+    hResidualYdX.clear();
+    for (int iroc = 0; iroc != 6; ++iroc){
+      hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
+                                  Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
+      hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
+                                     Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
+      hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
+                                     Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
+    }
+
+    sumResSquareCurrent = 0;
+
+
+    // Event Loop
+    for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+      if (! (BFR.NTracks()==1))
+        continue;
+
+      PLTTrack * Track = BFR.Track(0);
+
+      if (! BFR.Plane(iroc_align)->NClusters()==1)
+        continue;
+
+      float max_charge = -1;
+      float h_LX = -9999;
+      float h_LY = -9999;
+
+      for (int i=0; i != BFR.Plane(iroc_align)->Cluster(0)->NHits(); ++i){
+
+          PLTHit * Hit = BFR.Plane(iroc_align)->Cluster(0)->Hit(i);
+
+          if (Hit->Charge() > max_charge){
+            max_charge = Hit->Charge();
+            h_LX = Hit->LX();
+            h_LY = Hit->LY();
+          }
+      }
+
+      // float h_LX    = BFR.Plane(iroc_align)->Cluster(0)->LX();
+      // float h_LY    = BFR.Plane(iroc_align)->Cluster(0)->LY();
+
+      float track_TX = Track->TX(iroc_align);
+      float track_TY = Track->TY(iroc_align);
+
+      float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iroc_align);
+      float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iroc_align);
+
+      float d_LX =  (track_LX - h_LX);
+      float d_LY =  (track_LY - h_LY);
+
+      if (!(fabs(d_LX)<2))
+        continue;
+
+      if (!(fabs(d_LY)<2))
+        continue;
+
+
+      // dX vs dY
+      hResidual[iroc_align].Fill( d_LX, d_LY);
+
+      // X vs dY
+      hResidualXdY[iroc_align].Fill( h_LX, d_LY);
+
+      // Y vs dX
+      hResidualYdX[iroc_align].Fill( h_LY, d_LX);
+
+    } // end event loop
+
+    std::cout << "RESIDUALS: " << hResidual[iroc_align].GetMean(1) << " " << hResidual[iroc_align].GetMean(2) << std::endl;
+    std::cout << "RESIDUALS RMS: " << hResidual[iroc_align].GetRMS(1) << " " << hResidual[iroc_align].GetRMS(2) <<std::endl;
+
+
+
+
+  std::cout << "Before: " << Alignment.LX(1,iroc_align) << std::endl;
+
+  float angle = atan(hResidualXdY[iroc_align].GetCorrelationFactor()) ;
+
+  x_align[iroc_align] +=  hResidual[iroc_align].GetMean(1);
+  y_align[iroc_align] +=  hResidual[iroc_align].GetMean(2);
+  r_align[iroc_align] +=  hResidualXdY[iroc_align].GetCorrelationFactor();
+
+
+  std::cout << "After: " << Alignment.LX(1,iroc_align) << std::endl;
+
+
+  TCanvas Can;
+  Can.cd();
+
+  // 2D Residuals
+  hResidual[iroc_align].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc_align].GetName()) + ".gif");
+
+  // Residual X-Projection
+  gStyle->SetOptStat(1111);
+  hResidual[iroc_align].ProjectionX()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc_align].GetName()) + "_X.gif");
+
+  // Residual Y-Projection
+  hResidual[iroc_align].ProjectionY()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc_align].GetName()) + "_Y.gif");
+
+  // 2D Residuals X/dY
+  hResidualXdY[iroc_align].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidualXdY[iroc_align].GetName()) + ".gif");
+
+  // 2D Residuals Y/dX
+  hResidualYdX[iroc_align].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidualYdX[iroc_align].GetName()) + ".gif");
+
+
+
+  float new_RMS = sqrt(hResidual[iroc_align].GetRMS(1)*hResidual[iroc_align].GetRMS(1)+
+                       hResidual[iroc_align].GetRMS(2)*hResidual[iroc_align].GetRMS(2));
+
+  //std::cout << "New RMS: " << iroc_align << " " << lz << " " << new_RMS << std::endl;
+
+
+
+
+  for (int i=0; i!=6;i++){
+
+    std::cout << i << " " << x_align[i] << " " << y_align[i] << " " << z_align[i] << " " << r_align[i] <<std::endl;
+  }
+
+} // end loop over rocs
+Alignment.WriteAlignmentFile("NewAlignment.dat");
+
+} // end alignment loop
+
+
+
+
+std::cout << "PART TWO!!!!!" << std::endl;
+
+
+
+// Start with initial Alignment (X,Y offsets and rotations set to zero)
+PLTAlignment Alignment;
+Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+
+for (int iroc=0;iroc!=6;iroc++){
+  Alignment.AddToLX( 1, iroc, x_align[iroc] );
+  Alignment.AddToLY( 1, iroc, y_align[iroc] );
+  //Alignment.AddToLR( 1, iroc, r_align[iroc] );
+}
+
+
+for (int ialign=0; ialign!=4;ialign++){
+
+
+  float best_RMS = 99999;
 
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
@@ -995,124 +1737,115 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, std::string cons
   double sumResSquareCurrent = 0.;
   double sumResSquareLast    = -1;
 
-  // Alignment loop
-  for (int ialign = 0; ialign < NMaxAlignmentIterations; ialign++){
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+  FILE* f = fopen("MyGainCal.dat", "w");
+  BFR.GetGainCal()->PrintGainCal(f);
+  fclose(f);
+  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.CalculateLevels(10000 ,OutDir);
 
-    std::cout << "At iteration " << ialign << std::endl;
 
-    PSIBinaryFileReader BFR(InFileName, CalibrationList);
-    BFR.SetTrackingAlignment(&Alignment);
-    FILE* f = fopen("MyGainCal.dat", "w");
-    BFR.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
-    BFR.CalculateLevels(10000 ,OutDir);
+  // Reset residual histograms
+  hResidual.clear();
+  hResidualXdY.clear();
+  hResidualYdX.clear();
+  for (int iroc = 0; iroc != 6; ++iroc){
+    hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
+                                Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
+    hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
+                                   Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
+    hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
+                                   Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
+  }
 
-    // Reset residual histograms
-    hResidual.clear();
-    hResidualXdY.clear();
-    hResidualYdX.clear();
-    for (int iroc = 0; iroc != 6; ++iroc){
-      hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                  Form("Residual_ROC%i",iroc), 100, -.2, .2, 100, -.2, .2));
-      hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
-                                     Form("ResidualXdY_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
-      hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
-                                     Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
-    }
+  sumResSquareCurrent = 0;
 
-    sumResSquareCurrent = 0;
 
-    // Event Loop
-    for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
-      if (ievent % 10000 == 0)
-        std::cout << "Processing event: " << ievent << std::endl;
+    if (! (BFR.NTracks()==1))
+      continue;
 
-      // Fill Residual histograms
-      for (size_t itrack = 0; itrack < BFR.NTracks(); itrack++){
-        // Need at least three hits for the residual to make sense
-        if (BFR.Track(itrack)->NClusters() > 2){
-            // Loop over clusters
-            for (size_t icluster = 0; icluster < BFR.Track(itrack)->NClusters(); icluster++){
+    PLTTrack * Track = BFR.Track(0);
 
-            // Get the ROC in which this cluster was recorded and fill the
-            // corresponding residual.
-            int ROC = BFR.Track(itrack)->Cluster(icluster)->ROC();
+    //if (Track->Chi2()>12)
+    //  continue;
 
-            // dX vs dY
-            hResidual[ROC].Fill( BFR.Track(itrack)->LResidualX( ROC ),
-                                 BFR.Track(itrack)->LResidualY( ROC ));
-            // X vs dY
-            hResidualXdY[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LX(),
-                                    BFR.Track(itrack)->LResidualY( ROC ));
-            // Y vs dX
-            hResidualYdX[ROC].Fill( BFR.Track(itrack)->Cluster(icluster)->LY(),
-                                    BFR.Track(itrack)->LResidualX( ROC ));
+    for (int iroc=0; iroc!=6; iroc++){
+      float d_LX = Track->LResidualX(iroc);
+      float d_LY = Track->LResidualY(iroc);
 
-            // Also measure the squared sum of residuals
-            // check against self so we don't get NaNs
-            if (BFR.Track(itrack)->Cluster(icluster)->LX()==  BFR.Track(itrack)->Cluster(icluster)->LX())
-              sumResSquareCurrent +=  BFR.Track(itrack)->Cluster(icluster)->LX()* BFR.Track(itrack)->Cluster(icluster)->LX();
-            if (BFR.Track(itrack)->Cluster(icluster)->LY()==  BFR.Track(itrack)->Cluster(icluster)->LY())
-              sumResSquareCurrent +=  BFR.Track(itrack)->Cluster(icluster)->LY()* BFR.Track(itrack)->Cluster(icluster)->LY();
+      float cl_LX = -999;
+      float cl_LY = -999;
 
-          } // end of loop over clusters
-        } // end >2 clusters
-      } // end of loop over tracks
-    } // end event loop
+      for (int icl=0; icl != Track->NClusters(); icl++){
+        if (Track->Cluster(icl)->ROC() == iroc){
 
-    // First iteration, init sumResSquareLast
-    if (ialign == 0){
-      sumResSquareLast = sumResSquareCurrent;
-    }
-    else{
-      // Improvement wrt/ last iteration of less than 0.01%. Quit.
-      if (fabs(sumResSquareLast-sumResSquareCurrent)/sumResSquareLast < 0.0001 ){
-        break;
+          cl_LX = Track->Cluster(icl)->LX();
+          cl_LY = Track->Cluster(icl)->LY();
+
+
+        }
       }
-      // Otherwise: update last residual and try again
-      else{
-        sumResSquareLast = sumResSquareCurrent;
-      }
+
+      // dX vs dY
+      hResidual[iroc].Fill( d_LX, d_LY);
+
+      // X vs dY
+      hResidualXdY[iroc].Fill( cl_LX, d_LY);
+
+      // Y vs dX
+      hResidualYdX[iroc].Fill( cl_LY, d_LX);
+
+
     }
 
-    // Loop over ROCs to update alignment
-    for (int iroc = 0; iroc != 6; ++iroc) {
-      Alignment.AddToLX( 1, iroc, hResidual[iroc].GetMean(1));
-      Alignment.AddToLY( 1, iroc, hResidual[iroc].GetMean(2));
-      float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
-      Alignment.AddToLR( 1, iroc, angle/10. );
-    }
+
+  } // end event loop
+
+  for (int iroc=0; iroc!=6; iroc++){
+  std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
+  std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
+
+  Alignment.AddToLX(1, iroc, hResidual[iroc].GetMean(1));
+  Alignment.AddToLY(1, iroc, hResidual[iroc].GetMean(2));
+
+  float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
+  Alignment.AddToLR(1, iroc, angle/10.);
+
+
+  TCanvas Can;
+  Can.cd();
+
+  // 2D Residuals
+  hResidual[iroc].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + ".gif");
+
+  // Residual X-Projection
+  gStyle->SetOptStat(1111);
+  hResidual[iroc].ProjectionX()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_X.gif");
+
+  // Residual Y-Projection
+  hResidual[iroc].ProjectionY()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_Y.gif");
+
+  // 2D Residuals X/dY
+  hResidualXdY[iroc].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidualXdY[iroc].GetName()) + ".gif");
+
+  // 2D Residuals Y/dX
+  hResidualYdX[iroc].Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidualYdX[iroc].GetName()) + ".gif");
+
+  }
+
+
+
   } // end alignment loop
 
-  // Loop over ROCs to draw final per-plane histos
-  for (int iroc = 0; iroc != 6; ++iroc) {
-    TCanvas Can;
-    Can.cd();
-
-    // 2D Residuals
-    hResidual[iroc].Draw("colz");
-    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + ".gif");
-
-    // Residual X-Projection
-    gStyle->SetOptStat(1111);
-    hResidual[iroc].ProjectionX()->Draw();
-    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_X.gif");
-
-    // Residual Y-Projection
-    hResidual[iroc].ProjectionY()->Draw();
-    Can.SaveAs( OutDir+"/"+TString(hResidual[iroc].GetName()) + "_Y.gif");
-
-    // 2D Residuals X/dY
-    hResidualXdY[iroc].Draw("colz");
-    Can.SaveAs( OutDir+"/"+TString(hResidualXdY[iroc].GetName()) + ".gif");
-
-    // 2D Residuals Y/dX
-    hResidualYdX[iroc].Draw("colz");
-    Can.SaveAs( OutDir+"/"+TString(hResidualYdX[iroc].GetName()) + ".gif");
-
-  } // end loop over ROCs
   Alignment.WriteAlignmentFile("NewAlignment.dat");
 
   return 0;
@@ -1279,6 +2012,62 @@ void WriteHTML (TString const OutDir, TString const CalFile)
     f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);
   f << "<br>\n";
 
+
+  // Single Plane Studies
+  f << "<h2>Single Plane Studies</h2>\n";
+  f << "<br>" << std::endl;
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"TracksPassing_ROC%i.gif\"><img width=\"150\" src=\"TracksPassing_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"PlaneEfficiency_ROC%i.gif\"><img width=\"150\" src=\"PlaneEfficiency_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"Charge_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"Charge02_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge02_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"Charge03_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge03_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"Charge04_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge04_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestChi2_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"SinglePlaneTestChi2X_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2X_ROC%i.gif\"></a>\n", i, i);
+f << "<br>\n";
+
+for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"SinglePlaneTestChi2Y_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2Y_ROC%i.gif\"></a>\n", i, i);
+f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestDY_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDY_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SinglePlaneTestDR_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDR_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
   // EVENT DISPLAYS
   f << "<h2>Event Displays</h2>\n";
 
@@ -1347,12 +2136,18 @@ int main (int argc, char* argv[])
   std::string CalibrationList = argv[2];
 
 
+  // Open a ROOT file to store histograms in
+  // do it here and pass to all functions we call
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber + "/";
+  TFile out_f( OutDir + "histos.root","recreate");
+
   int doAlign = atoi(argv[3]);
 
   if (doAlign)
-    TestPSIBinaryFileReaderAlign(InFileName, CalibrationList, RunNumber);
+    TestPSIBinaryFileReaderAlign(InFileName, &out_f, CalibrationList, RunNumber);
   else
-    TestPSIBinaryFileReader(InFileName, CalibrationList, RunNumber);
+    TestPSIBinaryFileReader(InFileName, &out_f, CalibrationList, RunNumber);
 
 
   return 0;

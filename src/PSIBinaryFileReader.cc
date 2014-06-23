@@ -510,8 +510,17 @@ void PSIBinaryFileReader::DecodeHits ()
     AddPlane( &(it->second) );
   }
 
-  if (NClusters() == 6 && HitPlaneBits() == 0x3f) {
+
+  // If we are doing single plane-efficiencies:
+  // Just send all events to the tracking and sort it out there
+  if (DoingSinglePlaneEfficiency()){
     RunTracking( *((PLTTelescope*) this));
+  }
+  // Otherwise require exactly one hit per plane
+  else {
+    if (NClusters() == 6 && HitPlaneBits() == 0x3f) {
+      RunTracking( *((PLTTelescope*) this));
+    }
   }
 
   return;
@@ -598,7 +607,7 @@ void PSIBinaryFileReader::ReadPixelMask (std::string const InFileName)
     linestream.str(line);
     linestream >> ch >> roc >> col >> row;
 
-    std::cout << "Masking: " << ch << " " << roc << " " << col << " " << row << std::endl;
+    //std::cout << "Masking: " << ch << " " << roc << " " << col << " " << row << std::endl;
     fPixelMask.insert( ch*100000 + roc*10000 + col*100 + row );
   }
 

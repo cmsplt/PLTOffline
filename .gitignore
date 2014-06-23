@@ -72,3 +72,6 @@ PSIGainCalFits
 plots/*
 lib/DHidasPLT.so
 python/plots
+mtb.bin
+python/*.png
+Telescope_Silicon0_4_PolyA_PolyD_S86_S105_29052014_0408/
