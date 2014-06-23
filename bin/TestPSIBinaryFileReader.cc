@@ -57,7 +57,7 @@ int FindHotPixels (std::string const InFileName,
   //fclose(f);
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
 
   // Add hot pixels we are given to mask
   // Since we now do multiple iterations in the histograms in one FindHotPixels call
@@ -201,7 +201,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   BFR.SetPlaneUnderTest( plane_under_test );
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -249,10 +249,10 @@ void TestPlaneEfficiency (std::string const InFileName,
     if (BFR.NTracks() == 1){
 
       // Look at the 90% quantile
-      //if (BFR.Track(0)->Chi2X() > 6.25)
-      //  continue;
-      //if (BFR.Track(0)->Chi2Y() > 6.25)
-      //  continue;
+      if (BFR.Track(0)->Chi2X() > 6.25)
+        continue;
+      if (BFR.Track(0)->Chi2Y() > 6.25)
+        continue;
 
 
       hChi2.Fill( BFR.Track(0)->Chi2());
@@ -587,7 +587,7 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
   BFR.SetTrackingAlignment(&Alignment);
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -704,7 +704,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   fclose(f);
 
   // Mask additional outer four layer on all diamonds
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
 
   //Add hot pixels we found to mask
   for (int iroc=0; iroc != 6; iroc++){
@@ -1561,7 +1561,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
+    BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
     BFR.CalculateLevels(10000 ,OutDir);
     BFR.SetPlaneUnderTest( iroc_align );
 
@@ -1741,7 +1741,7 @@ for (int ialign=0; ialign!=4;ialign++){
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
   BFR.CalculateLevels(10000 ,OutDir);
 
 

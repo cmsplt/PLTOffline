@@ -29,6 +29,8 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   std::vector<float> UncertsX;
   std::vector<float> UncertsY;
 
+
+  // Initial Values for Alignment
   if (false){
     UncertsX.push_back( 0.015);
     UncertsX.push_back( 0.015);
@@ -44,22 +46,24 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     UncertsY.push_back( 0.010);
     UncertsY.push_back( 0.010);
   }
-  else if (false){
-    UncertsX.push_back( 0.026);
-    UncertsX.push_back( 0.018);
-    UncertsX.push_back( 0.027);
-    UncertsX.push_back( 0.038);
-    UncertsX.push_back( 0.049);
-    UncertsX.push_back( 0.066);
-
-    UncertsY.push_back( 0.025);
-    UncertsY.push_back( 0.011);
-    UncertsY.push_back( 0.014);
-    UncertsY.push_back( 0.023);
-    UncertsY.push_back( 0.031);
-    UncertsY.push_back( 0.048);
-  }
+  // Telescope 2
   else if (true){
+    UncertsX.push_back( 0.011);
+    UncertsX.push_back( 0.007);
+    UncertsX.push_back( 0.011);
+    UncertsX.push_back( 0.011);
+    UncertsX.push_back( 0.006);
+    UncertsX.push_back( 0.011);
+
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.006);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.011);
+    UncertsY.push_back( 0.006);
+    UncertsY.push_back( 0.011);
+  }
+  // Telescope 1
+  else if (false){
     UncertsX.push_back( 0.013);
     UncertsX.push_back( 0.006);
     UncertsX.push_back( 0.010);
