@@ -32,6 +32,8 @@ class PLTTracking
     static bool CompareTrackD2 (PLTTrack*, PLTTrack*);
 
     void SetPlaneUnderTest( int);
+    void SetPlaneUnderTestSandwich( int);
+
 
     void RunTracking (PLTTelescope&);
 

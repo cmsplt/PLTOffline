@@ -90,6 +90,70 @@ void PLTTracking::SetPlaneUnderTest( int put){
 }
 
 
+void PLTTracking::SetPlaneUnderTestSandwich( int put){
+
+    fDoSinglePlaneEfficiency = true;
+
+    // The default is 222222 -> require at least one hit in all planes
+    // (there and an additional condition before calling tracking that
+    //  requires exactly 6 hits)
+
+    // For sandwich measurement (to get the residual) we want (for example):
+    // 303000
+    if (put==0){
+      fUsePlanesForTracking[0] = 0;
+      fUsePlanesForTracking[1] = 3;
+      fUsePlanesForTracking[2] = 3;
+      fUsePlanesForTracking[3] = 0;
+      fUsePlanesForTracking[4] = 0;
+      fUsePlanesForTracking[5] = 0;
+    }
+    else if (put==1){
+      fUsePlanesForTracking[0] = 3;
+      fUsePlanesForTracking[1] = 0;
+      fUsePlanesForTracking[2] = 3;
+      fUsePlanesForTracking[3] = 0;
+      fUsePlanesForTracking[4] = 0;
+      fUsePlanesForTracking[5] = 0;
+    }
+    else if (put==2){
+      fUsePlanesForTracking[0] = 0;
+      fUsePlanesForTracking[1] = 3;
+      fUsePlanesForTracking[2] = 0;
+      fUsePlanesForTracking[3] = 3;
+      fUsePlanesForTracking[4] = 0;
+      fUsePlanesForTracking[5] = 0;
+    }
+    else if (put==3){
+      fUsePlanesForTracking[0] = 0;
+      fUsePlanesForTracking[1] = 0;
+      fUsePlanesForTracking[2] = 3;
+      fUsePlanesForTracking[3] = 0;
+      fUsePlanesForTracking[4] = 3;
+      fUsePlanesForTracking[5] = 0;
+    }
+    else if (put==4){
+      fUsePlanesForTracking[0] = 0;
+      fUsePlanesForTracking[1] = 0;
+      fUsePlanesForTracking[2] = 0;
+      fUsePlanesForTracking[3] = 3;
+      fUsePlanesForTracking[4] = 0;
+      fUsePlanesForTracking[5] = 3;
+    }
+    else if (put==5){
+      fUsePlanesForTracking[0] = 0;
+      fUsePlanesForTracking[1] = 0;
+      fUsePlanesForTracking[2] = 0;
+      fUsePlanesForTracking[3] = 3;
+      fUsePlanesForTracking[4] = 3;
+      fUsePlanesForTracking[5] = 0;
+    }
+
+
+
+}
+
+
 void PLTTracking::RunTracking (PLTTelescope& Telescope)
 {
   switch (fTrackingAlgorithm) {
@@ -229,7 +293,7 @@ void PLTTracking::TrackFinder_6PlanesHit (PLTTelescope& Telescope)
     }
   }
 
-  
+
   // Check if all the planes which require exactly one cluster have that
   for (int iPlane=0; iPlane < Telescope.NPlanes(); iPlane++){
     if ((fUsePlanesForTracking[iPlane]==3) &&

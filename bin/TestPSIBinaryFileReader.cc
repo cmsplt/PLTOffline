@@ -378,6 +378,18 @@ void TestPlaneEfficiency (std::string const InFileName,
   TCanvas Can;
   Can.cd();
 
+  hOccupancyNum.SetMinimum(0);
+  hOccupancyNum.SetAxisRange(18,34,"X");
+  hOccupancyNum.SetAxisRange(45,76,"Y");
+  hOccupancyNum.Draw("colz");
+  hOccupancyNum.Write();
+
+
+  hOccupancyDenom.Draw("colz");
+  hOccupancyDenom.Write();
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".gif");
+  Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
+
   hOccupancyDenom.SetMinimum(0);
   hOccupancyNum.SetAxisRange(18,34,"X");
   hOccupancyNum.SetAxisRange(45,76,"Y");
@@ -396,7 +408,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   hOccupancyNum.SetMaximum(1.2);
 
   hOccupancyNum.Draw("colz");
-  hOccupancyNum.Write();
+  // Do not write the numerator-histo after division to the file
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".gif");
   Can.SaveAs( OutDir+TString(hOccupancyNum.GetName()) + ".pdf");
 
@@ -503,7 +515,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   h60->Write();
 
   Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +".gif");
-  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +".pdf");
+  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +".pdf");
 
   float maxz;
   if (plane_under_test==1)
@@ -1695,6 +1707,10 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     std::cout << i << " " << x_align[i] << " " << y_align[i] << " " << z_align[i] << " " << r_align[i] <<std::endl;
   }
 
+
+
+
+
 } // end loop over rocs
 Alignment.WriteAlignmentFile("NewAlignment.dat");
 
@@ -1846,6 +1862,93 @@ for (int ialign=0; ialign!=4;ialign++){
   } // end alignment loop
 
   Alignment.WriteAlignmentFile("NewAlignment.dat");
+
+
+// PART THREE!
+
+for (int iplane=0; iplane!=6;iplane++){
+
+  // Prepare Residual histograms
+  // hResidual:    x=dX / y=dY
+  TH2F hResidual( Form("Residual_ROC%i",iplane),
+                  Form("Residual_ROC%i",iplane),
+                  200, -.2, .2, 200, -.2, .2 );
+
+  PSIBinaryFileReader BFR(InFileName, CalibrationList);
+  BFR.SetTrackingAlignment(&Alignment);
+  BFR.SetPlaneUnderTestSandwich( iplane );
+  FILE* f = fopen("MyGainCal.dat", "w");
+  BFR.GetGainCal()->PrintGainCal(f);
+  fclose(f);
+  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.CalculateLevels(10000 ,OutDir);
+
+
+  // Event Loop
+  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    if (! (BFR.NTracks()==1))
+      continue;
+
+    PLTTrack * Track = BFR.Track(0);
+
+    if (! BFR.Plane(iplane)->NClusters()==1)
+      continue;
+
+    float max_charge = -1;
+    float h_LX = -9999;
+    float h_LY = -9999;
+
+    for (int i=0; i != BFR.Plane(iplane)->Cluster(0)->NHits(); ++i){
+
+        PLTHit * Hit = BFR.Plane(iplane)->Cluster(0)->Hit(i);
+
+        if (Hit->Charge() > max_charge){
+          max_charge = Hit->Charge();
+          h_LX = Hit->LX();
+          h_LY = Hit->LY();
+        }
+    }
+
+    float track_TX = Track->TX(iplane);
+    float track_TY = Track->TY(iplane);
+
+    float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iplane);
+    float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iplane);
+
+    float d_LX =  (track_LX - h_LX);
+    float d_LY =  (track_LY - h_LY);
+
+
+    // dX vs dY
+    hResidual.Fill( d_LX, d_LY);
+
+
+
+  } // end event loop
+  std::cout << "UNCERTAINTIES FOR " << iplane << std::endl;
+  std::cout << "RESIDUALS: " << hResidual.GetMean(1) << " " << hResidual.GetMean(2) << std::endl;
+  std::cout << "RESIDUALS RMS: " << hResidual.GetRMS(1) << " " << hResidual.GetRMS(2) <<std::endl;
+
+
+
+  TCanvas Can;
+  Can.cd();
+
+  // 2D Residuals
+  hResidual.Draw("colz");
+  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + ".gif");
+
+  // Residual X-Projection
+  gStyle->SetOptStat(1111);
+  hResidual.ProjectionX()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + "_X.gif");
+
+  // Residual Y-Projection
+  hResidual.ProjectionY()->Draw();
+  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + "_Y.gif");
+
+} // end loop over planes
 
   return 0;
 }
