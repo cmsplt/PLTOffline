@@ -217,10 +217,10 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
   TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
-  TH3F hCharge01       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Mean Charge within #Delta R < 0.01 cm", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge02       = TH3F( Form("Charge02_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.02 cm", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge03       = TH3F( Form("Charge03_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.03 cm", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge04       = TH3F( Form("Charge04_ROC%i", plane_under_test), "Mean Charge within #Delta R < 0.04 cm", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Mean Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Mean Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Mean Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge60       = TH3F( Form("Charge60_ROC%i", plane_under_test), "Mean Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
 
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
@@ -276,10 +276,10 @@ void TestPlaneEfficiency (std::string const InFileName,
       PLTPlane* Plane = BFR.Plane( plane_under_test );
       bool matched = false;
 
-      float sum01 = 0;
-      float sum02 = 0;
-      float sum03 = 0;
-      float sum04 = 0;
+      float sum15 = 0;
+      float sum30 = 0;
+      float sum45 = 0;
+      float sum60 = 0;
 
       // loop over all hits and check distance to intersection
       for (int ih = 0; ih != Plane->NHits(); ih++){
@@ -291,27 +291,27 @@ void TestPlaneEfficiency (std::string const InFileName,
              hdty.Fill( dty );
              hdtr.Fill( dtr );
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.01)
-               sum01 += Plane->Hit(ih)->Charge();
-
-             if (sqrt( dtx*dtx + dty*dty ) < 0.02)
-               sum02 += Plane->Hit(ih)->Charge();
+             if (sqrt( dtx*dtx + dty*dty ) < 0.015)
+               sum15 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < 0.03)
-               sum03 += Plane->Hit(ih)->Charge();
+               sum30 += Plane->Hit(ih)->Charge();
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.04)
-               sum04 += Plane->Hit(ih)->Charge();
+             if (sqrt( dtx*dtx + dty*dty ) < 0.045)
+               sum45 += Plane->Hit(ih)->Charge();
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.06)
+               sum60 += Plane->Hit(ih)->Charge();
 
              if (sqrt( dtx*dtx + dty*dty ) < max_dr)
                matched=true;
 
        } // end of loop over hits
 
-       hCharge01.Fill( px, py, sum01);
-       hCharge02.Fill( px, py, sum02);
-       hCharge03.Fill( px, py, sum03);
-       hCharge04.Fill( px, py, sum04);
+       hCharge15.Fill( px, py, sum15);
+       hCharge30.Fill( px, py, sum30);
+       hCharge45.Fill( px, py, sum45);
+       hCharge60.Fill( px, py, sum60);
 
        // if there was at least one match: fill denominator
        if (matched)
@@ -360,11 +360,11 @@ void TestPlaneEfficiency (std::string const InFileName,
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
 
-                   for (int ibin_z = 1; ibin_z != hCharge01.GetNbinsZ()+2; ibin_z++){
-                     hCharge01.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge02.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge03.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge04.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   for (int ibin_z = 1; ibin_z != hCharge15.GetNbinsZ()+2; ibin_z++){
+                     hCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                    }
 
                  }
@@ -429,10 +429,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".gif");
   Can.SaveAs( OutDir+ TString(hChi2.GetName()) +".pdf");
 
-
-
   hChi2X.Scale( 1/ hChi2X.Integral());
-
+  hChi2X.SetAxisRange(0, 0.07,"Y");
   hChi2X.Draw("hist");
 
 
@@ -448,6 +446,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
   hChi2Y.Scale(1/hChi2Y.Integral());
+  hChi2Y.SetAxisRange(0, 0.08,"Y");
   hChi2Y.Draw();
   fun_chi2_3dof.Draw("SAME");
   hChi2Y.Write();
@@ -455,55 +454,56 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".pdf");
 
 
-  TH1* h01 = hCharge01.Project3D("Z");
-  TH1* h02 = hCharge02.Project3D("Z");
-  TH1* h03 = hCharge03.Project3D("Z");
-  TH1* h04 = hCharge04.Project3D("Z");
+  TH1* h15 = hCharge15.Project3D("Z");
+  TH1* h30 = hCharge30.Project3D("Z");
+  TH1* h45 = hCharge45.Project3D("Z");
+  TH1* h60 = hCharge60.Project3D("Z");
 
-  float hmax = 1.1 * std::max( h01->GetMaximum(),
-                 std::max( h02->GetMaximum(),
-                   std::max( h03->GetMaximum(), h04->GetMaximum() )));
+  float hmax = 1.1 * std::max( h15->GetMaximum(),
+                 std::max( h30->GetMaximum(),
+                  std::max( h45->GetMaximum(), h60->GetMaximum() )));
 
-  h01->SetAxisRange(0,hmax,"Y");
-  h02->SetAxisRange(0,hmax,"Y");
-  h03->SetAxisRange(0,hmax,"Y");
-  h04->SetAxisRange(0,hmax,"Y");
 
-  h01->SetLineColor(1);
-  h02->SetLineColor(2);
-  h03->SetLineColor(3);
-  h04->SetLineColor(4);
+  h15->SetAxisRange(0,hmax,"Y");
+  h30->SetAxisRange(0,hmax,"Y");
+  h45->SetAxisRange(0,hmax,"Y");
+  h60->SetAxisRange(0,hmax,"Y");
 
-  h01->SetLineWidth(2);
-  h02->SetLineWidth(2);
-  h03->SetLineWidth(2);
-  h04->SetLineWidth(2);
+  h15->SetLineColor(1);
+  h30->SetLineColor(2);
+  h45->SetLineColor(3);
+  h60->SetLineColor(4);
 
-  h01->GetXaxis()->SetTitle("Charge (Electrons)");
-  h01->GetYaxis()->SetTitle("Number of Hits");
+  h15->SetLineWidth(2);
+  h30->SetLineWidth(2);
+  h45->SetLineWidth(2);
+  h60->SetLineWidth(2);
+
+  h15->GetXaxis()->SetTitle("Charge (Electrons)");
+  h15->GetYaxis()->SetTitle("Number of Hits");
 
   TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
   Leg.SetFillColor(0);
   Leg.SetBorderSize(0);
   Leg.SetTextSize(0.05);
-  Leg.AddEntry(h01, "#Delta R < 0.01 cm", "l");
-  Leg.AddEntry(h02, "#Delta R < 0.02 cm", "l");
-  Leg.AddEntry(h03, "#Delta R < 0.03 cm", "l");
-  Leg.AddEntry(h04, "#Delta R < 0.04 cm", "l");
+  Leg.AddEntry(h15, "#Delta R < 150 #mu m", "l");
+  Leg.AddEntry(h30, "#Delta R < 300 #mu m", "l");
+  Leg.AddEntry(h45, "#Delta R < 450 #mu m", "l");
+  Leg.AddEntry(h60, "#Delta R < 600 #mu m", "l");
 
-  h01->Draw();
-  h02->Draw("SAME");
-  h03->Draw("SAME");
-  h04->Draw("SAME");
+  h15->Draw();
+  h30->Draw("SAME");
+  h45->Draw("SAME");
+  h60->Draw("SAME");
   Leg.Draw();
 
-  h01->Write();
-  h02->Write();
-  h03->Write();
-  h04->Write();
+  h15->Write();
+  h30->Write();
+  h45->Write();
+  h60->Write();
 
-  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".gif");
-  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +".pdf");
+  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +".gif");
+  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +".pdf");
 
   float maxz;
   if (plane_under_test==1)
@@ -516,45 +516,45 @@ void TestPlaneEfficiency (std::string const InFileName,
     maxz = 50000;
 
 
-  TProfile2D * ph01 = hCharge01.Project3DProfile("yx");
-  ph01->SetAxisRange(18,34,"X");
-  ph01->SetAxisRange(45,76,"Y");
-  ph01->SetMinimum(0);
-  ph01->SetMaximum(maxz);
-  ph01->Draw("COLZ");
-  ph01->Write();
-  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge01.GetName()) +"_profile.pdf");
+  TProfile2D * ph15 = hCharge15.Project3DProfile("yx");
+  ph15->SetAxisRange(18,34,"X");
+  ph15->SetAxisRange(45,76,"Y");
+  ph15->SetMinimum(0);
+  ph15->SetMaximum(maxz);
+  ph15->Draw("COLZ");
+  ph15->Write();
+  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +"_profile.pdf");
 
-  TProfile2D * ph02 = hCharge02.Project3DProfile("yx");
-  ph02->SetAxisRange(18,34,"X");
-  ph02->SetAxisRange(45,76,"Y");
-  ph02->SetMinimum(0);
-  ph02->SetMaximum(maxz);
-  ph02->Draw("COLZ");
-  ph02->Write();
-  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge02.GetName()) +"_profile.pdf");
+  TProfile2D * ph30 = hCharge30.Project3DProfile("yx");
+  ph30->SetAxisRange(18,34,"X");
+  ph30->SetAxisRange(45,76,"Y");
+  ph30->SetMinimum(0);
+  ph30->SetMaximum(maxz);
+  ph30->Draw("COLZ");
+  ph30->Write();
+  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +"_profile.pdf");
 
-  TProfile2D * ph03 = hCharge03.Project3DProfile("yx");
-  ph03->SetAxisRange(18,34,"X");
-  ph03->SetAxisRange(45,76,"Y");
-  ph03->SetMinimum(0);
-  ph03->SetMaximum(maxz);
-  ph03->Draw("COLZ");
-  ph03->Write();
-  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge03.GetName()) +"_profile.pdf");
+  TProfile2D * ph45 = hCharge45.Project3DProfile("yx");
+  ph45->SetAxisRange(18,34,"X");
+  ph45->SetAxisRange(45,76,"Y");
+  ph45->SetMinimum(0);
+  ph45->SetMaximum(maxz);
+  ph45->Draw("COLZ");
+  ph45->Write();
+  Can.SaveAs( OutDir+ TString(hCharge45.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge45.GetName()) +"_profile.pdf");
 
-  TProfile2D * ph04 = hCharge04.Project3DProfile("yx");
-  ph04->SetAxisRange(18,34,"X");
-  ph04->SetAxisRange(45,76,"Y");
-  ph04->SetMinimum(0);
-  ph04->SetMaximum(maxz);
-  ph04->Draw("COLZ");
-  ph04->Write();
-  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge04.GetName()) +"_profile.pdf");
+  TProfile2D * ph60 = hCharge60.Project3DProfile("yx");
+  ph60->SetAxisRange(18,34,"X");
+  ph60->SetAxisRange(45,76,"Y");
+  ph60->SetMinimum(0);
+  ph60->SetMaximum(maxz);
+  ph60->Draw("COLZ");
+  ph60->Write();
+  Can.SaveAs( OutDir+ TString(hCharge60.GetName()) +"_profile.gif");
+  Can.SaveAs( OutDir+ TString(hCharge60.GetName()) +"_profile.pdf");
 
 
 }
@@ -2035,15 +2035,15 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge02_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge02_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"Charge30_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge30_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge03_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge03_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"Charge45_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge45_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-  f << Form("<a href=\"Charge04_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge04_ROC%i_profile.gif\"></a>\n", i, i);
+  f << Form("<a href=\"Charge60_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge60_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
