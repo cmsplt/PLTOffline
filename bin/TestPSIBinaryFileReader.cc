@@ -57,7 +57,7 @@ int FindHotPixels (std::string const InFileName,
   //fclose(f);
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
 
   // Add hot pixels we are given to mask
   // Since we now do multiple iterations in the histograms in one FindHotPixels call
@@ -201,7 +201,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   BFR.SetPlaneUnderTest( plane_under_test );
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -599,7 +599,7 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
   BFR.SetTrackingAlignment(&Alignment);
 
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -716,7 +716,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   fclose(f);
 
   // Mask additional outer four layer on all diamonds
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
 
   //Add hot pixels we found to mask
   for (int iroc=0; iroc != 6; iroc++){
@@ -1573,7 +1573,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+    BFR.ReadPixelMask( "outerPixelMask.txt");
     BFR.CalculateLevels(10000 ,OutDir);
     BFR.SetPlaneUnderTest( iroc_align );
 
@@ -1757,7 +1757,7 @@ for (int ialign=0; ialign!=4;ialign++){
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
   BFR.CalculateLevels(10000 ,OutDir);
 
 
@@ -1890,7 +1890,7 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+  BFR.ReadPixelMask( "outerPixelMask.txt");
   BFR.CalculateLevels(10000 ,OutDir);
 
   // Event Loop
@@ -1922,7 +1922,7 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
     BFR.SetPlaneUnderTest( iplane );
-    BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+    BFR.ReadPixelMask( "outerPixelMask.txt");
     BFR.CalculateLevels(10000 ,OutDir);
 
     // Event Loop

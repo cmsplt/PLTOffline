@@ -47,13 +47,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     UncertsY.push_back( 0.010);
   }
   // Telescope 2
-  else if (true){
-    // UncertsX.push_back( 0.011 * 1.1 * 4.9/4. );
-    // UncertsX.push_back( 0.007 * 0.6 * 4.9/4. );
-    // UncertsX.push_back( 0.011 * 0.6* 4.9/4. );
-    // UncertsX.push_back( 0.011 * 0.6* 4.9/4. );
-    // UncertsX.push_back( 0.006 * 0.7* 4.9/4. );
-    // UncertsX.push_back( 0.011 * 0.9* 4.9/4. );
+  else if (false){
 
     UncertsX.push_back( 0.011 * 1.07599 * (4.9/4)*0.818072* (4.8/4));
     UncertsX.push_back( 0.007 * 0.664035* (4.9/4)*0.748706* (4.8/4));
@@ -71,7 +65,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     UncertsY.push_back( 0.011 * (3.26493/4) * 1.02268*(4.95337/4)* (4.26719/4));
   }
   // Telescope 1
-  else if (false){
+  else if (true){
     UncertsX.push_back( 0.013);
     UncertsX.push_back( 0.006);
     UncertsX.push_back( 0.010);

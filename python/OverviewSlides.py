@@ -4,7 +4,7 @@
 Create an overview pdf-presentation of multiple runs
 """
 
-telescope = 2
+telescope = 1
 
 if telescope == 1:
 
@@ -69,9 +69,9 @@ latex_preamble = r"""
 
 \begin{document}
 
-  \title{Plots for runs ... -- ...}
+  \title{Plots for runs 322 -- 352}
   \author{GK}
-  \date{23. June 2014}
+  \date{24. June 2014}
 
 
   \frame{\titlepage}
@@ -100,13 +100,13 @@ def section( name, file):
 
 def overview( run, roc, file):
   s = r"""\begin{figure}
-          \subfloat[$\varepsilon$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/PlaneEfficiency_NROC.pdf}}
-          \subfloat[R $<$ 150 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC_profile.pdf}}
-          \subfloat[R $<$ 300 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge30_NROC_profile.pdf}} \\
-          \subfloat[1D]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC.pdf}}
-          \subfloat[R $<$ 450 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge45_NROC_profile.pdf}}
-          \subfloat[R $<$ 600 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge60_NROC_profile.pdf}}
-          \end{figure}
+  \subfloat[$\varepsilon$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/PlaneEfficiency_NROC.pdf}}
+  \subfloat[R=150]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC_profile.pdf}}
+  \subfloat[R=300]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge30_NROC_profile.pdf}} \\
+  \subfloat[1D]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC.pdf}}
+  \subfloat[R=450]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge45_NROC_profile.pdf}}
+  \subfloat[R=600]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge60_NROC_profile.pdf}}
+  \end{figure}
           """
   s = s.replace("NROC", "ROC"+str(roc))
   s = s.replace("RUN", str(run))
