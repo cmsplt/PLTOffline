@@ -48,19 +48,27 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
   }
   // Telescope 2
   else if (true){
-    UncertsX.push_back( 0.011);
-    UncertsX.push_back( 0.007);
-    UncertsX.push_back( 0.011);
-    UncertsX.push_back( 0.011);
-    UncertsX.push_back( 0.006);
-    UncertsX.push_back( 0.011);
+    // UncertsX.push_back( 0.011 * 1.1 * 4.9/4. );
+    // UncertsX.push_back( 0.007 * 0.6 * 4.9/4. );
+    // UncertsX.push_back( 0.011 * 0.6* 4.9/4. );
+    // UncertsX.push_back( 0.011 * 0.6* 4.9/4. );
+    // UncertsX.push_back( 0.006 * 0.7* 4.9/4. );
+    // UncertsX.push_back( 0.011 * 0.9* 4.9/4. );
 
-    UncertsY.push_back( 0.011);
-    UncertsY.push_back( 0.006);
-    UncertsY.push_back( 0.011);
-    UncertsY.push_back( 0.011);
-    UncertsY.push_back( 0.006);
-    UncertsY.push_back( 0.011);
+    UncertsX.push_back( 0.011 * 1.07599 * (4.9/4)*0.818072* (4.8/4));
+    UncertsX.push_back( 0.007 * 0.664035* (4.9/4)*0.748706* (4.8/4));
+    UncertsX.push_back( 0.011 * 0.590592* (4.9/4)*0.862891* (4.8/4));
+    UncertsX.push_back( 0.011 * 0.61544* (4.9/4)*0.847775* (4.8/4));
+    UncertsX.push_back( 0.006 * 0.680986* (4.9/4)*0.749404* (4.8/4));
+    UncertsX.push_back( 0.011 * 0.890617* (4.9/4)*0.866757* (4.8/4));
+
+
+    UncertsY.push_back( 0.011 * (3.26493/4) * 1.1732 * (4.95337/4) * (4.26719/4));
+    UncertsY.push_back( 0.006 * (3.26493/4) * 0.814698*(4.95337/4)*0.670769* (4.26719/4));
+    UncertsY.push_back( 0.011 * (3.26493/4) * 0.594904*(4.95337/4)* (4.26719/4));
+    UncertsY.push_back( 0.011 * (3.26493/4) * 0.561002*(4.95337/4)* (4.26719/4));
+    UncertsY.push_back( 0.006 * (3.26493/4) * 0.685312*(4.95337/4)*0.641011* (4.26719/4)*0.689615);
+    UncertsY.push_back( 0.011 * (3.26493/4) * 1.02268*(4.95337/4)* (4.26719/4));
   }
   // Telescope 1
   else if (false){

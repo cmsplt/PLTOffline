@@ -184,7 +184,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Hit matching distance [cm]
-  float max_dr = 0.03;
+  float max_dr = 0.04;
 
 
   gStyle->SetOptStat(0);
@@ -1863,95 +1863,138 @@ for (int ialign=0; ialign!=4;ialign++){
 
   Alignment.WriteAlignmentFile("NewAlignment.dat");
 
+  return 0;
+}
 
-// PART THREE!
 
-for (int iplane=0; iplane!=6;iplane++){
+int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+{
 
-  // Prepare Residual histograms
-  // hResidual:    x=dX / y=dY
-  TH2F hResidual( Form("Residual_ROC%i",iplane),
-                  Form("Residual_ROC%i",iplane),
-                  200, -.2, .2, 200, -.2, .2 );
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber;
 
+  gStyle->SetOptStat(0);
+
+  // Start with initial Alignment (X,Y offsets and rotations set to zero)
+  PLTAlignment Alignment;
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+
+  TH1F hChi2_6_X( "", "", 100, 0, 10);
+  TH1F hChi2_6_Y( "", "", 100, 0, 10);
+
+
+  // Determine the 6-plane CHi2
+  {
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-  BFR.SetPlaneUnderTestSandwich( iplane );
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
   BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
   BFR.CalculateLevels(10000 ,OutDir);
 
-
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
     if (! (BFR.NTracks()==1))
-      continue;
+    continue;
 
     PLTTrack * Track = BFR.Track(0);
-
-    if (! BFR.Plane(iplane)->NClusters()==1)
-      continue;
-
-    float max_charge = -1;
-    float h_LX = -9999;
-    float h_LY = -9999;
-
-    for (int i=0; i != BFR.Plane(iplane)->Cluster(0)->NHits(); ++i){
-
-        PLTHit * Hit = BFR.Plane(iplane)->Cluster(0)->Hit(i);
-
-        if (Hit->Charge() > max_charge){
-          max_charge = Hit->Charge();
-          h_LX = Hit->LX();
-          h_LY = Hit->LY();
-        }
-    }
-
-    float track_TX = Track->TX(iplane);
-    float track_TY = Track->TY(iplane);
-
-    float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iplane);
-    float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iplane);
-
-    float d_LX =  (track_LX - h_LX);
-    float d_LY =  (track_LY - h_LY);
-
-
-    // dX vs dY
-    hResidual.Fill( d_LX, d_LY);
-
-
+    hChi2_6_X.Fill( Track->Chi2X() );
+    hChi2_6_Y.Fill( Track->Chi2Y() );
 
   } // end event loop
-  std::cout << "UNCERTAINTIES FOR " << iplane << std::endl;
-  std::cout << "RESIDUALS: " << hResidual.GetMean(1) << " " << hResidual.GetMean(2) << std::endl;
-  std::cout << "RESIDUALS RMS: " << hResidual.GetRMS(1) << " " << hResidual.GetRMS(2) <<std::endl;
+  } // end getting 6-plane Chi2
 
 
 
-  TCanvas Can;
-  Can.cd();
+  for (int iplane=0; iplane!=6;iplane++){
 
-  // 2D Residuals
-  hResidual.Draw("colz");
-  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + ".gif");
+    // Prepare Residual histograms
+    TH1F hChi2_5_X( "", "", 100, 0, 10);
+    TH1F hChi2_5_Y( "", "", 100, 0, 10);
 
-  // Residual X-Projection
-  gStyle->SetOptStat(1111);
-  hResidual.ProjectionX()->Draw();
-  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + "_X.gif");
+    // Determine the 5-plane CHi2
+    {
+    PSIBinaryFileReader BFR(InFileName, CalibrationList);
+    BFR.SetTrackingAlignment(&Alignment);
+    FILE* f = fopen("MyGainCal.dat", "w");
+    BFR.GetGainCal()->PrintGainCal(f);
+    fclose(f);
+    BFR.SetPlaneUnderTest( iplane );
+    BFR.ReadPixelMask( "outerPixelMask_Telescope2.txt");
+    BFR.CalculateLevels(10000 ,OutDir);
 
-  // Residual Y-Projection
-  hResidual.ProjectionY()->Draw();
-  Can.SaveAs( OutDir+"/"+TString(hResidual.GetName()) + "_Y.gif");
+    // Event Loop
+    for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
-} // end loop over planes
+      if (! (BFR.NTracks()==1))
+        continue;
+
+      PLTTrack * Track = BFR.Track(0);
+      hChi2_5_X.Fill( Track->Chi2X() );
+      hChi2_5_Y.Fill( Track->Chi2Y() );
+
+
+    } // end event loop
+    } // end getting 5-plane Chi2
+
+
+
+    TCanvas Can;
+    Can.cd();
+
+    hChi2_5_X.SetLineColor(3);
+    hChi2_5_Y.SetLineColor(3);
+
+
+    TF1 fun1("fun1","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+    TF1 fun2("fun2","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+    TF1 fun3("fun3","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+    TF1 fun4("fun4","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+
+    fun1.SetNpx(1000);
+    fun2.SetNpx(1000);
+    fun3.SetNpx(1000);
+    fun4.SetNpx(1000);
+
+    fun1.SetParameter(0, 2);
+    fun2.SetParameter(0, 2);
+    fun3.SetParameter(0, 2);
+    fun4.SetParameter(0, 2);
+
+    hChi2_5_X.Scale( 1./ hChi2_5_X.Integral());
+    hChi2_5_Y.Scale( 1./ hChi2_5_Y.Integral());
+
+    hChi2_6_X.Scale( 1./ hChi2_6_X.Integral());
+    hChi2_6_Y.Scale( 1./ hChi2_6_Y.Integral());
+
+    hChi2_5_X.Fit( &fun1 );
+    hChi2_6_X.Fit( &fun2 );
+    hChi2_5_Y.Fit( &fun3 );
+    hChi2_6_Y.Fit( &fun4 );
+
+    hChi2_5_X.Draw();
+    hChi2_6_X.Draw("SAME");
+    Can.SaveAs( OutDir+TString::Format("/FunWithChi2X_ROC%i",iplane) + ".gif");
+
+    hChi2_5_Y.Draw();
+    hChi2_6_Y.Draw("SAME");
+    Can.SaveAs( OutDir+TString::Format("/FunWithChi2Y_ROC%i",iplane) + ".gif");
+
+    std::cout << "X ROC: " << iplane << " " << fun1.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. - fun1.GetParameter(0)*2.<< std::endl;
+    std::cout << "Y ROC: " << iplane << " " << fun3.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. - fun3.GetParameter(0)*2.<< std::endl;
+
+
+
+  } // end loop over planes
 
   return 0;
 }
+
+
+
+
 
 
 
@@ -2246,8 +2289,10 @@ int main (int argc, char* argv[])
 
   int doAlign = atoi(argv[3]);
 
-  if (doAlign)
+  if (doAlign==1)
     TestPSIBinaryFileReaderAlign(InFileName, &out_f, CalibrationList, RunNumber);
+  else if (doAlign==2)
+      TestPSIBinaryFileReaderResiduals(InFileName, &out_f, CalibrationList, RunNumber);
   else
     TestPSIBinaryFileReader(InFileName, &out_f, CalibrationList, RunNumber);
 

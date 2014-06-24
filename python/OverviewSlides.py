@@ -4,33 +4,55 @@
 Create an overview pdf-presentation of multiple runs
 """
 
-# Flux in kHz
-# (taken from Steve's Spreadsheet)
-di_runs = {
-    322 : 1.6,
-    325 : 12.9,
-    327 : 130.6,
-    330 : 1167,
-    333 : 20809,
-    338 : 1137,
-    340 : 125.4,
-    343 : 10.8,
-    347 : 1.4,
-    348 : 1.5,
-    350 : 20809.2,
-    352 : 21387.3,
+telescope = 2
+
+if telescope == 1:
+
+    # Flux in kHz
+    # (taken from Steve's Spreadsheet)
+    di_runs = {
+        322 :      1.6,
+        325 :     12.9,
+        327 :    130.6,
+        330 :   1167.,
+        333 :  20809.,
+        338 :   1137.,
+        340 :    125.4,
+        343 :     10.8,
+        347 :      1.4,
+        348 :      1.5,
+        350 :  20809.2,
+        352 :  21387.3,
+        }
+
+    roc_names={
+      1:"Poly A",
+      2:"Poly D",
+      3:"s86",
+      4:"s105",
     }
 
-roc_names={
-  1:"Poly A",
-  2:"Poly D",
-  3:"s86",
-  4:"s105",
-}
-roc_name1 = "Poly A"
-roc_name2 = "Poly D"
-roc_name3 = "s86"
-roc_name4 = "s105"
+elif telescope ==2:
+    di_runs = {
+        466 :     2.,
+        467 :    18.2,
+#        468 :   151.4,
+        469 :  1313.9,
+        470 :  9445.1,
+        471 :  1269.4,
+        472 :  1272.8,
+        473 :   143.4,
+        474 :    13.6,
+        475 :     2.0,
+        476 :  9398.8,
+        478 : 22138.7
+        }
+
+    roc_names={
+      1:"Poly B",
+      2:"Poly D (2)",
+      3:"s108",
+    }
 
 latex_preamble = r"""
 \documentclass{beamer}
@@ -47,9 +69,9 @@ latex_preamble = r"""
 
 \begin{document}
 
-  \title{Plots for runs 322 -- 352}
+  \title{Plots for runs ... -- ...}
   \author{GK}
-  \date{17. June 2014}
+  \date{23. June 2014}
 
 
   \frame{\titlepage}
@@ -79,11 +101,11 @@ def section( name, file):
 def overview( run, roc, file):
   s = r"""\begin{figure}
           \subfloat[$\varepsilon$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/PlaneEfficiency_NROC.pdf}}
-          \subfloat[R $<$ 0.01 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC_profile.pdf}}
-          \subfloat[R $<$ 0.02 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge02_NROC_profile.pdf}} \\
+          \subfloat[R $<$ 150 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC_profile.pdf}}
+          \subfloat[R $<$ 300 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge30_NROC_profile.pdf}} \\
           \subfloat[1D]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge_NROC.pdf}}
-          \subfloat[R $<$ 0.03 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge03_NROC_profile.pdf}}
-          \subfloat[R $<$ 0.04 cm]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge04_NROC_profile.pdf}}
+          \subfloat[R $<$ 450 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge45_NROC_profile.pdf}}
+          \subfloat[R $<$ 600 $\mu\textrm{m}$]{\includegraphics[width = .35\textwidth]{../plots/000RUN/Charge60_NROC_profile.pdf}}
           \end{figure}
           """
   s = s.replace("NROC", "ROC"+str(roc))
@@ -197,7 +219,9 @@ f.write( latex_preamble)
 #   endframe(f)
 
 
-for roc in [1,2,3,4]:
+
+
+for roc in sorted(roc_names.keys()):
   section( roc_names[roc], f)
   for run in sorted(di_runs):
     newframe( roc_names[roc]+ ", Run {0:d}, Flux={1:3.1f} kHz".format(run, di_runs[run]), f)

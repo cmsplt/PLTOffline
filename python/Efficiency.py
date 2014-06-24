@@ -90,17 +90,17 @@ for i_run, run in enumerate(di_runs):
 
     for iroc in range(1,5):
 
-        h =  f.Get("PlaneEfficiency_ROC"+str(iroc))
-        cnt =0
-        sum =0.
-        for ibin_x in range(1, h.GetNbinsX()+2):
-            for ibin_y in range(1, h.GetNbinsY()+2):
-                if h.GetBinError(ibin_x, ibin_y)>0:
-                    sum += h.GetBinContent(ibin_x, ibin_y)
-                    cnt += 1
+        h_num  =  f.Get("PlaneEfficiency_ROC"+str(iroc))
+        h_denom =  f.Get("TracksPassing_ROC"+str(iroc))
+        num=0
+        denom=0
+        for ibin_x in range(1, h_denom.GetNbinsX()+2):
+            for ibin_y in range(1, h_denom.GetNbinsY()+2):
+                num   += h_num.GetBinContent(ibin_x, ibin_y)
+                denom += h_denom.GetBinContent(ibin_x, ibin_y)
 
-        if cnt>0:
-            eff_tr[run].append( sum/cnt)
+        if denom>0:
+            eff_tr[run].append( num/denom)
         else:
             eff_tr[run].append( -1)
 
