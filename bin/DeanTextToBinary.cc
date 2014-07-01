@@ -37,10 +37,8 @@ int DeanTextToBinary (std::string const InFileName, std::string const OutFileNam
   std::vector<PLTHit> Hits;
 
   for ( ; InFile >> Channel >> ROC >> Column >> Row >> ADC >> EventNumber; ) {
-    std::cout << EventNumber << std::endl;
     if (IsFirstEvent) {
       LastEventNumber = EventNumber;
-      std::cout << "IsFirstEvent" << std::endl;
       IsFirstEvent = false;
     }
     if (EventNumber != LastEventNumber) {

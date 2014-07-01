@@ -14,10 +14,11 @@
 #include "PLTU.h"
 
 
-int PrintTextEvents(std::string const DataFileName)
+int PrintTextEvents(std::string const DataFileName, std::string const OutFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
+  FILE* ff = fopen(OutFileName.c_str(), "w");
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
@@ -29,7 +30,8 @@ int PrintTextEvents(std::string const DataFileName)
       PLTPlane* Plane = Event.Plane(iplane);
       for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
         PLTHit* Hit = Plane->Hit(ihit);
-        printf("%2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber());
+        printf("%2i %1i %2i %2i %4i %i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber());
+        fprintf(ff, "%2i %1i %2i %2i %4i %i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber());
       }
     }
 
@@ -37,6 +39,7 @@ int PrintTextEvents(std::string const DataFileName)
   }
 
 
+  fclose(ff);
 
 
 
@@ -48,14 +51,15 @@ int PrintTextEvents(std::string const DataFileName)
 int main (int argc, char* argv[])
 {
 
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << std::endl;
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " [DataFile.dat] [OutFileName]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
+  std::string const OutFileName = argv[2];
 
-  PrintTextEvents(DataFileName);
+  PrintTextEvents(DataFileName, OutFileName);
 
   return 0;
 }

@@ -731,12 +731,11 @@ int PLTMC ()
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
 
-  FILE* ff = fopen("MyTest.txt", "w");
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 2;
-  for (int ievent = 1; ievent != NEvents; ++ievent) {
+  int const NEvents = 100;
+  for (int ievent = 1; ievent <= NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
@@ -796,7 +795,6 @@ int PLTMC ()
       n = 0x00000000;
       PLTHit* Hit = Hits[ihit];
       //printf("Channel ROC Row Col ADC: %2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Row(), Hit->Column(), Hit->ADC(), ievent);
-      fprintf(ff, "%2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), ievent);
 
       n |= (Hit->Channel() << 26);
       n |= ( (Hit->ROC() + 1) << 21);
@@ -845,7 +843,6 @@ int PLTMC ()
     Hits.clear();
   }
 
-  fclose(ff);
 
   fout.close();
 
