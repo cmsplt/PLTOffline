@@ -98,11 +98,20 @@ class PLTAlignment
     void AddToGY (int const, float);
     void AddToGZ (int const, float);
 
+    float GetErrorX(int plane){ return fErrorsX[plane];};
+    float GetErrorY(int plane){ return fErrorsY[plane];};
+
+    void SetErrorX(int plane, float val ){ fErrorsX[plane]=val;};
+    void SetErrorY(int plane, float val ){ fErrorsY[plane]=val;};  
 
 
   private:
     std::map< std::pair<int, int>, CP > fConstantMap;
     std::map<int, TelescopeAlignmentStruct> fTelescopeMap;
+
+    std::vector< float > fErrorsX;
+    std::vector< float > fErrorsY;
+
     bool fIsGood;
 
     static bool const DEBUG = false;

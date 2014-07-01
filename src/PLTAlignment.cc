@@ -6,6 +6,11 @@
 PLTAlignment::PLTAlignment ()
 {
   fIsGood = false;
+
+  for (int i=0; i != 6; i++){
+    fErrorsX.push_back( 0.015);
+    fErrorsY.push_back( 0.015);
+  }
 }
 
 
