@@ -16,7 +16,7 @@ ROOT.gStyle.SetOptStat(0)
 # Select runs
 ###############################
 
-telescope = 1
+telescope = 2
 
 if telescope == 1:
 
@@ -186,7 +186,7 @@ for iroc in range(1,5):
         else:
             gr_tr.SetMarkerStyle(21)
 
-        gr_tr.SetMarkerSize(2)
+        gr_tr.SetMarkerSize(1)
         gr_tr.SetMarkerColor(ROOT.kRed)
 
         li_grs.append(gr_si)
