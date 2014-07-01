@@ -1052,7 +1052,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
         if (iplane < 6) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
           hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
-          
+
 					if (Cluster->Charge() > 300000) {
               //printf("High Charge: %13.3E\n", Cluster->Charge());
               continue;
@@ -1543,14 +1543,14 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
 
-  for (int iroc=0;iroc!=6;iroc++){
+  for (int iroc=1;iroc!=5;iroc++){
     Alignment.AddToLX( 1, iroc, x_align[iroc] );
     Alignment.AddToLY( 1, iroc, y_align[iroc] );
     //Alignment.AddToLR( 1, iroc, r_align[iroc] );
   }
 
 
-  for (int iroc_align = 0; iroc_align != 6; ++iroc_align) {
+  for (int iroc_align = 1; iroc_align != 5; ++iroc_align) {
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
 
@@ -1703,7 +1703,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
 
 
-  for (int i=0; i!=6;i++){
+  for (int i=1; i!=5;i++){
 
     std::cout << i << " " << x_align[i] << " " << y_align[i] << " " << z_align[i] << " " << r_align[i] <<std::endl;
   }
@@ -1728,14 +1728,14 @@ std::cout << "PART TWO!!!!!" << std::endl;
 PLTAlignment Alignment;
 Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
 
-for (int iroc=0;iroc!=6;iroc++){
+for (int iroc=1;iroc!=5;iroc++){
   Alignment.AddToLX( 1, iroc, x_align[iroc] );
   Alignment.AddToLY( 1, iroc, y_align[iroc] );
   //Alignment.AddToLR( 1, iroc, r_align[iroc] );
 }
 
 
-for (int ialign=0; ialign!=4;ialign++){
+for (int ialign=1; ialign!=5;ialign++){
 
 
   float best_RMS = 99999;
@@ -1821,7 +1821,7 @@ for (int ialign=0; ialign!=4;ialign++){
 
   } // end event loop
 
-  for (int iroc=0; iroc!=6; iroc++){
+  for (int iroc=1; iroc!=5; iroc++){
   std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
@@ -1880,49 +1880,24 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
 
-  TH1F hChi2_6_X( "", "", 100, 0, 10);
-  TH1F hChi2_6_Y( "", "", 100, 0, 10);
+  for (int ires=0; ires != 30; ires++){
 
 
-  // Determine the 6-plane CHi2
-  {
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  FILE* f = fopen("MyGainCal.dat", "w");
-  BFR.GetGainCal()->PrintGainCal(f);
-  fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask.txt");
-  BFR.CalculateLevels(10000 ,OutDir);
+    TH1F hChi2_6_X( "", "", 100, 0, 10);
+    TH1F hChi2_6_Y( "", "", 100, 0, 10);
 
-  // Event Loop
-  for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+    float chi2_6_x;
+    float chi2_6_y;
+    std::vector<float> chi2_5_x;
+    std::vector<float> chi2_5_y;
 
-    if (! (BFR.NTracks()==1))
-    continue;
-
-    PLTTrack * Track = BFR.Track(0);
-    hChi2_6_X.Fill( Track->Chi2X() );
-    hChi2_6_Y.Fill( Track->Chi2Y() );
-
-  } // end event loop
-  } // end getting 6-plane Chi2
-
-
-
-  for (int iplane=0; iplane!=6;iplane++){
-
-    // Prepare Residual histograms
-    TH1F hChi2_5_X( "", "", 100, 0, 10);
-    TH1F hChi2_5_Y( "", "", 100, 0, 10);
-
-    // Determine the 5-plane CHi2
+    // Determine the 6-plane CHi2
     {
     PSIBinaryFileReader BFR(InFileName, CalibrationList);
     BFR.SetTrackingAlignment(&Alignment);
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.SetPlaneUnderTest( iplane );
     BFR.ReadPixelMask( "outerPixelMask.txt");
     BFR.CalculateLevels(10000 ,OutDir);
 
@@ -1930,65 +1905,145 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
       if (! (BFR.NTracks()==1))
-        continue;
+      continue;
 
       PLTTrack * Track = BFR.Track(0);
-      hChi2_5_X.Fill( Track->Chi2X() );
-      hChi2_5_Y.Fill( Track->Chi2Y() );
-
+      hChi2_6_X.Fill( Track->Chi2X() );
+      hChi2_6_Y.Fill( Track->Chi2Y() );
 
     } // end event loop
-    } // end getting 5-plane Chi2
+    } // end getting 6-plane Chi2
 
 
 
-    TCanvas Can;
-    Can.cd();
+    for (int iplane=0; iplane!=6;iplane++){
 
-    hChi2_5_X.SetLineColor(3);
-    hChi2_5_Y.SetLineColor(3);
+      // Prepare Residual histograms
+      TH1F hChi2_5_X( "", "", 100, 0, 10);
+      TH1F hChi2_5_Y( "", "", 100, 0, 10);
+
+      // Determine the 5-plane CHi2
+      {
+      PSIBinaryFileReader BFR(InFileName, CalibrationList);
+      BFR.SetTrackingAlignment(&Alignment);
+      FILE* f = fopen("MyGainCal.dat", "w");
+      BFR.GetGainCal()->PrintGainCal(f);
+      fclose(f);
+      BFR.SetPlaneUnderTest( iplane );
+      BFR.ReadPixelMask( "outerPixelMask.txt");
+      BFR.CalculateLevels(10000 ,OutDir);
+
+      // Event Loop
+      for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+        if (! (BFR.NTracks()==1))
+          continue;
+
+        PLTTrack * Track = BFR.Track(0);
+        hChi2_5_X.Fill( Track->Chi2X() );
+        hChi2_5_Y.Fill( Track->Chi2Y() );
 
 
-    TF1 fun1("fun1","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
-    TF1 fun2("fun2","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
-    TF1 fun3("fun3","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
-    TF1 fun4("fun4","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
-
-    fun1.SetNpx(1000);
-    fun2.SetNpx(1000);
-    fun3.SetNpx(1000);
-    fun4.SetNpx(1000);
-
-    fun1.SetParameter(0, 2);
-    fun2.SetParameter(0, 2);
-    fun3.SetParameter(0, 2);
-    fun4.SetParameter(0, 2);
-
-    hChi2_5_X.Scale( 1./ hChi2_5_X.Integral());
-    hChi2_5_Y.Scale( 1./ hChi2_5_Y.Integral());
-
-    hChi2_6_X.Scale( 1./ hChi2_6_X.Integral());
-    hChi2_6_Y.Scale( 1./ hChi2_6_Y.Integral());
-
-    hChi2_5_X.Fit( &fun1 );
-    hChi2_6_X.Fit( &fun2 );
-    hChi2_5_Y.Fit( &fun3 );
-    hChi2_6_Y.Fit( &fun4 );
-
-    hChi2_5_X.Draw();
-    hChi2_6_X.Draw("SAME");
-    Can.SaveAs( OutDir+TString::Format("/FunWithChi2X_ROC%i",iplane) + ".gif");
-
-    hChi2_5_Y.Draw();
-    hChi2_6_Y.Draw("SAME");
-    Can.SaveAs( OutDir+TString::Format("/FunWithChi2Y_ROC%i",iplane) + ".gif");
-
-    std::cout << "X ROC: " << iplane << " " << fun1.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. - fun1.GetParameter(0)*2.<< std::endl;
-    std::cout << "Y ROC: " << iplane << " " << fun3.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. - fun3.GetParameter(0)*2.<< std::endl;
+      } // end event loop
+      } // end getting 5-plane Chi2
 
 
 
-  } // end loop over planes
+      TCanvas Can;
+      Can.cd();
+
+      hChi2_5_X.SetLineColor(3);
+      hChi2_5_Y.SetLineColor(3);
+
+
+      TF1 fun1("fun1","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+      TF1 fun2("fun2","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+      TF1 fun3("fun3","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+      TF1 fun4("fun4","TMath::GammaDist(x, [0], 0, 2)/10.", 0, 10);
+
+      fun1.SetNpx(1000);
+      fun2.SetNpx(1000);
+      fun3.SetNpx(1000);
+      fun4.SetNpx(1000);
+
+      fun1.SetParameter(0, 2);
+      fun2.SetParameter(0, 2);
+      fun3.SetParameter(0, 2);
+      fun4.SetParameter(0, 2);
+
+      hChi2_5_X.Scale( 1./ hChi2_5_X.Integral());
+      hChi2_5_Y.Scale( 1./ hChi2_5_Y.Integral());
+
+      hChi2_6_X.Scale( 1./ hChi2_6_X.Integral());
+      hChi2_6_Y.Scale( 1./ hChi2_6_Y.Integral());
+
+      hChi2_5_X.Fit( &fun1 );
+      hChi2_6_X.Fit( &fun2 );
+      hChi2_5_Y.Fit( &fun3 );
+      hChi2_6_Y.Fit( &fun4 );
+
+      hChi2_5_X.Draw();
+      hChi2_6_X.Draw("SAME");
+      Can.SaveAs( OutDir+TString::Format("/FunWithChi2X_ROC%i",iplane) + ".gif");
+
+      hChi2_5_Y.Draw();
+      hChi2_6_Y.Draw("SAME");
+      Can.SaveAs( OutDir+TString::Format("/FunWithChi2Y_ROC%i",iplane) + ".gif");
+
+//      std::cout << "X ROC: " << iplane << " " << fun1.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. - fun1.GetParameter(0)*2.<< std::endl;
+//      std::cout << "Y ROC: " << iplane << " " << fun3.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. - fun3.GetParameter(0)*2.<< std::endl;
+
+      chi2_5_x.push_back( fun1.GetParameter(0)*2 );
+      chi2_5_y.push_back( fun3.GetParameter(0)*2 );
+
+      chi2_6_x = fun2.GetParameter(0)*2 ;
+      chi2_6_y = fun4.GetParameter(0)*2 ;
+
+    } // end loop over planes
+
+
+    if (true){
+
+      float max_dchi2_x=-1;
+      float max_dchi2_y=-1;
+      int imax_x=-1;
+      int imax_y=-1;
+
+      std::cout << "SIX PLANES: " << chi2_6_x << " " << chi2_6_y << std::endl;
+
+      for (int ic=0; ic!=6; ic++){
+
+          std::cout << "X ROC: " << ic << " " << chi2_5_x[ic] <<std::endl;
+          std::cout << "Y ROC: " << ic << " " << chi2_5_y[ic] <<std::endl;
+
+          if (fabs(1-(chi2_6_x-chi2_5_x[ic])) > max_dchi2_y ){
+            imax_x      = ic;
+            max_dchi2_x = fabs(1-(chi2_6_x-chi2_5_x[ic]));
+          }
+          if (fabs(1-(chi2_6_y-chi2_5_y[ic])) > max_dchi2_y ){
+            imax_y = ic;
+            max_dchi2_y = fabs(1-(chi2_6_y-chi2_5_y[ic]));
+          }
+
+
+      }
+
+      Alignment.SetErrorX(imax_x, Alignment.GetErrorX(imax_x)*(chi2_6_x-chi2_5_x[imax_x]));
+      Alignment.SetErrorY(imax_y, Alignment.GetErrorY(imax_y)*(chi2_6_y-chi2_5_y[imax_y]));
+
+
+      for (int ic=0; ic!=6; ic++){
+        Alignment.SetErrorX(ic, Alignment.GetErrorX(ic)*(chi2_6_x/4.));
+        Alignment.SetErrorY(ic, Alignment.GetErrorY(ic)*(chi2_6_y/4.));
+
+        std::cout << "X ROC RES: " << ic << " " << Alignment.GetErrorX(ic) <<std::endl;
+        std::cout << "Y ROC RES: " << ic << " " << Alignment.GetErrorY(ic) <<std::endl;
+      }
+
+
+    }
+
+  } // end of residual finding loop
 
   return 0;
 }
