@@ -330,7 +330,6 @@ void TestPlaneEfficiency (std::string const InFileName,
        ipix++){
 
          // Decode the integer
-         int ch   = *ipix /  100000;
          int roc  = (*ipix % 100000) / 10000;
          int col  = (*ipix % 10000 ) / 100;
          int row  = (*ipix % 100);
@@ -1324,7 +1323,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 //    lRatio.SetTextAlign(11);
 //    lRatio.SetFillStyle(0);
 //    lRatio.SetBorderSize(0);
-		lPulseHeight.AddEntry( "oneovertwo", TString::Format("%8.0f", oneovertwo[iroc], "")+" 1pix/2pix");
+		lPulseHeight.AddEntry( "oneovertwo", TString::Format("%8.0f", oneovertwo[iroc])+" 1pix/2pix");
 //    lRatio.AddEntry( "oneoverthree", TString::Format("%8.0f", oneoverthree, "")+" 1 over 3");
 //    lRatio.AddEntry( "twooverthree", TString::Format("%8.0f", twooverthree, "")+" 2 over 3");
 //    lRatio.Draw("same");
@@ -1515,9 +1514,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
 	TString const PlotsDir = "plots/";
 	TString const OutDir = PlotsDir + RunNumber;
-  // Repeat up to 100 times. Cancel if the squared sum of residuals
-  // improves by less than 0.01%
-  int NMaxAlignmentIterations = 100;
 
   gStyle->SetOptStat(0);
 
@@ -1554,8 +1550,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
 
-    float best_RMS = 99999;
-
     // Prepare Residual histograms
     // hResidual:    x=dX / y=dY
     // hResidualXdY: x=X  / y=dY
@@ -1564,10 +1558,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     std::vector< TH2F > hResidualXdY;
     std::vector< TH2F > hResidualYdX;
 
-    // Keep track of the squarted sum of residuals and use it as exit
-    // criterion
-    double sumResSquareCurrent = 0.;
-    double sumResSquareLast    = -1;
 
     PSIBinaryFileReader BFR(InFileName, CalibrationList);
     BFR.SetTrackingAlignment(&Alignment);
@@ -1591,9 +1581,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
       hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
                                      Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
     }
-
-    sumResSquareCurrent = 0;
-
 
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -1659,8 +1646,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
   std::cout << "Before: " << Alignment.LX(1,iroc_align) << std::endl;
 
-  float angle = atan(hResidualXdY[iroc_align].GetCorrelationFactor()) ;
-
   x_align[iroc_align] +=  hResidual[iroc_align].GetMean(1);
   y_align[iroc_align] +=  hResidual[iroc_align].GetMean(2);
   r_align[iroc_align] +=  hResidualXdY[iroc_align].GetCorrelationFactor();
@@ -1692,15 +1677,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
   // 2D Residuals Y/dX
   hResidualYdX[iroc_align].Draw("colz");
   Can.SaveAs( OutDir+"/"+TString(hResidualYdX[iroc_align].GetName()) + ".gif");
-
-
-
-  float new_RMS = sqrt(hResidual[iroc_align].GetRMS(1)*hResidual[iroc_align].GetRMS(1)+
-                       hResidual[iroc_align].GetRMS(2)*hResidual[iroc_align].GetRMS(2));
-
-  //std::cout << "New RMS: " << iroc_align << " " << lz << " " << new_RMS << std::endl;
-
-
 
 
   for (int i=1; i!=5;i++){
@@ -1737,9 +1713,6 @@ for (int iroc=1;iroc!=5;iroc++){
 
 for (int ialign=1; ialign!=5;ialign++){
 
-
-  float best_RMS = 99999;
-
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
   // hResidualXdY: x=X  / y=dY
@@ -1747,11 +1720,6 @@ for (int ialign=1; ialign!=5;ialign++){
   std::vector< TH2F > hResidual;
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
-
-  // Keep track of the squarted sum of residuals and use it as exit
-  // criterion
-  double sumResSquareCurrent = 0.;
-  double sumResSquareLast    = -1;
 
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
@@ -1774,9 +1742,6 @@ for (int ialign=1; ialign!=5;ialign++){
     hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
                                    Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
   }
-
-  sumResSquareCurrent = 0;
-
 
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
