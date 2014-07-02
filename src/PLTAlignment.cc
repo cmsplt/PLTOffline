@@ -596,3 +596,20 @@ void PLTAlignment::AddToGZ (int const ch, float val)
   fConstantMap[ std::make_pair<int, int>(ch, 1) ].GZ = oldval+val;
   fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
 }
+
+void PLTAlignment::SetErrorsTelescope1(){
+
+  SetErrorX( 0, 0.0140731);
+  SetErrorX( 1, 0.00361882);
+  SetErrorX( 2, 0.00918365);
+  SetErrorX( 3, 0.00958796);
+  SetErrorX( 4, 0.00507182);
+  SetErrorX( 5, 0.0145948);
+
+  SetErrorY( 0, 0.0150418);
+  SetErrorY( 1, 0.00300886);
+  SetErrorY( 2, 0.00657946);
+  SetErrorY( 3, 0.00800457);
+  SetErrorY( 4, 0.0038472);
+  SetErrorY( 5, 0.0150418);
+}

@@ -45,7 +45,6 @@ class PLTAlignment
     std::pair<int, int> PXYfromLXY (std::pair<float, float> const&);
     std::pair<float, float> PXYDistFromLXYDist (std::pair<float, float> const&);
 
-
     // GtoT
 
     // Need a function for G->T, G->L
@@ -102,8 +101,9 @@ class PLTAlignment
     float GetErrorY(int plane){ return fErrorsY[plane];};
 
     void SetErrorX(int plane, float val ){ fErrorsX[plane]=val;};
-    void SetErrorY(int plane, float val ){ fErrorsY[plane]=val;};  
+    void SetErrorY(int plane, float val ){ fErrorsY[plane]=val;};
 
+    void SetErrorsTelescope1();
 
   private:
     std::map< std::pair<int, int>, CP > fConstantMap;
