@@ -245,7 +245,8 @@ void TestPlaneEfficiency (std::string const InFileName,
                           std::string const CalibrationList,
                           TString const RunNumber,
                           std::vector< std::vector< std::vector<int> > > & hot_pixels,
-                          int plane_under_test)
+                          int plane_under_test,
+                          int n_events)
 {
   /* TestPlaneEfficiency
 
@@ -291,6 +292,24 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
   TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
+  // Also have a second set - sliced according to event number
+  int n_slices = 5;
+  int slice_size = n_events/n_slices;
+  std::vector<TH2F> hOccupancyNum_eventSlices;
+  std::vector<TH2F> hOccupancyDenom_eventSlices;
+  for (int i=0; i != n_slices; i++){
+
+    TH2F h_n = TH2F(   Form("Numerator_ROC%i_slice%i",plane_under_test,i), "",   52, 0, 52, 80, 0, 80);
+    TH2F h_d = TH2F(   Form("Denominator_ROC%i_slice%i",plane_under_test,i), "",   52, 0, 52, 80, 0, 80);
+
+    hOccupancyNum_eventSlices.push_back( h_n );
+    hOccupancyDenom_eventSlices.push_back( h_d );
+  }
+
+
+
+
+
   TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
   TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Total Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
   TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Total Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
@@ -325,6 +344,10 @@ void TestPlaneEfficiency (std::string const InFileName,
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
+    int i_slice = ievent/slice_size;
+    if (i_slice==n_slices)
+        i_slice--;
+
     // require exactly one track
     if (BFR.NTracks() == 1){
 
@@ -351,6 +374,7 @@ void TestPlaneEfficiency (std::string const InFileName,
       int py = Alignment.PYfromLY( ly );
 
       hOccupancyDenom.Fill( px, py );
+      hOccupancyDenom_eventSlices[i_slice].Fill(px, py);
 
       // Now look for a close hit in the plane under test
       PLTPlane* Plane = BFR.Plane( plane_under_test );
@@ -418,9 +442,10 @@ void TestPlaneEfficiency (std::string const InFileName,
        hMaxCharge60.Fill( px, py, max60);
 
        // if there was at least one match: fill denominator
-       if (matched)
+       if (matched){
          hOccupancyNum.Fill( px, py );
-
+         hOccupancyNum_eventSlices[i_slice].Fill(px, py);
+       }
 
        // loop over all clusters and check distance to intersection
        for (int ic = 0; ic != Plane->NClusters(); ic++){
@@ -506,6 +531,11 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Prepare drawing
   TCanvas Can;
   Can.cd();
+
+  for (int i=0; i!= n_slices; i++){
+    hOccupancyNum_eventSlices[i].Write();
+    hOccupancyDenom_eventSlices[i].Write();  
+  }
 
   hOccupancyNum.SetMinimum(0);
   hOccupancyNum.SetAxisRange(12,38,"X");
@@ -638,7 +668,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
 
-void TestPlaneEfficiencySilicon (std::string const InFileName,
+int TestPlaneEfficiencySilicon (std::string const InFileName,
                                  TFile * out_f,
                                  std::string const CalibrationList,
                                  TString const RunNumber,
@@ -687,9 +717,11 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
     denoms[i] = 0;
   }
 
-
+  int n_events = 0;
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
+    n_events++;
 
     // print progress
     if (ievent % 10000 == 0) {
@@ -735,6 +767,7 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
 
   }
 
+  return n_events;
 }
 
 
@@ -756,12 +789,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   // Look for hot pixels
   FindHotPixels(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
 
-  TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+  int n_events = TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
 
 
   // Study single planes
   for (int iplane=1; iplane!=5;iplane++)
-    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane);
+    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane,n_events);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
