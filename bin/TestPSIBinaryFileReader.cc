@@ -301,6 +301,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH3F hMaxCharge45       = TH3F( Form("MaxCharge45_ROC%i", plane_under_test), "Max Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
   TH3F hMaxCharge60       = TH3F( Form("MaxCharge60_ROC%i", plane_under_test), "Max Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
 
+  TH3F hClusterSize       = TH3F( Form("ClusterSize_ROC%i", plane_under_test), "Cluster Size", 52,0,52, 80,0,80,11,-0.5,10.5);
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
@@ -420,6 +421,18 @@ void TestPlaneEfficiency (std::string const InFileName,
        if (matched)
          hOccupancyNum.Fill( px, py );
 
+
+       // loop over all clusters and check distance to intersection
+       for (int ic = 0; ic != Plane->NClusters(); ic++){
+              float dtx = (tx - Plane->Cluster(ic)->TX());
+              float dty = (ty - Plane->Cluster(ic)->TY());
+              float dtr = sqrt( dtx*dtx + dty*dty );
+
+              if (dtr < max_dr)
+                hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
+
+        } // end of loop over clusters
+
     } // end of having one track
   } // End of Event Loop
 
@@ -478,6 +491,8 @@ void TestPlaneEfficiency (std::string const InFileName,
                      hMaxCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                      hMaxCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                      hMaxCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+
+                     hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                    }
 
                  }
@@ -614,6 +629,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &hMaxCharge30, &Can, maxz, OutDir);
   Write2DCharge( &hMaxCharge45, &Can, maxz, OutDir);
   Write2DCharge( &hMaxCharge60, &Can, maxz, OutDir);
+
+  Write2DCharge( &hClusterSize, &Can, 7, OutDir);
 
 
 
@@ -2244,12 +2261,18 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"ClusterSize_ROC%i_profile.gif\"><img width=\"150\" src=\"ClusterSize_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
     f << Form("<a href=\"MaxCharge_ROC%i.gif\"><img width=\"150\" src=\"MaxCharge_ROC%i.gif\"></a>\n", i, i);
     f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
+
 
 
   for (int i = 1; i != 5; i++)
