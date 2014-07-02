@@ -42,6 +42,7 @@ PlotThresholds
 PlotTrims
 PrintBXTracks
 PrintEventNumbers
+PrintTextEvents
 ProcessHistograms
 PulseHeights
 PulseHeightsSignalTrack
