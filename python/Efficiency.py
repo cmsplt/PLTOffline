@@ -16,7 +16,7 @@ ROOT.gStyle.SetOptStat(0)
 # Select runs
 ###############################
 
-telescope = 2
+telescope = 1
 
 if telescope == 1:
 

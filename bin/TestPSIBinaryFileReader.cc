@@ -27,6 +27,80 @@
 
 void WriteHTML (TString const, TString const);
 
+void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
+  TProfile2D * ph = h->Project3DProfile("yx");
+  ph->SetAxisRange(18,34,"X");
+  ph->SetAxisRange(45,76,"Y");
+  ph->SetMinimum(0);
+  ph->SetMaximum(maxz);
+  ph->Draw("COLZ");
+  ph->Write();
+  Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.gif");
+  Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.pdf");
+}
+
+void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
+
+  if (hs.size()!=4){
+    std::cerr << "Write1DCharge needs exactly four histograms!" << std::endl;
+    return;
+  }
+
+  TH1* h15 = hs[0]->Project3D("Z");
+  TH1* h30 = hs[1]->Project3D("Z");
+  TH1* h45 = hs[2]->Project3D("Z");
+  TH1* h60 = hs[3]->Project3D("Z");
+
+  float hmax = 1.1 * std::max( h15->GetMaximum(),
+                       std::max( h30->GetMaximum(),
+                         std::max( h45->GetMaximum(),
+                           h60->GetMaximum() )));
+
+  h15->SetAxisRange(2000,50000,"X");
+  h30->SetAxisRange(2000,50000,"X");
+  h45->SetAxisRange(2000,50000,"X");
+  h60->SetAxisRange(2000,50000,"X");
+
+  h15->SetAxisRange(0,hmax,"Y");
+  h30->SetAxisRange(0,hmax,"Y");
+  h45->SetAxisRange(0,hmax,"Y");
+  h60->SetAxisRange(0,hmax,"Y");
+
+
+  h15->SetLineColor(1);
+  h30->SetLineColor(2);
+  h45->SetLineColor(3);
+  h60->SetLineColor(4);
+
+  h15->SetLineWidth(2);
+  h30->SetLineWidth(2);
+  h45->SetLineWidth(2);
+  h60->SetLineWidth(2);
+
+  h15->GetXaxis()->SetTitle("Charge (Electrons)");
+  h15->GetYaxis()->SetTitle("Number of Hits");
+
+  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.05);
+  Leg.AddEntry(h15, "#Delta R < 150 #mu m", "l");
+  Leg.AddEntry(h30, "#Delta R < 300 #mu m", "l");
+  Leg.AddEntry(h45, "#Delta R < 450 #mu m", "l");
+  Leg.AddEntry(h60, "#Delta R < 600 #mu m", "l");
+
+  h15->Draw();
+  h30->Draw("SAME");
+  h45->Draw("SAME");
+  h60->Draw("SAME");
+  Leg.Draw();
+
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".pdf");
+
+}
+
+
 int FindHotPixels (std::string const InFileName,
                    TFile * out_f,
                    std::string const CalibrationList,
@@ -50,7 +124,7 @@ int FindHotPixels (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-
+  Alignment.SetErrorsTelescope1();
 
   //FILE* f = fopen("MyGainCal.dat", "w");
   //BFR.GetGainCal()->PrintGainCal(f);
@@ -186,7 +260,6 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Track/Hit matching distance [cm]
   float max_dr = 0.04;
 
-
   gStyle->SetOptStat(0);
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
@@ -194,6 +267,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -217,10 +291,15 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
   TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
-  TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Mean Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Mean Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Mean Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge60       = TH3F( Form("Charge60_ROC%i", plane_under_test), "Mean Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Total Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Total Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge60       = TH3F( Form("Charge60_ROC%i", plane_under_test), "Total Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
+
+  TH3F hMaxCharge15       = TH3F( Form("MaxCharge_ROC%i", plane_under_test),   "Max Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge30       = TH3F( Form("MaxCharge30_ROC%i", plane_under_test), "Max Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge45       = TH3F( Form("MaxCharge45_ROC%i", plane_under_test), "Max Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge60       = TH3F( Form("MaxCharge60_ROC%i", plane_under_test), "Max Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
 
 
   TH1F hdtx = TH1F( Form("SinglePlaneTestDX_ROC%i",plane_under_test),   "SinglePlaneTest_DX",   100, -0.2, 0.2 );
@@ -281,6 +360,11 @@ void TestPlaneEfficiency (std::string const InFileName,
       float sum45 = 0;
       float sum60 = 0;
 
+      float max15 = 0;
+      float max30 = 0;
+      float max45 = 0;
+      float max60 = 0;
+
       // loop over all hits and check distance to intersection
       for (int ih = 0; ih != Plane->NHits(); ih++){
              float dtx = (tx - Plane->Hit(ih)->TX());
@@ -291,17 +375,31 @@ void TestPlaneEfficiency (std::string const InFileName,
              hdty.Fill( dty );
              hdtr.Fill( dtr );
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.015)
-               sum15 += Plane->Hit(ih)->Charge();
+             float charge = Plane->Hit(ih)->Charge();
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.03)
-               sum30 += Plane->Hit(ih)->Charge();
+             if (sqrt( dtx*dtx + dty*dty ) < 0.015){
+               sum15 += charge;
+               if (charge > max15)
+                 max15 = charge;
+             }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.045)
-               sum45 += Plane->Hit(ih)->Charge();
+             if (sqrt( dtx*dtx + dty*dty ) < 0.03){
+               sum30 += charge;
+               if (charge > max30)
+                 max30 = charge;
+             }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.06)
-               sum60 += Plane->Hit(ih)->Charge();
+             if (sqrt( dtx*dtx + dty*dty ) < 0.045){
+               sum45 += charge;
+               if (charge > max45)
+                  max45 = charge;
+             }
+
+             if (sqrt( dtx*dtx + dty*dty ) < 0.06){
+               sum60 += charge;
+               if (charge > max60)
+                 max60 = charge;
+             }
 
              if (sqrt( dtx*dtx + dty*dty ) < max_dr)
                matched=true;
@@ -313,6 +411,11 @@ void TestPlaneEfficiency (std::string const InFileName,
        hCharge45.Fill( px, py, sum45);
        hCharge60.Fill( px, py, sum60);
 
+       hMaxCharge15.Fill( px, py, max15);
+       hMaxCharge30.Fill( px, py, max30);
+       hMaxCharge45.Fill( px, py, max45);
+       hMaxCharge60.Fill( px, py, max60);
+
        // if there was at least one match: fill denominator
        if (matched)
          hOccupancyNum.Fill( px, py );
@@ -323,6 +426,8 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   // Remove masked areas from Occupancy Histograms
   const std::set<int> * pixelMask = BFR.GetPixelMask();
+
+  std::cout << "Got PixelMask: "<<pixelMask->size() <<std::endl;
 
   // Loop over all masked pixels
   for (std::set<int>::const_iterator ipix = pixelMask->begin();
@@ -342,6 +447,8 @@ void TestPlaneEfficiency (std::string const InFileName,
              float masked_lx = Alignment.PXtoLX( col);
              float masked_ly = Alignment.PYtoLY( row);
 
+             //std::cout << col << " " << row << " " << masked_lx << " " << masked_ly << std::endl;
+
              // Loop over the TH2
              for (int ibin_x = 1; ibin_x != hOccupancyNum.GetNbinsX()+2; ibin_x++){
                for (int ibin_y = 1; ibin_y != hOccupancyNum.GetNbinsY()+2; ibin_y++){
@@ -352,6 +459,8 @@ void TestPlaneEfficiency (std::string const InFileName,
 
                  float lx = Alignment.PXtoLX( px);
                  float ly = Alignment.PYtoLY( py);
+
+                 //std::cout << px << " " << py << " " << lx << " " << ly;
 
                  // And check if they are within matching-distance of a masked pixel
                  if (sqrt( (lx-masked_lx)*(lx-masked_lx)+(ly-masked_ly)*(ly-masked_ly) ) < max_dr){
@@ -364,9 +473,15 @@ void TestPlaneEfficiency (std::string const InFileName,
                      hCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                      hCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                      hCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+
+                     hMaxCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
                    }
 
                  }
+
                }
              }
         }
@@ -378,8 +493,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.cd();
 
   hOccupancyNum.SetMinimum(0);
-  hOccupancyNum.SetAxisRange(18,34,"X");
-  hOccupancyNum.SetAxisRange(45,76,"Y");
+  hOccupancyNum.SetAxisRange(12,38,"X");
+  hOccupancyNum.SetAxisRange(39,80,"Y");
   hOccupancyNum.Draw("colz");
   hOccupancyNum.Write();
 
@@ -390,10 +505,10 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+TString(hOccupancyDenom.GetName()) + ".pdf");
 
   hOccupancyDenom.SetMinimum(0);
-  hOccupancyNum.SetAxisRange(18,34,"X");
-  hOccupancyNum.SetAxisRange(45,76,"Y");
-  hOccupancyDenom.SetAxisRange(18,34,"X");
-  hOccupancyDenom.SetAxisRange(45,76,"Y");
+  hOccupancyNum.SetAxisRange(12,38,"X");
+  hOccupancyNum.SetAxisRange(39,80,"Y");
+  hOccupancyDenom.SetAxisRange(12,38,"X");
+  hOccupancyDenom.SetAxisRange(39,80,"Y");
 
   hOccupancyDenom.Draw("colz");
   hOccupancyDenom.Write();
@@ -465,56 +580,20 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".pdf");
 
 
-  TH1* h15 = hCharge15.Project3D("Z");
-  TH1* h30 = hCharge30.Project3D("Z");
-  TH1* h45 = hCharge45.Project3D("Z");
-  TH1* h60 = hCharge60.Project3D("Z");
+  std::vector <TH3*> hs_mean_charge;
+  hs_mean_charge.push_back( &hCharge15 );
+  hs_mean_charge.push_back( &hCharge30 );
+  hs_mean_charge.push_back( &hCharge45 );
+  hs_mean_charge.push_back( &hCharge60 );
+  Write1DCharge( hs_mean_charge, &Can, OutDir);
 
-  float hmax = 1.1 * std::max( h15->GetMaximum(),
-                 std::max( h30->GetMaximum(),
-                  std::max( h45->GetMaximum(), h60->GetMaximum() )));
+  std::vector <TH3*> hs_max_charge;
+  hs_max_charge.push_back( &hMaxCharge15 );
+  hs_max_charge.push_back( &hMaxCharge30 );
+  hs_max_charge.push_back( &hMaxCharge45 );
+  hs_max_charge.push_back( &hMaxCharge60 );
+  Write1DCharge( hs_max_charge, &Can, OutDir);
 
-
-  h15->SetAxisRange(0,hmax,"Y");
-  h30->SetAxisRange(0,hmax,"Y");
-  h45->SetAxisRange(0,hmax,"Y");
-  h60->SetAxisRange(0,hmax,"Y");
-
-  h15->SetLineColor(1);
-  h30->SetLineColor(2);
-  h45->SetLineColor(3);
-  h60->SetLineColor(4);
-
-  h15->SetLineWidth(2);
-  h30->SetLineWidth(2);
-  h45->SetLineWidth(2);
-  h60->SetLineWidth(2);
-
-  h15->GetXaxis()->SetTitle("Charge (Electrons)");
-  h15->GetYaxis()->SetTitle("Number of Hits");
-
-  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
-  Leg.SetFillColor(0);
-  Leg.SetBorderSize(0);
-  Leg.SetTextSize(0.05);
-  Leg.AddEntry(h15, "#Delta R < 150 #mu m", "l");
-  Leg.AddEntry(h30, "#Delta R < 300 #mu m", "l");
-  Leg.AddEntry(h45, "#Delta R < 450 #mu m", "l");
-  Leg.AddEntry(h60, "#Delta R < 600 #mu m", "l");
-
-  h15->Draw();
-  h30->Draw("SAME");
-  h45->Draw("SAME");
-  h60->Draw("SAME");
-  Leg.Draw();
-
-  h15->Write();
-  h30->Write();
-  h45->Write();
-  h60->Write();
-
-  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +".gif");
-  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +".pdf");
 
   float maxz;
   if (plane_under_test==1)
@@ -526,46 +605,16 @@ void TestPlaneEfficiency (std::string const InFileName,
   if (plane_under_test==4)
     maxz = 50000;
 
+  Write2DCharge( &hCharge15, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge30, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge45, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge60, &Can, maxz, OutDir);
 
-  TProfile2D * ph15 = hCharge15.Project3DProfile("yx");
-  ph15->SetAxisRange(18,34,"X");
-  ph15->SetAxisRange(45,76,"Y");
-  ph15->SetMinimum(0);
-  ph15->SetMaximum(maxz);
-  ph15->Draw("COLZ");
-  ph15->Write();
-  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge15.GetName()) +"_profile.pdf");
+  Write2DCharge( &hMaxCharge15, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge30, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge45, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge60, &Can, maxz, OutDir);
 
-  TProfile2D * ph30 = hCharge30.Project3DProfile("yx");
-  ph30->SetAxisRange(18,34,"X");
-  ph30->SetAxisRange(45,76,"Y");
-  ph30->SetMinimum(0);
-  ph30->SetMaximum(maxz);
-  ph30->Draw("COLZ");
-  ph30->Write();
-  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge30.GetName()) +"_profile.pdf");
-
-  TProfile2D * ph45 = hCharge45.Project3DProfile("yx");
-  ph45->SetAxisRange(18,34,"X");
-  ph45->SetAxisRange(45,76,"Y");
-  ph45->SetMinimum(0);
-  ph45->SetMaximum(maxz);
-  ph45->Draw("COLZ");
-  ph45->Write();
-  Can.SaveAs( OutDir+ TString(hCharge45.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge45.GetName()) +"_profile.pdf");
-
-  TProfile2D * ph60 = hCharge60.Project3DProfile("yx");
-  ph60->SetAxisRange(18,34,"X");
-  ph60->SetAxisRange(45,76,"Y");
-  ph60->SetMinimum(0);
-  ph60->SetMaximum(maxz);
-  ph60->Draw("COLZ");
-  ph60->Write();
-  Can.SaveAs( OutDir+ TString(hCharge60.GetName()) +"_profile.gif");
-  Can.SaveAs( OutDir+ TString(hCharge60.GetName()) +"_profile.pdf");
 
 
 }
@@ -592,13 +641,15 @@ void TestPlaneEfficiencySilicon (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
 
+
   // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask( "outerPixelMask_forSiEff.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -705,6 +756,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -1211,6 +1263,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
     // Draw Occupancy histograms
     hOccupancy[iroc].SetMinimum(0);
+    hOccupancy[iroc].SetAxisRange(12,38,"X");
+    hOccupancy[iroc].SetAxisRange(39,80,"Y");
     hOccupancy[iroc].Draw("colz");
     Can.SaveAs( OutDir+TString(hOccupancy[iroc].GetName()) + ".gif");
     hOccupancy[iroc].Write();
@@ -1833,20 +1887,20 @@ for (int ialign=1; ialign!=5;ialign++){
 }
 
 
-int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
-{
+int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
+                                      TFile * out_f,
+                                      std::string const CalibrationList,
+                                      TString const RunNumber){
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber;
 
   gStyle->SetOptStat(0);
 
-  // Start with initial Alignment (X,Y offsets and rotations set to zero)
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
 
-  for (int ires=0; ires != 30; ires++){
-
+  for (int ires=0; ires != 10; ires++){
 
     TH1F hChi2_6_X( "", "", 100, 0, 10);
     TH1F hChi2_6_Y( "", "", 100, 0, 10);
@@ -1954,9 +2008,6 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName, TFile * out_
       hChi2_5_Y.Draw();
       hChi2_6_Y.Draw("SAME");
       Can.SaveAs( OutDir+TString::Format("/FunWithChi2Y_ROC%i",iplane) + ".gif");
-
-//      std::cout << "X ROC: " << iplane << " " << fun1.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. << " " << fun2.GetParameter(0)*2. - fun1.GetParameter(0)*2.<< std::endl;
-//      std::cout << "Y ROC: " << iplane << " " << fun3.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. << " " << fun4.GetParameter(0)*2. - fun3.GetParameter(0)*2.<< std::endl;
 
       chi2_5_x.push_back( fun1.GetParameter(0)*2 );
       chi2_5_y.push_back( fun3.GetParameter(0)*2 );
@@ -2191,6 +2242,10 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"PlaneEfficiency_ROC%i.gif\"><img width=\"150\" src=\"PlaneEfficiency_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"MaxCharge_ROC%i.gif\"><img width=\"150\" src=\"MaxCharge_ROC%i.gif\"></a>\n", i, i);
+    f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
