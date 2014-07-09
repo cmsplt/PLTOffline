@@ -6,7 +6,7 @@ Analyze multiple runs from PSI testbeam in May 2014
 
 # ##############################
 # Imports
-###############################
+# ##############################
 
 import sys
 
@@ -28,9 +28,9 @@ nslices = 5
 if telescope == 0:
 
     # For testing
-    di_runs = {316: 1.6}
+    di_runs = {322: 1.6}
 
-    li_runs_up = [316]
+    li_runs_up = [322]
     li_runs_down = []
     li_runs_final = []
 
@@ -192,26 +192,26 @@ for i_run, run in enumerate(di_runs):
 
 
 ###############################
-# Prepare pretty ROOT
-###############################
-
-ROOT.gStyle.SetOptStat(0)
-
-c = ROOT.TCanvas("", "", 800, 800)
-
-legend_origin_x = 0.2
-legend_origin_y = 0.2
-legend_size_x = 0.1
-legend_size_y = 0.045 * 4
-
-c.SetLogx(1)
-
-
-###############################
 # make_plots
 ###############################
 
 def make_plots(add_si, do_zoom, do_slice):
+    # Prepare pretty ROOT
+
+    ROOT.gStyle.SetOptStat(0)
+
+    c = ROOT.TCanvas("", "", 800, 800)
+
+    legend_origin_x = 0.2
+    legend_origin_y = 0.2
+    legend_size_x = 0.1
+    if add_si:
+        legend_size_y = 0.045 * 4
+    else:
+        legend_size_y = 0.045 * 3
+
+    c.SetLogx(1)
+
     # Loop over ROCs
     for i_roc in range(1, 5):
 
@@ -227,7 +227,7 @@ def make_plots(add_si, do_zoom, do_slice):
 
         # Prepare 'background' TH2.
         if do_zoom:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.4, 1.1)
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.6, 1.05)
         else:
             h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
         h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
@@ -291,16 +291,18 @@ def make_plots(add_si, do_zoom, do_slice):
             # Markers
             gr_si.SetMarkerStyle(2)
             gr_tr.SetMarkerSize(1)
-            gr_tr.SetMarkerColor(ROOT.kRed)
             # going up
             if direction == "up":
                 gr_tr.SetMarkerStyle(22)
+                gr_tr.SetMarkerColor(ROOT.kRed)
             #  down
             elif direction == "down":
                 gr_tr.SetMarkerStyle(23)
+                gr_tr.SetMarkerColor(ROOT.kBlue)
             # final high flux
             else:
                 gr_tr.SetMarkerStyle(21)
+                gr_tr.SetMarkerColor(ROOT.kGreen)
 
             # Protect graphs from autodelete
             li_grs.append(gr_si)
@@ -320,4 +322,4 @@ def make_plots(add_si, do_zoom, do_slice):
 # End of Make Plots
 
 make_plots(add_si=True, do_zoom=False, do_slice=False)
-make_plots(add_si=False, do_zoom=False, do_slice=True)
+make_plots(add_si=False, do_zoom=True, do_slice=True)
