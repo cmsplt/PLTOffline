@@ -518,6 +518,12 @@ void TestPlaneEfficiency (std::string const InFileName,
                      hMaxCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
 
                      hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+
+                     for (int i=0; i != n_slices; i++){
+                       hOccupancyNum_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                       hOccupancyDenom_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                     }
+
                    }
 
                  }
@@ -534,7 +540,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   for (int i=0; i!= n_slices; i++){
     hOccupancyNum_eventSlices[i].Write();
-    hOccupancyDenom_eventSlices[i].Write();  
+    hOccupancyDenom_eventSlices[i].Write();
   }
 
   hOccupancyNum.SetMinimum(0);
@@ -1815,7 +1821,7 @@ for (int iroc=1;iroc!=5;iroc++){
 }
 
 
-for (int ialign=1; ialign!=5;ialign++){
+for (int ialign=1; ialign!=15;ialign++){
 
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
@@ -1824,6 +1830,7 @@ for (int ialign=1; ialign!=5;ialign++){
   std::vector< TH2F > hResidual;
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
+  std::vector< TGraph > gResidualXdY;
 
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
@@ -1842,9 +1849,10 @@ for (int ialign=1; ialign!=5;ialign++){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
                                 Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
-                                   Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
+                                   Form("ResidualXdY_ROC%i",iroc), 35, -0.2, 0.2, 100, -.2, .2));
     hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
-                                   Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
+                                   Form("ResidualYdX_ROC%i",iroc), 41, -.2, .2, 100, -.2, .2));
+    gResidualXdY.push_back( TGraph() );
   }
 
   // Event Loop
@@ -1859,6 +1867,7 @@ for (int ialign=1; ialign!=5;ialign++){
     //  continue;
 
     for (int iroc=0; iroc!=6; iroc++){
+
       float d_LX = Track->LResidualX(iroc);
       float d_LY = Track->LResidualY(iroc);
 
@@ -1875,14 +1884,48 @@ for (int ialign=1; ialign!=5;ialign++){
         }
       }
 
+      // Hits instead of Clusters for Alignment
+      // float h_LX = -999;
+      // float h_LY = -999;
+      // float max_charge = 0;
+      // for (int i=0; i != BFR.Plane(iroc)->Cluster(0)->NHits(); ++i){
+      //
+      //   PLTHit * Hit = BFR.Plane(iroc)->Cluster(0)->Hit(i);
+      //
+      //   if (Hit->Charge() > max_charge){
+      //     max_charge = Hit->Charge();
+      //     h_LX = Hit->LX();
+      //     h_LY = Hit->LY();
+      //   }
+      // }
+      //
+      // if (fabs(h_LX)>10 || fabs(h_LY)>10)
+      //     continue
+      //
+      // float track_TX = Track->TX(iroc);
+      // float track_TY = Track->TY(iroc);
+      //
+      // float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iroc);
+      // float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iroc);
+      //
+      // float d_LX =  (track_LX - h_LX);
+      // float d_LY =  (track_LY - h_LY);
+
+
       // dX vs dY
       hResidual[iroc].Fill( d_LX, d_LY);
 
-      // X vs dY
-      hResidualXdY[iroc].Fill( cl_LX, d_LY);
 
-      // Y vs dX
-      hResidualYdX[iroc].Fill( cl_LY, d_LX);
+      if ((fabs(d_LX) < 1000) && (fabs(d_LY) < 1000)){
+          // X vs dY
+          hResidualXdY[iroc].Fill( cl_LX, d_LY);
+
+          // Y vs dX
+          hResidualYdX[iroc].Fill( cl_LY, d_LX);
+
+          gResidualXdY[iroc].SetPoint(gResidualXdY[iroc].GetN(), cl_LX, d_LY );
+        }
+
 
 
     }
@@ -1898,11 +1941,23 @@ for (int ialign=1; ialign!=5;ialign++){
   Alignment.AddToLY(1, iroc, hResidual[iroc].GetMean(2));
 
   float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
-  Alignment.AddToLR(1, iroc, angle/10.);
 
+
+  TF1 linear_fun = TF1("","[0]+[1]*x");
+  gResidualXdY[iroc].Fit(&linear_fun);
+
+
+  float other_angle = atan(linear_fun.GetParameter(1));
+
+  Alignment.AddToLR(1, iroc, other_angle/3.);
+
+  std::cout << "ROC: " << iroc << " Angle: " << angle << " Other Angle:" << other_angle << std::endl;
 
   TCanvas Can;
   Can.cd();
+
+  gResidualXdY[iroc].Draw("AP*");
+  Can.SaveAs( OutDir+"/"+TString::Format("gRes%i",iroc) + ".gif");
 
   // 2D Residuals
   hResidual[iroc].Draw("colz");
@@ -1950,7 +2005,7 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
 
-  for (int ires=0; ires != 10; ires++){
+  for (int ires=0; ires != 8; ires++){
 
     TH1F hChi2_6_X( "", "", 100, 0, 10);
     TH1F hChi2_6_Y( "", "", 100, 0, 10);
