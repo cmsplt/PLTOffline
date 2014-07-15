@@ -793,8 +793,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
 
   // Study single planes
-  for (int iplane=1; iplane!=5;iplane++)
-    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane,n_events);
+  //for (int iplane=1; iplane!=5;iplane++)
+  //  TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane,n_events);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
