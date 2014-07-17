@@ -259,7 +259,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Hit matching distance [cm]
-  float max_dr = 0.04;
+  float max_dr_x = 0.045;
+  float max_dr_y = 0.03;
 
   gStyle->SetOptStat(0);
   TString const PlotsDir = "plots/";
@@ -426,8 +427,8 @@ void TestPlaneEfficiency (std::string const InFileName,
                  max60 = charge;
              }
 
-             if (sqrt( dtx*dtx + dty*dty ) < max_dr)
-               matched=true;
+             if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
+                matched=true;
 
        } // end of loop over hits
 
@@ -453,7 +454,7 @@ void TestPlaneEfficiency (std::string const InFileName,
               float dty = (ty - Plane->Cluster(ic)->TY());
               float dtr = sqrt( dtx*dtx + dty*dty );
 
-              if (dtr < max_dr)
+              if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
                 hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
 
         } // end of loop over clusters
@@ -501,7 +502,10 @@ void TestPlaneEfficiency (std::string const InFileName,
                  //std::cout << px << " " << py << " " << lx << " " << ly;
 
                  // And check if they are within matching-distance of a masked pixel
-                 if (sqrt( (lx-masked_lx)*(lx-masked_lx)+(ly-masked_ly)*(ly-masked_ly) ) < max_dr){
+                 float dtx = lx-masked_lx;
+                 float dty = ly-masked_ly;
+
+                 if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1){
                    // If yes: set numerator and denominator to zero
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
