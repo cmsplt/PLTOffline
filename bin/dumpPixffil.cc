@@ -8,6 +8,7 @@ using namespace std;
 
 int convPXL (int ROC)
 {
+  if (ROC == 160 || ROC == 161) return 0;
   return ROC % 2 ? 80 - (ROC - 1) / 2 : (ROC - 1) / 2 - 80;
 }
 
@@ -73,13 +74,14 @@ void decodeSpyDataFifo (uint32_t unsigned word, int event)
     } else if (chan > 0 && chan < 37) {
 
       int mycol=0;
-      if (convPXL((word & pxlmsk) >> 8) > 0) {
+      //if (convPXL((word & pxlmsk) >> 8) > 0) {
+      if ( ((word & pxlmsk) >> 8) % 2) {
         mycol = ((word & dclmsk) >> 16) * 2 + 1;
       } else {
         mycol = ((word & dclmsk) >> 16) * 2;
       }
 
-      printf("%2lu %1i %2i %2i %3lu %i\n", chan,(int) roc - 1, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event);
+      printf("%2lu %1i %2i %2i %3lu %09i  %i\n", chan,(int) roc - 1, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), event, (word & pxlmsk) >> 8);
 
     } else {
     }

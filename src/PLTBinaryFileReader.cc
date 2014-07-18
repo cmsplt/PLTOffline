@@ -80,6 +80,7 @@ void PLTBinaryFileReader::SetIsText (bool const in)
 
 int PLTBinaryFileReader::convPXL (int IN)
 {
+  if (IN == 160 || IN == 161) return 0;
   return IN % 2 == 1 ? 80 - (IN - 1) / 2 : (IN) / 2 - 80;
 }
 
@@ -109,7 +110,8 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector
     } else if (chan > 0 && chan < 37) {
       // Oh, NOW we have a hit!
       int mycol = 0;
-      if (convPXL((word & pxlmsk) >> 8) > 0) {
+      //if (convPXL((word & pxlmsk) >> 8) > 0) {
+      if ( ((word & pxlmsk) >> 8) % 2) {
         // Odd
         mycol = ((word & dclmsk) >> 16) * 2 + 1;
         //std::cout << "MYCOL A: " << mycol << std::endl;
