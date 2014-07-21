@@ -34,7 +34,8 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
     }
     else{
       std::cout << "ERROR: No Initial-Alignment file for telescopeID=" << telescopeID << std::endl;
-      return "";
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
     }
   }
   // Real Alignment
@@ -45,7 +46,8 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
       return "ALIGNMENT/Alignment_ETHTelescope_run466.dat";
     else{
       std::cout << "ERROR: No Alignment file for telescopeID=" << telescopeID << std::endl;
-      return "";
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
     }
   }
 }
@@ -59,7 +61,8 @@ std::string GetMaskingFilename(int telescopeID){
     return "outerPixelMask_Telescope2.txt";
   else{
     std::cout << "ERROR: No Masking file for telescopeID=" << telescopeID << std::endl;
-    return "";
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
   }
 }
 
@@ -72,7 +75,8 @@ int GetNumberOfROCS(int telescopeID){
     return 2;
   else{
     std::cout << "ERROR: Number of ROCs not defined for telescopeID=" << telescopeID << std::endl;
-    return -1;
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
   }
 }
 
@@ -177,7 +181,7 @@ int FindHotPixels (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-  Alignment.SetErrorsTelescope1();
+  Alignment.SetErrors(1);
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -319,7 +323,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrorsTelescope1();
+  Alignment.SetErrors(1);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -749,7 +753,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrorsTelescope1();
+  Alignment.SetErrors(1);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -878,18 +882,16 @@ int TestPSIBinaryFileReader (std::string const InFileName,
     }
   }
 
-
+  // Setup Output Directory and gStyle
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
-
   std::cout<<OutDir<<std::endl;
-
   gStyle->SetOptStat(0);
 
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrorsTelescope1();
+  Alignment.SetErrors(1);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -2563,8 +2565,8 @@ int main (int argc, char* argv[])
   int action = atoi(argv[3]);
 
   // Telescope IDs:
-  // 1: First May-Testbeam Telescope
-  // 2: Second May-Tesbeam Telescope
+  // 1: First May-Testbeam Telescope (Si, PolyA, PolyD, S86,  S105, Si)
+  // 2: Second May-Tesbeam Telescope (Si, PolyB, PolyD, S108, Si,   Si)
   // 3: First Silicon + 1 Diamond Telescope (July Testbeam)
   // 4: Two-Plane Silicon Telescope (July Testbeam)
   int telescopeID = atoi(argv[4]);
