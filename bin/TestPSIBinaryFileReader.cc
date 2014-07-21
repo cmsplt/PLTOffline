@@ -782,16 +782,21 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
 
 
 
-int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+int TestPSIBinaryFileReader (std::string const InFileName,
+                             TFile * out_f,
+                             std::string const CalibrationList,
+                             TString const RunNumber,
+                             int telescopeID)
 {
   // Run default analysis
+  const int NROC = 6;
 
   // Mask hot pixels in offline analysis
   // pixels are considered hot if they have > 10 times the number of mean hits of
   // other (filled) pixels in the ROC
   // Call the hot finder repeatedly until no new hot pixels can be found
   std::vector< std::vector< std::vector<int> > > hot_pixels;
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     std::vector< std::vector<int> > tmp;
     hot_pixels.push_back( tmp );
   }
@@ -830,7 +835,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   BFR.ReadPixelMask( "outerPixelMask.txt");
 
   //Add hot pixels we found to mask
-  for (int iroc=0; iroc != 6; iroc++){
+  for (int iroc=0; iroc != NROC; iroc++){
    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
      // std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
@@ -844,7 +849,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   // x == columns
   // y == rows
   std::vector< TH2F > hOccupancy;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
                                 Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
@@ -860,24 +865,24 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   std::vector<TH2F> hOccupancyLowPH;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancyLowPH.push_back( TH2F( Form("OccupancyLowPH_ROC%i",iroc),
                                 Form("OccupancyLowPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
   std::vector<TH2F> hOccupancyHighPH;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancyHighPH.push_back( TH2F( Form("OccupancyHighPH_ROC%i",iroc),
                                 Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
   std::vector<TH1F> hNHitsPerCluster;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hNHitsPerCluster.push_back( TH1F( Form("NHitsPerCluster_ROC%i",iroc),
                                 Form("NHitsPerCluster_ROC%i",iroc), 10, 0, 10));
   }
 
   std::vector<TH1F> hNClusters;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hNClusters.push_back( TH1F( Form("NClusters_ROC%i",iroc),
                                 Form("NClusters_ROC%i",iroc), 10, 0, 10));
   }
@@ -964,12 +969,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   hCoincidenceMap.GetYaxis()->CenterTitle();
 
   // Prepare PulseHeight histograms
-  TH1F* hPulseHeight[6][4];
+  TH1F* hPulseHeight[NROC][4];
   int const phMin = 0;
   int const phMax = 50000;
   int const phNBins = 50;
   // Standard
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeight_ROC%i_All", iroc);
     hPulseHeight[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeight_ROC%i_NPix1", iroc);
@@ -980,8 +985,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeight[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
   // For Tracks
-  TH1F* hPulseHeightTrack6[6][4];
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  TH1F* hPulseHeightTrack6[NROC][4];
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeightTrack6_ROC%i_All", iroc);
     hPulseHeightTrack6[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeightTrack6_ROC%i_NPix1", iroc);
@@ -992,7 +997,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeightTrack6[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
   // Long Histogram (see the Protons)
-  TH1F* hPulseHeightLong[6][4];
+  TH1F* hPulseHeightLong[NROC][4];
   int const phLongMax = 300000;
   for (int iroc = 0; iroc != 6; ++iroc) {
     TString Name = TString::Format("PulseHeightLong_ROC%i_All", iroc);
@@ -1005,8 +1010,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeightLong[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
   }
   // For Tracks, using additional selections
-  TH1F* hPulseHeightOffline[6][4];
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  TH1F* hPulseHeightOffline[NROC][4];
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeightOffline_ROC%i_All", iroc);
     hPulseHeightOffline[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeightOffline_ROC%i_NPix1", iroc);
@@ -1020,7 +1025,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
 
   int const HistColors[4] = { 1, 4, 28, 2 };
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     for (int inpix = 0; inpix != 4; ++inpix) {
     hPulseHeight[iroc][inpix]->SetXTitle("Charge (electrons)");
     hPulseHeight[iroc][inpix]->SetYTitle("Number of Clusters");
@@ -1038,11 +1043,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   // 2D Pulse Height maps for All and Track6
-  double AvgPH2D[6][PLTU::NCOL][PLTU::NROW];
-  int NAvgPH2D[6][PLTU::NCOL][PLTU::NROW];
-  double AvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
-  int NAvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
-  for (int i = 0; i != 6; ++i) {
+  double AvgPH2D[NROC][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2D[NROC][PLTU::NCOL][PLTU::NROW];
+  double AvgPH2DTrack6[NROC][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2DTrack6[NROC][PLTU::NCOL][PLTU::NROW];
+  for (int i = 0; i != NROC; ++i) {
     for (int icol = 0; icol != PLTU::NCOL; ++icol) {
       for (int irow = 0; irow != PLTU::NROW; ++irow) {
         AvgPH2D[i][icol][irow] = 0;
@@ -1054,10 +1059,10 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   // Pulse height average counts and averages.  Also define TGraphs
-  int NAvgPH[6][4];
-  double AvgPH[6][4];
-  TGraphErrors gAvgPH[6][4];
-  for (int i = 0; i != 6; ++i) {
+  int NAvgPH[NROC][4];
+  double AvgPH[NROC][4];
+  TGraphErrors gAvgPH[NROC][4];
+  for (int i = 0; i != NROC; ++i) {
     for (int j = 0; j != 4; ++j) {
       NAvgPH[i][j] = 0;
       AvgPH[i][j] = 0;
@@ -1093,7 +1098,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
 
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
         Form("Residual_ROC%i",iroc), 100, -.15, .15, 100, -.15, .15));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
@@ -1102,9 +1107,9 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
            Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
   }
 
-	float_t  onepc[6];
-	float_t  twopc[6];
-	float_t threepc[6];
+	float_t  onepc[NROC];
+	float_t  twopc[NROC];
+	float_t threepc[NROC];
 
   int const TimeWidth = 20000;
   int NGraphPoints = 0;
@@ -1127,7 +1132,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     //}
 
     if (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
-      for (int i = 0; i != 6; ++i) {
+      for (int i = 0; i != NROC; ++i) {
         for (int j = 0; j != 4; ++j) {
           gAvgPH[i][j].Set(NGraphPoints+1);
           gAvgPH[i][j].SetPoint(NGraphPoints, ThisTime - TimeWidth/2, AvgPH[i][j]);
@@ -1142,7 +1147,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
     // draw tracks
     static int ieventdraw = 0;
-    if (ieventdraw < 20 && BFR.NClusters() >= 6) {
+    if (ieventdraw < 20 && BFR.NClusters() >= NROC) {
       BFR.DrawTracksAndHits( TString::Format(OutDir + "/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
@@ -1154,13 +1159,13 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
 
-        //printf("Event %6i   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
+        //printf("Event %NROCi   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
         //    ievent, iplane, Cluster->NHits(), Cluster->Charge(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row());
         //for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
         //  printf(" %5i", Cluster->Hit(ihit)->ADC());
         //}
         //printf("\n");
-        if (iplane < 6) {
+        if (iplane < NROC) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
           hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
 
@@ -1193,10 +1198,10 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
         PLTHit* Hit = Plane->Hit(ihit);
 
 
-        if (Hit->ROC() < 6) {
+        if (Hit->ROC() < NROC) {
           hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
         } else {
-          std::cerr << "Oops, ROC >= 6?" << std::endl;
+          std::cerr << "Oops, ROC >= NROC?" << std::endl;
         }
       }
 
@@ -1218,7 +1223,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     }
 
     if (BFR.NTracks() == 1 &&
-        BFR.Track(0)->NClusters() == 6 &&
+        BFR.Track(0)->NClusters() == NROC &&
         BFR.Track(0)->Cluster(0)->Charge() < 300000 &&
         BFR.Track(0)->Cluster(1)->Charge() < 300000 &&
         BFR.Track(0)->Cluster(2)->Charge() < 300000 &&
@@ -1303,7 +1308,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
 
   // Catch up on PH by time graph
-    for (int i = 0; i != 6; ++i) {
+    for (int i = 0; i != NROC; ++i) {
       for (int j = 0; j != 4; ++j) {
         gAvgPH[i][j].Set(NGraphPoints+1);
         gAvgPH[i][j].SetPoint(NGraphPoints, NGraphPoints*TimeWidth + TimeWidth/2, AvgPH[i][j]);
@@ -1319,7 +1324,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   Can.cd();
 
 
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
 
     // Draw Occupancy histograms
     hOccupancy[iroc].SetMinimum(0);
@@ -1620,9 +1625,13 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 }
 
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+int DoAlignment (std::string const InFileName,
+                 TFile * out_f,
+                 std::string const CalibrationList,
+                 TString const RunNumber,
+                 int telescopeID)
 {
-  /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
+  /* DoAlignment: Produce alignment constants and save
   them to NewAlignment.dat
   */
 
@@ -1996,10 +2005,11 @@ for (int ialign=1; ialign!=15;ialign++){
 }
 
 
-int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
-                                      TFile * out_f,
-                                      std::string const CalibrationList,
-                                      TString const RunNumber){
+int FindResiduals(std::string const InFileName,
+                  TFile * out_f,
+                  std::string const CalibrationList,
+                  TString const RunNumber,
+                  int telescopeID){
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber;
@@ -2445,8 +2455,8 @@ f << "<br>\n";
 
 int main (int argc, char* argv[])
 {
-  if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [doAlign]" << std::endl;
+  if (argc != 5) {
+    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [doAlign] [telescope]" << std::endl;
     std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
     return 1;
   }
@@ -2463,6 +2473,12 @@ int main (int argc, char* argv[])
     mv NewAlignment.dat ALIGNMENT/Alignment_ETHTelescope
   */
 
+  // Telescope IDs:
+  // 0: First May-Testbeam Telescope
+  // 1: Second May-Tesbeam Telescope
+  // 2: First Silicon + 1 Diamond Telescope (July Testbeam)
+  // 3: Two-Plane Silicon Telescope (July Testbeam)
+
   std::string const InFileName = argv[1];
   TString const FullRunName = InFileName;
   Int_t const Index = FullRunName.Index("bt05r",0);
@@ -2476,16 +2492,35 @@ int main (int argc, char* argv[])
   // do it here and pass to all functions we call
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
-  TFile out_f( OutDir + "histos.root","recreate");
+  TFile out_f( OutDir + "histos.root", "recreate");
 
   int doAlign = atoi(argv[3]);
 
+  int telescopeID =atoi(argv[4]);
+
+  std::cout << "Using telescopeID=" << telescopeID << std::endl;
+
+  // ALIGNMENT
   if (doAlign==1)
-    TestPSIBinaryFileReaderAlign(InFileName, &out_f, CalibrationList, RunNumber);
+    DoAlignment(InFileName,
+                &out_f,
+                CalibrationList,
+                RunNumber,
+                telescopeID);
+  // RESIDUAL CALCULATION
   else if (doAlign==2)
-      TestPSIBinaryFileReaderResiduals(InFileName, &out_f, CalibrationList, RunNumber);
+      FindResiduals(InFileName,
+                                       &out_f,
+                                       CalibrationList,
+                                       RunNumber,
+                                       telescopeID);
+  // ANALYSIS
   else
-    TestPSIBinaryFileReader(InFileName, &out_f, CalibrationList, RunNumber);
+    TestPSIBinaryFileReader(InFileName,
+                            &out_f,
+                            CalibrationList,
+                            RunNumber,
+                            telescopeID);
 
 
   return 0;
