@@ -126,6 +126,8 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
     return;
   }
 
+  std::cout << GainCalFileName << std::endl;
+
   std::ifstream InFile(GainCalFileName.c_str());
   if (!InFile.is_open()) {
     std::cerr << "ERROR: cannot open gaincal file: " << GainCalFileName << std::endl;
@@ -181,7 +183,7 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 }
 
 int PLTGainCal::GetHardwareID (int const Channel)
-{ 
+{
   return fHardwareMap[Channel];
 }
 
@@ -300,7 +302,7 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName, int cons
   // Get blank line out of the way
   FunctionLine.ReadLine(f);
 
-  
+
 
 
   std::string line;

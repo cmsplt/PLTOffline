@@ -58,7 +58,7 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
 
-  fAlignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  fAlignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
   SetTrackingAlignment(&fAlignment);
   SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_6PlanesHit);
 

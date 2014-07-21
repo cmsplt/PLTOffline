@@ -56,7 +56,7 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
 std::string GetMaskingFilename(int telescopeID){
 
   if (telescopeID == 1)
-    return "outerPixelMask_telescope1.txt";
+    return "outerPixelMask_Telescope1.txt";
   else if (telescopeID == 2)
     return "outerPixelMask_Telescope2.txt";
   else{
@@ -176,12 +176,13 @@ int FindHotPixels (std::string const InFileName,
 
   // Open Alignment
   PLTAlignment Alignment;
+  std::cout << "GetAlignmentFilename(telescopeID)=" << GetAlignmentFilename(telescopeID) << std::endl;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-  Alignment.SetErrors(1);
+  Alignment.SetErrors(telescopeID);
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -312,6 +313,36 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   */
 
+float max_dr_x = 0.045;
+float max_dr_y = 0.03;
+
+
+gStyle->SetOptStat(0);
+TString const PlotsDir = "plots/";
+TString const OutDir = PlotsDir + RunNumber + "/";
+
+// Open Alignment
+PLTAlignment Alignment;
+Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
+Alignment.SetErrors(telescopeID);
+
+// Initialize Reader
+PSIBinaryFileReader BFR(InFileName, CalibrationList);
+BFR.SetTrackingAlignment(&Alignment);
+
+// Apply Masking
+BFR.ReadPixelMask("outerPixelMask_forSiEff.txt");
+
+// Add additional hot pixels (from FindHotPixels to mask)
+for (int iroc=0; iroc != 6; iroc++){
+  for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+    BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+  }
+}
+
+BFR.CalculateLevels(10000, OutDir);
+
+/*
   // Track/Hit matching distance [cm]
   float max_dr_x = 0.045;
   float max_dr_y = 0.03;
@@ -323,12 +354,14 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(1);
+  Alignment.SetErrors(telescopeID);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-  BFR.SetPlaneUnderTest( plane_under_test );
+
+
+  std::cout << plane_under_test << std::endl;
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -341,6 +374,12 @@ void TestPlaneEfficiency (std::string const InFileName,
   }
 
   BFR.CalculateLevels(10000, OutDir);
+*/
+
+  std::exit(0);
+
+  BFR.SetPlaneUnderTest(plane_under_test);
+
 
   // Prepare Occupancy histograms
   // Telescope coordinates
@@ -753,7 +792,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(1);
+  Alignment.SetErrors(telescopeID);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -768,8 +807,6 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
       BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
     }
   }
-
-  //BFR.AddToPixelMask(1,0,0,0);
 
   BFR.CalculateLevels(10000, OutDir);
 
@@ -860,17 +897,24 @@ int TestPSIBinaryFileReader (std::string const InFileName,
                 hot_pixels,
                 telescopeID);
 
+  /*
+  std::cout << "Going to call TestPlaneEfficiencySilicon" << std::endl;
   int n_events = TestPlaneEfficiencySilicon(InFileName,
                                             out_f,
                                             CalibrationList,
                                             RunNumber,
                                             hot_pixels,
                                             telescopeID);
+  std::cout << "Done with TestPlaneEfficiencySilicon" << std::endl;
+  */
+  int n_events = 100;
 
   // For Telescopes from May testbeam:
   //   Do single plane studies
   if ((telescopeID == 1) || (telescopeID == 2)){
     for (int iplane=1; iplane != 5; iplane++){
+      std::cout << "Going to call TestPlaneEfficiency " << iplane << std::endl;
+
       TestPlaneEfficiency(InFileName,
                           out_f,
                           CalibrationList,
@@ -891,7 +935,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Open Alignment
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(1);
+  Alignment.SetErrors(telescopeID);
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -1189,22 +1233,21 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   int const TimeWidth = 20000;
   int NGraphPoints = 0;
 
-
   // "times" for counting
   int const StartTime = 0;
   int ThisTime;
 
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
     ThisTime = ievent;
+
     // print progress
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
-    //if (BFR.HitPlaneBits() != 0x0) {
-      hCoincidenceMap.Fill(BFR.HitPlaneBits());
-    //}
+    hCoincidenceMap.Fill(BFR.HitPlaneBits());
 
     if (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
       for (int i = 0; i != NROC; ++i) {
@@ -1234,18 +1277,11 @@ int TestPSIBinaryFileReader (std::string const InFileName,
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
 
-        //printf("Event %NROCi   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
-        //    ievent, iplane, Cluster->NHits(), Cluster->Charge(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row());
-        //for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
-        //  printf(" %5i", Cluster->Hit(ihit)->ADC());
-        //}
-        //printf("\n");
         if (iplane < NROC) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
           hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
 
 					if (Cluster->Charge() > 300000) {
-              //printf("High Charge: %13.3E\n", Cluster->Charge());
               continue;
           }
           PLTU::AddToRunningAverage(AvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
@@ -2092,7 +2128,7 @@ int FindResiduals(std::string const InFileName,
   gStyle->SetOptStat(0);
 
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
 
   for (int ires=0; ires != 8; ires++){
 
@@ -2536,16 +2572,15 @@ int main (int argc, char* argv[])
     return 1;
   }
 
-  /* There three useage modes: default, alignment and residuals
+  /* There three useage modes: analysis, alignment and residuals
 
-  default uses the Alignment_ETHTelescope.dat file and analyzes the given run
-    producing Occupancy, PulseHeight and tracking plots.
+  analysis uses alignment and residuals for the given telescope to perform
+    global and single plane studies
 
   alignment starts with all alignment constants zero and does several iterations
     to minimize the residuals. All planes are shifted in x and y and rotated
     around the z-axis. Residual plots of the last iteration are saved.
-    As output the file NewAlignment.dat is produced. To actually use it, do:
-    mv NewAlignment.dat ALIGNMENT/Alignment_ETHTelescope
+    As output the file NewAlignment.dat is produced.
 
   residuals tries to find the correct residuals for tracking
   */
