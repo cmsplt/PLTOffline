@@ -24,6 +24,45 @@
 #include "TProfile2D.h"
 #include "TParameter.h"
 
+std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
+
+  // Get the correct Alignment for a given telescope
+  // Initial Alignment (start values for finding alignment)
+  if (useInitial){
+    if ((telescopeID==1) || (telescopeID==2)){
+      return "ALIGNMENT/Alignment_ETHTelescope_initial.dat";
+    }
+    else{
+      std::cout << "ERROR: No Initial-Alignment file for telescopeID=" << telescopeID << std::endl;
+      return "";
+    }
+  }
+  // Real Alignment
+  else{
+    if (telescopeID==1)
+      return "ALIGNMENT/Alignment_ETHTelescope_run316.dat";
+    else if (telescopeID==2)
+      return "ALIGNMENT/Alignment_ETHTelescope_run466.dat";
+    else{
+      std::cout << "ERROR: No Alignment file for telescopeID=" << telescopeID << std::endl;
+      return "";
+    }
+  }
+}
+
+
+int GetNumberOfROCS(int telescopeID){
+
+  if ((telescopeID == 1) || (telescopeID == 2) ||  (telescopeID == 3))
+    return 6;
+  else if (telescopeID == 4)
+    return 2;
+  else{
+    std::cout << "ERROR: Number of ROCs not defined for telescopeID=" << telescopeID << std::endl;
+    return -1;
+  }
+}
+
 
 void WriteHTML (TString const, TString const);
 
@@ -105,7 +144,8 @@ int FindHotPixels (std::string const InFileName,
                    TFile * out_f,
                    std::string const CalibrationList,
                    TString const RunNumber,
-                   std::vector< std::vector< std::vector<int> > > & hot_pixels
+                   std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                   int telescopeID
                    )
 {
   // FindHotPixels
@@ -119,7 +159,7 @@ int FindHotPixels (std::string const InFileName,
 
   // Open Alignment
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
@@ -246,7 +286,8 @@ void TestPlaneEfficiency (std::string const InFileName,
                           TString const RunNumber,
                           std::vector< std::vector< std::vector<int> > > & hot_pixels,
                           int plane_under_test,
-                          int n_events)
+                          int n_events,
+                          int telescopeID)
 {
   /* TestPlaneEfficiency
 
@@ -268,7 +309,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   // Open Alignment
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
   Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
@@ -682,7 +723,8 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
                                  TFile * out_f,
                                  std::string const CalibrationList,
                                  TString const RunNumber,
-                                 std::vector< std::vector< std::vector<int> > > & hot_pixels)
+                                 std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                                 int telescopeID)
 {
   /* TestPlaneEfficiencySilicon
 
@@ -697,7 +739,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
 
   // Open Alignment
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
   Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
@@ -789,7 +831,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
                              int telescopeID)
 {
   // Run default analysis
-  const int NROC = 6;
+  const int NROC = GetNumberOfROCS(telescopeID);
 
   // Mask hot pixels in offline analysis
   // pixels are considered hot if they have > 10 times the number of mean hits of
@@ -802,14 +844,31 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   }
 
   // Look for hot pixels
-  FindHotPixels(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+  FindHotPixels(InFileName,
+                out_f,
+                CalibrationList,
+                RunNumber,
+                hot_pixels,
+                telescopeID);
 
-  int n_events = TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+  int n_events = TestPlaneEfficiencySilicon(InFileName,
+                                            out_f,
+                                            CalibrationList,
+                                            RunNumber,
+                                            hot_pixels,
+                                            telescopeID);
 
 
   // Study single planes
   for (int iplane=1; iplane!=5;iplane++)
-    TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane,n_events);
+    TestPlaneEfficiency(InFileName,
+                        out_f,
+                        CalibrationList,
+                        RunNumber,
+                        hot_pixels,
+                        iplane,
+                        n_events,
+                        telescopeID);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
@@ -820,7 +879,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
   // Open Alignment
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
   Alignment.SetErrorsTelescope1();
 
   // Initialize Reader
@@ -1061,22 +1120,29 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Pulse height average counts and averages.  Also define TGraphs
   int NAvgPH[NROC][4];
   double AvgPH[NROC][4];
-  TGraphErrors gAvgPH[NROC][4];
+  std::vector< std::vector< TGraphErrors > > gAvgPH;
+
   for (int i = 0; i != NROC; ++i) {
+
+    std::vector< TGraphErrors > tmp_gr_vector;
+
     for (int j = 0; j != 4; ++j) {
       NAvgPH[i][j] = 0;
       AvgPH[i][j] = 0;
-      gAvgPH[i][j].SetName( Form("PulseHeightTime_ROC%i_NPix%i", i, j) );
-      gAvgPH[i][j].SetTitle( Form("Average Pulse Height ROC %i NPix %i", i, j) );
-      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
-      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
-      gAvgPH[i][j].SetLineColor(HistColors[j]);
-      gAvgPH[i][j].SetMarkerColor(HistColors[j]);
-      gAvgPH[i][j].SetMinimum(0);
-      gAvgPH[i][j].SetMaximum(60000);
-      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
-      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      TGraphErrors gr;
+      gr.SetName( Form("PulseHeightTime_ROC%i_NPix%i", i, j) );
+      gr.SetTitle( Form("Average Pulse Height ROC %i NPix %i", i, j) );
+      gr.GetXaxis()->SetTitle("Event Number");
+      gr.GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      gr.SetLineColor(HistColors[j]);
+      gr.SetMarkerColor(HistColors[j]);
+      gr.SetMinimum(0);
+      gr.SetMaximum(60000);
+      gr.GetXaxis()->SetTitle("Event Number");
+      gr.GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      tmp_gr_vector.push_back(gr);
     }
+    gAvgPH.push_back(tmp_gr_vector);
   }
 
   // Track Chi2 Distribution
@@ -1660,7 +1726,7 @@ int DoAlignment (std::string const InFileName,
 
   // Start with initial Alignment (X,Y offsets and rotations set to zero)
   PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID, true));
 
   for (int iroc=1;iroc!=5;iroc++){
     Alignment.AddToLX( 1, iroc, x_align[iroc] );
@@ -1825,7 +1891,7 @@ std::cout << "PART TWO!!!!!" << std::endl;
 
 // Start with initial Alignment (X,Y offsets and rotations set to zero)
 PLTAlignment Alignment;
-Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID, true));
 
 for (int iroc=1;iroc!=5;iroc++){
   Alignment.AddToLX( 1, iroc, x_align[iroc] );
@@ -2456,12 +2522,12 @@ f << "<br>\n";
 int main (int argc, char* argv[])
 {
   if (argc != 5) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [doAlign] [telescope]" << std::endl;
-    std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [action] [telescopeUD]" << std::endl;
+    std::cerr << "action: 0 for analysis, 1 for producing alignment file, 2 for finding residuals" << std::endl;
     return 1;
   }
 
-  /* There are now two useage modes: default and alignment
+  /* There three useage modes: default, alignment and residuals
 
   default uses the Alignment_ETHTelescope.dat file and analyzes the given run
     producing Occupancy, PulseHeight and tracking plots.
@@ -2471,13 +2537,10 @@ int main (int argc, char* argv[])
     around the z-axis. Residual plots of the last iteration are saved.
     As output the file NewAlignment.dat is produced. To actually use it, do:
     mv NewAlignment.dat ALIGNMENT/Alignment_ETHTelescope
+
+  residuals tries to find the correct residuals for tracking
   */
 
-  // Telescope IDs:
-  // 0: First May-Testbeam Telescope
-  // 1: Second May-Tesbeam Telescope
-  // 2: First Silicon + 1 Diamond Telescope (July Testbeam)
-  // 3: Two-Plane Silicon Telescope (July Testbeam)
 
   std::string const InFileName = argv[1];
   TString const FullRunName = InFileName;
@@ -2487,6 +2550,17 @@ int main (int argc, char* argv[])
 
   std::string CalibrationList = argv[2];
 
+  // 0: Analysis
+  // 1: Alignment
+  // 2: Residuals
+  int action = atoi(argv[3]);
+
+  // Telescope IDs:
+  // 1: First May-Testbeam Telescope
+  // 2: Second May-Tesbeam Telescope
+  // 3: First Silicon + 1 Diamond Telescope (July Testbeam)
+  // 4: Two-Plane Silicon Telescope (July Testbeam)
+  int telescopeID = atoi(argv[4]);
 
   // Open a ROOT file to store histograms in
   // do it here and pass to all functions we call
@@ -2494,26 +2568,22 @@ int main (int argc, char* argv[])
   TString const OutDir = PlotsDir + RunNumber + "/";
   TFile out_f( OutDir + "histos.root", "recreate");
 
-  int doAlign = atoi(argv[3]);
-
-  int telescopeID =atoi(argv[4]);
-
-  std::cout << "Using telescopeID=" << telescopeID << std::endl;
-
   // ALIGNMENT
-  if (doAlign==1)
+  if (action==1)
     DoAlignment(InFileName,
                 &out_f,
                 CalibrationList,
                 RunNumber,
                 telescopeID);
+
   // RESIDUAL CALCULATION
-  else if (doAlign==2)
-      FindResiduals(InFileName,
-                                       &out_f,
-                                       CalibrationList,
-                                       RunNumber,
-                                       telescopeID);
+  else if (action==2)
+    FindResiduals(InFileName,
+                  &out_f,
+                  CalibrationList,
+                  RunNumber,
+                  telescopeID);
+
   // ANALYSIS
   else
     TestPSIBinaryFileReader(InFileName,
