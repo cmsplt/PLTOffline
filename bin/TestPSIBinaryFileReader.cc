@@ -51,6 +51,19 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
 }
 
 
+std::string GetMaskingFilename(int telescopeID){
+
+  if (telescopeID == 1)
+    return "outerPixelMask_telescope1.txt";
+  else if (telescopeID == 2)
+    return "outerPixelMask_Telescope2.txt";
+  else{
+    std::cout << "ERROR: No Masking file for telescopeID=" << telescopeID << std::endl;
+    return "";
+  }
+}
+
+
 int GetNumberOfROCS(int telescopeID){
 
   if ((telescopeID == 1) || (telescopeID == 2) ||  (telescopeID == 3))
@@ -166,12 +179,8 @@ int FindHotPixels (std::string const InFileName,
   BFR.SetTrackingAlignment(&Alignment);
   Alignment.SetErrorsTelescope1();
 
-  //FILE* f = fopen("MyGainCal.dat", "w");
-  //BFR.GetGainCal()->PrintGainCal(f);
-  //fclose(f);
-
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
   // Add hot pixels we are given to mask
   // Since we now do multiple iterations in the histograms in one FindHotPixels call
@@ -317,8 +326,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   BFR.SetTrackingAlignment(&Alignment);
   BFR.SetPlaneUnderTest( plane_under_test );
 
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -746,9 +755,8 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
 
-
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask_forSiEff.txt");
+  // Apply Masking
+  BFR.ReadPixelMask("outerPixelMask_forSiEff.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -833,10 +841,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Run default analysis
   const int NROC = GetNumberOfROCS(telescopeID);
 
-  // Mask hot pixels in offline analysis
-  // pixels are considered hot if they have > 10 times the number of mean hits of
-  // other (filled) pixels in the ROC
-  // Call the hot finder repeatedly until no new hot pixels can be found
+  // Initialize hot-pixel array
   std::vector< std::vector< std::vector<int> > > hot_pixels;
   for (int iroc = 0; iroc != NROC; ++iroc) {
     std::vector< std::vector<int> > tmp;
@@ -858,17 +863,21 @@ int TestPSIBinaryFileReader (std::string const InFileName,
                                             hot_pixels,
                                             telescopeID);
 
+  // For Telescopes from May testbeam:
+  //   Do single plane studies
+  if ((telescopeID == 1) || (telescopeID == 2)){
+    for (int iplane=1; iplane != 5; iplane++){
+      TestPlaneEfficiency(InFileName,
+                          out_f,
+                          CalibrationList,
+                          RunNumber,
+                          hot_pixels,
+                          iplane,
+                          n_events,
+                          telescopeID);
+    }
+  }
 
-  // Study single planes
-  for (int iplane=1; iplane!=5;iplane++)
-    TestPlaneEfficiency(InFileName,
-                        out_f,
-                        CalibrationList,
-                        RunNumber,
-                        hot_pixels,
-                        iplane,
-                        n_events,
-                        telescopeID);
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
@@ -885,20 +894,18 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-  //BFR.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
 
-  // Mask additional outer four layer on all diamonds
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
   //Add hot pixels we found to mask
   for (int iroc=0; iroc != NROC; iroc++){
-   for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
-     // std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
-     BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
-   }
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
   }
 
   BFR.CalculateLevels(10000, OutDir);
@@ -1753,7 +1760,7 @@ int DoAlignment (std::string const InFileName,
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
+    BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
     BFR.CalculateLevels(10000 ,OutDir);
     BFR.SetPlaneUnderTest( iroc_align );
 
@@ -1916,7 +1923,7 @@ for (int ialign=1; ialign!=15;ialign++){
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
   BFR.CalculateLevels(10000 ,OutDir);
 
 
@@ -2102,7 +2109,7 @@ int FindResiduals(std::string const InFileName,
     FILE* f = fopen("MyGainCal.dat", "w");
     BFR.GetGainCal()->PrintGainCal(f);
     fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
+    BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
     BFR.CalculateLevels(10000 ,OutDir);
 
     // Event Loop
@@ -2134,7 +2141,7 @@ int FindResiduals(std::string const InFileName,
       BFR.GetGainCal()->PrintGainCal(f);
       fclose(f);
       BFR.SetPlaneUnderTest( iplane );
-      BFR.ReadPixelMask( "outerPixelMask.txt");
+      BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
       BFR.CalculateLevels(10000 ,OutDir);
 
       // Event Loop
