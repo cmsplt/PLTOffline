@@ -313,36 +313,6 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   */
 
-float max_dr_x = 0.045;
-float max_dr_y = 0.03;
-
-
-gStyle->SetOptStat(0);
-TString const PlotsDir = "plots/";
-TString const OutDir = PlotsDir + RunNumber + "/";
-
-// Open Alignment
-PLTAlignment Alignment;
-Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-Alignment.SetErrors(telescopeID);
-
-// Initialize Reader
-PSIBinaryFileReader BFR(InFileName, CalibrationList);
-BFR.SetTrackingAlignment(&Alignment);
-
-// Apply Masking
-BFR.ReadPixelMask("outerPixelMask_forSiEff.txt");
-
-// Add additional hot pixels (from FindHotPixels to mask)
-for (int iroc=0; iroc != 6; iroc++){
-  for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
-    BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
-  }
-}
-
-BFR.CalculateLevels(10000, OutDir);
-
-/*
   // Track/Hit matching distance [cm]
   float max_dr_x = 0.045;
   float max_dr_y = 0.03;
@@ -359,9 +329,7 @@ BFR.CalculateLevels(10000, OutDir);
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName, CalibrationList);
   BFR.SetTrackingAlignment(&Alignment);
-
-
-  std::cout << plane_under_test << std::endl;
+  BFR.SetPlaneUnderTest(plane_under_test);
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -374,11 +342,6 @@ BFR.CalculateLevels(10000, OutDir);
   }
 
   BFR.CalculateLevels(10000, OutDir);
-*/
-
-  std::exit(0);
-
-  BFR.SetPlaneUnderTest(plane_under_test);
 
 
   // Prepare Occupancy histograms
@@ -545,7 +508,6 @@ BFR.CalculateLevels(10000, OutDir);
        for (int ic = 0; ic != Plane->NClusters(); ic++){
               float dtx = (tx - Plane->Cluster(ic)->TX());
               float dty = (ty - Plane->Cluster(ic)->TY());
-              float dtr = sqrt( dtx*dtx + dty*dty );
 
               if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
                 hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
@@ -897,17 +859,12 @@ int TestPSIBinaryFileReader (std::string const InFileName,
                 hot_pixels,
                 telescopeID);
 
-  /*
-  std::cout << "Going to call TestPlaneEfficiencySilicon" << std::endl;
   int n_events = TestPlaneEfficiencySilicon(InFileName,
                                             out_f,
                                             CalibrationList,
                                             RunNumber,
                                             hot_pixels,
                                             telescopeID);
-  std::cout << "Done with TestPlaneEfficiencySilicon" << std::endl;
-  */
-  int n_events = 100;
 
   // For Telescopes from May testbeam:
   //   Do single plane studies
