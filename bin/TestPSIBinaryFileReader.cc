@@ -146,10 +146,10 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   Leg.SetFillColor(0);
   Leg.SetBorderSize(0);
   Leg.SetTextSize(0.05);
-  Leg.AddEntry(h15, "#Delta R < 150 #mu m", "l");
-  Leg.AddEntry(h30, "#Delta R < 300 #mu m", "l");
-  Leg.AddEntry(h45, "#Delta R < 450 #mu m", "l");
-  Leg.AddEntry(h60, "#Delta R < 600 #mu m", "l");
+  Leg.AddEntry(h15, "1 Pixel Ellipse", "l");
+  Leg.AddEntry(h30, "2 Pixel Ellipse", "l");
+  Leg.AddEntry(h45, "3 Pixel Ellipse", "l");
+  Leg.AddEntry(h60, "4 Pixel Ellipse", "l");
 
   h15->Draw();
   h30->Draw("SAME");
@@ -364,17 +364,15 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
 
+  TH3F hCharge1       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge2       = TH3F( Form("Charge2_ROC%i", plane_under_test), "Total Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge3       = TH3F( Form("Charge3_ROC%i", plane_under_test), "Total Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hCharge4       = TH3F( Form("Charge4_ROC%i", plane_under_test), "Total Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
-
-  TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Total Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Total Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge60       = TH3F( Form("Charge60_ROC%i", plane_under_test), "Total Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
-
-  TH3F hMaxCharge15       = TH3F( Form("MaxCharge_ROC%i", plane_under_test),   "Max Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge30       = TH3F( Form("MaxCharge30_ROC%i", plane_under_test), "Max Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge45       = TH3F( Form("MaxCharge45_ROC%i", plane_under_test), "Max Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge60       = TH3F( Form("MaxCharge60_ROC%i", plane_under_test), "Max Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge1       = TH3F( Form("MaxCharge_ROC%i", plane_under_test),   "Max Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge2       = TH3F( Form("MaxCharge2_ROC%i", plane_under_test), "Max Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge3       = TH3F( Form("MaxCharge3_ROC%i", plane_under_test), "Max Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hMaxCharge4       = TH3F( Form("MaxCharge4_ROC%i", plane_under_test), "Max Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
   TH3F hClusterSize       = TH3F( Form("ClusterSize_ROC%i", plane_under_test), "Cluster Size", 52,0,52, 80,0,80,11,-0.5,10.5);
 
@@ -436,15 +434,15 @@ void TestPlaneEfficiency (std::string const InFileName,
       PLTPlane* Plane = BFR.Plane( plane_under_test );
       bool matched = false;
 
-      float sum15 = 0;
-      float sum30 = 0;
-      float sum45 = 0;
-      float sum60 = 0;
+      float sum1 = 0;
+      float sum2 = 0;
+      float sum3 = 0;
+      float sum4 = 0;
 
-      float max15 = 0;
-      float max30 = 0;
-      float max45 = 0;
-      float max60 = 0;
+      float max1 = 0;
+      float max2 = 0;
+      float max3 = 0;
+      float max4 = 0;
 
       // loop over all hits and check distance to intersection
       for (int ih = 0; ih != Plane->NHits(); ih++){
@@ -458,28 +456,32 @@ void TestPlaneEfficiency (std::string const InFileName,
 
              float charge = Plane->Hit(ih)->Charge();
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.015){
-               sum15 += charge;
-               if (charge > max15)
-                 max15 = charge;
+             // 1 Pixel Ellipse
+             if ( (dtx*dtx/(0.015*0.015)) + (dty*dty/(0.01*0.01)) < 1){
+               sum1 += charge;
+               if (charge > max1)
+                 max1 = charge;
              }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.03){
-               sum30 += charge;
-               if (charge > max30)
-                 max30 = charge;
+             // 2 Pixel Ellipse
+             if ( (dtx*dtx/(0.03*0.03)) + (dty*dty/(0.02*0.02)) < 1){
+               sum2 += charge;
+               if (charge > max2)
+                 max2 = charge;
              }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.045){
-               sum45 += charge;
-               if (charge > max45)
-                  max45 = charge;
+             // 3 Pixel Ellipse
+             if ( (dtx*dtx/(0.045*0.045)) + (dty*dty/(0.03*0.03)) < 1){
+               sum3 += charge;
+               if (charge > max3)
+                  max3 = charge;
              }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.06){
-               sum60 += charge;
-               if (charge > max60)
-                 max60 = charge;
+             // 4 Pixel Ellipse
+             if ( (dtx*dtx/(0.06*0.06)) + (dty*dty/(0.04*0.04)) < 1){
+               sum4 += charge;
+               if (charge > max4)
+                 max4 = charge;
              }
 
              if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
@@ -487,15 +489,15 @@ void TestPlaneEfficiency (std::string const InFileName,
 
        } // end of loop over hits
 
-       hCharge15.Fill( px, py, sum15);
-       hCharge30.Fill( px, py, sum30);
-       hCharge45.Fill( px, py, sum45);
-       hCharge60.Fill( px, py, sum60);
+       hCharge1.Fill( px, py, sum1);
+       hCharge2.Fill( px, py, sum2);
+       hCharge3.Fill( px, py, sum3);
+       hCharge4.Fill( px, py, sum4);
 
-       hMaxCharge15.Fill( px, py, max15);
-       hMaxCharge30.Fill( px, py, max30);
-       hMaxCharge45.Fill( px, py, max45);
-       hMaxCharge60.Fill( px, py, max60);
+       hMaxCharge1.Fill( px, py, max1);
+       hMaxCharge2.Fill( px, py, max2);
+       hMaxCharge3.Fill( px, py, max3);
+       hMaxCharge4.Fill( px, py, max4);
 
        // if there was at least one match: fill denominator
        if (matched){
@@ -564,16 +566,16 @@ void TestPlaneEfficiency (std::string const InFileName,
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
 
-                   for (int ibin_z = 1; ibin_z != hCharge15.GetNbinsZ()+2; ibin_z++){
-                     hCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   for (int ibin_z = 1; ibin_z != hCharge1.GetNbinsZ()+2; ibin_z++){
+                     hCharge1.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge2.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge3.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hCharge4.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
 
-                     hMaxCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge1.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge2.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge3.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                     hMaxCharge4.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
 
                      hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
 
@@ -690,17 +692,17 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
   std::vector <TH3*> hs_mean_charge;
-  hs_mean_charge.push_back( &hCharge15 );
-  hs_mean_charge.push_back( &hCharge30 );
-  hs_mean_charge.push_back( &hCharge45 );
-  hs_mean_charge.push_back( &hCharge60 );
+  hs_mean_charge.push_back( &hCharge1 );
+  hs_mean_charge.push_back( &hCharge2 );
+  hs_mean_charge.push_back( &hCharge3 );
+  hs_mean_charge.push_back( &hCharge4 );
   Write1DCharge( hs_mean_charge, &Can, OutDir);
 
   std::vector <TH3*> hs_max_charge;
-  hs_max_charge.push_back( &hMaxCharge15 );
-  hs_max_charge.push_back( &hMaxCharge30 );
-  hs_max_charge.push_back( &hMaxCharge45 );
-  hs_max_charge.push_back( &hMaxCharge60 );
+  hs_max_charge.push_back( &hMaxCharge1 );
+  hs_max_charge.push_back( &hMaxCharge2 );
+  hs_max_charge.push_back( &hMaxCharge3 );
+  hs_max_charge.push_back( &hMaxCharge4 );
   Write1DCharge( hs_max_charge, &Can, OutDir);
 
 
@@ -714,15 +716,15 @@ void TestPlaneEfficiency (std::string const InFileName,
   if (plane_under_test==4)
     maxz = 50000;
 
-  Write2DCharge( &hCharge15, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge30, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge45, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge60, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &hCharge4, &Can, maxz, OutDir);
 
-  Write2DCharge( &hMaxCharge15, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge30, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge45, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge60, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &hMaxCharge4, &Can, maxz, OutDir);
 
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
 
@@ -2423,15 +2425,15 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge30_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge30_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"Charge2_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge2_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge45_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge45_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"Charge3_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge3_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-  f << Form("<a href=\"Charge60_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge60_ROC%i_profile.gif\"></a>\n", i, i);
+  f << Form("<a href=\"Charge3_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge4_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
