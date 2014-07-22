@@ -174,15 +174,11 @@ int FindHotPixels (std::string const InFileName,
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  std::cout << "GetAlignmentFilename(telescopeID)=" << GetAlignmentFilename(telescopeID) << std::endl;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  Alignment.SetErrors(telescopeID);
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -321,14 +317,11 @@ void TestPlaneEfficiency (std::string const InFileName,
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(telescopeID);
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
   BFR.SetPlaneUnderTest(plane_under_test);
 
   // Apply Masking
@@ -390,7 +383,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 
 
-  double tz = Alignment.GetTZ(1, plane_under_test);
+  double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
 
   // Event Loop
@@ -424,11 +417,11 @@ void TestPlaneEfficiency (std::string const InFileName,
       double tx = BFR.Track(0)->TX( tz );
       double ty = BFR.Track(0)->TY( tz );
 
-      double lx = Alignment.TtoLX( tx, ty, 1, plane_under_test);
-      double ly = Alignment.TtoLY( tx, ty, 1, plane_under_test);
+      double lx = BFR.GetAlignment()->TtoLX( tx, ty, 1, plane_under_test);
+      double ly = BFR.GetAlignment()->TtoLY( tx, ty, 1, plane_under_test);
 
-      int px = Alignment.PXfromLX( lx );
-      int py = Alignment.PYfromLY( ly );
+      int px = BFR.GetAlignment()->PXfromLX( lx );
+      int py = BFR.GetAlignment()->PYfromLY( ly );
 
       hOccupancyDenom.Fill( px, py );
       hOccupancyDenom_eventSlices[i_slice].Fill(px, py);
@@ -538,8 +531,8 @@ void TestPlaneEfficiency (std::string const InFileName,
 
              // Convert pixel row/column to local coordinates
              // deltaR(local) should be == deltaR(telescope) (within a plane)
-             float masked_lx = Alignment.PXtoLX( col);
-             float masked_ly = Alignment.PYtoLY( row);
+             float masked_lx = BFR.GetAlignment()->PXtoLX( col);
+             float masked_ly = BFR.GetAlignment()->PYtoLY( row);
 
              //std::cout << col << " " << row << " " << masked_lx << " " << masked_ly << std::endl;
 
@@ -551,8 +544,8 @@ void TestPlaneEfficiency (std::string const InFileName,
                  int px =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
                  int py =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
 
-                 float lx = Alignment.PXtoLX( px);
-                 float ly = Alignment.PYtoLY( py);
+                 float lx = BFR.GetAlignment()->PXtoLX( px);
+                 float ly = BFR.GetAlignment()->PYtoLY( py);
 
                  //std::cout << px << " " << py << " " << lx << " " << ly;
 
@@ -752,13 +745,11 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   TString const OutDir = PlotsDir + RunNumber + "/";
 
   // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(telescopeID);
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
   BFR.ReadPixelMask("outerPixelMask_forSiEff.txt");
@@ -889,14 +880,11 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   std::cout<<OutDir<<std::endl;
   gStyle->SetOptStat(0);
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
-  Alignment.SetErrors(telescopeID);
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
@@ -1339,7 +1327,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
           }
           PLTU::AddToRunningAverage(AvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
 
-          if (Track->IsFiducial(1, 5, Alignment, PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
+          if (Track->IsFiducial(1, 5, *(BFR.GetAlignment()), PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
             hOccupancyTrack6[Cluster->ROC()].Fill(Cluster->PX(), Cluster->PY());
           }
 
@@ -1708,8 +1696,6 @@ int DoAlignment (std::string const InFileName,
 
   gStyle->SetOptStat(0);
 
-
-
   std::vector<float> x_align;
   std::vector<float> y_align;
   std::vector<float> z_align;
@@ -1722,24 +1708,34 @@ int DoAlignment (std::string const InFileName,
     r_align.push_back(0);
   }
 
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID, true));
+  BFR.GetAlignment()->SetErrors(telescopeID);
+
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
+
+  BFR.CalculateLevels(10000, OutDir);
+
 
   for (int ialign=0; ialign!=2;ialign++){
 
 
-  // Start with initial Alignment (X,Y offsets and rotations set to zero)
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID, true));
-
   for (int iroc=1;iroc!=5;iroc++){
-    Alignment.AddToLX( 1, iroc, x_align[iroc] );
-    Alignment.AddToLY( 1, iroc, y_align[iroc] );
-    //Alignment.AddToLR( 1, iroc, r_align[iroc] );
+    BFR.GetAlignment()->AddToLX( 1, iroc, x_align[iroc] );
+    BFR.GetAlignment()->AddToLY( 1, iroc, y_align[iroc] );
+    //BFR.GetAlignment()->AddToLR( 1, iroc, r_align[iroc] );
   }
 
 
   for (int iroc_align = 1; iroc_align != 5; ++iroc_align) {
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
+
+    BFR.ResetFile();
+    BFR.SetPlaneUnderTest( iroc_align );
 
     // Prepare Residual histograms
     // hResidual:    x=dX / y=dY
@@ -1749,15 +1745,6 @@ int DoAlignment (std::string const InFileName,
     std::vector< TH2F > hResidualXdY;
     std::vector< TH2F > hResidualYdX;
 
-
-    PSIBinaryFileReader BFR(InFileName, CalibrationList);
-    BFR.SetTrackingAlignment(&Alignment);
-    FILE* f = fopen("MyGainCal.dat", "w");
-    BFR.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
-    BFR.CalculateLevels(10000 ,OutDir);
-    BFR.SetPlaneUnderTest( iroc_align );
 
 
     // Reset residual histograms
@@ -1805,8 +1792,8 @@ int DoAlignment (std::string const InFileName,
       float track_TX = Track->TX(iroc_align);
       float track_TY = Track->TY(iroc_align);
 
-      float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iroc_align);
-      float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iroc_align);
+      float track_LX = BFR.GetAlignment()->TtoLX( track_TX, track_TY, 1, iroc_align);
+      float track_LY = BFR.GetAlignment()->TtoLY( track_TX, track_TY, 1, iroc_align);
 
       float d_LX =  (track_LX - h_LX);
       float d_LY =  (track_LY - h_LY);
@@ -1835,14 +1822,14 @@ int DoAlignment (std::string const InFileName,
 
 
 
-  std::cout << "Before: " << Alignment.LX(1,iroc_align) << std::endl;
+  std::cout << "Before: " << BFR.GetAlignment()->LX(1,iroc_align) << std::endl;
 
   x_align[iroc_align] +=  hResidual[iroc_align].GetMean(1);
   y_align[iroc_align] +=  hResidual[iroc_align].GetMean(2);
   r_align[iroc_align] +=  hResidualXdY[iroc_align].GetCorrelationFactor();
 
 
-  std::cout << "After: " << Alignment.LX(1,iroc_align) << std::endl;
+  std::cout << "After: " << BFR.GetAlignment()->LX(1,iroc_align) << std::endl;
 
 
   TCanvas Can;
@@ -1880,7 +1867,7 @@ int DoAlignment (std::string const InFileName,
 
 
 } // end loop over rocs
-Alignment.WriteAlignmentFile("NewAlignment.dat");
+BFR.GetAlignment()->WriteAlignmentFile("NewAlignment.dat");
 
 } // end alignment loop
 
@@ -1888,18 +1875,6 @@ Alignment.WriteAlignmentFile("NewAlignment.dat");
 
 
 std::cout << "PART TWO!!!!!" << std::endl;
-
-
-
-// Start with initial Alignment (X,Y offsets and rotations set to zero)
-PLTAlignment Alignment;
-Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID, true));
-
-for (int iroc=1;iroc!=5;iroc++){
-  Alignment.AddToLX( 1, iroc, x_align[iroc] );
-  Alignment.AddToLY( 1, iroc, y_align[iroc] );
-  //Alignment.AddToLR( 1, iroc, r_align[iroc] );
-}
 
 
 for (int ialign=1; ialign!=15;ialign++){
@@ -1912,15 +1887,6 @@ for (int ialign=1; ialign!=15;ialign++){
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
   std::vector< TGraph > gResidualXdY;
-
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  FILE* f = fopen("MyGainCal.dat", "w");
-  BFR.GetGainCal()->PrintGainCal(f);
-  fclose(f);
-  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
-  BFR.CalculateLevels(10000 ,OutDir);
-
 
   // Reset residual histograms
   hResidual.clear();
@@ -2018,8 +1984,8 @@ for (int ialign=1; ialign!=15;ialign++){
   std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
-  Alignment.AddToLX(1, iroc, hResidual[iroc].GetMean(1));
-  Alignment.AddToLY(1, iroc, hResidual[iroc].GetMean(2));
+  BFR.GetAlignment()->AddToLX(1, iroc, hResidual[iroc].GetMean(1));
+  BFR.GetAlignment()->AddToLY(1, iroc, hResidual[iroc].GetMean(2));
 
   float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
 
@@ -2030,7 +1996,7 @@ for (int ialign=1; ialign!=15;ialign++){
 
   float other_angle = atan(linear_fun.GetParameter(1));
 
-  Alignment.AddToLR(1, iroc, other_angle/3.);
+  BFR.GetAlignment()->AddToLR(1, iroc, other_angle/3.);
 
   std::cout << "ROC: " << iroc << " Angle: " << angle << " Other Angle:" << other_angle << std::endl;
 
@@ -2067,7 +2033,7 @@ for (int ialign=1; ialign!=15;ialign++){
 
   } // end alignment loop
 
-  Alignment.WriteAlignmentFile("NewAlignment.dat");
+  BFR.GetAlignment()->WriteAlignmentFile("NewAlignment.dat");
 
   return 0;
 }
@@ -2084,8 +2050,18 @@ int FindResiduals(std::string const InFileName,
 
   gStyle->SetOptStat(0);
 
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(GetAlignmentFilename(telescopeID));
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName,
+                          CalibrationList,
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
+
+  FILE* f = fopen("MyGainCal.dat", "w");
+  BFR.GetGainCal()->PrintGainCal(f);
+  fclose(f);
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
+  BFR.CalculateLevels(10000 ,OutDir);
+
 
   for (int ires=0; ires != 8; ires++){
 
@@ -2098,27 +2074,20 @@ int FindResiduals(std::string const InFileName,
     std::vector<float> chi2_5_y;
 
     // Determine the 6-plane CHi2
-    {
-    PSIBinaryFileReader BFR(InFileName, CalibrationList);
-    BFR.SetTrackingAlignment(&Alignment);
-    FILE* f = fopen("MyGainCal.dat", "w");
-    BFR.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
-    BFR.CalculateLevels(10000 ,OutDir);
-
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
+      BFR.ResetFile();
+      BFR.SetAllPlanes();
+
       if (! (BFR.NTracks()==1))
-      continue;
+        continue;
 
       PLTTrack * Track = BFR.Track(0);
       hChi2_6_X.Fill( Track->Chi2X() );
       hChi2_6_Y.Fill( Track->Chi2Y() );
 
     } // end event loop
-    } // end getting 6-plane Chi2
 
 
 
@@ -2130,14 +2099,9 @@ int FindResiduals(std::string const InFileName,
 
       // Determine the 5-plane CHi2
       {
-      PSIBinaryFileReader BFR(InFileName, CalibrationList);
-      BFR.SetTrackingAlignment(&Alignment);
-      FILE* f = fopen("MyGainCal.dat", "w");
-      BFR.GetGainCal()->PrintGainCal(f);
-      fclose(f);
+      // Initialize Reader
+      BFR.ResetFile();
       BFR.SetPlaneUnderTest( iplane );
-      BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
-      BFR.CalculateLevels(10000 ,OutDir);
 
       // Event Loop
       for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -2231,16 +2195,16 @@ int FindResiduals(std::string const InFileName,
 
       }
 
-      Alignment.SetErrorX(imax_x, Alignment.GetErrorX(imax_x)*(chi2_6_x-chi2_5_x[imax_x]));
-      Alignment.SetErrorY(imax_y, Alignment.GetErrorY(imax_y)*(chi2_6_y-chi2_5_y[imax_y]));
+      BFR.GetAlignment()->SetErrorX(imax_x, BFR.GetAlignment()->GetErrorX(imax_x)*(chi2_6_x-chi2_5_x[imax_x]));
+      BFR.GetAlignment()->SetErrorY(imax_y, BFR.GetAlignment()->GetErrorY(imax_y)*(chi2_6_y-chi2_5_y[imax_y]));
 
 
       for (int ic=0; ic!=6; ic++){
-        Alignment.SetErrorX(ic, Alignment.GetErrorX(ic)*(chi2_6_x/4.));
-        Alignment.SetErrorY(ic, Alignment.GetErrorY(ic)*(chi2_6_y/4.));
+        BFR.GetAlignment()->SetErrorX(ic, BFR.GetAlignment()->GetErrorX(ic)*(chi2_6_x/4.));
+        BFR.GetAlignment()->SetErrorY(ic, BFR.GetAlignment()->GetErrorY(ic)*(chi2_6_y/4.));
 
-        std::cout << "X ROC RES: " << ic << " " << Alignment.GetErrorX(ic) <<std::endl;
-        std::cout << "Y ROC RES: " << ic << " " << Alignment.GetErrorY(ic) <<std::endl;
+        std::cout << "X ROC RES: " << ic << " " << BFR.GetAlignment()->GetErrorX(ic) <<std::endl;
+        std::cout << "Y ROC RES: " << ic << " " << BFR.GetAlignment()->GetErrorY(ic) <<std::endl;
       }
 
 
@@ -2516,11 +2480,6 @@ f << "<br>\n";
 }
 
 
-
-
-
-
-
 int main (int argc, char* argv[])
 {
   if (argc != 5) {
@@ -2541,7 +2500,6 @@ int main (int argc, char* argv[])
 
   residuals tries to find the correct residuals for tracking
   */
-
 
   std::string const InFileName = argv[1];
   TString const FullRunName = InFileName;

@@ -25,7 +25,9 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName)
 }
 
 
-PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList)
+PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
+                                          std::string const CalibrationList,
+                                          std::string const AlignmentFileName)
 {
   // constructor
   fEOF = 0;
@@ -50,7 +52,6 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fCL >> fCalibrationFile[4];
   fCL >> fCalibrationFile[5];
 
-
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[0]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[1]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[2]);
@@ -58,7 +59,7 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
 
-  fAlignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
+  fAlignment.ReadAlignmentFile(AlignmentFileName);
   SetTrackingAlignment(&fAlignment);
   SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_6PlanesHit);
 
@@ -85,6 +86,13 @@ bool PSIBinaryFileReader::OpenFile ()
   return false;
 }
 
+void PSIBinaryFileReader::ResetFile ()
+{
+  // Reset the file
+  std::cout << "Reset the file!" << std::endl;
+  fInputBinaryFile.close();
+  OpenFile();  
+}
 
 
 
@@ -433,10 +441,7 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents,TString const Out
   hTBMLevels.Draw("hist");
   Can.SaveAs(OutDir + "LevelsTBM.gif");
 
-  // Reset the file
-  std::cout << "Reset the file!" << std::endl;
-  fInputBinaryFile.close();
-  OpenFile();
+  ResetFile();
 
   return 0;
 }
@@ -458,8 +463,8 @@ void PSIBinaryFileReader::DecodeHits ()
   int const NROCs = UBCount - 5;
   //std::cout << "fBufferSize: " << fBufferSize << std::endl;
   //std::cout << "NROCs: " << NROCs << std::endl;
-  static int iBadData = 0;
-  static int iGoodData = 0;
+  //static int iBadData = 0;
+  //static int iGoodData = 0;
   if (NROCs > NMAXROCS) {
     //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
     std::cerr << "WARNING: NROCs > NMAXROCS.  Too many UBs.  Skipping this event" << std::endl;

@@ -13,11 +13,12 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
 {
   public:
     PSIBinaryFileReader (std::string const);
-    PSIBinaryFileReader (std::string const, std::string const);
+    PSIBinaryFileReader (std::string const, std::string const, std::string const);
     ~PSIBinaryFileReader ();
 
     std::string fBinaryFileName;
     bool OpenFile ();
+    void ResetFile ();
     void Clear ();
 
     void ReadPixelMask (std::string const);
@@ -45,6 +46,11 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     PLTGainCal* GetGainCal ()
     {
       return &fGainCal;
+    }
+
+    PLTAlignment* GetAlignment()
+    {
+      return &fAlignment;
     }
 
     const std::set<int> * GetPixelMask(){
