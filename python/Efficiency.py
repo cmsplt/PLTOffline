@@ -227,7 +227,7 @@ def make_plots(add_si, do_zoom, do_slice):
 
         # Prepare 'background' TH2.
         if do_zoom:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.6, 1.05)
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.4, 1.05)
         else:
             h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
         h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
@@ -290,7 +290,7 @@ def make_plots(add_si, do_zoom, do_slice):
 
             # Markers
             gr_si.SetMarkerStyle(2)
-            gr_tr.SetMarkerSize(1)
+            gr_tr.SetMarkerSize(1.5)
             # going up
             if direction == "up":
                 gr_tr.SetMarkerStyle(22)
