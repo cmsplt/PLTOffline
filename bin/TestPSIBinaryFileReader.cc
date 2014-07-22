@@ -316,8 +316,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Hit matching distance [cm]
-  float max_dr_x = 0.045;
-  float max_dr_y = 0.03;
+  float max_dr_x = 0.03;
+  float max_dr_y = 0.02;
 
   gStyle->SetOptStat(0);
   TString const PlotsDir = "plots/";
