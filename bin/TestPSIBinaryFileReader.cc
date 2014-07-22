@@ -95,6 +95,17 @@ void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
   Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.pdf");
 }
 
+float GetMaximumExceptBin(TH1* h, int ibin){
+
+  if (h->GetMaximumBin() == ibin){
+    return h->GetMaximum(h->GetMaximum());
+  }
+  else{
+    return h->GetMaximum();
+  }
+
+}
+
 void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
 
   if (hs.size()!=4){
@@ -107,15 +118,10 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   TH1* h45 = hs[2]->Project3D("Z");
   TH1* h60 = hs[3]->Project3D("Z");
 
-  float hmax = 1.1 * std::max( h15->GetMaximum(),
-                       std::max( h30->GetMaximum(),
-                         std::max( h45->GetMaximum(),
-                           h60->GetMaximum() )));
-
-  h15->SetAxisRange(2000,50000,"X");
-  h30->SetAxisRange(2000,50000,"X");
-  h45->SetAxisRange(2000,50000,"X");
-  h60->SetAxisRange(2000,50000,"X");
+  float hmax = 1.1 * std::max( GetMaximumExceptBin(h15, 1),
+                       std::max( GetMaximumExceptBin(h30, 1),
+                         std::max( GetMaximumExceptBin(h45, 1),
+                            GetMaximumExceptBin(h60, 1))));
 
   h15->SetAxisRange(0,hmax,"Y");
   h30->SetAxisRange(0,hmax,"Y");
@@ -1712,7 +1718,7 @@ int DoAlignment (std::string const InFileName,
   PSIBinaryFileReader BFR(InFileName,
                           CalibrationList,
                           GetAlignmentFilename(telescopeID, true));
-  BFR.GetAlignment()->SetErrors(telescopeID);
+  BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
@@ -1730,7 +1736,7 @@ int DoAlignment (std::string const InFileName,
   }
 
 
-  for (int iroc_align = 1; iroc_align != 5; ++iroc_align) {
+  for (int iroc_align = 1; iroc_align != 6; ++iroc_align) {
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
 
@@ -1753,7 +1759,7 @@ int DoAlignment (std::string const InFileName,
     hResidualYdX.clear();
     for (int iroc = 0; iroc != 6; ++iroc){
       hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                  Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
+                                  Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
       hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
                                      Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
       hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
@@ -1879,6 +1885,9 @@ std::cout << "PART TWO!!!!!" << std::endl;
 
 for (int ialign=1; ialign!=15;ialign++){
 
+  BFR.ResetFile();
+  BFR.SetAllPlanes();
+
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
   // hResidualXdY: x=X  / y=dY
@@ -1894,7 +1903,7 @@ for (int ialign=1; ialign!=15;ialign++){
   hResidualYdX.clear();
   for (int iroc = 0; iroc != 6; ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
+                                Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
                                    Form("ResidualXdY_ROC%i",iroc), 35, -0.2, 0.2, 100, -.2, .2));
     hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
@@ -1962,7 +1971,6 @@ for (int ialign=1; ialign!=15;ialign++){
       // dX vs dY
       hResidual[iroc].Fill( d_LX, d_LY);
 
-
       if ((fabs(d_LX) < 1000) && (fabs(d_LY) < 1000)){
           // X vs dY
           hResidualXdY[iroc].Fill( cl_LX, d_LY);
@@ -1980,7 +1988,7 @@ for (int ialign=1; ialign!=15;ialign++){
 
   } // end event loop
 
-  for (int iroc=1; iroc!=5; iroc++){
+  for (int iroc=1; iroc!=6; iroc++){
   std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
@@ -2054,7 +2062,7 @@ int FindResiduals(std::string const InFileName,
   PSIBinaryFileReader BFR(InFileName,
                           CalibrationList,
                           GetAlignmentFilename(telescopeID));
-  BFR.GetAlignment()->SetErrors(telescopeID);
+  BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
@@ -2064,6 +2072,9 @@ int FindResiduals(std::string const InFileName,
 
 
   for (int ires=0; ires != 8; ires++){
+
+    BFR.ResetFile();
+    BFR.SetAllPlanes();
 
     TH1F hChi2_6_X( "", "", 100, 0, 10);
     TH1F hChi2_6_Y( "", "", 100, 0, 10);
@@ -2077,8 +2088,6 @@ int FindResiduals(std::string const InFileName,
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
-      BFR.ResetFile();
-      BFR.SetAllPlanes();
 
       if (! (BFR.NTracks()==1))
         continue;

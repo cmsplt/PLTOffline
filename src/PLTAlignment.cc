@@ -597,42 +597,59 @@ void PLTAlignment::AddToGZ (int const ch, float val)
   fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
 }
 
-void PLTAlignment::SetErrors(int telescopeID){
+void PLTAlignment::SetErrors(int telescopeID, bool initial){
 
-  if (telescopeID == 1){
-    SetErrorX( 0, 0.0159959);
-    SetErrorX( 1, 0.0036472);
-    SetErrorX( 2, 0.00863393);
-    SetErrorX( 3, 0.00875513);
-    SetErrorX( 4, 0.00540883);
-    SetErrorX( 5, 0.0148445);
+  if (initial){
+    SetErrorX( 0, 0.004);
+    SetErrorX( 1, 0.004);
+    SetErrorX( 2, 0.004);
+    SetErrorX( 3, 0.004);
+    SetErrorX( 4, 0.004);
+    SetErrorX( 5, 0.004);
 
-    SetErrorY( 0, 0.013026);
-    SetErrorY( 1, 0.0027642);
-    SetErrorY( 2, 0.00723878);
-    SetErrorY( 3, 0.00807274);
-    SetErrorY( 4, 0.00580178);
-    SetErrorY( 5, 0.0201051);
-  }
-  else if (telescopeID == 2){
-    SetErrorX( 0, 0.0354824);
-    SetErrorX( 1, 0.0153928);
-    SetErrorX( 2, 0.0104785);
-    SetErrorX( 3, 0.0110446);
-    SetErrorX( 4, 0.00366951);
-    SetErrorX( 5, 0.0222321);
-
-    SetErrorY( 0, 0.014847);
-    SetErrorY( 1, 0.00497932);
-    SetErrorY( 2, 0.00587453);
-    SetErrorY( 3, 0.00551315);
-    SetErrorY( 4, 0.00914208);
-    SetErrorY( 5, 0.0296843);
+    SetErrorY( 0, 0.003);
+    SetErrorY( 1, 0.003);
+    SetErrorY( 2, 0.003);
+    SetErrorY( 3, 0.003);
+    SetErrorY( 4, 0.003);
+    SetErrorY( 5, 0.003);
   }
   else{
-    std::cout << "ERROR: No Errors defined for telescopeID==" << telescopeID << std::endl;
-    std::cout << "Exiting.." << std::endl;
-    std::exit(0);
+    if (telescopeID == 1){
+      SetErrorX( 0, 0.0138452);
+      SetErrorX( 1, 0.0041562);
+      SetErrorX( 2, 0.00850018);
+      SetErrorX( 3, 0.00796671);
+      SetErrorX( 4, 0.00778308);
+      SetErrorX( 5, 0.0142984);
+
+      SetErrorY( 0, 0.013026);
+      SetErrorY( 1, 0.00384812);
+      SetErrorY( 2, 0.00728567);
+      SetErrorY( 3, 0.00688992);
+      SetErrorY( 4, 0.00460671);
+      SetErrorY( 5, 0.0130273);
+    }
+    else if (telescopeID == 2){
+      SetErrorX( 0, 0.0354824);
+      SetErrorX( 1, 0.0153928);
+      SetErrorX( 2, 0.0104785);
+      SetErrorX( 3, 0.0110446);
+      SetErrorX( 4, 0.00366951);
+      SetErrorX( 5, 0.0222321);
+
+      SetErrorY( 0, 0.014847);
+      SetErrorY( 1, 0.00497932);
+      SetErrorY( 2, 0.00587453);
+      SetErrorY( 3, 0.00551315);
+      SetErrorY( 4, 0.00914208);
+      SetErrorY( 5, 0.0296843);
+    }
+    else{
+      std::cout << "ERROR: No Errors defined for telescopeID==" << telescopeID << std::endl;
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
+    }
   }
 
 }
