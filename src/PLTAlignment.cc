@@ -628,3 +628,20 @@ void PLTAlignment::SetErrorsTelescope1(){
   SetErrorY( 5, 0.0201051);
 
 }
+
+void PLTAlignment::SetErrorsTelescope2(){
+
+  SetErrorX( 0, 0.0354824);
+  SetErrorX( 1, 0.0153928);
+  SetErrorX( 2, 0.0104785);
+  SetErrorX( 3, 0.0110446);
+  SetErrorX( 4, 0.00366951);
+  SetErrorX( 5, 0.0222321);
+
+  SetErrorY( 0, 0.014847);
+  SetErrorY( 1, 0.00497932);
+  SetErrorY( 2, 0.00587453);
+  SetErrorY( 3, 0.00551315);
+  SetErrorY( 4, 0.00914208);
+  SetErrorY( 5, 0.0296843);
+}
