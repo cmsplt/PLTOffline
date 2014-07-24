@@ -82,7 +82,7 @@ int GetNumberOfROCS(int telescopeID){
 
 
 bool CheckEllipse(float dx, float dy, float max_dx, float max_dy){
-  if ( (dx*dx/(max_dx*max_dx)) + (dy*dy/(max_dy*max_dy)) < 1)
+  if ( (dx*dx/(max_dx*max_dx)) + (dy*dy/(max_dy*max_dy)) <= 1.01)
     return true;
   else
     return false;
