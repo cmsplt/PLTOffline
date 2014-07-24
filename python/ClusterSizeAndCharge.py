@@ -2,7 +2,7 @@
 
 """
 Analyze multiple runs from PSI testbeam in May 2014.
-Extract the cluster size and charge as a function of flux.
+Extract the cluster size, total charge in radius and charge of second highest hit as a function of flux.
 """
 
 # ##############################
@@ -19,7 +19,7 @@ import RunInfos
 # Configuration
 ###############################
 
-telescope = 0
+telescope = 1
 
 try:
     di_runs = RunInfos.di_di_runs[telescope]
@@ -40,21 +40,28 @@ except KeyError:
 # list entries: one per ROC
 charge = {}
 cluster_size = {}
+second_charge = {}
 
 # Loop over runs
 for i_run, run in enumerate(di_runs):
 
     print "At: ", run
 
-    cluster_size[run] = []
     charge[run] = []
+    cluster_size[run] = []
+    second_charge[run] = []
 
     input_rootfile_name = "../plots/000" + str(run) + "/histos.root"
     f = ROOT.TFile.Open(input_rootfile_name)
 
     for iroc in range(1, 5):
+        # Get the cluster size
         h_cs = f.Get("ClusterSize_ROC" + str(iroc))
         cluster_size[run].append(h_cs.Project3D("z").GetMean())
+
+        # Get the charge of the second in the cluster
+        h_se = f.Get("SecondCharge_ROC" + str(iroc))
+        second_charge[run].append(h_se.GetMean())
 
         # Use the charge within a 2-pixel radius
         h_charge = f.Get("Charge2_ROC" + str(iroc))
@@ -88,21 +95,27 @@ def make_plots():
 
     c = ROOT.TCanvas("", "", 800, 800)
 
-    legend_origin_x = 0.2
-    legend_origin_y = 0.2
-    legend_size_x = 0.1
-    legend_size_y = 0.045 * 3
-
     c.SetLogx(1)
 
-    for plot_var in ["cluster_size", "charge"]:
+    for plot_var in ["cluster_size", "charge", "second_charge"]:
 
         if plot_var == "cluster_size":
             di_values = cluster_size
+            legend_origin_x = 0.2
+            legend_origin_y = 0.2
         elif plot_var == "charge":
             di_values = charge
+            legend_origin_x = 0.2
+            legend_origin_y = 0.8
+        elif plot_var == "second_charge":
+            di_values = second_charge
+            legend_origin_x = 0.2
+            legend_origin_y = 0.5
         else:
             raise VariableError(plot_var)
+
+        legend_size_x = 0.1
+        legend_size_y = 0.045 * 3
 
         # Loop over ROCs
         for i_roc in range(1, 5):
@@ -123,6 +136,9 @@ def make_plots():
             elif plot_var == "charge":
                 h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
                 h.GetYaxis().SetTitle("Total Charge within 2-pixel radius")
+            elif plot_var == "second_charge":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
+                h.GetYaxis().SetTitle("Charge of second hit in cluster")
             else:
                 raise VariableError
 
@@ -176,7 +192,7 @@ def make_plots():
 
                 # Protect graphs from autodelete
                 li_grs.append(gr)
-
+                gr.SetMarkerSize(1.5)
                 gr.Draw("PSAME")
             legend.Draw()
 
@@ -184,6 +200,8 @@ def make_plots():
                 outfile_name = "ClusterSize_Telescope{0}_ROC{1}".format(telescope, i_roc)
             elif plot_var == "charge":
                 outfile_name = "Charge_Telescope{0}_ROC{1}".format(telescope, i_roc)
+            elif plot_var == "second_charge":
+                outfile_name = "SecondCharge_Telescope{0}_ROC{1}".format(telescope, i_roc)
             else:
                 raise VariableError
 
