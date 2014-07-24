@@ -411,6 +411,11 @@ void TestPlaneEfficiency (std::string const InFileName,
       if (BFR.Track(0)->Chi2Y() > 6.25)
         continue;
 
+      // Only accept reasonably central events
+      double slopeX = BFR.Track(0)->fTVX / BFR.Track(0)->fTVZ;
+      double slopeY = BFR.Track(0)->fTVY / BFR.Track(0)->fTVZ;
+      if ((fabs(slopeX) > 0.02) || (fabs(slopeY) > 0.02))
+        continue;
 
       hChi2.Fill( BFR.Track(0)->Chi2());
       hChi2X.Fill( BFR.Track(0)->Chi2X());
@@ -728,7 +733,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
 
-
+  hClusterSize.Write();
 
 }
 

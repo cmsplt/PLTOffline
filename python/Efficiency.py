@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 """
-Analyze multiple runs from PSI testbeam in May 2014
+Analyze multiple runs from PSI testbeam in May 2014.
+Extract the efficiency as a function of flux.
 """
 
 # ##############################
@@ -12,6 +13,7 @@ import sys
 
 import ROOT
 
+import RunInfos
 
 ###############################
 # Configuration
@@ -20,64 +22,13 @@ import ROOT
 telescope = 1
 nslices = 5
 
-
-###############################
-# Define Runs
-###############################
-
-if telescope == 0:
-
-    # For testing
-    di_runs = {322: 1.6}
-
-    li_runs_up = [322]
-    li_runs_down = []
-    li_runs_final = []
-
-elif telescope == 1:
-
-    # Flux in kHz
-    # (taken from Steve's Spreadsheet)
-    di_runs = {
-        322: 1.6,
-        325: 12.9,
-        327: 130.6,
-        330: 1167.,
-        333: 20809.,
-        338: 1137.,
-        340: 125.4,
-        343: 10.8,
-        347: 1.4,
-        348: 1.5,
-        350: 20809.2,
-        352: 21387.3,
-    }
-
-    li_runs_up = [322, 325, 327, 330, 333]
-    li_runs_down = [338, 340, 343, 347, 348]
-    li_runs_final = [350, 352]
-
-elif telescope == 2:
-    di_runs = {
-        466: 2.,
-        467: 18.2,
-        469: 1313.9,
-        470: 9445.1,
-        471: 1269.4,
-        472: 1272.8,
-        473: 143.4,
-        474: 13.6,
-        475: 2.0,
-        476: 9398.8,
-        478: 22138.7
-    }
-    li_runs_up = [466, 467, 469, 470]
-    li_runs_down = [471, 472, 473, 474, 475]
-    li_runs_final = [476, 478]
-
-else:
-    print "Invalid Telescope: ", telescope
-    print "Exiting.."
+try:
+    di_runs = RunInfos.di_di_runs[telescope]
+    li_runs_up = RunInfos.di_li_runs_up[telescope]
+    li_runs_down = RunInfos.di_li_runs_down[telescope]
+    li_runs_final = RunInfos.di_li_runs_final[telescope]
+except KeyError:
+    print "Invalid telescope! Exiting.."
     sys.exit()
 
 
@@ -87,6 +38,11 @@ else:
 ###############################
 
 def eff_and_unc(h_num, h_denom):
+    """ Calculate efficiency and uncertainty
+    :param h_num: Numerator TH2
+    :param h_denom: Denominator TH2
+    :return: Efficiency, Uncertainty Error Up, Uncertainty Error Low (as a tuple floats)
+    """
     num = 0
     denom = 0
 
@@ -227,7 +183,7 @@ def make_plots(add_si, do_zoom, do_slice):
 
         # Prepare 'background' TH2.
         if do_zoom:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.4, 1.05)
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
         else:
             h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
         h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
