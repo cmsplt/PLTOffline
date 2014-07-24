@@ -19,7 +19,7 @@ import RunInfos
 # Configuration
 ###############################
 
-telescope = 0
+telescope = 1
 
 try:
     di_runs = RunInfos.di_di_runs[telescope]
@@ -89,7 +89,7 @@ def make_plots():
         legend.SetBorderSize(0)
 
         # Prepare 'background' TH2.
-        h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 5)
+        h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
         h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
         h.GetYaxis().SetTitle("Mean Cluster Size")
         h.Draw()
@@ -111,7 +111,7 @@ def make_plots():
 
             # Loop over runs
             for irun, run in enumerate(sorted(li_runs)):
-                gr.SetPoint(irun, di_runs[run], cluster_size[run][i_roc])
+                gr.SetPoint(irun, di_runs[run], cluster_size[run][i_roc-1])  # i_roc-1 since we don't have data for ROC0
 
             # Make things look nice:
             # Legend Entries
