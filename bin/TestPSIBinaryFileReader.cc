@@ -735,6 +735,8 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &hCharge3, &Can, maxz, OutDir);
   Write2DCharge( &hCharge4, &Can, maxz, OutDir);
 
+  hCharge2.Write();
+
   Write2DCharge( &hMaxCharge1, &Can, maxz, OutDir);
   Write2DCharge( &hMaxCharge2, &Can, maxz, OutDir);
   Write2DCharge( &hMaxCharge3, &Can, maxz, OutDir);
