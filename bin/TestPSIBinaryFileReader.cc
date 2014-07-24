@@ -81,6 +81,15 @@ int GetNumberOfROCS(int telescopeID){
 }
 
 
+bool CheckEllipse(float dx, float dy, float max_dx, float max_dy){
+  if ( (dx*dx/(max_dx*max_dx)) + (dy*dy/(max_dy*max_dy)) < 1)
+    return true;
+  else
+    return false;
+}
+
+
+
 void WriteHTML (TString const, TString const);
 
 void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
@@ -462,34 +471,34 @@ void TestPlaneEfficiency (std::string const InFileName,
              float charge = Plane->Hit(ih)->Charge();
 
              // 1 Pixel Ellipse
-             if ( (dtx*dtx/(0.015*0.015)) + (dty*dty/(0.01*0.01)) < 1){
+             if (CheckEllipse(dtx, dty, 0.015, 0.01)){
                sum1 += charge;
                if (charge > max1)
                  max1 = charge;
              }
 
              // 2 Pixel Ellipse
-             if ( (dtx*dtx/(0.03*0.03)) + (dty*dty/(0.02*0.02)) < 1){
+             if (CheckEllipse(dtx, dty, 0.03, 0.02)){
                sum2 += charge;
                if (charge > max2)
                  max2 = charge;
              }
 
              // 3 Pixel Ellipse
-             if ( (dtx*dtx/(0.045*0.045)) + (dty*dty/(0.03*0.03)) < 1){
+             if (CheckEllipse(dtx, dty, 0.045, 0.03)){
                sum3 += charge;
                if (charge > max3)
                   max3 = charge;
              }
 
              // 4 Pixel Ellipse
-             if ( (dtx*dtx/(0.06*0.06)) + (dty*dty/(0.04*0.04)) < 1){
+             if (CheckEllipse(dtx, dty, 0.06, 0.04)){
                sum4 += charge;
                if (charge > max4)
                  max4 = charge;
              }
 
-             if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
+             if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
                 matched=true;
 
        } // end of loop over hits
@@ -515,7 +524,7 @@ void TestPlaneEfficiency (std::string const InFileName,
               float dtx = (tx - Plane->Cluster(ic)->TX());
               float dty = (ty - Plane->Cluster(ic)->TY());
 
-              if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1)
+              if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
                 hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
 
         } // end of loop over clusters
@@ -566,7 +575,7 @@ void TestPlaneEfficiency (std::string const InFileName,
                  float dtx = lx-masked_lx;
                  float dty = ly-masked_ly;
 
-                 if ( (dtx*dtx/(max_dr_x*max_dr_x)) + (dty*dty/(max_dr_y*max_dr_y)) < 1){
+                 if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y)){
                    // If yes: set numerator and denominator to zero
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
