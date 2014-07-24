@@ -1,12 +1,12 @@
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000466/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000467/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000468/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000469/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000470/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000471/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000472/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000473/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000474/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000475/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000476/mtb.bin  GKCalibrationList_Telescope2.txt 0
-./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000478/mtb.bin  GKCalibrationList_Telescope2.txt 0 						
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000466/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000467/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000468/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000469/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000470/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000471/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000472/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000473/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000474/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000475/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000476/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
+./TestPSIBinaryFileReader /Volumes/t3/testbeam_may2014_data/bt05r000478/mtb.bin  GKCalibrationList_Telescope2.txt 0 2
