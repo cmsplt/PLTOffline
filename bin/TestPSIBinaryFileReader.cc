@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cmath>
 #include <stdlib.h>
-
+#include <algorithm>
 
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
@@ -23,6 +23,7 @@
 #include "TH3F.h"
 #include "TProfile2D.h"
 #include "TParameter.h"
+
 
 std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
 
@@ -394,6 +395,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
   TH1F hChi2Y = TH1F( Form("SinglePlaneTestChi2Y_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2Y",   100, 0, 20 );
 
+  TH1F hSecondCharge = TH1F( Form("SecondCharge_ROC%i", plane_under_test), "Charge of second pixel in Cluster", 200, 0, 50000);
 
 
   double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
@@ -519,13 +521,25 @@ void TestPlaneEfficiency (std::string const InFileName,
          hOccupancyNum_eventSlices[i_slice].Fill(px, py);
        }
 
-       // loop over all clusters and check distance to intersection
+       // loop over all clusters and check cluster size
+       // Also get charge of second highest cluster
        for (int ic = 0; ic != Plane->NClusters(); ic++){
+
               float dtx = (tx - Plane->Cluster(ic)->TX());
               float dty = (ty - Plane->Cluster(ic)->TY());
 
-              if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
+              if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y)){
                 hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
+
+                std::vector<float> charges;
+                for (int ih = 0; ih != Plane->Cluster(ic)->NHits(); ih++)
+                    charges.push_back(Plane->Cluster(ic)->Hit(ih)->Charge());
+
+                std::sort(charges.begin(), charges.end());
+                if (charges.size() >= 2)
+                    hSecondCharge.Fill(charges[charges.size()-2]);
+
+              } // end of CheckEllipse
 
         } // end of loop over clusters
 
@@ -745,6 +759,11 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
 
   hClusterSize.Write();
+
+  hSecondCharge.Draw();
+  Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".gif");
+  Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".pdf");
+  hSecondCharge.Write();
 
 }
 
@@ -2472,6 +2491,11 @@ f << "<br>\n";
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"SinglePlaneTestDR_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDR_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"SecondCharge_ROC%i.gif\"><img width=\"150\" src=\"SecondCharge_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
 
   // EVENT DISPLAYS
   f << "<h2>Event Displays</h2>\n";
