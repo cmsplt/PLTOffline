@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <utility>
 #include <cmath>
 #include <stdlib.h>
 #include <algorithm>
@@ -24,6 +25,8 @@
 #include "TProfile2D.h"
 #include "TParameter.h"
 
+
+bool PairSort( std::pair<int, float> i, std::pair<int, float> j) { return (i.second < j.second); }
 
 std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
 
@@ -274,7 +277,9 @@ int FindHotPixels (std::string const InFileName,
       else
         mean_occupancy = -1;
 
-      // Find with an occupancy of more than 10 times the meanm
+      std::cout << "FindHotPixels, ROC: " << iroc << " Mean Occupancy: " << mean_occupancy << std::endl;
+
+      // Find with an occupancy of more than 10 times the mean
       for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
         for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
 
@@ -397,6 +402,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   TH1F hSecondCharge = TH1F( Form("SecondCharge_ROC%i", plane_under_test), "Charge of second pixel in Cluster", 200, 0, 50000);
 
+  TH2F hSc10k   = TH2F(   Form("hSc10k_ROC%i",plane_under_test), "hSc10k",   52, 0, 52, 80, 0, 80);
 
   double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
@@ -531,13 +537,26 @@ void TestPlaneEfficiency (std::string const InFileName,
               if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y)){
                 hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
 
-                std::vector<float> charges;
-                for (int ih = 0; ih != Plane->Cluster(ic)->NHits(); ih++)
-                    charges.push_back(Plane->Cluster(ic)->Hit(ih)->Charge());
+                std::vector<std::pair<int, float> > index_and_charge;
+                for (int ih = 0; ih != Plane->Cluster(ic)->NHits(); ih++){
+                    index_and_charge.push_back(std::make_pair(ih, Plane->Cluster(ic)->Hit(ih)->Charge()));
+                }
 
-                std::sort(charges.begin(), charges.end());
-                if (charges.size() >= 2)
-                    hSecondCharge.Fill(charges[charges.size()-2]);
+                std::sort(index_and_charge.begin(), index_and_charge.end(), PairSort);
+                if (index_and_charge.size() >= 2){
+
+                    int index = index_and_charge[index_and_charge.size()-2].first;
+                    float charge = index_and_charge[index_and_charge.size()-2].second;
+
+                    hSecondCharge.Fill(charge);
+
+                    if ((9000 < charge) && (charge<11000))
+                        hSc10k.Fill( BFR.GetAlignment()->PXfromLX(Plane->Cluster(ic)->Hit(index)->LX()),
+                                     BFR.GetAlignment()->PYfromLY(Plane->Cluster(ic)->Hit(index)->LY()),
+                                     1 );
+
+
+                }
 
               } // end of CheckEllipse
 
@@ -764,6 +783,9 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".gif");
   Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".pdf");
   hSecondCharge.Write();
+
+  hSc10k.Draw("COLZ");
+  Can.SaveAs(OutDir + TString(hSc10k.GetName()) + ".gif");
 
 }
 
