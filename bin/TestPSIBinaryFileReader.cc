@@ -11,10 +11,8 @@
 #include <cmath>
 #include <stdlib.h>
 #include <algorithm>
+#include <numeric>
 
-#include "PSIBinaryFileReader.h"
-#include "PLTPlane.h"
-#include "PLTAlignment.h"
 #include "TLegend.h"
 #include "TLegendEntry.h"
 #include "TString.h"
@@ -25,8 +23,63 @@
 #include "TProfile2D.h"
 #include "TParameter.h"
 
+#include "PSIBinaryFileReader.h"
+#include "PLTPlane.h"
+#include "PLTAlignment.h"
 
+#define DEBUG true
+
+template<typename T>
+void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i){
+/*
+    Fill the i-th value of the vector into the histogram.
+    px and py are the position to fill them at.
+
+    If i is negative: count from the back, Python style!
+
+    If i is larger than the number of entries: fill with zero
+*/
+    // Count from the front
+    // [0,1,2,3,...]
+    if (i>=0){
+        if (values.size() >= i+1)
+            h->Fill(px, py, values[i]);
+        else
+            h->Fill(px, py, 0);
+    }
+    // Count from the back
+    // [...,-3, -2, -1]
+    else{
+      int abs_i = i*-1;
+
+      if (values.size() >= abs_i)
+        h->Fill(px, py, values[values.size()-abs_i]);
+      else
+        h->Fill(px, py, 0);
+    }
+
+}
+
+// Helper function for sorting a <int, float> pair according to the float
 bool PairSort( std::pair<int, float> i, std::pair<int, float> j) { return (i.second < j.second); }
+
+std::pair<int, float> FindILowestIndexAndValue( std::vector<float> values, int i=0){
+
+    std::vector<std::pair<int, float> > index_and_values;
+
+    for (int iv = 0; iv != values.size(); iv++){
+        index_and_values.push_back(std::make_pair(iv, values[iv]));
+    }
+
+    std::sort(index_and_values.begin(), index_and_values.end(), PairSort);
+
+    if ((i+1) <= index_and_values.size())
+        return index_and_values[i];
+    else
+        return std::make_pair(-1, TMath::QuietNaN());
+
+}
+
 
 std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
 
@@ -98,8 +151,8 @@ void WriteHTML (TString const, TString const);
 
 void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
   TProfile2D * ph = h->Project3DProfile("yx");
-  ph->SetAxisRange(18,34,"X");
-  ph->SetAxisRange(45,76,"Y");
+  ph->SetAxisRange(12,38,"X");
+  ph->SetAxisRange(39,80,"Y");
   ph->SetMinimum(0);
   ph->SetMaximum(maxz);
   ph->Draw("COLZ");
@@ -155,14 +208,14 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   h15->GetXaxis()->SetTitle("Charge (Electrons)");
   h15->GetYaxis()->SetTitle("Number of Hits");
 
-  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
+  TLegend Leg(0.7, 0.5, 0.90, 0.88, "");
   Leg.SetFillColor(0);
   Leg.SetBorderSize(0);
   Leg.SetTextSize(0.05);
-  Leg.AddEntry(h15, "1 Pixel Ellipse", "l");
-  Leg.AddEntry(h30, "2 Pixel Ellipse", "l");
-  Leg.AddEntry(h45, "3 Pixel Ellipse", "l");
-  Leg.AddEntry(h60, "4 Pixel Ellipse", "l");
+  Leg.AddEntry(h15, "R=1", "l");
+  Leg.AddEntry(h30, "R=2", "l");
+  Leg.AddEntry(h45, "R=3", "l");
+  Leg.AddEntry(h60, "R=4", "l");
 
   h15->Draw();
   h30->Draw("SAME");
@@ -357,11 +410,10 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   BFR.CalculateLevels(10000, OutDir);
 
-
   // Prepare Occupancy histograms
   // Telescope coordinates
-  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
-  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyNum   = TH2F(Form("PlaneEfficiency_ROC%i", plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F(Form("TracksPassing_ROC%i", plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
   // Also have a second set - sliced according to event number
   int n_slices = 5;
@@ -377,17 +429,31 @@ void TestPlaneEfficiency (std::string const InFileName,
     hOccupancyDenom_eventSlices.push_back( h_d );
   }
 
+  TH3F hSumCharge1 = TH3F( Form("SumCharge_ROC%i", plane_under_test),  "Sum Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge2 = TH3F( Form("SumCharge2_ROC%i", plane_under_test), "Sum Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge3 = TH3F( Form("SumCharge3_ROC%i", plane_under_test), "Sum Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge4 = TH3F( Form("SumCharge4_ROC%i", plane_under_test), "Sum Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
+  TH3F h1stCharge1 = TH3F( Form("1stCharge_ROC%i", plane_under_test),  "1st Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge2 = TH3F( Form("1stCharge2_ROC%i", plane_under_test), "1st Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge3 = TH3F( Form("1stCharge3_ROC%i", plane_under_test), "1st Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge4 = TH3F( Form("1stCharge4_ROC%i", plane_under_test), "1st Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
-  TH3F hCharge1       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge2       = TH3F( Form("Charge2_ROC%i", plane_under_test), "Total Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge3       = TH3F( Form("Charge3_ROC%i", plane_under_test), "Total Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge4       = TH3F( Form("Charge4_ROC%i", plane_under_test), "Total Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge1ADC = TH3F( Form("1stCharge_ADC_ROC%i", plane_under_test),  "1st Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge2ADC = TH3F( Form("1stCharge2_ADC_ROC%i", plane_under_test), "1st Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge3ADC = TH3F( Form("1stCharge3_ADC_ROC%i", plane_under_test), "1st Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge4ADC = TH3F( Form("1stCharge4_ADC_ROC%i", plane_under_test), "1st Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
 
-  TH3F hMaxCharge1       = TH3F( Form("MaxCharge_ROC%i", plane_under_test),   "Max Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge2       = TH3F( Form("MaxCharge2_ROC%i", plane_under_test), "Max Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge3       = TH3F( Form("MaxCharge3_ROC%i", plane_under_test), "Max Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge4       = TH3F( Form("MaxCharge4_ROC%i", plane_under_test), "Max Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge1 = TH3F( Form("2ndCharge_ROC%i", plane_under_test),  "2nd Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge2 = TH3F( Form("2ndCharge2_ROC%i", plane_under_test), "2nd Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge3 = TH3F( Form("2ndCharge3_ROC%i", plane_under_test), "2nd Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge4 = TH3F( Form("2ndCharge4_ROC%i", plane_under_test), "2nd Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+
+  TH3F h2ndCharge1ADC = TH3F( Form("2ndCharge_ADC_ROC%i", plane_under_test),  "2nd Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge2ADC = TH3F( Form("2ndCharge2_ADC_ROC%i", plane_under_test), "2nd Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge3ADC = TH3F( Form("2ndCharge3_ADC_ROC%i", plane_under_test), "2nd Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge4ADC = TH3F( Form("2ndCharge4_ADC_ROC%i", plane_under_test), "2nd Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+
 
   TH3F hClusterSize       = TH3F( Form("ClusterSize_ROC%i", plane_under_test), "Cluster Size", 52,0,52, 80,0,80,11,-0.5,10.5);
 
@@ -395,14 +461,13 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
   TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
 
+  TH1F hDrSecondCluster = TH1F(Form("DeltaRSecondCluster_ROC%i", plane_under_test), "#Delta R Second Cluster", 30, -0.5, 29.5);
+  TH1F hFractionContainted = TH1F(Form("FractionContained_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1);
 
   TH1F hChi2  = TH1F( Form("SinglePlaneTestChi2_ROC%i",plane_under_test),   "SinglePlaneTest_Chi2",    200, 0, 50 );
   TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
   TH1F hChi2Y = TH1F( Form("SinglePlaneTestChi2Y_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2Y",   100, 0, 20 );
 
-  TH1F hSecondCharge = TH1F( Form("SecondCharge_ROC%i", plane_under_test), "Charge of second pixel in Cluster", 200, 0, 50000);
-
-  TH2F hSc10k   = TH2F(   Form("hSc10k_ROC%i",plane_under_test), "hSc10k",   52, 0, 52, 80, 0, 80);
 
   double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
@@ -452,118 +517,164 @@ void TestPlaneEfficiency (std::string const InFileName,
       hOccupancyDenom.Fill( px, py );
       hOccupancyDenom_eventSlices[i_slice].Fill(px, py);
 
-      // Now look for a close hit in the plane under test
       PLTPlane* Plane = BFR.Plane( plane_under_test );
-      bool matched = false;
 
-      float sum1 = 0;
-      float sum2 = 0;
-      float sum3 = 0;
-      float sum4 = 0;
+      std::vector<float> delta_rs;
 
-      float max1 = 0;
-      float max2 = 0;
-      float max3 = 0;
-      float max4 = 0;
+      for (int icl = 0; icl != Plane->NClusters(); icl++){
 
-      // loop over all hits and check distance to intersection
-      for (int ih = 0; ih != Plane->NHits(); ih++){
-             float dtx = (tx - Plane->Hit(ih)->TX());
-             float dty = (ty - Plane->Hit(ih)->TY());
-             float dtr = sqrt( dtx*dtx + dty*dty );
+        float cl_px = Plane->Cluster(icl)->PX();
+        float cl_py = Plane->Cluster(icl)->PY();
 
-             hdtx.Fill( dtx );
-             hdty.Fill( dty );
-             hdtr.Fill( dtr );
+        float delta_px = px - cl_px;
+        float delta_py = py - cl_py;
 
-             float charge = Plane->Hit(ih)->Charge();
+        delta_rs.push_back(sqrt(delta_px*delta_px + delta_py*delta_py));
+      }
 
-             // 1 Pixel Ellipse
-             if (CheckEllipse(dtx, dty, 0.015, 0.01)){
-               sum1 += charge;
-               if (charge > max1)
-                 max1 = charge;
-             }
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. Before FindILowestIndexAndValue." << std::endl;
 
-             // 2 Pixel Ellipse
-             if (CheckEllipse(dtx, dty, 0.03, 0.02)){
-               sum2 += charge;
-               if (charge > max2)
-                 max2 = charge;
-             }
+      int closest_cluster_index = FindILowestIndexAndValue(delta_rs).first;
 
-             // 3 Pixel Ellipse
-             if (CheckEllipse(dtx, dty, 0.045, 0.03)){
-               sum3 += charge;
-               if (charge > max3)
-                  max3 = charge;
-             }
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. After FindILowestIndexAndValue. closest_cluster_index = " << closest_cluster_index << std::endl;
 
-             // 4 Pixel Ellipse
-             if (CheckEllipse(dtx, dty, 0.06, 0.04)){
-               sum4 += charge;
-               if (charge > max4)
-                 max4 = charge;
-             }
+      if (delta_rs.size() >= 2)
+        hDrSecondCluster.Fill(FindILowestIndexAndValue(delta_rs, 1).second);
 
-             if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
-                matched=true;
+      // Now look for a close hit in the plane under test
 
-       } // end of loop over hits
+      int matched = 0;
 
-       hCharge1.Fill( px, py, sum1);
-       hCharge2.Fill( px, py, sum2);
-       hCharge3.Fill( px, py, sum3);
-       hCharge4.Fill( px, py, sum4);
+      std::vector<float> charges_in_ell_1;
+      std::vector<float> charges_in_ell_2;
+      std::vector<float> charges_in_ell_3;
+      std::vector<float> charges_in_ell_4;
 
-       hMaxCharge1.Fill( px, py, max1);
-       hMaxCharge2.Fill( px, py, max2);
-       hMaxCharge3.Fill( px, py, max3);
-       hMaxCharge4.Fill( px, py, max4);
+      std::vector<int> adcs_in_ell_1;
+      std::vector<int> adcs_in_ell_2;
+      std::vector<int> adcs_in_ell_3;
+      std::vector<int> adcs_in_ell_4;
 
-       // if there was at least one match: fill denominator
-       if (matched){
+      // Make sure there is at least one cluster
+      if (closest_cluster_index != -1){
+
+          // Determine here if the closest cluster is actually close enouigh
+          // and fill cluster size
+          float cluster_dtx = (tx - Plane->Cluster(closest_cluster_index)->TX());
+          float cluster_dty = (ty - Plane->Cluster(closest_cluster_index)->TY());
+          if (CheckEllipse(cluster_dtx, cluster_dty, max_dr_x, max_dr_y)){
+            hClusterSize.Fill(px, py, Plane->Cluster(closest_cluster_index)->NHits());
+          }
+
+          if (DEBUG)
+            std::cout << "TestPlaneEfficiency. Before Loop over hits" << std::endl;
+
+          // loop over all hits in the cluster and check distance to intersection
+          for (int ih = 0; ih != Plane->Cluster(closest_cluster_index)->NHits(); ih++){
+
+                 if (DEBUG)
+                   std::cout << "TestPlaneEfficiency. ih = " << ih << std::endl;
+
+                 float dtx = (tx - Plane->Cluster(closest_cluster_index)->Hit(ih)->TX());
+                 float dty = (ty - Plane->Cluster(closest_cluster_index)->Hit(ih)->TY());
+                 float dtr = sqrt( dtx*dtx + dty*dty );
+
+                 hdtx.Fill( dtx );
+                 hdty.Fill( dty );
+                 hdtr.Fill( dtr );
+
+                 int adc = Plane->Cluster(closest_cluster_index)->Hit(ih)->ADC();
+                 float charge = Plane->Cluster(closest_cluster_index)->Hit(ih)->Charge();
+
+                 if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
+                    matched++;
+
+                 // 1 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.015, 0.01)){
+                   adcs_in_ell_1.push_back(adc);
+                   charges_in_ell_1.push_back(charge);
+                 }
+
+                 // 2 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.03, 0.02)){
+                   adcs_in_ell_2.push_back(adc);
+                   charges_in_ell_2.push_back(charge);
+                 }
+
+                 // 3 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.045, 0.03)){
+                   adcs_in_ell_3.push_back(adc);
+                   charges_in_ell_3.push_back(charge);
+                 }
+
+                 // 4 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.06, 0.04)){
+                   adcs_in_ell_4.push_back(adc);
+                   charges_in_ell_4.push_back(charge);
+                 }
+
+          } // end of loop over hits
+
+          hFractionContainted.Fill(1. * matched / Plane->Cluster(closest_cluster_index)->NHits());
+
+      } // End of having at least one valid cluster
+
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. After Loop over hits" << std::endl;
+
+      // if there was at least one match: fill denominator
+      if (matched > 0){
          hOccupancyNum.Fill( px, py );
-         hOccupancyNum_eventSlices[i_slice].Fill(px, py);
-       }
+         hOccupancyNum_eventSlices[i_slice].Fill(px, py, 1);
+      }
 
-       // loop over all clusters and check cluster size
-       // Also get charge of second highest cluster
-       for (int ic = 0; ic != Plane->NClusters(); ic++){
+      // Sort Charge Vectors
+      std::sort(charges_in_ell_1.begin(), charges_in_ell_1.end());
+      std::sort(charges_in_ell_2.begin(), charges_in_ell_2.end());
+      std::sort(charges_in_ell_3.begin(), charges_in_ell_3.end());
+      std::sort(charges_in_ell_4.begin(), charges_in_ell_4.end());
 
-              float dtx = (tx - Plane->Cluster(ic)->TX());
-              float dty = (ty - Plane->Cluster(ic)->TY());
+      // Sort ADC Vectors
+      std::sort(adcs_in_ell_1.begin(), adcs_in_ell_1.end());
+      std::sort(adcs_in_ell_2.begin(), adcs_in_ell_2.end());
+      std::sort(adcs_in_ell_3.begin(), adcs_in_ell_3.end());
+      std::sort(adcs_in_ell_4.begin(), adcs_in_ell_4.end());
 
-              if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y)){
-                hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
+      // Fill Sum of Charges
+      hSumCharge1.Fill(px, py, std::accumulate(charges_in_ell_1.begin(), charges_in_ell_1.end(), 0));
+      hSumCharge2.Fill(px, py, std::accumulate(charges_in_ell_2.begin(), charges_in_ell_2.end(), 0));
+      hSumCharge3.Fill(px, py, std::accumulate(charges_in_ell_3.begin(), charges_in_ell_3.end(), 0));
+      hSumCharge4.Fill(px, py, std::accumulate(charges_in_ell_4.begin(), charges_in_ell_4.end(), 0));
 
-                std::vector<std::pair<int, float> > index_and_charge;
-                for (int ih = 0; ih != Plane->Cluster(ic)->NHits(); ih++){
-                    index_and_charge.push_back(std::make_pair(ih, Plane->Cluster(ic)->Hit(ih)->Charge()));
-                }
+      // Fill Highest Charge
+      FillIth(&h1stCharge1, px, py, charges_in_ell_1, -1);
+      FillIth(&h1stCharge2, px, py, charges_in_ell_2, -1);
+      FillIth(&h1stCharge3, px, py, charges_in_ell_3, -1);
+      FillIth(&h1stCharge4, px, py, charges_in_ell_4, -1);
 
-                std::sort(index_and_charge.begin(), index_and_charge.end(), PairSort);
-                if (index_and_charge.size() >= 2){
+      // Fill Highest ADC
+      FillIth(&h1stCharge1ADC, px, py, adcs_in_ell_1, -1);
+      FillIth(&h1stCharge2ADC, px, py, adcs_in_ell_2, -1);
+      FillIth(&h1stCharge3ADC, px, py, adcs_in_ell_3, -1);
+      FillIth(&h1stCharge4ADC, px, py, adcs_in_ell_4, -1);
 
-                    int index = index_and_charge[index_and_charge.size()-2].first;
-                    float charge = index_and_charge[index_and_charge.size()-2].second;
+      // Fill Second Highest Charge
+      FillIth(&h2ndCharge1, px, py, charges_in_ell_1, -2);
+      FillIth(&h2ndCharge2, px, py, charges_in_ell_2, -2);
+      FillIth(&h2ndCharge3, px, py, charges_in_ell_3, -2);
+      FillIth(&h2ndCharge4, px, py, charges_in_ell_4, -2);
 
-                    hSecondCharge.Fill(charge);
-
-                    if ((9000 < charge) && (charge<11000))
-                        hSc10k.Fill( BFR.GetAlignment()->PXfromLX(Plane->Cluster(ic)->Hit(index)->LX()),
-                                     BFR.GetAlignment()->PYfromLY(Plane->Cluster(ic)->Hit(index)->LY()),
-                                     1 );
-
-
-                }
-
-              } // end of CheckEllipse
-
-        } // end of loop over clusters
+      // Fill Second Highest ADC
+      FillIth(&h2ndCharge1ADC, px, py, adcs_in_ell_1, -2);
+      FillIth(&h2ndCharge2ADC, px, py, adcs_in_ell_2, -2);
+      FillIth(&h2ndCharge3ADC, px, py, adcs_in_ell_3, -2);
+      FillIth(&h2ndCharge4ADC, px, py, adcs_in_ell_4, -2);
 
     } // end of having one track
   } // End of Event Loop
+
 
 
   // Remove masked areas from Occupancy Histograms
@@ -613,23 +724,38 @@ void TestPlaneEfficiency (std::string const InFileName,
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
 
-                   for (int ibin_z = 1; ibin_z != hCharge1.GetNbinsZ()+2; ibin_z++){
-                     hCharge1.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge2.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge3.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge4.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   for (int ibin_z = 1; ibin_z != hSumCharge1.GetNbinsZ()+2; ibin_z++){
 
-                     hMaxCharge1.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge2.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge3.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge4.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
 
-                     hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
 
-                     for (int i=0; i != n_slices; i++){
-                       hOccupancyNum_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
-                       hOccupancyDenom_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
-                     }
+                    h1stCharge1ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge2ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge3ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge4ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    h2ndCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    h2ndCharge1ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge2ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge3ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge4ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    for (int i=0; i != n_slices; i++){
+                        hOccupancyNum_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                        hOccupancyDenom_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    }
 
                    }
 
@@ -738,19 +864,40 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".pdf");
 
 
-  std::vector <TH3*> hs_mean_charge;
-  hs_mean_charge.push_back( &hCharge1 );
-  hs_mean_charge.push_back( &hCharge2 );
-  hs_mean_charge.push_back( &hCharge3 );
-  hs_mean_charge.push_back( &hCharge4 );
-  Write1DCharge( hs_mean_charge, &Can, OutDir);
+  std::vector <TH3*> hs_mean_sum_charge;
+  hs_mean_sum_charge.push_back( &hSumCharge1 );
+  hs_mean_sum_charge.push_back( &hSumCharge2 );
+  hs_mean_sum_charge.push_back( &hSumCharge3 );
+  hs_mean_sum_charge.push_back( &hSumCharge4 );
+  Write1DCharge(hs_mean_sum_charge, &Can, OutDir);
 
-  std::vector <TH3*> hs_max_charge;
-  hs_max_charge.push_back( &hMaxCharge1 );
-  hs_max_charge.push_back( &hMaxCharge2 );
-  hs_max_charge.push_back( &hMaxCharge3 );
-  hs_max_charge.push_back( &hMaxCharge4 );
-  Write1DCharge( hs_max_charge, &Can, OutDir);
+  std::vector <TH3*> hs_mean_1st_charge;
+  hs_mean_1st_charge.push_back( &h1stCharge1 );
+  hs_mean_1st_charge.push_back( &h1stCharge2 );
+  hs_mean_1st_charge.push_back( &h1stCharge3 );
+  hs_mean_1st_charge.push_back( &h1stCharge4 );
+  Write1DCharge(hs_mean_1st_charge, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_2nd_charge;
+  hs_mean_2nd_charge.push_back( &h2ndCharge1 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge2 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge3 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge4 );
+  Write1DCharge(hs_mean_2nd_charge, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_1st_charge_adc;
+  hs_mean_1st_charge_adc.push_back( &h1stCharge1ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge2ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge3ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge4ADC );
+  Write1DCharge(hs_mean_1st_charge_adc, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_2nd_charge_adc;
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge1ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge2ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge3ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge4ADC );
+  Write1DCharge(hs_mean_2nd_charge_adc, &Can, OutDir);
 
 
   float maxz;
@@ -763,29 +910,35 @@ void TestPlaneEfficiency (std::string const InFileName,
   if (plane_under_test==4)
     maxz = 50000;
 
-  Write2DCharge( &hCharge1, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge2, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge3, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge4, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge4, &Can, maxz, OutDir);
 
-  hCharge2.Write();
+  hSumCharge2.Write();
 
-  Write2DCharge( &hMaxCharge1, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge2, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge3, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge4, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge4, &Can, maxz, OutDir);
+
+  Write2DCharge( &h2ndCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge4, &Can, maxz, OutDir);
+
+  h2ndCharge2.Write();
 
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
-
   hClusterSize.Write();
 
-  hSecondCharge.Draw();
-  Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".gif");
-  Can.SaveAs(OutDir + TString(hSecondCharge.GetName()) + ".pdf");
-  hSecondCharge.Write();
+  hDrSecondCluster.Draw();
+  Can.SaveAs( OutDir+ TString(hDrSecondCluster.GetName()) +".gif");
 
-  hSc10k.Draw("COLZ");
-  Can.SaveAs(OutDir + TString(hSc10k.GetName()) + ".gif");
+  hFractionContainted.Draw();
+  Can.SaveAs( OutDir+ TString(hFractionContainted.GetName()) +".gif");
+
+
 
 }
 
@@ -2468,30 +2621,70 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"MaxCharge_ROC%i.gif\"><img width=\"150\" src=\"MaxCharge_ROC%i.gif\"></a>\n", i, i);
+    f << Form("<a href=\"SumCharge_ROC%i.gif\"><img width=\"150\" src=\"SumCharge_ROC%i.gif\"></a>\n", i, i);
     f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
+    f << Form("<a href=\"1stCharge_ROC%i.gif\"><img width=\"150\" src=\"1stCharge_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"2ndCharge_ROC%i.gif\"><img width=\"150\" src=\"2ndCharge_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
 
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"Charge_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge_ROC%i_profile.gif\"></a>\n", i, i);
+    f << Form("<a href=\"SumCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge2_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge2_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"SumCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge2_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge3_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge3_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"SumCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge3_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-  f << Form("<a href=\"Charge3_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge4_ROC%i_profile.gif\"></a>\n", i, i);
+  f << Form("<a href=\"SumCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge4_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"1stCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"1stCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge2_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"1stCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge3_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"1stCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge4_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"2ndCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"2ndCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge2_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"2ndCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge3_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"2ndCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge4_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+
 
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"SinglePlaneTestChi2_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2_ROC%i.gif\"></a>\n", i, i);
@@ -2512,10 +2705,6 @@ f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"SinglePlaneTestDR_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDR_ROC%i.gif\"></a>\n", i, i);
-  f << "<br>\n";
-
-  for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"SecondCharge_ROC%i.gif\"><img width=\"150\" src=\"SecondCharge_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
 
