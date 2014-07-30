@@ -19,7 +19,7 @@ import RunInfos
 # Configuration
 ###############################
 
-telescope = 1
+telescope = 2
 
 try:
     di_runs = RunInfos.di_di_runs[telescope]
@@ -40,6 +40,8 @@ except KeyError:
 # list entries: one per ROC
 charge = {}
 cluster_size = {}
+cluster_size_fraction_1 = {}
+cluster_size_fraction_12 = {}
 second_charge = {}
 
 # Loop over runs
@@ -49,22 +51,33 @@ for i_run, run in enumerate(di_runs):
 
     charge[run] = []
     cluster_size[run] = []
+    cluster_size_fraction_1[run] = []
+    cluster_size_fraction_12[run] = []
     second_charge[run] = []
 
     input_rootfile_name = "../plots/000" + str(run) + "/histos.root"
     f = ROOT.TFile.Open(input_rootfile_name)
 
     for iroc in range(1, 5):
-        # Get the cluster size
+        # Get the mean cluster size
         h_cs = f.Get("ClusterSize_ROC" + str(iroc))
-        cluster_size[run].append(h_cs.Project3D("z").GetMean())
+        h_cs_proj = h_cs.Project3D("z")
+        cluster_size[run].append(h_cs_proj.GetMean())
+
+        # Get the the fraction of events where the cluster size:
+        #   is equal to 1
+        #   is equal to 1 or 2
+        bin_1 = h_cs_proj.FindBin(1)
+        bin_2 = h_cs_proj.FindBin(2)
+        cluster_size_fraction_1[run].append(1. * h_cs_proj.GetBinContent(bin_1) / h_cs_proj.Integral())
+        cluster_size_fraction_12[run].append(1. * h_cs_proj.Integral(bin_1, bin_2) / h_cs_proj.Integral())
 
         # Get the charge of the second in the cluster
-        h_se = f.Get("SecondCharge_ROC" + str(iroc))
-        second_charge[run].append(h_se.GetMean())
+        h_se = f.Get("2ndCharge2_ROC" + str(iroc))
+        second_charge[run].append(h_se.Project3D("z").GetMean())
 
         # Use the charge within a 2-pixel radius
-        h_charge = f.Get("Charge2_ROC" + str(iroc))
+        h_charge = f.Get("SumCharge2_ROC" + str(iroc))
         charge[run].append(h_charge.Project3D("z").GetMean())
 
     # End of loop over ROCs
@@ -97,10 +110,18 @@ def make_plots():
 
     c.SetLogx(1)
 
-    for plot_var in ["cluster_size", "charge", "second_charge"]:
+    for plot_var in ["cluster_size", "cluster_size_fraction_1", "cluster_size_fraction_12", "charge", "second_charge"]:
 
         if plot_var == "cluster_size":
             di_values = cluster_size
+            legend_origin_x = 0.2
+            legend_origin_y = 0.2
+        elif plot_var == "cluster_size_fraction_1":
+            di_values = cluster_size_fraction_1
+            legend_origin_x = 0.2
+            legend_origin_y = 0.2
+        elif plot_var == "cluster_size_fraction_12":
+            di_values = cluster_size_fraction_12
             legend_origin_x = 0.2
             legend_origin_y = 0.2
         elif plot_var == "charge":
@@ -110,7 +131,7 @@ def make_plots():
         elif plot_var == "second_charge":
             di_values = second_charge
             legend_origin_x = 0.2
-            legend_origin_y = 0.5
+            legend_origin_y = 0.65
         else:
             raise VariableError(plot_var)
 
@@ -133,6 +154,12 @@ def make_plots():
             if plot_var == "cluster_size":
                 h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
                 h.GetYaxis().SetTitle("Mean Cluster Size")
+            elif plot_var == "cluster_size_fraction_1":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                h.GetYaxis().SetTitle("Fraction of size == 1 Clusters")
+            elif plot_var == "cluster_size_fraction_12":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
             elif plot_var == "charge":
                 h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
                 h.GetYaxis().SetTitle("Total Charge within 2-pixel radius")
@@ -198,6 +225,10 @@ def make_plots():
 
             if plot_var == "cluster_size":
                 outfile_name = "ClusterSize_Telescope{0}_ROC{1}".format(telescope, i_roc)
+            elif plot_var == "cluster_size_fraction_1":
+                outfile_name = "ClusterSizeFraction1_Telescope{0}_ROC{1}".format(telescope, i_roc)
+            elif plot_var == "cluster_size_fraction_12":
+                outfile_name = "ClusterSizeFraction12_Telescope{0}_ROC{1}".format(telescope, i_roc)
             elif plot_var == "charge":
                 outfile_name = "Charge_Telescope{0}_ROC{1}".format(telescope, i_roc)
             elif plot_var == "second_charge":
