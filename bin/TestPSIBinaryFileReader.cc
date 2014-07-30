@@ -27,17 +27,17 @@
 #include "PLTPlane.h"
 #include "PLTAlignment.h"
 
-#define DEBUG true
+#define DEBUG false
 
 template<typename T>
-void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i){
+void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i, bool fill_when_too_small = true){
 /*
     Fill the i-th value of the vector into the histogram.
     px and py are the position to fill them at.
 
     If i is negative: count from the back, Python style!
 
-    If i is larger than the number of entries: fill with zero
+    fill_when_too_small decides if we should fill with zero when not enough values are available,
 */
     // Count from the front
     // [0,1,2,3,...]
@@ -45,7 +45,8 @@ void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i){
         if (values.size() >= i+1)
             h->Fill(px, py, values[i]);
         else
-            h->Fill(px, py, 0);
+            if (fill_when_too_small)
+                h->Fill(px, py, 0);
     }
     // Count from the back
     // [...,-3, -2, -1]
@@ -55,7 +56,8 @@ void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i){
       if (values.size() >= abs_i)
         h->Fill(px, py, values[values.size()-abs_i]);
       else
-        h->Fill(px, py, 0);
+        if (fill_when_too_small)
+            h->Fill(px, py, 0);
     }
 
 }
@@ -90,7 +92,8 @@ std::pair<int, float> FindILowestIndexAndValue( std::vector<float> values, int i
 
 
     if ((i+1) <= index_and_values.size()){
-        std::cout << "FindILowestIndexAndValue, i=" << i << " " << index_and_values[i].first << " : " << index_and_values[i].second << std::endl;
+        if (DEBUG)
+            std::cout << "FindILowestIndexAndValue, i=" << i << " " << index_and_values[i].first << " : " << index_and_values[i].second << std::endl;
         return index_and_values[i];
     }
     else
@@ -750,16 +753,18 @@ void TestPlaneEfficiency (std::string const InFileName,
       FillIth(&h1stCharge4ADC, px, py, adcs_in_ell_4, -1);
 
       // Fill Second Highest Charge
-      FillIth(&h2ndCharge1, px, py, charges_in_ell_1, -2);
-      FillIth(&h2ndCharge2, px, py, charges_in_ell_2, -2);
-      FillIth(&h2ndCharge3, px, py, charges_in_ell_3, -2);
-      FillIth(&h2ndCharge4, px, py, charges_in_ell_4, -2);
+      // do NOT fill if not available!
+      FillIth(&h2ndCharge1, px, py, charges_in_ell_1, -2, false);
+      FillIth(&h2ndCharge2, px, py, charges_in_ell_2, -2, false);
+      FillIth(&h2ndCharge3, px, py, charges_in_ell_3, -2, false);
+      FillIth(&h2ndCharge4, px, py, charges_in_ell_4, -2, false);
 
       // Fill Second Highest ADC
-      FillIth(&h2ndCharge1ADC, px, py, adcs_in_ell_1, -2);
-      FillIth(&h2ndCharge2ADC, px, py, adcs_in_ell_2, -2);
-      FillIth(&h2ndCharge3ADC, px, py, adcs_in_ell_3, -2);
-      FillIth(&h2ndCharge4ADC, px, py, adcs_in_ell_4, -2);
+      // do NOT fill if not available!
+      FillIth(&h2ndCharge1ADC, px, py, adcs_in_ell_1, -2, false);
+      FillIth(&h2ndCharge2ADC, px, py, adcs_in_ell_2, -2, false);
+      FillIth(&h2ndCharge3ADC, px, py, adcs_in_ell_3, -2, false);
+      FillIth(&h2ndCharge4ADC, px, py, adcs_in_ell_4, -2, false);
 
     } // end of having one track
   } // End of Event Loop
