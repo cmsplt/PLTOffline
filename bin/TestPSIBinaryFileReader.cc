@@ -67,14 +67,32 @@ std::pair<int, float> FindILowestIndexAndValue( std::vector<float> values, int i
 
     std::vector<std::pair<int, float> > index_and_values;
 
-    for (int iv = 0; iv != values.size(); iv++){
-        index_and_values.push_back(std::make_pair(iv, values[iv]));
+    if (DEBUG){
+        std::cout << "FindILowestIndexAndValue, before sort: ";
+        for (int iv = 0; iv != values.size(); iv++)
+            std::cout << values[iv] << " ";
+        std::cout << endl;
     }
+
+    // SORT
+    for (int iv = 0; iv != values.size(); iv++)
+        index_and_values.push_back(std::make_pair(iv, values[iv]));
+
 
     std::sort(index_and_values.begin(), index_and_values.end(), PairSort);
 
-    if ((i+1) <= index_and_values.size())
+   if (DEBUG){
+        std::cout << "FindILowestIndexAndValue, after sort: ";
+        for (int iv = 0; iv != index_and_values.size(); iv++)
+            std::cout << index_and_values[iv].second << " ";
+        std::cout << endl;
+    }
+
+
+    if ((i+1) <= index_and_values.size()){
+        std::cout << "FindILowestIndexAndValue, i=" << i << " " << index_and_values[i].first << " : " << index_and_values[i].second << std::endl;
         return index_and_values[i];
+    }
     else
         return std::make_pair(-1, TMath::QuietNaN());
 
@@ -122,6 +140,20 @@ std::string GetMaskingFilename(int telescopeID){
     std::exit(0);
   }
 }
+
+std::string GetCalibrationFilename(int telescopeID){
+
+  if (telescopeID == 1)
+    return "GKCalibrationList.txt";
+  else if (telescopeID == 2)
+    return "GKCalibrationList_Telescope2.txt";
+  else{
+    std::cout << "ERROR: No Calibration file for telescopeID=" << telescopeID << std::endl;
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
+  }
+}
+
 
 
 int GetNumberOfROCS(int telescopeID){
@@ -228,10 +260,60 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
 
 }
 
+void Write1DFraction(std::vector<TH1*> hs, TCanvas *Can, TString OutDir){
+
+  if (hs.size()!=4){
+    std::cerr << "Write1Dneeds exactly four histograms!" << std::endl;
+    return;
+  }
+
+
+  float hmax = 1.1 * std::max( hs[0]->GetMaximum(),
+                       std::max( hs[1]->GetMaximum(),
+                         std::max( hs[2]->GetMaximum(),
+                            hs[3]->GetMaximum())));
+
+  hs[0]->SetAxisRange(0,hmax,"Y");
+  hs[1]->SetAxisRange(0,hmax,"Y");
+  hs[2]->SetAxisRange(0,hmax,"Y");
+  hs[3]->SetAxisRange(0,hmax,"Y");
+
+
+  hs[0]->SetLineColor(1);
+  hs[1]->SetLineColor(2);
+  hs[2]->SetLineColor(3);
+  hs[3]->SetLineColor(4);
+
+  hs[0]->SetLineWidth(2);
+  hs[1]->SetLineWidth(2);
+  hs[2]->SetLineWidth(2);
+  hs[3]->SetLineWidth(2);
+
+  hs[0]->GetXaxis()->SetTitle("Fraction of Hits in Cluster inside Radius");
+  hs[0]->GetYaxis()->SetTitle("");
+
+  TLegend Leg(0.7, 0.5, 0.90, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.05);
+  Leg.AddEntry(hs[0], "R=1", "l");
+  Leg.AddEntry(hs[1], "R=2", "l");
+  Leg.AddEntry(hs[2], "R=3", "l");
+  Leg.AddEntry(hs[3], "R=4", "l");
+
+  hs[0]->Draw();
+  hs[1]->Draw("SAME");
+  hs[2]->Draw("SAME");
+  hs[3]->Draw("SAME");
+  Leg.Draw();
+
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".pdf");
+
+}
 
 int FindHotPixels (std::string const InFileName,
                    TFile * out_f,
-                   std::string const CalibrationList,
                    TString const RunNumber,
                    std::vector< std::vector< std::vector<int> > > & hot_pixels,
                    int telescopeID
@@ -248,7 +330,7 @@ int FindHotPixels (std::string const InFileName,
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID));
   BFR.GetAlignment()->SetErrors(telescopeID);
 
@@ -366,7 +448,6 @@ int FindHotPixels (std::string const InFileName,
 
 void TestPlaneEfficiency (std::string const InFileName,
                           TFile * out_f,
-                          std::string const CalibrationList,
                           TString const RunNumber,
                           std::vector< std::vector< std::vector<int> > > & hot_pixels,
                           int plane_under_test,
@@ -393,7 +474,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID));
   BFR.GetAlignment()->SetErrors(telescopeID);
   BFR.SetPlaneUnderTest(plane_under_test);
@@ -454,6 +535,10 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH3F h2ndCharge3ADC = TH3F( Form("2ndCharge3_ADC_ROC%i", plane_under_test), "2nd Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
   TH3F h2ndCharge4ADC = TH3F( Form("2ndCharge4_ADC_ROC%i", plane_under_test), "2nd Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
 
+  TH1F hFractionContainted1 = TH1F(Form("FractionContained1_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted2 = TH1F(Form("FractionContained2_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted3 = TH1F(Form("FractionContained3_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted4 = TH1F(Form("FractionContained4_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
 
   TH3F hClusterSize       = TH3F( Form("ClusterSize_ROC%i", plane_under_test), "Cluster Size", 52,0,52, 80,0,80,11,-0.5,10.5);
 
@@ -461,8 +546,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
   TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
 
-  TH1F hDrSecondCluster = TH1F(Form("DeltaRSecondCluster_ROC%i", plane_under_test), "#Delta R Second Cluster", 30, -0.5, 29.5);
-  TH1F hFractionContainted = TH1F(Form("FractionContained_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1);
+  TH1F hDrSecondCluster = TH1F(Form("DeltaRSecondCluster_ROC%i", plane_under_test), "#Delta R Second Cluster", 50, -2., 20);
 
   TH1F hChi2  = TH1F( Form("SinglePlaneTestChi2_ROC%i",plane_under_test),   "SinglePlaneTest_Chi2",    200, 0, 50 );
   TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
@@ -540,7 +624,9 @@ void TestPlaneEfficiency (std::string const InFileName,
       if (DEBUG)
         std::cout << "TestPlaneEfficiency. After FindILowestIndexAndValue. closest_cluster_index = " << closest_cluster_index << std::endl;
 
-      if (delta_rs.size() >= 2)
+      if (delta_rs.size() == 1)
+        hDrSecondCluster.Fill(-1.);
+      else if (delta_rs.size() >= 2)
         hDrSecondCluster.Fill(FindILowestIndexAndValue(delta_rs, 1).second);
 
       // Now look for a close hit in the plane under test
@@ -617,7 +703,10 @@ void TestPlaneEfficiency (std::string const InFileName,
 
           } // end of loop over hits
 
-          hFractionContainted.Fill(1. * matched / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted1.Fill(1. * charges_in_ell_1.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted2.Fill(1. * charges_in_ell_2.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted3.Fill(1. * charges_in_ell_3.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted4.Fill(1. * charges_in_ell_4.size() / Plane->Cluster(closest_cluster_index)->NHits());
 
       } // End of having at least one valid cluster
 
@@ -932,11 +1021,19 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
   hClusterSize.Write();
 
+  Can.SetLogy(1);
   hDrSecondCluster.Draw();
   Can.SaveAs( OutDir+ TString(hDrSecondCluster.GetName()) +".gif");
+  Can.SetLogy(0);
 
-  hFractionContainted.Draw();
-  Can.SaveAs( OutDir+ TString(hFractionContainted.GetName()) +".gif");
+  std::vector<TH1*> hs_fraction_contained;
+  hs_fraction_contained.push_back(&hFractionContainted1);
+  hs_fraction_contained.push_back(&hFractionContainted2);
+  hs_fraction_contained.push_back(&hFractionContainted3);
+  hs_fraction_contained.push_back(&hFractionContainted4);
+  Write1DFraction(hs_fraction_contained, &Can, OutDir);
+
+  Can.SaveAs( OutDir+ TString(hFractionContainted1.GetName()) +".gif");
 
 
 
@@ -946,7 +1043,6 @@ void TestPlaneEfficiency (std::string const InFileName,
 
 int TestPlaneEfficiencySilicon (std::string const InFileName,
                                  TFile * out_f,
-                                 std::string const CalibrationList,
                                  TString const RunNumber,
                                  std::vector< std::vector< std::vector<int> > > & hot_pixels,
                                  int telescopeID)
@@ -965,7 +1061,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   // Open Alignment
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID));
   BFR.GetAlignment()->SetErrors(telescopeID);
 
@@ -1046,7 +1142,6 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
 
 int TestPSIBinaryFileReader (std::string const InFileName,
                              TFile * out_f,
-                             std::string const CalibrationList,
                              TString const RunNumber,
                              int telescopeID)
 {
@@ -1063,14 +1158,12 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Look for hot pixels
   FindHotPixels(InFileName,
                 out_f,
-                CalibrationList,
                 RunNumber,
                 hot_pixels,
                 telescopeID);
 
   int n_events = TestPlaneEfficiencySilicon(InFileName,
                                             out_f,
-                                            CalibrationList,
                                             RunNumber,
                                             hot_pixels,
                                             telescopeID);
@@ -1083,7 +1176,6 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
       TestPlaneEfficiency(InFileName,
                           out_f,
-                          CalibrationList,
                           RunNumber,
                           hot_pixels,
                           iplane,
@@ -1100,7 +1192,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID));
   BFR.GetAlignment()->SetErrors(telescopeID);
   FILE* f = fopen("MyGainCal.dat", "w");
@@ -1893,7 +1985,8 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   gStyle->SetOptStat(0);
 
 
-  WriteHTML(PlotsDir + RunNumber, CalibrationList);
+  WriteHTML(PlotsDir + RunNumber,
+            GetCalibrationFilename(telescopeID));
 
   return 0;
 }
@@ -1901,7 +1994,6 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
 int DoAlignment (std::string const InFileName,
                  TFile * out_f,
-                 std::string const CalibrationList,
                  TString const RunNumber,
                  int telescopeID)
 {
@@ -1928,7 +2020,7 @@ int DoAlignment (std::string const InFileName,
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID, true));
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
@@ -2261,7 +2353,6 @@ for (int ialign=1; ialign!=15;ialign++){
 
 int FindResiduals(std::string const InFileName,
                   TFile * out_f,
-                  std::string const CalibrationList,
                   TString const RunNumber,
                   int telescopeID){
 
@@ -2272,7 +2363,7 @@ int FindResiduals(std::string const InFileName,
 
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
-                          CalibrationList,
+                          GetCalibrationFilename(telescopeID),
                           GetAlignmentFilename(telescopeID));
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
@@ -2744,8 +2835,8 @@ f << "<br>\n";
 
 int main (int argc, char* argv[])
 {
-  if (argc != 5) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [action] [telescopeUD]" << std::endl;
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " InFileName action telescopeUD" << std::endl;
     std::cerr << "action: 0 for analysis, 1 for producing alignment file, 2 for finding residuals" << std::endl;
     return 1;
   }
@@ -2769,19 +2860,17 @@ int main (int argc, char* argv[])
   TString const RunNumber = FullRunName(Index+5,6);
   gSystem->mkdir("./plots/" + RunNumber);
 
-  std::string CalibrationList = argv[2];
-
   // 0: Analysis
   // 1: Alignment
   // 2: Residuals
-  int action = atoi(argv[3]);
+  int action = atoi(argv[2]);
 
   // Telescope IDs:
   // 1: First May-Testbeam Telescope (Si, PolyA, PolyD, S86,  S105, Si)
   // 2: Second May-Tesbeam Telescope (Si, PolyB, PolyD, S108, Si,   Si)
   // 3: First Silicon + 1 Diamond Telescope (July Testbeam)
   // 4: Two-Plane Silicon Telescope (July Testbeam)
-  int telescopeID = atoi(argv[4]);
+  int telescopeID = atoi(argv[3]);
 
   // Open a ROOT file to store histograms in
   // do it here and pass to all functions we call
@@ -2793,7 +2882,6 @@ int main (int argc, char* argv[])
   if (action==1)
     DoAlignment(InFileName,
                 &out_f,
-                CalibrationList,
                 RunNumber,
                 telescopeID);
 
@@ -2801,7 +2889,6 @@ int main (int argc, char* argv[])
   else if (action==2)
     FindResiduals(InFileName,
                   &out_f,
-                  CalibrationList,
                   RunNumber,
                   telescopeID);
 
@@ -2809,7 +2896,6 @@ int main (int argc, char* argv[])
   else
     TestPSIBinaryFileReader(InFileName,
                             &out_f,
-                            CalibrationList,
                             RunNumber,
                             telescopeID);
 
