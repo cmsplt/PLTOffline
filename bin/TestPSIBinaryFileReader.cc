@@ -196,6 +196,65 @@ void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
   Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.pdf");
 }
 
+
+void WriteAngleHistograms( TH1 * h_before_chi2_x,
+                          TH1 * h_before_chi2_y,
+                          TH1 * h_after_chi2_x,
+                          TH1 * h_after_chi2_y,
+                          TCanvas * Can,
+                          TString OutDir){
+
+  h_before_chi2_x->SetLineColor( kRed );
+  h_before_chi2_y->SetLineColor( kBlue );
+  h_after_chi2_x->SetLineColor( kMagenta );
+  h_after_chi2_y->SetLineColor( kBlack );
+
+  h_before_chi2_x->SetLineStyle(1);
+  h_before_chi2_y->SetLineStyle(2);
+  h_after_chi2_x->SetLineStyle(3);
+  h_after_chi2_y->SetLineStyle(4);
+
+  h_before_chi2_x->SetLineWidth(2);
+  h_before_chi2_y->SetLineWidth(2);
+  h_after_chi2_x->SetLineWidth(2);
+  h_after_chi2_y->SetLineWidth(2);
+
+  float hmax = 1.1 * std::max( h_before_chi2_x->GetMaximum(),
+                         std::max( h_before_chi2_y->GetMaximum(),
+                             std::max( h_after_chi2_x->GetMaximum(),
+                                h_after_chi2_y->GetMaximum())));
+
+
+  h_before_chi2_x->SetAxisRange(0, hmax, "Y");
+  h_before_chi2_y->SetAxisRange(0, hmax, "Y");
+  h_after_chi2_x->SetAxisRange(0, hmax, "Y");
+  h_after_chi2_y->SetAxisRange(0, hmax, "Y");
+
+  h_before_chi2_x->GetXaxis()->SetTitle("Angle [rad]");
+  h_before_chi2_x->GetYaxis()->SetTitle("Tracks");
+
+  h_before_chi2_x->Draw();
+  h_before_chi2_y->Draw("SAME");
+  h_after_chi2_x->Draw("SAME");
+  h_after_chi2_y->Draw("SAME");
+
+
+  TLegend Leg(0.7, 0.5, 0.85, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.04);
+  Leg.AddEntry(h_before_chi2_x, "X Before Chi^{2}", "l");
+  Leg.AddEntry(h_before_chi2_y, "Y Before Chi^{2}", "l");
+  Leg.AddEntry(h_after_chi2_x, "X After Chi^{2}", "l");
+  Leg.AddEntry(h_after_chi2_y, "Y After Chi^{2}", "l");
+
+  Leg.Draw();
+
+  Can->SaveAs( OutDir+ TString(h_before_chi2_x->GetName()) + ".gif");
+
+}
+
+
 float GetMaximumExceptBin(TH1* h, int ibin){
 
   if (h->GetMaximumBin() == ibin){
@@ -555,6 +614,12 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
   TH1F hChi2Y = TH1F( Form("SinglePlaneTestChi2Y_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2Y",   100, 0, 20 );
 
+  TH1F hAngleBeforeChi2X = TH1F( Form("SinglePlaneAngleBeforeChi2CutX_ROC%i",plane_under_test), "SinglePlaneAngleBeforeChi2CutX", 100, -0.04, 0.04 );
+  TH1F hAngleBeforeChi2Y = TH1F( Form("SinglePlaneAngleBeforeChi2CutY_ROC%i",plane_under_test), "SinglePlaneAngleBeforeChi2CutX", 100, -0.04, 0.04 );
+
+  TH1F hAngleAfterChi2X = TH1F( Form("SinglePlaneAngleAfterChi2CutX_ROC%i",plane_under_test), "SinglePlaneAngleAfterChi2CutX", 100, -0.04, 0.04 );
+  TH1F hAngleAfterChi2Y = TH1F( Form("SinglePlaneAngleAfterChi2CutY_ROC%i",plane_under_test), "SinglePlaneAngleAfterChi2CutX", 100, -0.04, 0.04 );
+
 
   double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
@@ -574,16 +639,27 @@ void TestPlaneEfficiency (std::string const InFileName,
     // require exactly one track
     if (BFR.NTracks() == 1){
 
+      // Calculate the Angle of the tracks
+      double slopeX = BFR.Track(0)->fTVX / BFR.Track(0)->fTVZ;
+      double slopeY = BFR.Track(0)->fTVY / BFR.Track(0)->fTVZ;
+
+      double angleX = atan(slopeX);
+      double angleY = atan(slopeY);
+
+      hAngleBeforeChi2X.Fill(angleX);
+      hAngleBeforeChi2Y.Fill(angleY);
+
       // Look at the 90% quantile
       if (BFR.Track(0)->Chi2X() > 6.25)
         continue;
       if (BFR.Track(0)->Chi2Y() > 6.25)
         continue;
-
+    
+      hAngleAfterChi2X.Fill(angleX);
+      hAngleAfterChi2Y.Fill(angleY);
+  
       // Only accept reasonably central events
-      double slopeX = BFR.Track(0)->fTVX / BFR.Track(0)->fTVZ;
-      double slopeY = BFR.Track(0)->fTVY / BFR.Track(0)->fTVZ;
-      if ((fabs(slopeX) > 0.02) || (fabs(slopeY) > 0.02))
+      if ((fabs(angleX) > 0.004) || (fabs(angleY) > 0.004))
         continue;
 
       hChi2.Fill( BFR.Track(0)->Chi2());
@@ -1040,11 +1116,14 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   Can.SaveAs( OutDir+ TString(hFractionContainted1.GetName()) +".gif");
 
-
+  WriteAngleHistograms(&hAngleBeforeChi2X,
+                       &hAngleBeforeChi2Y,
+                       &hAngleAfterChi2X,
+                       &hAngleAfterChi2Y,
+                       &Can,
+                       OutDir);
 
 }
-
-
 
 int TestPlaneEfficiencySilicon (std::string const InFileName,
                                  TFile * out_f,
