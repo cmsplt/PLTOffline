@@ -490,6 +490,7 @@ int FindHotPixels (std::string const InFileName,
             colrow.push_back( irow-1 );
             hOccupancy[iroc].SetBinContent( icol, irow, 0);
             hot_pixels[iroc].push_back( colrow );
+            std::cout << "Masking ROC COL ROW: " << iroc << " " << icol-1 << " " << irow-1 << std::endl;
           }
         }
       }
@@ -659,7 +660,7 @@ void TestPlaneEfficiency (std::string const InFileName,
       hAngleAfterChi2Y.Fill(angleY);
   
       // Only accept reasonably central events
-      if ((fabs(angleX) > 0.004) || (fabs(angleY) > 0.004))
+      if ((fabs(angleX) > 0.02) || (fabs(angleY) > 0.02))
         continue;
 
       hChi2.Fill( BFR.Track(0)->Chi2());
