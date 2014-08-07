@@ -51,6 +51,12 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
   fCL >> fCalibrationFile[3];
   fCL >> fCalibrationFile[4];
   fCL >> fCalibrationFile[5];
+  fCL >> fRawCalibrationFile[0];
+  fCL >> fRawCalibrationFile[1];
+  fCL >> fRawCalibrationFile[2];
+  fCL >> fRawCalibrationFile[3];
+  fCL >> fRawCalibrationFile[4];
+  fCL >> fRawCalibrationFile[5];
 
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[0]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[1]);
@@ -58,6 +64,13 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[3]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
+
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[0], 0);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[1], 1);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[2], 2);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[3], 3);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[4], 4);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[5], 5);
 
   fAlignment.ReadAlignmentFile(AlignmentFileName);
   SetTrackingAlignment(&fAlignment);
@@ -500,7 +513,8 @@ void PSIBinaryFileReader::DecodeHits ()
       if (!IsPixelMasked( 1*100000 + iroc*10000 + colrow.first*100 + colrow.second)){
         //printf("Hit iroc %2i  col %2i  row %2i  PH: %4i\n", iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
         PLTHit* Hit = new PLTHit(1, iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
-        fGainCal.SetCharge(*Hit);
+        //fGainCal.SetCharge(*Hit);
+        fGainInterpolator.SetCharge(*Hit);
         fAlignment.AlignHit(*Hit);
         fHits.push_back(Hit);
         fPlaneMap[Hit->ROC()].AddHit(Hit);

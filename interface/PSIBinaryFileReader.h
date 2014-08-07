@@ -6,6 +6,7 @@
 
 #include "PLTTelescope.h"
 #include "PLTGainCal.h"
+#include "PSIGainInterpolator.h"
 #include "PLTAlignment.h"
 #include "PLTTracking.h"
 
@@ -77,12 +78,14 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     std::vector<PLTHit*> fHits;
 
     PLTGainCal fGainCal;
+    PSIGainInterpolator fGainInterpolator;
     PLTAlignment fAlignment;
 
     std::map<int, PLTPlane> fPlaneMap;
 
     std::string fBaseCalDir;
     std::string fCalibrationFile[6];
+    std::string fRawCalibrationFile[6];
 
 };
 
