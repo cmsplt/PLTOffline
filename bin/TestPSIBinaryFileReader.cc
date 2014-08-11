@@ -399,6 +399,8 @@ int FindHotPixels (std::string const InFileName,
   // Apply Masking
   BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
+  std::cout << "Read pixel mask" << std::endl;
+
   // Add hot pixels we are given to mask
   // Since we now do multiple iterations in the histograms in one FindHotPixels call
   // instead of multiple FindHotPixels calls this should not be necessary anymore.
@@ -410,6 +412,8 @@ int FindHotPixels (std::string const InFileName,
   }
 
   BFR.CalculateLevels(10000, OutDir);
+
+  std::cout << "calculated levels" << std::endl;
 
   // Prepare Occupancy histograms
   // x == columns

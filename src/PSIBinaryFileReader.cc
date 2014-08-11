@@ -76,6 +76,8 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
   SetTrackingAlignment(&fAlignment);
   SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_6PlanesHit);
 
+  std::cout << "Done with PSIBinaryFileReade constructor" << std::endl;
+
 }
 
 

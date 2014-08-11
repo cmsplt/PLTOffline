@@ -163,17 +163,20 @@ float PSIGainInterpolator::GetLinearInterpolation (int const ch, int const roc, 
     }
   }
 
-  if (LowIndex > 0 && HighIndex > 0) {
+//  std:: cout << "Low Index = " << LowIndex << " High Index = " << HighIndex << std::endl;
+//  std:: cout << "Low  = " << Low << " High  = " << High << std::endl;
+
+  if (LowIndex >= 0 && HighIndex > 0) {
     float const Slope = ( (float) fVCalValues[HighIndex] - (float) fVCalValues[LowIndex]) / ((float) High - (float) Low );
     return (float) fVCalValues[LowIndex] + Slope * (float) (adc - Low);
   } else if (LowIndex >= 1) {
-    std::cerr << "WARNING: Extrapolation on high end used" << std::endl;
+    //std::cerr << "WARNING: Extrapolation on high end used" << std::endl;
     float const Slope = ( (float) fVCalValues[LowIndex] - (float) fVCalValues[LowIndex - 1]) / ((float) Low - (float) V[LowIndex - 1] );
     return (float) fVCalValues[LowIndex] + Slope * (float) (adc - Low);
   } else if (HighIndex == 0) {
-    std::cerr << "WARNING: Extrapolation on low end used" << std::endl;
+    // std::cerr << "WARNING: Extrapolation on low end used" << std::endl;
     float const Slope = ( (float) fVCalValues[HighIndex+1] - (float) fVCalValues[HighIndex]) / ((float) V[HighIndex + 1] - (float) High );
-    std::cout << High << std::endl;
+    // std::cout << High << std::endl;
     return (float) fVCalValues[HighIndex] + Slope * (float) (adc - High);
   } else {
     std::cerr << "ERROR: For some reason you have reached a strange state, or my logic has failed me" << std::endl;
