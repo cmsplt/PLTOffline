@@ -1245,11 +1245,11 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   }
 
   // Look for hot pixels
-  FindHotPixels(InFileName,
-                out_f,
-                RunNumber,
-                hot_pixels,
-                telescopeID);
+  //FindHotPixels(InFileName,
+  //              out_f,
+  //              RunNumber,
+  //              hot_pixels,
+  //              telescopeID);
 
   int n_events = TestPlaneEfficiencySilicon(InFileName,
                                             out_f,
