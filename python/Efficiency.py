@@ -15,11 +15,23 @@ import ROOT
 
 import RunInfos
 
+
+###############################
+# Read telescope from the commandline
+###############################
+
+if not len(sys.argv)==2:
+    print "Wrong number of input arguments!"
+    print "Usage: {0} telescopeID".format(sys.argv[0])
+    sys.exit()
+else:
+    telescope = int(sys.argv[1])
+
+
 ###############################
 # Configuration
 ###############################
 
-telescope = 1
 nslices = 5
 
 try:
@@ -168,31 +180,31 @@ def make_plots(add_si, do_zoom, do_slice):
 
     c.SetLogx(1)
 
-    # Loop over ROCs
-    for i_roc in range(1, 5):
+    for direction in ["up", "down", "final"]:
+        # Loop over ROCs
+        for i_roc in range(1, 5):
 
-        # Prepare Legend
-        legend = ROOT.TLegend(legend_origin_x,
-                              legend_origin_y,
-                              legend_origin_x + legend_size_x,
-                              legend_origin_y + legend_size_y)
-        legend.SetBorderSize(1)
-        legend.SetFillColor(0)
-        legend.SetTextSize(0.04)
-        legend.SetBorderSize(0)
+            # Prepare Legend
+            legend = ROOT.TLegend(legend_origin_x,
+                                  legend_origin_y,
+                                  legend_origin_x + legend_size_x,
+                                  legend_origin_y + legend_size_y)
+            legend.SetBorderSize(1)
+            legend.SetFillColor(0)
+            legend.SetTextSize(0.04)
+            legend.SetBorderSize(0)
 
-        # Prepare 'background' TH2.
-        if do_zoom:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
-        else:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
-        h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
-        h.GetYaxis().SetTitle("#varepsilon")
-        h.Draw()
+            # Prepare 'background' TH2.
+            if do_zoom:
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
+            else:
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
+            h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
+            h.GetYaxis().SetTitle("#varepsilon")
+            h.Draw()
 
-        # Prepare efficiency TGraphs
-        li_grs = []
-        for direction in ["up", "down", "final"]:
+            # Prepare efficiency TGraphs
+            li_grs = []
 
             # Choose runs to use
             if direction == "up":
@@ -238,11 +250,11 @@ def make_plots(add_si, do_zoom, do_slice):
                 legend.AddEntry(gr_si, "Without Tracking (Require Silicon Hits)", "P")
 
             if direction == "up":
-                legend.AddEntry(gr_tr, "Tracking (Up)", "P")
+                legend.AddEntry(gr_tr, "Increasing Flux", "P")
             elif direction == "down":
-                legend.AddEntry(gr_tr, "Tracking (Down)", "P")
+                legend.AddEntry(gr_tr, "Decreasing Flux", "P")
             elif direction == "final":
-                legend.AddEntry(gr_tr, "Tracking (Final)", "P")
+                legend.AddEntry(gr_tr, "Final", "P")
 
             # Markers
             gr_si.SetMarkerStyle(2)
@@ -267,15 +279,15 @@ def make_plots(add_si, do_zoom, do_slice):
             if add_si:
                 gr_si.Draw("PSAME")
             gr_tr.Draw("PSAME")
-        legend.Draw()
+            legend.Draw()
 
-        outfile_name = "Eff_Telescope{0}_ROC{1}".format(telescope, i_roc)
-        if do_slice:
-            outfile_name += "_sliced"
-        c.Print(outfile_name + ".png")
+            outfile_name = "Eff_Telescope{0}_ROC{1}_{2}".format(telescope, i_roc, direction)
+            if do_slice:
+                outfile_name += "_sliced"
+            c.Print(outfile_name + ".png")
         # End loop over ROCs
-
+    # End of loop over directions
 # End of Make Plots
 
-make_plots(add_si=True, do_zoom=False, do_slice=False)
+make_plots(add_si=False, do_zoom=False, do_slice=False)
 make_plots(add_si=False, do_zoom=True, do_slice=True)

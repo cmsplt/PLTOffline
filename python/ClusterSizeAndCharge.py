@@ -15,11 +15,21 @@ import ROOT
 
 import RunInfos
 
+
+###############################
+# Read telescope from the commandline
+###############################
+
+if not len(sys.argv)==2:
+    print "Wrong number of input arguments!"
+    print "Usage: {0} telescopeID".format(sys.argv[0])
+    sys.exit()
+else:
+    telescope = int(sys.argv[1])
+
 ###############################
 # Configuration
 ###############################
-
-telescope = 2
 
 try:
     di_runs = RunInfos.di_di_runs[telescope]
@@ -29,6 +39,9 @@ try:
 except KeyError:
     print "Invalid telescope! Exiting.."
     sys.exit()
+
+
+
 
 
 ###############################
@@ -138,45 +151,47 @@ def make_plots():
         legend_size_x = 0.1
         legend_size_y = 0.045 * 3
 
-        # Loop over ROCs
-        for i_roc in range(1, 5):
 
-            # Prepare Legend
-            legend = ROOT.TLegend(legend_origin_x,
-                                  legend_origin_y,
-                                  legend_origin_x + legend_size_x,
-                                  legend_origin_y + legend_size_y)
-            legend.SetBorderSize(1)
-            legend.SetFillColor(0)
-            legend.SetTextSize(0.04)
-            legend.SetBorderSize(0)
+        for direction in ["up", "down", "final"]:
 
-            if plot_var == "cluster_size":
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
-                h.GetYaxis().SetTitle("Mean Cluster Size")
-            elif plot_var == "cluster_size_fraction_1":
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
-                h.GetYaxis().SetTitle("Fraction of size == 1 Clusters")
-            elif plot_var == "cluster_size_fraction_12":
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
-                h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
-            elif plot_var == "charge":
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
-                h.GetYaxis().SetTitle("Total Charge within 2-pixel radius")
-            elif plot_var == "second_charge":
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
-                h.GetYaxis().SetTitle("Charge of second hit in cluster")
-            else:
-                raise VariableError
+            # Loop over ROCs
+            for i_roc in range(1, 5):
 
-            h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
-            h.GetYaxis().SetTitleOffset(2.)
+                # Prepare Legend
+                legend = ROOT.TLegend(legend_origin_x,
+                                      legend_origin_y,
+                                      legend_origin_x + legend_size_x,
+                                      legend_origin_y + legend_size_y)
+                legend.SetBorderSize(1)
+                legend.SetFillColor(0)
+                legend.SetTextSize(0.04)
+                legend.SetBorderSize(0)
 
-            h.Draw()
+                if plot_var == "cluster_size":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
+                    h.GetYaxis().SetTitle("Mean Cluster Size")
+                elif plot_var == "cluster_size_fraction_1":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                    h.GetYaxis().SetTitle("Fraction of size == 1 Clusters")
+                elif plot_var == "cluster_size_fraction_12":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                    h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
+                elif plot_var == "charge":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
+                    h.GetYaxis().SetTitle("Total Charge within 2-pixel radius")
+                elif plot_var == "second_charge":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
+                    h.GetYaxis().SetTitle("Charge of second hit in cluster")
+                else:
+                    raise VariableError
 
-            # Prepare efficiency TGraphs
-            li_grs = []
-            for direction in ["up", "down", "final"]:
+                h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
+                h.GetYaxis().SetTitleOffset(2.)
+
+                h.Draw()
+
+                # Prepare efficiency TGraphs
+                li_grs = []
 
                 # Choose runs to use
                 if direction == "up":
@@ -197,9 +212,9 @@ def make_plots():
                 # Legend Entries
 
                 if direction == "up":
-                    legend.AddEntry(gr, "Up", "P")
+                    legend.AddEntry(gr, "Increasing Flux", "P")
                 elif direction == "down":
-                    legend.AddEntry(gr, "Down", "P")
+                    legend.AddEntry(gr, "Decreasing Flux", "P")
                 elif direction == "final":
                     legend.AddEntry(gr, "Final", "P")
 
@@ -221,22 +236,24 @@ def make_plots():
                 li_grs.append(gr)
                 gr.SetMarkerSize(1.5)
                 gr.Draw("PSAME")
-            legend.Draw()
+                legend.Draw()
 
-            if plot_var == "cluster_size":
-                outfile_name = "ClusterSize_Telescope{0}_ROC{1}".format(telescope, i_roc)
-            elif plot_var == "cluster_size_fraction_1":
-                outfile_name = "ClusterSizeFraction1_Telescope{0}_ROC{1}".format(telescope, i_roc)
-            elif plot_var == "cluster_size_fraction_12":
-                outfile_name = "ClusterSizeFraction12_Telescope{0}_ROC{1}".format(telescope, i_roc)
-            elif plot_var == "charge":
-                outfile_name = "Charge_Telescope{0}_ROC{1}".format(telescope, i_roc)
-            elif plot_var == "second_charge":
-                outfile_name = "SecondCharge_Telescope{0}_ROC{1}".format(telescope, i_roc)
-            else:
-                raise VariableError
+                if plot_var == "cluster_size":
+                    outfile_name = "ClusterSize_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                elif plot_var == "cluster_size_fraction_1":
+                    outfile_name = "ClusterSizeFraction1_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                elif plot_var == "cluster_size_fraction_12":
+                    outfile_name = "ClusterSizeFraction12_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                elif plot_var == "charge":
+                    outfile_name = "Charge_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                elif plot_var == "second_charge":
+                    outfile_name = "SecondCharge_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                else:
+                    raise VariableError
 
-            c.Print(outfile_name + ".png")
+                outfile_name += "_" + direction
+
+                c.Print(outfile_name + ".png")
             # End loop over ROCs
 # End of Make Plots
 
