@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "TString.h"
+#include "TH1F.h"
 
 #define DEBUG false
 
@@ -32,7 +33,6 @@ bool PSIGainInterpolator::ReadFile (std::string const InFileName, int const roc)
 
   // Clear previous values
   fVCalValues.clear();
-
 
   // For PSI board we always use ch1
   int const ch = 1;
@@ -63,24 +63,8 @@ bool PSIGainInterpolator::ReadFile (std::string const InFileName, int const roc)
   size_t const NPoints = fVCalValues.size();
   std::cout << "NPoints = " << NPoints << std::endl;
 
-  // IMPORTANT !!!
-  // For Telescope 1 and 2 the calibration order is
-  // 50 / 100 / 150 / 200 / 250/ 210/ 350 / 490 / 630 / 1400
-  // to make sure everything works we need to exchange the values of
-  // pos 4 and 5 of the TemVec and the fCalValues vector
-  // TODO: Need to change that when Vcal values change
-  // !!!!!!!!!!!!!!!!
-
-   float tmp = fVCalValues[4];
-   fVCalValues[4] = fVCalValues[5];
-   fVCalValues[5] = tmp;
-
-   std::cout << "fCalValues" << std::endl;
-   for (size_t i = 0; i != fVCalValues.size(); ++i)
-      std::cout << fVCalValues[i] << " ";
-   std::cout << std::endl;
-
-
+  TH1F ks("","", 200,5,10);
+    
   // Loop over all lines in the input data file
   std::istringstream s;
   TString Pix;
@@ -110,6 +94,11 @@ bool PSIGainInterpolator::ReadFile (std::string const InFileName, int const roc)
     if (DEBUG)
         std::cout << row << " " << 100*col << " " << 10000*roc << " " << 100000*ch << " " << row + 100*col * 10000*roc * 100000*ch << " -> " << id << std::endl ;
 
+    if ((TempVec[3] - TempVec[4]) != 0){
+	float k = (200. + 50.*(TempVec[3] - TempVec[5])/(TempVec[3] - TempVec[4]))/30.;
+	ks.Fill(k);
+    }
+
     // IMPORTANT !!!
     // For Telescope 1 and 2 the calibration order is
     // 50 / 100 / 150 / 200 / 250/ 210/ 350 / 490 / 630 / 1400
@@ -118,18 +107,44 @@ bool PSIGainInterpolator::ReadFile (std::string const InFileName, int const roc)
     // TODO: Need to change that when Vcal values change
     // !!!!!!!!!!!!!!!!
 
-    tmp = TempVec[4];
+    float tmp = TempVec[4];
     TempVec[4] = TempVec[5];
     TempVec[5] = tmp;
 
-    std::cout << "TempVec" << std::endl;
-    for (size_t i = 0; i != TempVec.size(); ++i)
-	std::cout << TempVec[i] << " ";
-    std::cout << std::endl;
+    // std::cout << "TempVec" << std::endl;
+    // for (size_t i = 0; i != TempVec.size(); ++i)
+    // 	std::cout << TempVec[i] << " ";
+    // std::cout << std::endl;
 
 
     fCalibrationMap[id] = TempVec;
   }
+
+
+  std::cout << "roc: " << roc << " k = " << ks.GetMean() << std::endl;
+
+
+  for (size_t i = 5; i != fVCalValues.size(); ++i)
+      fVCalValues[i] *= ks.GetMean()/7.;
+
+  // IMPORTANT !!!
+  // For Telescope 1 and 2 the calibration order is
+  // 50 / 100 / 150 / 200 / 250/ 210/ 350 / 490 / 630 / 1400
+  // to make sure everything works we need to exchange the values of
+  // pos 4 and 5 of the TemVec and the fCalValues vector
+  // TODO: Need to change that when Vcal values change
+  // !!!!!!!!!!!!!!!!
+
+   float tmp = fVCalValues[4];
+   fVCalValues[4] = fVCalValues[5];
+   fVCalValues[5] = tmp;
+
+   std::cout << "fCalValues" << std::endl;
+   for (size_t i = 0; i != fVCalValues.size(); ++i)
+      std::cout << fVCalValues[i] << " ";
+   std::cout << std::endl;
+
+
 
   return true;
 }
