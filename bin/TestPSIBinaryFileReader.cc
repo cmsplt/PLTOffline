@@ -317,6 +317,8 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   h60->Draw("SAME");
   Leg.Draw();
 
+  h60->Write();
+
   Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
   Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".pdf");
 
