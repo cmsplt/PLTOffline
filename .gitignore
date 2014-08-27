@@ -79,3 +79,7 @@ python/*.png
 Telescope_Silicon0_4_PolyA_PolyD_S86_S105_29052014_0408/
 MyGainCal.dat
 .idea
+TestPSIGainInterpolator
+plots-*
+python/small-angle/
+python/wide-angle/
