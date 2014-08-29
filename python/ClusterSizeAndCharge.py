@@ -2,7 +2,7 @@
 
 """
 Analyze multiple runs from PSI testbeam in May 2014.
-Extract the cluster size, total charge in radius and charge of second highest hit as a function of flux.
+Extract the cluster size, leading and second highest charge of  hit as a function of flux.
 """
 
 # ##############################
@@ -36,6 +36,7 @@ try:
     li_runs_up = RunInfos.di_li_runs_up[telescope]
     li_runs_down = RunInfos.di_li_runs_down[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
+    di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
     print "Invalid telescope! Exiting.."
     sys.exit()
@@ -71,9 +72,9 @@ for i_run, run in enumerate(di_runs):
     input_rootfile_name = "../plots/000" + str(run) + "/histos.root"
     f = ROOT.TFile.Open(input_rootfile_name)
 
-    for iroc in range(1, 5):
+    for i_roc in range(1, 5):
         # Get the mean cluster size
-        h_cs = f.Get("ClusterSize_ROC" + str(iroc))
+        h_cs = f.Get("ClusterSize_ROC" + str(i_roc))
         h_cs_proj = h_cs.Project3D("z")
         cluster_size[run].append(h_cs_proj.GetMean())
 
@@ -86,11 +87,11 @@ for i_run, run in enumerate(di_runs):
         cluster_size_fraction_12[run].append(1. * h_cs_proj.Integral(bin_1, bin_2) / h_cs_proj.Integral())
 
         # Get the charge of the second in the cluster
-        h_se = f.Get("2ndCharge2_ROC" + str(iroc))
+        h_se = f.Get("2ndCharge2_ROC" + str(i_roc))
         second_charge[run].append(h_se.Project3D("z").GetMean())
 
-        # Use the charge within a 2-pixel radius
-        h_charge = f.Get("SumCharge2_ROC" + str(iroc))
+        # Use the leading charge within a 4-pixel radius
+        h_charge = f.Get("1stCharge4_ROC" + str(i_roc))
         charge[run].append(h_charge.Project3D("z").GetMean())
 
     # End of loop over ROCs
@@ -178,7 +179,7 @@ def make_plots():
                     h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
                 elif plot_var == "charge":
                     h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
-                    h.GetYaxis().SetTitle("Total Charge within 2-pixel radius")
+                    h.GetYaxis().SetTitle("Leading Charge within 4-pixel radius")
                 elif plot_var == "second_charge":
                     h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
                     h.GetYaxis().SetTitle("Charge of second hit in cluster")
@@ -239,19 +240,19 @@ def make_plots():
                 legend.Draw()
 
                 if plot_var == "cluster_size":
-                    outfile_name = "ClusterSize_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                    outfile_name = "ClusterSize"
                 elif plot_var == "cluster_size_fraction_1":
-                    outfile_name = "ClusterSizeFraction1_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                    outfile_name = "ClusterSizeFraction1"
                 elif plot_var == "cluster_size_fraction_12":
-                    outfile_name = "ClusterSizeFraction12_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                    outfile_name = "ClusterSizeFraction12"
                 elif plot_var == "charge":
-                    outfile_name = "Charge_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                    outfile_name = "Charge_Telescope"
                 elif plot_var == "second_charge":
-                    outfile_name = "SecondCharge_Telescope{0}_ROC{1}".format(telescope, i_roc)
+                    outfile_name = "SecondCharge_Telescope"
                 else:
                     raise VariableError
-
-                outfile_name += "_" + direction
+        
+                outfile_name += "Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
 
                 c.Print(outfile_name + ".png")
             # End loop over ROCs

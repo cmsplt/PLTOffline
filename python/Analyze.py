@@ -45,6 +45,7 @@ try:
     li_runs_up = RunInfos.di_li_runs_up[telescope]
     li_runs_down = RunInfos.di_li_runs_down[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
+    di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
     print "Invalid telescope! Exiting.."
     sys.exit()
@@ -157,4 +158,10 @@ for name in li_names:
                 di_histos[name][run].Draw("SAME")
 
         legend.Draw()
-        c.Print("plots/{0}_{1}.pdf".format(name, direction))
+
+        # Extract the ROC number from the name
+        roc_pos_in_string = name.find("ROC") + 3 # because ROC has three letters
+        roc_index = int(name[roc_pos_in_string])
+        
+
+        c.Print("plots/{0}_Telescope{1}_{2}_{3}.pdf".format(name, telescope, di_rocs[roc_index],  direction))

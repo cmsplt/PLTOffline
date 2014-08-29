@@ -39,6 +39,7 @@ try:
     li_runs_up = RunInfos.di_li_runs_up[telescope]
     li_runs_down = RunInfos.di_li_runs_down[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
+    di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
     print "Invalid telescope! Exiting.."
     sys.exit()
@@ -125,16 +126,16 @@ for i_run, run in enumerate(di_runs):
     f = ROOT.TFile.Open(input_rootfile_name)
 
     # Silicon-based efficiency
-    for iroc in range(6):
-        nums_si[run].append(f.Get("SiliconEfficiencyNumeratorROC" + str(iroc)).GetVal())
-        denoms_si[run].append(f.Get("SiliconEfficiencyDenominatorROC" + str(iroc)).GetVal())
+    for i_roc in range(6):
+        nums_si[run].append(f.Get("SiliconEfficiencyNumeratorROC" + str(i_roc)).GetVal())
+        denoms_si[run].append(f.Get("SiliconEfficiencyDenominatorROC" + str(i_roc)).GetVal())
 
     # Tracking-based efficiency
-    for iroc in range(1, 5):
+    for i_roc in range(1, 5):
 
         # First get the full-run efficiency
-        eff, unc_up, unc_low = eff_and_unc(f.Get("PlaneEfficiency_ROC" + str(iroc)),
-                                           f.Get("TracksPassing_ROC" + str(iroc)))
+        eff, unc_up, unc_low = eff_and_unc(f.Get("PlaneEfficiency_ROC" + str(i_roc)),
+                                           f.Get("TracksPassing_ROC" + str(i_roc)))
         eff_tr[run].append(eff)
         unc_up_tr[run].append(unc_up)
         unc_low_tr[run].append(unc_low)
@@ -145,8 +146,8 @@ for i_run, run in enumerate(di_runs):
         li_uncs_low = []
         for islice in range(nslices):
             eff_slice, unc_up_slice, unc_low_slice = eff_and_unc(
-                f.Get("Numerator_ROC{0}_slice{1}".format(iroc, islice)),
-                f.Get("Denominator_ROC{0}_slice{1}".format(iroc, islice)))
+                f.Get("Numerator_ROC{0}_slice{1}".format(i_roc, islice)),
+                f.Get("Denominator_ROC{0}_slice{1}".format(i_roc, islice)))
 
             li_effs.append(eff_slice)
             li_uncs_up.append(unc_up_slice)
@@ -281,7 +282,7 @@ def make_plots(add_si, do_zoom, do_slice):
             gr_tr.Draw("PSAME")
             legend.Draw()
 
-            outfile_name = "Eff_Telescope{0}_ROC{1}_{2}".format(telescope, i_roc, direction)
+            outfile_name = "Eff_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
             if do_slice:
                 outfile_name += "_sliced"
             c.Print(outfile_name + ".png")
@@ -290,4 +291,4 @@ def make_plots(add_si, do_zoom, do_slice):
 # End of Make Plots
 
 make_plots(add_si=False, do_zoom=False, do_slice=False)
-make_plots(add_si=False, do_zoom=True, do_slice=True)
+#make_plots(add_si=False, do_zoom=True, do_slice=True)

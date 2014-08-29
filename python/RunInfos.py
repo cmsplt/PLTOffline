@@ -11,10 +11,12 @@ Flux numbers are in kHz and taken from Steve's spreadsheet.
 # di_li_runs_up has lists of runs while increasing the flux
 # di_li_runs_down has lists of runs while decreasing the flux
 # di_li_runs_final lists of runs at maximum flux, taken in the end
+# di_di_rocs has dictionaries with roc-number:name matching as values
 di_di_runs = {}
 di_li_runs_up = {}
 di_li_runs_down = {}
 di_li_runs_final = {}
+di_di_rocs = {}
 
 
 # Telescope 0: For testing
@@ -22,7 +24,13 @@ di_di_runs[0] = {316: 1.6}
 di_li_runs_up[0] = [316]
 di_li_runs_down[0] = []
 di_li_runs_final[0] = []
-
+di_di_rocs[0] = {0 : "Si",
+                 1 : "PolyA", 
+                 2 : "PolyD", 
+                 3 : "S86", 
+                 4 : "S105", 
+                 5 : "Si"}
+                 
 
 # Telescope 1
 di_di_runs[1] = {
@@ -44,6 +52,14 @@ di_li_runs_up[1] = [322, 325, 327, 330, 333]
 di_li_runs_down[1] = [338, 340, 343, 347, 348]
 di_li_runs_final[1] = [350, 352]
 
+di_di_rocs[1] = {0 : "Si",
+                 1 : "PolyA", 
+                 2 : "PolyD", 
+                 3 : "S86", 
+                 4 : "S105", 
+                 5 : "Si"}
+
+
 
 # Telescope 2
 di_di_runs[2] = {
@@ -62,3 +78,11 @@ di_di_runs[2] = {
 di_li_runs_up[2] = [466, 467, 469, 470]
 di_li_runs_down[2] = [471, 472, 473, 474, 475]
 di_li_runs_final[2] = [476, 478]
+
+
+di_di_rocs[2] = {0 : "Si",
+                 1 : "PolyB", 
+                 2 : "PolyD", 
+                 3 : "S108", 
+                 4 : "Si", 
+                 5 : "Si"}
