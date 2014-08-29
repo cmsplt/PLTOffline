@@ -42,9 +42,8 @@ else:
 
 try:
     di_runs = RunInfos.di_di_runs[telescope]
-    li_runs_up = RunInfos.di_li_runs_up[telescope]
-    li_runs_down = RunInfos.di_li_runs_down[telescope]
-    li_runs_final = RunInfos.di_li_runs_final[telescope]
+    li_runs_up = RunInfos.di_li_runs_up_less[telescope]
+    li_runs_down = RunInfos.di_li_runs_down_less[telescope]
     di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
     print "Invalid telescope! Exiting.."
@@ -59,6 +58,7 @@ li_names = []
 
 
 li_names +=  ["1stCharge4_ROC{0}_z".format(iroc) for iroc in range(1,5)]
+li_names +=  ["SumCharge4_ROC{0}_z".format(iroc) for iroc in range(1,5)]
 
 ###############################
 # Extract histograms from files
@@ -69,7 +69,7 @@ di_histos = {}
 for name in li_names:
     di_histos[name] = {}
 
-for i_run, run in enumerate(li_runs_up + li_runs_down + li_runs_final):
+for i_run, run in enumerate(li_runs_up + li_runs_down):
 
     print "Doing", run
     input_rootfile_name = "../plots/000"+str(run)+"/histos.root"
@@ -94,7 +94,7 @@ for i_run, run in enumerate(li_runs_up + li_runs_down + li_runs_final):
 
 c = ROOT.TCanvas("","",800,800)
 
-
+c.SetGrid(1,1)
 
 li_colors = [ROOT.kRed,      ROOT.kBlue+1,     ROOT.kBlack,
              ROOT.kOrange-1, ROOT.kViolet+1,   ROOT.kGreen+1,
@@ -115,15 +115,13 @@ def GetMaximumExceptBin(h, ibin=1):
 ###############################
 
 for name in li_names:
-    for direction in ["up", "down", "final"]:
+    for direction in ["up", "down"]:
 
         # Choose runs to use
         if direction == "up":
             li_runs = li_runs_up
         elif direction == "down":
             li_runs = li_runs_down
-        else:
-            li_runs = li_runs_final
 
         legend_origin_x     = 0.6
         legend_origin_y     = 0.5

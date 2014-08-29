@@ -35,6 +35,7 @@ try:
     di_runs = RunInfos.di_di_runs[telescope]
     li_runs_up = RunInfos.di_li_runs_up[telescope]
     li_runs_down = RunInfos.di_li_runs_down[telescope]
+    li_runs_down_extended = RunInfos.di_li_runs_down_extended[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
     di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
@@ -53,6 +54,7 @@ except KeyError:
 # dict_keys = run numbers
 # list entries: one per ROC
 charge = {}
+sum_charge = {}
 cluster_size = {}
 cluster_size_fraction_1 = {}
 cluster_size_fraction_12 = {}
@@ -64,6 +66,7 @@ for i_run, run in enumerate(di_runs):
     print "At: ", run
 
     charge[run] = []
+    sum_charge[run] = []
     cluster_size[run] = []
     cluster_size_fraction_1[run] = []
     cluster_size_fraction_12[run] = []
@@ -94,6 +97,10 @@ for i_run, run in enumerate(di_runs):
         h_charge = f.Get("1stCharge4_ROC" + str(i_roc))
         charge[run].append(h_charge.Project3D("z").GetMean())
 
+        # Use the sum of  charges within a 4-pixel radius
+        h_sumcharge = f.Get("SumCharge4_ROC" + str(i_roc))
+        sum_charge[run].append(h_sumcharge.Project3D("z").GetMean())
+
     # End of loop over ROCs
 # End loop over runs
 
@@ -123,8 +130,15 @@ def make_plots():
     c = ROOT.TCanvas("", "", 800, 800)
 
     c.SetLogx(1)
+    c.SetGrid(1, 1)
 
-    for plot_var in ["cluster_size", "cluster_size_fraction_1", "cluster_size_fraction_12", "charge", "second_charge"]:
+    for plot_var in ["cluster_size", 
+                     #"cluster_size_fraction_1", 
+                     #"cluster_size_fraction_12", 
+                     "charge", 
+                     "sum_charge", 
+                     #"second_charge"
+    ]:
 
         if plot_var == "cluster_size":
             di_values = cluster_size
@@ -142,6 +156,10 @@ def make_plots():
             di_values = charge
             legend_origin_x = 0.2
             legend_origin_y = 0.8
+        elif plot_var == "sum_charge":
+            di_values = sum_charge
+            legend_origin_x = 0.2
+            legend_origin_y = 0.8
         elif plot_var == "second_charge":
             di_values = second_charge
             legend_origin_x = 0.2
@@ -150,7 +168,7 @@ def make_plots():
             raise VariableError(plot_var)
 
         legend_size_x = 0.1
-        legend_size_y = 0.045 * 3
+        legend_size_y = 0.045 * 1
 
 
         for direction in ["up", "down", "final"]:
@@ -178,8 +196,11 @@ def make_plots():
                     h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
                     h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
                 elif plot_var == "charge":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 50000)
-                    h.GetYaxis().SetTitle("Leading Charge within 4-pixel radius")
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
+                    h.GetYaxis().SetTitle("Leading charge within 4-pixel radius")
+                elif plot_var == "sum_charge":
+                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
+                    h.GetYaxis().SetTitle("Sum of charge within 4-pixel radius")
                 elif plot_var == "second_charge":
                     h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
                     h.GetYaxis().SetTitle("Charge of second hit in cluster")
@@ -198,7 +219,7 @@ def make_plots():
                 if direction == "up":
                     li_runs = li_runs_up
                 elif direction == "down":
-                    li_runs = li_runs_down
+                    li_runs = li_runs_down_extended
                 else:
                     li_runs = li_runs_final
 
@@ -246,13 +267,15 @@ def make_plots():
                 elif plot_var == "cluster_size_fraction_12":
                     outfile_name = "ClusterSizeFraction12"
                 elif plot_var == "charge":
-                    outfile_name = "Charge_Telescope"
+                    outfile_name = "LeadingCharge"
+                elif plot_var == "sum_charge":
+                    outfile_name = "SumCharge"
                 elif plot_var == "second_charge":
-                    outfile_name = "SecondCharge_Telescope"
+                    outfile_name = "SecondCharge"
                 else:
                     raise VariableError
         
-                outfile_name += "Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
+                outfile_name += "_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
 
                 c.Print(outfile_name + ".png")
             # End loop over ROCs

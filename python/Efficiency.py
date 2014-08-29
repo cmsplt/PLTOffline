@@ -37,7 +37,7 @@ nslices = 5
 try:
     di_runs = RunInfos.di_di_runs[telescope]
     li_runs_up = RunInfos.di_li_runs_up[telescope]
-    li_runs_down = RunInfos.di_li_runs_down[telescope]
+    li_runs_down = RunInfos.di_li_runs_down_extended[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
     di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
@@ -170,6 +170,7 @@ def make_plots(add_si, do_zoom, do_slice):
     ROOT.gStyle.SetOptStat(0)
 
     c = ROOT.TCanvas("", "", 800, 800)
+    c.SetGrid(1,1)
 
     legend_origin_x = 0.2
     legend_origin_y = 0.2
