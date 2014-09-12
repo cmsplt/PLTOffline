@@ -515,8 +515,11 @@ void PSIBinaryFileReader::DecodeHits ()
       if (!IsPixelMasked( 1*100000 + iroc*10000 + colrow.first*100 + colrow.second)){
         //printf("Hit iroc %2i  col %2i  row %2i  PH: %4i\n", iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
         PLTHit* Hit = new PLTHit(1, iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
-        //fGainCal.SetCharge(*Hit);
-        fGainInterpolator.SetCharge(*Hit);
+
+	// Fits (use for Telescope 1 at the moment)
+        fGainCal.SetCharge(*Hit);	
+	// Linear Interpolation (use for Telescope 2 at the moment)
+        //fGainInterpolator.SetCharge(*Hit);
         fAlignment.AlignHit(*Hit);
         fHits.push_back(Hit);
         fPlaneMap[Hit->ROC()].AddHit(Hit);

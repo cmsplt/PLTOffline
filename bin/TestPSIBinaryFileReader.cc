@@ -317,6 +317,9 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   h60->Draw("SAME");
   Leg.Draw();
 
+  h15->Write();
+  h30->Write();
+  h45->Write();
   h60->Write();
 
   Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
@@ -1093,11 +1096,15 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &hSumCharge4, &Can, maxz, OutDir);
 
   hSumCharge2.Write();
+  hSumCharge4.Write();
 
   Write2DCharge( &h1stCharge1, &Can, maxz, OutDir);
   Write2DCharge( &h1stCharge2, &Can, maxz, OutDir);
   Write2DCharge( &h1stCharge3, &Can, maxz, OutDir);
   Write2DCharge( &h1stCharge4, &Can, maxz, OutDir);
+
+  h1stCharge2.Write();
+  h1stCharge4.Write();
 
   Write2DCharge( &h2ndCharge1, &Can, maxz, OutDir);
   Write2DCharge( &h2ndCharge2, &Can, maxz, OutDir);
@@ -1105,6 +1112,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   Write2DCharge( &h2ndCharge4, &Can, maxz, OutDir);
 
   h2ndCharge2.Write();
+  h2ndCharge4.Write();
 
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
   hClusterSize.Write();
