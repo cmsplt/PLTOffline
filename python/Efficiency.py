@@ -15,6 +15,10 @@ import ROOT
 
 import RunInfos
 
+ROOT.gStyle.SetPadLeftMargin(0.15)
+ROOT.gStyle.SetPadBottomMargin(0.15)
+ROOT.gROOT.ForceStyle()
+
 
 ###############################
 # Read telescope from the commandline
@@ -37,7 +41,7 @@ nslices = 5
 try:
     di_runs = RunInfos.di_di_runs[telescope]
     li_runs_up = RunInfos.di_li_runs_up[telescope]
-    li_runs_down = RunInfos.di_li_runs_down_extended[telescope]
+    li_runs_down = RunInfos.di_li_runs_down[telescope]
     li_runs_final = RunInfos.di_li_runs_final[telescope]
     di_rocs = RunInfos.di_di_rocs[telescope]
 except KeyError:
@@ -170,43 +174,56 @@ def make_plots(add_si, do_zoom, do_slice):
     ROOT.gStyle.SetOptStat(0)
 
     c = ROOT.TCanvas("", "", 800, 800)
+
+
+
     c.SetGrid(1,1)
 
     legend_origin_x = 0.2
     legend_origin_y = 0.2
     legend_size_x = 0.1
     if add_si:
-        legend_size_y = 0.045 * 4
+        legend_size_y = 0.062 * 4
     else:
-        legend_size_y = 0.045 * 3
+        legend_size_y = 0.062 * 3
 
     c.SetLogx(1)
 
-    for direction in ["up", "down", "final"]:
-        # Loop over ROCs
-        for i_roc in range(1, 5):
 
-            # Prepare Legend
-            legend = ROOT.TLegend(legend_origin_x,
-                                  legend_origin_y,
-                                  legend_origin_x + legend_size_x,
-                                  legend_origin_y + legend_size_y)
-            legend.SetBorderSize(1)
-            legend.SetFillColor(0)
-            legend.SetTextSize(0.04)
-            legend.SetBorderSize(0)
+    # Loop over ROCs
+    for i_roc in range(1, 5):
 
-            # Prepare 'background' TH2.
-            if do_zoom:
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
-            else:
-                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
-            h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
-            h.GetYaxis().SetTitle("#varepsilon")
-            h.Draw()
+        # Prepare Legend
+        legend = ROOT.TLegend(legend_origin_x,
+                              legend_origin_y,
+                              legend_origin_x + legend_size_x,
+                              legend_origin_y + legend_size_y)
+        legend.SetBorderSize(1)
+        legend.SetFillColor(0)
+        legend.SetTextSize(0.06)
+        legend.SetBorderSize(0)
 
-            # Prepare efficiency TGraphs
-            li_grs = []
+        # Prepare 'background' TH2.
+        if do_zoom:
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
+        else:
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
+
+        h.GetXaxis().SetTitleSize(0.06)
+        h.GetYaxis().SetTitleSize(0.06)
+        h.GetXaxis().SetLabelSize(0.06)
+        h.GetYaxis().SetLabelSize(0.06)
+            
+
+        h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
+        h.GetYaxis().SetTitle("#varepsilon")
+        h.Draw()
+
+        # Prepare efficiency TGraphs
+        li_grs = []
+
+
+        for direction in ["up", "down", "final"]:
 
             # Choose runs to use
             if direction == "up":
@@ -256,7 +273,7 @@ def make_plots(add_si, do_zoom, do_slice):
             elif direction == "down":
                 legend.AddEntry(gr_tr, "Decreasing Flux", "P")
             elif direction == "final":
-                legend.AddEntry(gr_tr, "Final", "P")
+                legend.AddEntry(gr_tr, "Highest Flux", "P")
 
             # Markers
             gr_si.SetMarkerStyle(2)
@@ -283,12 +300,11 @@ def make_plots(add_si, do_zoom, do_slice):
             gr_tr.Draw("PSAME")
             legend.Draw()
 
-            outfile_name = "Eff_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
-            if do_slice:
-                outfile_name += "_sliced"
-            c.Print(outfile_name + ".png")
-        # End loop over ROCs
-    # End of loop over directions
+        outfile_name = "Eff_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], "all")
+        if do_slice:
+            outfile_name += "_sliced"
+        c.Print(outfile_name + ".png")
+
 # End of Make Plots
 
 make_plots(add_si=False, do_zoom=False, do_slice=False)

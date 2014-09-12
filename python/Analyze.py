@@ -92,7 +92,16 @@ for i_run, run in enumerate(li_runs_up + li_runs_down):
 # Prepare pretty ROOT
 ###############################
 
+ROOT.gStyle.SetPadLeftMargin(0.15)
+ROOT.gStyle.SetPadBottomMargin(0.15)
+ROOT.gStyle.SetPadRightMargin(0.05)
+ROOT.gStyle.SetPadTopMargin(0.05)
+ROOT.gROOT.ForceStyle()
+
+
 c = ROOT.TCanvas("","",800,800)
+
+
 
 c.SetGrid(1,1)
 
@@ -134,7 +143,7 @@ for name in li_names:
                            legend_origin_y + legend_size_y )
         legend.SetBorderSize(1)
         legend.SetFillColor(0)
-        legend.SetTextSize(0.04)
+        legend.SetTextSize(0.06)
         legend.SetBorderSize(0)
 
 
@@ -149,6 +158,12 @@ for name in li_names:
 
             di_histos[name][run].SetMinimum(0)
             di_histos[name][run].SetMaximum(the_max)
+            di_histos[name][run].GetXaxis().SetRange(0, 49900)
+
+            di_histos[name][run].GetXaxis().SetTitleSize(0.06)
+            di_histos[name][run].GetYaxis().SetTitleSize(0.06)
+            di_histos[name][run].GetXaxis().SetLabelSize(0.06)
+            di_histos[name][run].GetYaxis().SetLabelSize(0.06)
 
             if i_run == 0:
                 di_histos[name][run].Draw()

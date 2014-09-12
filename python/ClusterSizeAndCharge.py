@@ -90,14 +90,14 @@ for i_run, run in enumerate(di_runs):
         cluster_size_fraction_12[run].append(1. * h_cs_proj.Integral(bin_1, bin_2) / h_cs_proj.Integral())
 
         # Get the charge of the second in the cluster
-        h_se = f.Get("2ndCharge2_ROC" + str(i_roc))
+        h_se = f.Get("2ndCharge4_ROC" + str(i_roc))
         second_charge[run].append(h_se.Project3D("z").GetMean())
 
-        # Use the leading charge within a 4-pixel radius
+        # Use the leading charge within a 2-pixel radius
         h_charge = f.Get("1stCharge4_ROC" + str(i_roc))
         charge[run].append(h_charge.Project3D("z").GetMean())
 
-        # Use the sum of  charges within a 4-pixel radius
+        # Use the sum of  charges within a 2-pixel radius
         h_sumcharge = f.Get("SumCharge4_ROC" + str(i_roc))
         sum_charge[run].append(h_sumcharge.Project3D("z").GetMean())
 
@@ -122,7 +122,8 @@ def make_plots():
 
     # Prepare pretty ROOT
     ROOT.gStyle.SetOptStat(0)
-    ROOT.gStyle.SetPadLeftMargin(0.16)
+    ROOT.gStyle.SetPadLeftMargin(0.23)
+    ROOT.gStyle.SetPadBottomMargin(0.15)
     ROOT.gStyle.SetPadRightMargin(0.05)
     ROOT.gStyle.SetPadTopMargin(0.05)
     ROOT.gROOT.ForceStyle()
@@ -142,84 +143,97 @@ def make_plots():
 
         if plot_var == "cluster_size":
             di_values = cluster_size
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.2
         elif plot_var == "cluster_size_fraction_1":
             di_values = cluster_size_fraction_1
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.2
         elif plot_var == "cluster_size_fraction_12":
             di_values = cluster_size_fraction_12
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.2
         elif plot_var == "charge":
             di_values = charge
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.8
         elif plot_var == "sum_charge":
             di_values = sum_charge
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.8
         elif plot_var == "second_charge":
             di_values = second_charge
-            legend_origin_x = 0.2
+            legend_origin_x = 0.3
             legend_origin_y = 0.65
         else:
             raise VariableError(plot_var)
 
         legend_size_x = 0.1
-        legend_size_y = 0.045 * 1
+        legend_size_y = 0.045 * 3
 
 
-        for direction in ["up", "down", "final"]:
 
-            # Loop over ROCs
-            for i_roc in range(1, 5):
 
-                # Prepare Legend
-                legend = ROOT.TLegend(legend_origin_x,
-                                      legend_origin_y,
-                                      legend_origin_x + legend_size_x,
-                                      legend_origin_y + legend_size_y)
-                legend.SetBorderSize(1)
-                legend.SetFillColor(0)
-                legend.SetTextSize(0.04)
-                legend.SetBorderSize(0)
+        # Loop over ROCs
+        for i_roc in range(1, 5):
 
-                if plot_var == "cluster_size":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
-                    h.GetYaxis().SetTitle("Mean Cluster Size")
-                elif plot_var == "cluster_size_fraction_1":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
-                    h.GetYaxis().SetTitle("Fraction of size == 1 Clusters")
-                elif plot_var == "cluster_size_fraction_12":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
-                    h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
-                elif plot_var == "charge":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
-                    h.GetYaxis().SetTitle("Leading charge within 4-pixel radius")
-                elif plot_var == "sum_charge":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
-                    h.GetYaxis().SetTitle("Sum of charge within 4-pixel radius")
-                elif plot_var == "second_charge":
-                    h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
-                    h.GetYaxis().SetTitle("Charge of second hit in cluster")
-                else:
-                    raise VariableError
+            # Prepare Legend
+            legend = ROOT.TLegend(legend_origin_x,
+                                  legend_origin_y,
+                                  legend_origin_x + legend_size_x,
+                                  legend_origin_y + legend_size_y)
+            legend.SetBorderSize(1)
+            legend.SetFillColor(0)
+            legend.SetTextSize(0.06)
+            legend.SetBorderSize(0)
 
-                h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
-                h.GetYaxis().SetTitleOffset(2.)
+            if plot_var == "cluster_size":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 3)
+                h.GetYaxis().SetTitle("Mean Cluster Size")
+            elif plot_var == "cluster_size_fraction_1":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                h.GetYaxis().SetTitle("Fraction of size == 1 Clusters")
+            elif plot_var == "cluster_size_fraction_12":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.)
+                h.GetYaxis().SetTitle("Fraction of 1 <= size <= 2 Clusters")
+            elif plot_var == "charge":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
+                h.GetYaxis().SetTitle("Leading charge within 4-pixel radius")
+            elif plot_var == "sum_charge":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 30000)
+                h.GetYaxis().SetTitle("Sum of charge within 4-pixel radius")
+            elif plot_var == "second_charge":
+                h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 15000)
+                h.GetYaxis().SetTitle("Charge of second hit in cluster")
+            else:
+                raise VariableError
 
-                h.Draw()
+            h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
+            #
 
-                # Prepare efficiency TGraphs
-                li_grs = []
+            h.GetXaxis().SetTitleSize(0.06)
+            h.GetYaxis().SetTitleSize(0.06)
+            h.GetXaxis().SetLabelSize(0.06)
+            h.GetYaxis().SetLabelSize(0.06)
+
+            if plot_var ==  "cluster_size":
+                h.GetYaxis().SetTitleOffset(1.5)
+            else:
+                h.GetYaxis().SetTitleOffset(1.85)
+
+            h.Draw()
+
+            # Prepare efficiency TGraphs
+            li_grs = []
+
+
+            for direction in ["up", "down", "final"]:
 
                 # Choose runs to use
                 if direction == "up":
                     li_runs = li_runs_up
                 elif direction == "down":
-                    li_runs = li_runs_down_extended
+                    li_runs = li_runs_down
                 else:
                     li_runs = li_runs_final
 
@@ -238,7 +252,7 @@ def make_plots():
                 elif direction == "down":
                     legend.AddEntry(gr, "Decreasing Flux", "P")
                 elif direction == "final":
-                    legend.AddEntry(gr, "Final", "P")
+                    legend.AddEntry(gr, "Highest Flux", "P")
 
                 # Markers
                 # going up
@@ -275,10 +289,10 @@ def make_plots():
                 else:
                     raise VariableError
         
-                outfile_name += "_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], direction)
+            outfile_name += "_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], "all")
 
-                c.Print(outfile_name + ".png")
-            # End loop over ROCs
+            c.Print(outfile_name + ".png")
+
 # End of Make Plots
 
 make_plots()
