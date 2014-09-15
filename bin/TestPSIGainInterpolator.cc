@@ -8,6 +8,8 @@
 
 
 #include <iostream>
+#include <cstdlib>
+#include  <cstdio>
 
 #include "PSIGainInterpolator.h"
 

@@ -1,7 +1,7 @@
 #include "PLTAlignment.h"
 
 #include <map>
-
+#include <cstdlib> 
 
 PLTAlignment::PLTAlignment ()
 {
