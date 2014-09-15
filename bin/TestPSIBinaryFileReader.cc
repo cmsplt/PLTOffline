@@ -7,13 +7,12 @@
 ////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <utility>
 #include <cmath>
 #include <stdlib.h>
+#include <algorithm>
+#include <numeric>
 
-
-#include "PSIBinaryFileReader.h"
-#include "PLTPlane.h"
-#include "PLTAlignment.h"
 #include "TLegend.h"
 #include "TLegendEntry.h"
 #include "TString.h"
@@ -24,19 +23,247 @@
 #include "TProfile2D.h"
 #include "TParameter.h"
 
+#include "PSIBinaryFileReader.h"
+#include "PLTPlane.h"
+#include "PLTAlignment.h"
+
+#define DEBUG false
+
+template<typename T>
+void FillIth(TH3F *h, int px, int py, std::vector<T> values, int i, bool fill_when_too_small = true){
+/*
+    Fill the i-th value of the vector into the histogram.
+    px and py are the position to fill them at.
+
+    If i is negative: count from the back, Python style!
+
+    fill_when_too_small decides if we should fill with zero when not enough values are available,
+*/
+    // Count from the front
+    // [0,1,2,3,...]
+    if (i>=0){
+        if (values.size() >= i+1)
+            h->Fill(px, py, values[i]);
+        else
+            if (fill_when_too_small)
+                h->Fill(px, py, 0);
+    }
+    // Count from the back
+    // [...,-3, -2, -1]
+    else{
+      int abs_i = i*-1;
+
+      if (values.size() >= abs_i)
+        h->Fill(px, py, values[values.size()-abs_i]);
+      else
+        if (fill_when_too_small)
+            h->Fill(px, py, 0);
+    }
+
+}
+
+// Helper function for sorting a <int, float> pair according to the float
+bool PairSort( std::pair<int, float> i, std::pair<int, float> j) { return (i.second < j.second); }
+
+std::pair<int, float> FindILowestIndexAndValue( std::vector<float> values, int i=0){
+
+    std::vector<std::pair<int, float> > index_and_values;
+
+    if (DEBUG){
+        std::cout << "FindILowestIndexAndValue, before sort: ";
+        for (int iv = 0; iv != values.size(); iv++)
+            std::cout << values[iv] << " ";
+        std::cout << endl;
+    }
+
+    // SORT
+    for (int iv = 0; iv != values.size(); iv++)
+        index_and_values.push_back(std::make_pair(iv, values[iv]));
+
+
+    std::sort(index_and_values.begin(), index_and_values.end(), PairSort);
+
+   if (DEBUG){
+        std::cout << "FindILowestIndexAndValue, after sort: ";
+        for (int iv = 0; iv != index_and_values.size(); iv++)
+            std::cout << index_and_values[iv].second << " ";
+        std::cout << endl;
+    }
+
+
+    if ((i+1) <= index_and_values.size()){
+        if (DEBUG)
+            std::cout << "FindILowestIndexAndValue, i=" << i << " " << index_and_values[i].first << " : " << index_and_values[i].second << std::endl;
+        return index_and_values[i];
+    }
+    else
+        return std::make_pair(-1, TMath::QuietNaN());
+
+}
+
+
+std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
+
+  // Get the correct Alignment for a given telescope
+  // Initial Alignment (start values for finding alignment)
+  if (useInitial){
+    if ((telescopeID==1) || (telescopeID==2)){
+      return "ALIGNMENT/Alignment_ETHTelescope_initial.dat";
+    }
+    else{
+      std::cout << "ERROR: No Initial-Alignment file for telescopeID=" << telescopeID << std::endl;
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
+    }
+  }
+  // Real Alignment
+  else{
+    if (telescopeID==1)
+      return "ALIGNMENT/Alignment_ETHTelescope_run316.dat";
+    else if (telescopeID==2)
+      return "ALIGNMENT/Alignment_ETHTelescope_run466.dat";
+    else{
+      std::cout << "ERROR: No Alignment file for telescopeID=" << telescopeID << std::endl;
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
+    }
+  }
+}
+
+
+std::string GetMaskingFilename(int telescopeID){
+
+  if (telescopeID == 1)
+    return "outerPixelMask_Telescope1.txt";
+  else if (telescopeID == 2)
+    return "outerPixelMask_Telescope2.txt";
+  else{
+    std::cout << "ERROR: No Masking file for telescopeID=" << telescopeID << std::endl;
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
+  }
+}
+
+std::string GetCalibrationFilename(int telescopeID){
+
+  if (telescopeID == 1)
+    return "GKCalibrationList.txt";
+  else if (telescopeID == 2)
+    return "GKCalibrationList_Telescope2.txt";
+  else{
+    std::cout << "ERROR: No Calibration file for telescopeID=" << telescopeID << std::endl;
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
+  }
+}
+
+
+
+int GetNumberOfROCS(int telescopeID){
+
+  if ((telescopeID == 1) || (telescopeID == 2) ||  (telescopeID == 3))
+    return 6;
+  else if (telescopeID == 4)
+    return 2;
+  else{
+    std::cout << "ERROR: Number of ROCs not defined for telescopeID=" << telescopeID << std::endl;
+    std::cout << "Exiting.." << std::endl;
+    std::exit(0);
+  }
+}
+
+
+bool CheckEllipse(float dx, float dy, float max_dx, float max_dy){
+  if ( (dx*dx/(max_dx*max_dx)) + (dy*dy/(max_dy*max_dy)) <= 1.01)
+    return true;
+  else
+    return false;
+}
+
+
 
 void WriteHTML (TString const, TString const);
 
 void Write2DCharge( TH3* h, TCanvas * Can, float maxz, TString OutDir){
   TProfile2D * ph = h->Project3DProfile("yx");
-  ph->SetAxisRange(18,34,"X");
-  ph->SetAxisRange(45,76,"Y");
+  ph->SetAxisRange(12,38,"X");
+  ph->SetAxisRange(39,80,"Y");
   ph->SetMinimum(0);
   ph->SetMaximum(maxz);
   ph->Draw("COLZ");
   ph->Write();
   Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.gif");
   Can->SaveAs( OutDir+ TString(h->GetName()) +"_profile.pdf");
+}
+
+
+void WriteAngleHistograms( TH1 * h_before_chi2_x,
+                          TH1 * h_before_chi2_y,
+                          TH1 * h_after_chi2_x,
+                          TH1 * h_after_chi2_y,
+                          TCanvas * Can,
+                          TString OutDir){
+
+  h_before_chi2_x->SetLineColor( kRed );
+  h_before_chi2_y->SetLineColor( kBlue );
+  h_after_chi2_x->SetLineColor( kMagenta );
+  h_after_chi2_y->SetLineColor( kBlack );
+
+  h_before_chi2_x->SetLineStyle(1);
+  h_before_chi2_y->SetLineStyle(2);
+  h_after_chi2_x->SetLineStyle(3);
+  h_after_chi2_y->SetLineStyle(4);
+
+  h_before_chi2_x->SetLineWidth(2);
+  h_before_chi2_y->SetLineWidth(2);
+  h_after_chi2_x->SetLineWidth(2);
+  h_after_chi2_y->SetLineWidth(2);
+
+  float hmax = 1.1 * std::max( h_before_chi2_x->GetMaximum(),
+                         std::max( h_before_chi2_y->GetMaximum(),
+                             std::max( h_after_chi2_x->GetMaximum(),
+                                h_after_chi2_y->GetMaximum())));
+
+
+  h_before_chi2_x->SetAxisRange(0, hmax, "Y");
+  h_before_chi2_y->SetAxisRange(0, hmax, "Y");
+  h_after_chi2_x->SetAxisRange(0, hmax, "Y");
+  h_after_chi2_y->SetAxisRange(0, hmax, "Y");
+
+  h_before_chi2_x->GetXaxis()->SetTitle("Angle [rad]");
+  h_before_chi2_x->GetYaxis()->SetTitle("Tracks");
+
+  h_before_chi2_x->Draw();
+  h_before_chi2_y->Draw("SAME");
+  h_after_chi2_x->Draw("SAME");
+  h_after_chi2_y->Draw("SAME");
+
+
+  TLegend Leg(0.7, 0.5, 0.85, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.04);
+  Leg.AddEntry(h_before_chi2_x, "X Before Chi^{2}", "l");
+  Leg.AddEntry(h_before_chi2_y, "Y Before Chi^{2}", "l");
+  Leg.AddEntry(h_after_chi2_x, "X After Chi^{2}", "l");
+  Leg.AddEntry(h_after_chi2_y, "Y After Chi^{2}", "l");
+
+  Leg.Draw();
+
+  Can->SaveAs( OutDir+ TString(h_before_chi2_x->GetName()) + ".gif");
+
+}
+
+
+float GetMaximumExceptBin(TH1* h, int ibin){
+
+  if (h->GetMaximumBin() == ibin){
+    return h->GetMaximum(h->GetMaximum());
+  }
+  else{
+    return h->GetMaximum();
+  }
+
 }
 
 void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
@@ -51,15 +278,10 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   TH1* h45 = hs[2]->Project3D("Z");
   TH1* h60 = hs[3]->Project3D("Z");
 
-  float hmax = 1.1 * std::max( h15->GetMaximum(),
-                       std::max( h30->GetMaximum(),
-                         std::max( h45->GetMaximum(),
-                           h60->GetMaximum() )));
-
-  h15->SetAxisRange(2000,50000,"X");
-  h30->SetAxisRange(2000,50000,"X");
-  h45->SetAxisRange(2000,50000,"X");
-  h60->SetAxisRange(2000,50000,"X");
+  float hmax = 1.1 * std::max( GetMaximumExceptBin(h15, 1),
+                       std::max( GetMaximumExceptBin(h30, 1),
+                         std::max( GetMaximumExceptBin(h45, 1),
+                            GetMaximumExceptBin(h60, 1))));
 
   h15->SetAxisRange(0,hmax,"Y");
   h30->SetAxisRange(0,hmax,"Y");
@@ -80,14 +302,14 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   h15->GetXaxis()->SetTitle("Charge (Electrons)");
   h15->GetYaxis()->SetTitle("Number of Hits");
 
-  TLegend Leg(0.5, 0.5, 0.90, 0.88, "");
+  TLegend Leg(0.7, 0.5, 0.90, 0.88, "");
   Leg.SetFillColor(0);
   Leg.SetBorderSize(0);
   Leg.SetTextSize(0.05);
-  Leg.AddEntry(h15, "#Delta R < 150 #mu m", "l");
-  Leg.AddEntry(h30, "#Delta R < 300 #mu m", "l");
-  Leg.AddEntry(h45, "#Delta R < 450 #mu m", "l");
-  Leg.AddEntry(h60, "#Delta R < 600 #mu m", "l");
+  Leg.AddEntry(h15, "R=1", "l");
+  Leg.AddEntry(h30, "R=2", "l");
+  Leg.AddEntry(h45, "R=3", "l");
+  Leg.AddEntry(h60, "R=4", "l");
 
   h15->Draw();
   h30->Draw("SAME");
@@ -95,17 +317,73 @@ void Write1DCharge( std::vector<TH3*> hs, TCanvas *Can, TString OutDir){
   h60->Draw("SAME");
   Leg.Draw();
 
+  h15->Write();
+  h30->Write();
+  h45->Write();
+  h60->Write();
+
   Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
   Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".pdf");
 
 }
 
+void Write1DFraction(std::vector<TH1*> hs, TCanvas *Can, TString OutDir){
+
+  if (hs.size()!=4){
+    std::cerr << "Write1Dneeds exactly four histograms!" << std::endl;
+    return;
+  }
+
+
+  float hmax = 1.1 * std::max( hs[0]->GetMaximum(),
+                       std::max( hs[1]->GetMaximum(),
+                         std::max( hs[2]->GetMaximum(),
+                            hs[3]->GetMaximum())));
+
+  hs[0]->SetAxisRange(0,hmax,"Y");
+  hs[1]->SetAxisRange(0,hmax,"Y");
+  hs[2]->SetAxisRange(0,hmax,"Y");
+  hs[3]->SetAxisRange(0,hmax,"Y");
+
+
+  hs[0]->SetLineColor(1);
+  hs[1]->SetLineColor(2);
+  hs[2]->SetLineColor(3);
+  hs[3]->SetLineColor(4);
+
+  hs[0]->SetLineWidth(2);
+  hs[1]->SetLineWidth(2);
+  hs[2]->SetLineWidth(2);
+  hs[3]->SetLineWidth(2);
+
+  hs[0]->GetXaxis()->SetTitle("Fraction of Hits in Cluster inside Radius");
+  hs[0]->GetYaxis()->SetTitle("");
+
+  TLegend Leg(0.7, 0.5, 0.90, 0.88, "");
+  Leg.SetFillColor(0);
+  Leg.SetBorderSize(0);
+  Leg.SetTextSize(0.05);
+  Leg.AddEntry(hs[0], "R=1", "l");
+  Leg.AddEntry(hs[1], "R=2", "l");
+  Leg.AddEntry(hs[2], "R=3", "l");
+  Leg.AddEntry(hs[3], "R=4", "l");
+
+  hs[0]->Draw();
+  hs[1]->Draw("SAME");
+  hs[2]->Draw("SAME");
+  hs[3]->Draw("SAME");
+  Leg.Draw();
+
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".gif");
+  Can->SaveAs( OutDir+ TString(hs[0]->GetName()) +".pdf");
+
+}
 
 int FindHotPixels (std::string const InFileName,
                    TFile * out_f,
-                   std::string const CalibrationList,
                    TString const RunNumber,
-                   std::vector< std::vector< std::vector<int> > > & hot_pixels
+                   std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                   int telescopeID
                    )
 {
   // FindHotPixels
@@ -117,21 +395,16 @@ int FindHotPixels (std::string const InFileName,
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  Alignment.SetErrorsTelescope1();
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
 
-  //FILE* f = fopen("MyGainCal.dat", "w");
-  //BFR.GetGainCal()->PrintGainCal(f);
-  //fclose(f);
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  std::cout << "Read pixel mask" << std::endl;
 
   // Add hot pixels we are given to mask
   // Since we now do multiple iterations in the histograms in one FindHotPixels call
@@ -144,6 +417,8 @@ int FindHotPixels (std::string const InFileName,
   }
 
   BFR.CalculateLevels(10000, OutDir);
+
+  std::cout << "calculated levels" << std::endl;
 
   // Prepare Occupancy histograms
   // x == columns
@@ -208,7 +483,9 @@ int FindHotPixels (std::string const InFileName,
       else
         mean_occupancy = -1;
 
-      // Find with an occupancy of more than 10 times the meanm
+      std::cout << "FindHotPixels, ROC: " << iroc << " Mean Occupancy: " << mean_occupancy << std::endl;
+
+      // Find with an occupancy of more than 10 times the mean
       for (int icol=1; icol != hOccupancy[iroc].GetNbinsX()+1; icol++){
         for (int irow=1; irow != hOccupancy[iroc].GetNbinsY()+1; irow++){
 
@@ -222,6 +499,7 @@ int FindHotPixels (std::string const InFileName,
             colrow.push_back( irow-1 );
             hOccupancy[iroc].SetBinContent( icol, irow, 0);
             hot_pixels[iroc].push_back( colrow );
+            std::cout << "Masking ROC COL ROW: " << iroc << " " << icol-1 << " " << irow-1 << std::endl;
           }
         }
       }
@@ -242,11 +520,11 @@ int FindHotPixels (std::string const InFileName,
 
 void TestPlaneEfficiency (std::string const InFileName,
                           TFile * out_f,
-                          std::string const CalibrationList,
                           TString const RunNumber,
                           std::vector< std::vector< std::vector<int> > > & hot_pixels,
                           int plane_under_test,
-                          int n_events)
+                          int n_events,
+                          int telescopeID)
 {
   /* TestPlaneEfficiency
 
@@ -259,24 +537,22 @@ void TestPlaneEfficiency (std::string const InFileName,
   */
 
   // Track/Hit matching distance [cm]
-  float max_dr = 0.04;
+  float max_dr_x = 0.03;
+  float max_dr_y = 0.02;
 
   gStyle->SetOptStat(0);
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
-  Alignment.SetErrorsTelescope1();
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  BFR.SetPlaneUnderTest( plane_under_test );
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
+  BFR.SetPlaneUnderTest(plane_under_test);
 
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -289,8 +565,8 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   // Prepare Occupancy histograms
   // Telescope coordinates
-  TH2F hOccupancyNum   = TH2F(   Form("PlaneEfficiency_ROC%i",plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
-  TH2F hOccupancyDenom = TH2F(  Form("TracksPassing_ROC%i",plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyNum   = TH2F(Form("PlaneEfficiency_ROC%i", plane_under_test), "PlaneEfficiency",   52, 0, 52, 80, 0, 80);
+  TH2F hOccupancyDenom = TH2F(Form("TracksPassing_ROC%i", plane_under_test), Form("TracksPassing_ROC%i",plane_under_test), 52, 0, 52, 80, 0, 80);
 
   // Also have a second set - sliced according to event number
   int n_slices = 5;
@@ -306,19 +582,35 @@ void TestPlaneEfficiency (std::string const InFileName,
     hOccupancyDenom_eventSlices.push_back( h_d );
   }
 
+  TH3F hSumCharge1 = TH3F( Form("SumCharge_ROC%i", plane_under_test),  "Sum Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge2 = TH3F( Form("SumCharge2_ROC%i", plane_under_test), "Sum Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge3 = TH3F( Form("SumCharge3_ROC%i", plane_under_test), "Sum Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F hSumCharge4 = TH3F( Form("SumCharge4_ROC%i", plane_under_test), "Sum Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
+  TH3F h1stCharge1 = TH3F( Form("1stCharge_ROC%i", plane_under_test),  "1st Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge2 = TH3F( Form("1stCharge2_ROC%i", plane_under_test), "1st Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge3 = TH3F( Form("1stCharge3_ROC%i", plane_under_test), "1st Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h1stCharge4 = TH3F( Form("1stCharge4_ROC%i", plane_under_test), "1st Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
+  TH3F h1stCharge1ADC = TH3F( Form("1stCharge_ADC_ROC%i", plane_under_test),  "1st Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge2ADC = TH3F( Form("1stCharge2_ADC_ROC%i", plane_under_test), "1st Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge3ADC = TH3F( Form("1stCharge3_ADC_ROC%i", plane_under_test), "1st Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
+  TH3F h1stCharge4ADC = TH3F( Form("1stCharge4_ADC_ROC%i", plane_under_test), "1st Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80, 50,-700, -200);
 
+  TH3F h2ndCharge1 = TH3F( Form("2ndCharge_ROC%i", plane_under_test),  "2nd Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge2 = TH3F( Form("2ndCharge2_ROC%i", plane_under_test), "2nd Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge3 = TH3F( Form("2ndCharge3_ROC%i", plane_under_test), "2nd Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge4 = TH3F( Form("2ndCharge4_ROC%i", plane_under_test), "2nd Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80,50,0,50000);
 
-  TH3F hCharge15       = TH3F( Form("Charge_ROC%i", plane_under_test),   "Total Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge30       = TH3F( Form("Charge30_ROC%i", plane_under_test), "Total Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge45       = TH3F( Form("Charge45_ROC%i", plane_under_test), "Total Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hCharge60       = TH3F( Form("Charge60_ROC%i", plane_under_test), "Total Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH3F h2ndCharge1ADC = TH3F( Form("2ndCharge_ADC_ROC%i", plane_under_test),  "2nd Charge within 1-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge2ADC = TH3F( Form("2ndCharge2_ADC_ROC%i", plane_under_test), "2nd Charge within 2-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge3ADC = TH3F( Form("2ndCharge3_ADC_ROC%i", plane_under_test), "2nd Charge within 3-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
+  TH3F h2ndCharge4ADC = TH3F( Form("2ndCharge4_ADC_ROC%i", plane_under_test), "2nd Charge within 4-Pixel Ellipse", 52,0,52, 80,0,80, 50, -700, -200);
 
-  TH3F hMaxCharge15       = TH3F( Form("MaxCharge_ROC%i", plane_under_test),   "Max Charge within #Delta R < 150 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge30       = TH3F( Form("MaxCharge30_ROC%i", plane_under_test), "Max Charge within #Delta R < 300 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge45       = TH3F( Form("MaxCharge45_ROC%i", plane_under_test), "Max Charge within #Delta R < 450 #mu m", 52,0,52, 80,0,80,50,0,50000);
-  TH3F hMaxCharge60       = TH3F( Form("MaxCharge60_ROC%i", plane_under_test), "Max Charge within #Delta R < 600 #mu m", 52,0,52, 80,0,80,50,0,50000);
+  TH1F hFractionContainted1 = TH1F(Form("FractionContained1_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted2 = TH1F(Form("FractionContained2_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted3 = TH1F(Form("FractionContained3_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
+  TH1F hFractionContainted4 = TH1F(Form("FractionContained4_ROC%i", plane_under_test), "Fraction Contained", 50, 0, 1.1);
 
   TH3F hClusterSize       = TH3F( Form("ClusterSize_ROC%i", plane_under_test), "Cluster Size", 52,0,52, 80,0,80,11,-0.5,10.5);
 
@@ -326,14 +618,20 @@ void TestPlaneEfficiency (std::string const InFileName,
   TH1F hdty = TH1F( Form("SinglePlaneTestDY_ROC%i",plane_under_test),   "SinglePlaneTest_DY",   100, -0.2, 0.2 );
   TH1F hdtr = TH1F( Form("SinglePlaneTestDR_ROC%i",plane_under_test),   "SinglePlaneTest_DR",   100, 0, 0.4 );
 
+  TH1F hDrSecondCluster = TH1F(Form("DeltaRSecondCluster_ROC%i", plane_under_test), "#Delta R Second Cluster", 50, -2., 20);
 
   TH1F hChi2  = TH1F( Form("SinglePlaneTestChi2_ROC%i",plane_under_test),   "SinglePlaneTest_Chi2",    200, 0, 50 );
   TH1F hChi2X = TH1F( Form("SinglePlaneTestChi2X_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2X",   100, 0, 20 );
   TH1F hChi2Y = TH1F( Form("SinglePlaneTestChi2Y_ROC%i",plane_under_test),  "SinglePlaneTest_Chi2Y",   100, 0, 20 );
 
+  TH1F hAngleBeforeChi2X = TH1F( Form("SinglePlaneAngleBeforeChi2CutX_ROC%i",plane_under_test), "SinglePlaneAngleBeforeChi2CutX", 100, -0.04, 0.04 );
+  TH1F hAngleBeforeChi2Y = TH1F( Form("SinglePlaneAngleBeforeChi2CutY_ROC%i",plane_under_test), "SinglePlaneAngleBeforeChi2CutX", 100, -0.04, 0.04 );
+
+  TH1F hAngleAfterChi2X = TH1F( Form("SinglePlaneAngleAfterChi2CutX_ROC%i",plane_under_test), "SinglePlaneAngleAfterChi2CutX", 100, -0.04, 0.04 );
+  TH1F hAngleAfterChi2Y = TH1F( Form("SinglePlaneAngleAfterChi2CutY_ROC%i",plane_under_test), "SinglePlaneAngleAfterChi2CutX", 100, -0.04, 0.04 );
 
 
-  double tz = Alignment.GetTZ(1, plane_under_test);
+  double tz = BFR.GetAlignment()->GetTZ(1, plane_under_test);
   std::cout << "Got TZ: " << tz << std::endl;
 
   // Event Loop
@@ -351,12 +649,28 @@ void TestPlaneEfficiency (std::string const InFileName,
     // require exactly one track
     if (BFR.NTracks() == 1){
 
+      // Calculate the Angle of the tracks
+      double slopeX = BFR.Track(0)->fTVX / BFR.Track(0)->fTVZ;
+      double slopeY = BFR.Track(0)->fTVY / BFR.Track(0)->fTVZ;
+
+      double angleX = atan(slopeX);
+      double angleY = atan(slopeY);
+
+      hAngleBeforeChi2X.Fill(angleX);
+      hAngleBeforeChi2Y.Fill(angleY);
+
       // Look at the 90% quantile
       if (BFR.Track(0)->Chi2X() > 6.25)
         continue;
       if (BFR.Track(0)->Chi2Y() > 6.25)
         continue;
-
+    
+      hAngleAfterChi2X.Fill(angleX);
+      hAngleAfterChi2Y.Fill(angleY);
+  
+      // Only accept reasonably central events
+      if ((fabs(angleX) > 0.02) || (fabs(angleY) > 0.02))
+        continue;
 
       hChi2.Fill( BFR.Track(0)->Chi2());
       hChi2X.Fill( BFR.Track(0)->Chi2X());
@@ -367,99 +681,180 @@ void TestPlaneEfficiency (std::string const InFileName,
       double tx = BFR.Track(0)->TX( tz );
       double ty = BFR.Track(0)->TY( tz );
 
-      double lx = Alignment.TtoLX( tx, ty, 1, plane_under_test);
-      double ly = Alignment.TtoLY( tx, ty, 1, plane_under_test);
+      double lx = BFR.GetAlignment()->TtoLX( tx, ty, 1, plane_under_test);
+      double ly = BFR.GetAlignment()->TtoLY( tx, ty, 1, plane_under_test);
 
-      int px = Alignment.PXfromLX( lx );
-      int py = Alignment.PYfromLY( ly );
+      int px = BFR.GetAlignment()->PXfromLX( lx );
+      int py = BFR.GetAlignment()->PYfromLY( ly );
 
       hOccupancyDenom.Fill( px, py );
       hOccupancyDenom_eventSlices[i_slice].Fill(px, py);
 
-      // Now look for a close hit in the plane under test
       PLTPlane* Plane = BFR.Plane( plane_under_test );
-      bool matched = false;
 
-      float sum15 = 0;
-      float sum30 = 0;
-      float sum45 = 0;
-      float sum60 = 0;
+      std::vector<float> delta_rs;
 
-      float max15 = 0;
-      float max30 = 0;
-      float max45 = 0;
-      float max60 = 0;
+      for (int icl = 0; icl != Plane->NClusters(); icl++){
 
-      // loop over all hits and check distance to intersection
-      for (int ih = 0; ih != Plane->NHits(); ih++){
-             float dtx = (tx - Plane->Hit(ih)->TX());
-             float dty = (ty - Plane->Hit(ih)->TY());
-             float dtr = sqrt( dtx*dtx + dty*dty );
+        float cl_px = Plane->Cluster(icl)->PX();
+        float cl_py = Plane->Cluster(icl)->PY();
 
-             hdtx.Fill( dtx );
-             hdty.Fill( dty );
-             hdtr.Fill( dtr );
+        float delta_px = px - cl_px;
+        float delta_py = py - cl_py;
 
-             float charge = Plane->Hit(ih)->Charge();
+        delta_rs.push_back(sqrt(delta_px*delta_px + delta_py*delta_py));
+      }
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.015){
-               sum15 += charge;
-               if (charge > max15)
-                 max15 = charge;
-             }
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. Before FindILowestIndexAndValue." << std::endl;
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.03){
-               sum30 += charge;
-               if (charge > max30)
-                 max30 = charge;
-             }
+      int closest_cluster_index = FindILowestIndexAndValue(delta_rs).first;
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.045){
-               sum45 += charge;
-               if (charge > max45)
-                  max45 = charge;
-             }
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. After FindILowestIndexAndValue. closest_cluster_index = " << closest_cluster_index << std::endl;
 
-             if (sqrt( dtx*dtx + dty*dty ) < 0.06){
-               sum60 += charge;
-               if (charge > max60)
-                 max60 = charge;
-             }
+      if (delta_rs.size() == 1)
+        hDrSecondCluster.Fill(-1.);
+      else if (delta_rs.size() >= 2)
+        hDrSecondCluster.Fill(FindILowestIndexAndValue(delta_rs, 1).second);
 
-             if (sqrt( dtx*dtx + dty*dty ) < max_dr)
-               matched=true;
+      // Now look for a close hit in the plane under test
 
-       } // end of loop over hits
+      int matched = 0;
 
-       hCharge15.Fill( px, py, sum15);
-       hCharge30.Fill( px, py, sum30);
-       hCharge45.Fill( px, py, sum45);
-       hCharge60.Fill( px, py, sum60);
+      std::vector<float> charges_in_ell_1;
+      std::vector<float> charges_in_ell_2;
+      std::vector<float> charges_in_ell_3;
+      std::vector<float> charges_in_ell_4;
 
-       hMaxCharge15.Fill( px, py, max15);
-       hMaxCharge30.Fill( px, py, max30);
-       hMaxCharge45.Fill( px, py, max45);
-       hMaxCharge60.Fill( px, py, max60);
+      std::vector<int> adcs_in_ell_1;
+      std::vector<int> adcs_in_ell_2;
+      std::vector<int> adcs_in_ell_3;
+      std::vector<int> adcs_in_ell_4;
 
-       // if there was at least one match: fill denominator
-       if (matched){
+      // Make sure there is at least one cluster
+      if (closest_cluster_index != -1){
+
+          // Determine here if the closest cluster is actually close enouigh
+          // and fill cluster size
+          float cluster_dtx = (tx - Plane->Cluster(closest_cluster_index)->TX());
+          float cluster_dty = (ty - Plane->Cluster(closest_cluster_index)->TY());
+          if (CheckEllipse(cluster_dtx, cluster_dty, max_dr_x, max_dr_y)){
+            hClusterSize.Fill(px, py, Plane->Cluster(closest_cluster_index)->NHits());
+          }
+
+          if (DEBUG)
+            std::cout << "TestPlaneEfficiency. Before Loop over hits" << std::endl;
+
+          // loop over all hits in the cluster and check distance to intersection
+          for (int ih = 0; ih != Plane->Cluster(closest_cluster_index)->NHits(); ih++){
+
+                 if (DEBUG)
+                   std::cout << "TestPlaneEfficiency. ih = " << ih << std::endl;
+
+                 float dtx = (tx - Plane->Cluster(closest_cluster_index)->Hit(ih)->TX());
+                 float dty = (ty - Plane->Cluster(closest_cluster_index)->Hit(ih)->TY());
+                 float dtr = sqrt( dtx*dtx + dty*dty );
+
+                 hdtx.Fill( dtx );
+                 hdty.Fill( dty );
+                 hdtr.Fill( dtr );
+
+                 int adc = Plane->Cluster(closest_cluster_index)->Hit(ih)->ADC();
+                 float charge = Plane->Cluster(closest_cluster_index)->Hit(ih)->Charge();
+
+                 if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y))
+                    matched++;
+
+                 // 1 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.015, 0.01)){
+                   adcs_in_ell_1.push_back(adc);
+                   charges_in_ell_1.push_back(charge);
+                 }
+
+                 // 2 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.03, 0.02)){
+                   adcs_in_ell_2.push_back(adc);
+                   charges_in_ell_2.push_back(charge);
+                 }
+
+                 // 3 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.045, 0.03)){
+                   adcs_in_ell_3.push_back(adc);
+                   charges_in_ell_3.push_back(charge);
+                 }
+
+                 // 4 Pixel Ellipse
+                 if (CheckEllipse(dtx, dty, 0.06, 0.04)){
+                   adcs_in_ell_4.push_back(adc);
+                   charges_in_ell_4.push_back(charge);
+                 }
+
+          } // end of loop over hits
+
+          hFractionContainted1.Fill(1. * charges_in_ell_1.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted2.Fill(1. * charges_in_ell_2.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted3.Fill(1. * charges_in_ell_3.size() / Plane->Cluster(closest_cluster_index)->NHits());
+          hFractionContainted4.Fill(1. * charges_in_ell_4.size() / Plane->Cluster(closest_cluster_index)->NHits());
+
+      } // End of having at least one valid cluster
+
+      if (DEBUG)
+        std::cout << "TestPlaneEfficiency. After Loop over hits" << std::endl;
+
+      // if there was at least one match: fill denominator
+      if (matched > 0){
          hOccupancyNum.Fill( px, py );
-         hOccupancyNum_eventSlices[i_slice].Fill(px, py);
-       }
+         hOccupancyNum_eventSlices[i_slice].Fill(px, py, 1);
+      }
 
-       // loop over all clusters and check distance to intersection
-       for (int ic = 0; ic != Plane->NClusters(); ic++){
-              float dtx = (tx - Plane->Cluster(ic)->TX());
-              float dty = (ty - Plane->Cluster(ic)->TY());
-              float dtr = sqrt( dtx*dtx + dty*dty );
+      // Sort Charge Vectors
+      std::sort(charges_in_ell_1.begin(), charges_in_ell_1.end());
+      std::sort(charges_in_ell_2.begin(), charges_in_ell_2.end());
+      std::sort(charges_in_ell_3.begin(), charges_in_ell_3.end());
+      std::sort(charges_in_ell_4.begin(), charges_in_ell_4.end());
 
-              if (dtr < max_dr)
-                hClusterSize.Fill( px, py, Plane->Cluster(ic)->NHits());
+      // Sort ADC Vectors
+      std::sort(adcs_in_ell_1.begin(), adcs_in_ell_1.end());
+      std::sort(adcs_in_ell_2.begin(), adcs_in_ell_2.end());
+      std::sort(adcs_in_ell_3.begin(), adcs_in_ell_3.end());
+      std::sort(adcs_in_ell_4.begin(), adcs_in_ell_4.end());
 
-        } // end of loop over clusters
+      // Fill Sum of Charges
+      hSumCharge1.Fill(px, py, std::accumulate(charges_in_ell_1.begin(), charges_in_ell_1.end(), 0));
+      hSumCharge2.Fill(px, py, std::accumulate(charges_in_ell_2.begin(), charges_in_ell_2.end(), 0));
+      hSumCharge3.Fill(px, py, std::accumulate(charges_in_ell_3.begin(), charges_in_ell_3.end(), 0));
+      hSumCharge4.Fill(px, py, std::accumulate(charges_in_ell_4.begin(), charges_in_ell_4.end(), 0));
+
+      // Fill Highest Charge
+      FillIth(&h1stCharge1, px, py, charges_in_ell_1, -1);
+      FillIth(&h1stCharge2, px, py, charges_in_ell_2, -1);
+      FillIth(&h1stCharge3, px, py, charges_in_ell_3, -1);
+      FillIth(&h1stCharge4, px, py, charges_in_ell_4, -1);
+
+      // Fill Highest ADC
+      FillIth(&h1stCharge1ADC, px, py, adcs_in_ell_1, -1);
+      FillIth(&h1stCharge2ADC, px, py, adcs_in_ell_2, -1);
+      FillIth(&h1stCharge3ADC, px, py, adcs_in_ell_3, -1);
+      FillIth(&h1stCharge4ADC, px, py, adcs_in_ell_4, -1);
+
+      // Fill Second Highest Charge
+      // do NOT fill if not available!
+      FillIth(&h2ndCharge1, px, py, charges_in_ell_1, -2, false);
+      FillIth(&h2ndCharge2, px, py, charges_in_ell_2, -2, false);
+      FillIth(&h2ndCharge3, px, py, charges_in_ell_3, -2, false);
+      FillIth(&h2ndCharge4, px, py, charges_in_ell_4, -2, false);
+
+      // Fill Second Highest ADC
+      // do NOT fill if not available!
+      FillIth(&h2ndCharge1ADC, px, py, adcs_in_ell_1, -2, false);
+      FillIth(&h2ndCharge2ADC, px, py, adcs_in_ell_2, -2, false);
+      FillIth(&h2ndCharge3ADC, px, py, adcs_in_ell_3, -2, false);
+      FillIth(&h2ndCharge4ADC, px, py, adcs_in_ell_4, -2, false);
 
     } // end of having one track
   } // End of Event Loop
+
 
 
   // Remove masked areas from Occupancy Histograms
@@ -482,8 +877,8 @@ void TestPlaneEfficiency (std::string const InFileName,
 
              // Convert pixel row/column to local coordinates
              // deltaR(local) should be == deltaR(telescope) (within a plane)
-             float masked_lx = Alignment.PXtoLX( col);
-             float masked_ly = Alignment.PYtoLY( row);
+             float masked_lx = BFR.GetAlignment()->PXtoLX( col);
+             float masked_ly = BFR.GetAlignment()->PYtoLY( row);
 
              //std::cout << col << " " << row << " " << masked_lx << " " << masked_ly << std::endl;
 
@@ -495,29 +890,53 @@ void TestPlaneEfficiency (std::string const InFileName,
                  int px =  hOccupancyNum.GetXaxis()->GetBinCenter( ibin_x );
                  int py =  hOccupancyNum.GetYaxis()->GetBinCenter( ibin_y );
 
-                 float lx = Alignment.PXtoLX( px);
-                 float ly = Alignment.PYtoLY( py);
+                 float lx = BFR.GetAlignment()->PXtoLX( px);
+                 float ly = BFR.GetAlignment()->PYtoLY( py);
 
                  //std::cout << px << " " << py << " " << lx << " " << ly;
 
                  // And check if they are within matching-distance of a masked pixel
-                 if (sqrt( (lx-masked_lx)*(lx-masked_lx)+(ly-masked_ly)*(ly-masked_ly) ) < max_dr){
+                 float dtx = lx-masked_lx;
+                 float dty = ly-masked_ly;
+
+                 if (CheckEllipse(dtx, dty, max_dr_x, max_dr_y)){
                    // If yes: set numerator and denominator to zero
                    hOccupancyNum.SetBinContent( ibin_x, ibin_y, 0);
                    hOccupancyDenom.SetBinContent( ibin_x, ibin_y, 0);
 
-                   for (int ibin_z = 1; ibin_z != hCharge15.GetNbinsZ()+2; ibin_z++){
-                     hCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                   for (int ibin_z = 1; ibin_z != hSumCharge1.GetNbinsZ()+2; ibin_z++){
 
-                     hMaxCharge15.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge30.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge45.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
-                     hMaxCharge60.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    hSumCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
 
-                     hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    h1stCharge1ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge2ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge3ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h1stCharge4ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    h2ndCharge1.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge2.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge3.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge4.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    h2ndCharge1ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge2ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge3ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    h2ndCharge4ADC.SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+
+                    hClusterSize.SetBinContent( ibin_x, ibin_y, ibin_z, 0);
+                    for (int i=0; i != n_slices; i++){
+                        hOccupancyNum_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                        hOccupancyDenom_eventSlices[i].SetBinContent(ibin_x, ibin_y, ibin_z, 0);
+                    }
+
                    }
 
                  }
@@ -534,7 +953,7 @@ void TestPlaneEfficiency (std::string const InFileName,
 
   for (int i=0; i!= n_slices; i++){
     hOccupancyNum_eventSlices[i].Write();
-    hOccupancyDenom_eventSlices[i].Write();  
+    hOccupancyDenom_eventSlices[i].Write();
   }
 
   hOccupancyNum.SetMinimum(0);
@@ -625,19 +1044,40 @@ void TestPlaneEfficiency (std::string const InFileName,
   Can.SaveAs( OutDir+ TString(hChi2Y.GetName()) +".pdf");
 
 
-  std::vector <TH3*> hs_mean_charge;
-  hs_mean_charge.push_back( &hCharge15 );
-  hs_mean_charge.push_back( &hCharge30 );
-  hs_mean_charge.push_back( &hCharge45 );
-  hs_mean_charge.push_back( &hCharge60 );
-  Write1DCharge( hs_mean_charge, &Can, OutDir);
+  std::vector <TH3*> hs_mean_sum_charge;
+  hs_mean_sum_charge.push_back( &hSumCharge1 );
+  hs_mean_sum_charge.push_back( &hSumCharge2 );
+  hs_mean_sum_charge.push_back( &hSumCharge3 );
+  hs_mean_sum_charge.push_back( &hSumCharge4 );
+  Write1DCharge(hs_mean_sum_charge, &Can, OutDir);
 
-  std::vector <TH3*> hs_max_charge;
-  hs_max_charge.push_back( &hMaxCharge15 );
-  hs_max_charge.push_back( &hMaxCharge30 );
-  hs_max_charge.push_back( &hMaxCharge45 );
-  hs_max_charge.push_back( &hMaxCharge60 );
-  Write1DCharge( hs_max_charge, &Can, OutDir);
+  std::vector <TH3*> hs_mean_1st_charge;
+  hs_mean_1st_charge.push_back( &h1stCharge1 );
+  hs_mean_1st_charge.push_back( &h1stCharge2 );
+  hs_mean_1st_charge.push_back( &h1stCharge3 );
+  hs_mean_1st_charge.push_back( &h1stCharge4 );
+  Write1DCharge(hs_mean_1st_charge, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_2nd_charge;
+  hs_mean_2nd_charge.push_back( &h2ndCharge1 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge2 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge3 );
+  hs_mean_2nd_charge.push_back( &h2ndCharge4 );
+  Write1DCharge(hs_mean_2nd_charge, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_1st_charge_adc;
+  hs_mean_1st_charge_adc.push_back( &h1stCharge1ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge2ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge3ADC );
+  hs_mean_1st_charge_adc.push_back( &h1stCharge4ADC );
+  Write1DCharge(hs_mean_1st_charge_adc, &Can, OutDir);
+
+  std::vector <TH3*> hs_mean_2nd_charge_adc;
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge1ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge2ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge3ADC );
+  hs_mean_2nd_charge_adc.push_back( &h2ndCharge4ADC );
+  Write1DCharge(hs_mean_2nd_charge_adc, &Can, OutDir);
 
 
   float maxz;
@@ -650,29 +1090,61 @@ void TestPlaneEfficiency (std::string const InFileName,
   if (plane_under_test==4)
     maxz = 50000;
 
-  Write2DCharge( &hCharge15, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge30, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge45, &Can, maxz, OutDir);
-  Write2DCharge( &hCharge60, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &hSumCharge4, &Can, maxz, OutDir);
 
-  Write2DCharge( &hMaxCharge15, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge30, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge45, &Can, maxz, OutDir);
-  Write2DCharge( &hMaxCharge60, &Can, maxz, OutDir);
+  hSumCharge2.Write();
+  hSumCharge4.Write();
+
+  Write2DCharge( &h1stCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &h1stCharge4, &Can, maxz, OutDir);
+
+  h1stCharge2.Write();
+  h1stCharge4.Write();
+
+  Write2DCharge( &h2ndCharge1, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge2, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge3, &Can, maxz, OutDir);
+  Write2DCharge( &h2ndCharge4, &Can, maxz, OutDir);
+
+  h2ndCharge2.Write();
+  h2ndCharge4.Write();
 
   Write2DCharge( &hClusterSize, &Can, 7, OutDir);
+  hClusterSize.Write();
 
+  Can.SetLogy(1);
+  hDrSecondCluster.Draw();
+  Can.SaveAs( OutDir+ TString(hDrSecondCluster.GetName()) +".gif");
+  Can.SetLogy(0);
 
+  std::vector<TH1*> hs_fraction_contained;
+  hs_fraction_contained.push_back(&hFractionContainted1);
+  hs_fraction_contained.push_back(&hFractionContainted2);
+  hs_fraction_contained.push_back(&hFractionContainted3);
+  hs_fraction_contained.push_back(&hFractionContainted4);
+  Write1DFraction(hs_fraction_contained, &Can, OutDir);
+
+  Can.SaveAs( OutDir+ TString(hFractionContainted1.GetName()) +".gif");
+
+  WriteAngleHistograms(&hAngleBeforeChi2X,
+                       &hAngleBeforeChi2Y,
+                       &hAngleAfterChi2X,
+                       &hAngleAfterChi2Y,
+                       &Can,
+                       OutDir);
 
 }
 
-
-
 int TestPlaneEfficiencySilicon (std::string const InFileName,
                                  TFile * out_f,
-                                 std::string const CalibrationList,
                                  TString const RunNumber,
-                                 std::vector< std::vector< std::vector<int> > > & hot_pixels)
+                                 std::vector< std::vector< std::vector<int> > > & hot_pixels,
+                                 int telescopeID)
 {
   /* TestPlaneEfficiencySilicon
 
@@ -686,17 +1158,14 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   TString const OutDir = PlotsDir + RunNumber + "/";
 
   // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
-  Alignment.SetErrorsTelescope1();
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
 
-
-  // Mask four extra rows on each boundary of the diamond sensors
-  BFR.ReadPixelMask( "outerPixelMask_forSiEff.txt");
+  // Apply Masking
+  BFR.ReadPixelMask("outerPixelMask_forSiEff.txt");
 
   // Add additional hot pixels (from FindHotPixels to mask)
   for (int iroc=0; iroc != 6; iroc++){
@@ -704,8 +1173,6 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
       BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
     }
   }
-
-  //BFR.AddToPixelMask(1,0,0,0);
 
   BFR.CalculateLevels(10000, OutDir);
 
@@ -772,59 +1239,73 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
 
 
 
-int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+int TestPSIBinaryFileReader (std::string const InFileName,
+                             TFile * out_f,
+                             TString const RunNumber,
+                             int telescopeID)
 {
   // Run default analysis
+  const int NROC = GetNumberOfROCS(telescopeID);
 
-  // Mask hot pixels in offline analysis
-  // pixels are considered hot if they have > 10 times the number of mean hits of
-  // other (filled) pixels in the ROC
-  // Call the hot finder repeatedly until no new hot pixels can be found
+  // Initialize hot-pixel array
   std::vector< std::vector< std::vector<int> > > hot_pixels;
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     std::vector< std::vector<int> > tmp;
     hot_pixels.push_back( tmp );
   }
 
   // Look for hot pixels
-  FindHotPixels(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+  //FindHotPixels(InFileName,
+  //              out_f,
+  //              RunNumber,
+  //              hot_pixels,
+  //              telescopeID);
 
-  int n_events = TestPlaneEfficiencySilicon(InFileName, out_f, CalibrationList, RunNumber, hot_pixels);
+  int n_events = TestPlaneEfficiencySilicon(InFileName,
+                                            out_f,
+                                            RunNumber,
+                                            hot_pixels,
+                                            telescopeID);
 
+  // For Telescopes from May testbeam:
+  //   Do single plane studies
+  if ((telescopeID == 1) || (telescopeID == 2)){
+    for (int iplane=1; iplane != 5; iplane++){
+      std::cout << "Going to call TestPlaneEfficiency " << iplane << std::endl;
 
-  // Study single planes
-  //for (int iplane=1; iplane!=5;iplane++)
-  //  TestPlaneEfficiency(InFileName, out_f, CalibrationList, RunNumber, hot_pixels,iplane,n_events);
+      TestPlaneEfficiency(InFileName,
+                          out_f,
+                          RunNumber,
+                          hot_pixels,
+                          iplane,
+                          n_events,
+                          telescopeID);
+    }
+  }
 
+  // Setup Output Directory and gStyle
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
-
   std::cout<<OutDir<<std::endl;
-
   gStyle->SetOptStat(0);
 
-  // Open Alignment
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
-  Alignment.SetErrorsTelescope1();
-
   // Initialize Reader
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  //BFR.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
   fclose(f);
 
-  // Mask additional outer four layer on all diamonds
-  BFR.ReadPixelMask( "outerPixelMask.txt");
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
 
   //Add hot pixels we found to mask
-  for (int iroc=0; iroc != 6; iroc++){
-   for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
-     // std::cout << "Masking HOT: " << iroc << " " << hot_pixels[iroc][icolrow][0] << " " << hot_pixels[iroc][icolrow][1] << std::endl;
-     BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
-   }
+  for (int iroc=0; iroc != NROC; iroc++){
+    for (int icolrow=0; icolrow != hot_pixels[iroc].size(); icolrow++){
+      BFR.AddToPixelMask( 1, iroc, hot_pixels[iroc][icolrow][0], hot_pixels[iroc][icolrow][1]);
+    }
   }
 
   BFR.CalculateLevels(10000, OutDir);
@@ -834,7 +1315,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   // x == columns
   // y == rows
   std::vector< TH2F > hOccupancy;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancy.push_back( TH2F( Form("Occupancy_ROC%i",iroc),
                                 Form("Occupancy_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
@@ -850,24 +1331,24 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   std::vector<TH2F> hOccupancyLowPH;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancyLowPH.push_back( TH2F( Form("OccupancyLowPH_ROC%i",iroc),
                                 Form("OccupancyLowPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
   std::vector<TH2F> hOccupancyHighPH;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hOccupancyHighPH.push_back( TH2F( Form("OccupancyHighPH_ROC%i",iroc),
                                 Form("OccupancyHighPH_ROC%i",iroc), 52, 0, 52, 80, 0, 80));
   }
 
   std::vector<TH1F> hNHitsPerCluster;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hNHitsPerCluster.push_back( TH1F( Form("NHitsPerCluster_ROC%i",iroc),
                                 Form("NHitsPerCluster_ROC%i",iroc), 10, 0, 10));
   }
 
   std::vector<TH1F> hNClusters;
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hNClusters.push_back( TH1F( Form("NClusters_ROC%i",iroc),
                                 Form("NClusters_ROC%i",iroc), 10, 0, 10));
   }
@@ -954,12 +1435,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   hCoincidenceMap.GetYaxis()->CenterTitle();
 
   // Prepare PulseHeight histograms
-  TH1F* hPulseHeight[6][4];
+  TH1F* hPulseHeight[NROC][4];
   int const phMin = 0;
   int const phMax = 50000;
   int const phNBins = 50;
   // Standard
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeight_ROC%i_All", iroc);
     hPulseHeight[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeight_ROC%i_NPix1", iroc);
@@ -970,8 +1451,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeight[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
   // For Tracks
-  TH1F* hPulseHeightTrack6[6][4];
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  TH1F* hPulseHeightTrack6[NROC][4];
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeightTrack6_ROC%i_All", iroc);
     hPulseHeightTrack6[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeightTrack6_ROC%i_NPix1", iroc);
@@ -982,7 +1463,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeightTrack6[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phMax);
   }
   // Long Histogram (see the Protons)
-  TH1F* hPulseHeightLong[6][4];
+  TH1F* hPulseHeightLong[NROC][4];
   int const phLongMax = 300000;
   for (int iroc = 0; iroc != 6; ++iroc) {
     TString Name = TString::Format("PulseHeightLong_ROC%i_All", iroc);
@@ -995,8 +1476,8 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     hPulseHeightLong[iroc][3] = new TH1F(Name, Name, phNBins, phMin, phLongMax);
   }
   // For Tracks, using additional selections
-  TH1F* hPulseHeightOffline[6][4];
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  TH1F* hPulseHeightOffline[NROC][4];
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     TString Name = TString::Format("PulseHeightOffline_ROC%i_All", iroc);
     hPulseHeightOffline[iroc][0] = new TH1F(Name, Name, phNBins, phMin, phMax);
     Name = TString::Format("PulseHeightOffline_ROC%i_NPix1", iroc);
@@ -1010,7 +1491,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
 
   int const HistColors[4] = { 1, 4, 28, 2 };
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
     for (int inpix = 0; inpix != 4; ++inpix) {
     hPulseHeight[iroc][inpix]->SetXTitle("Charge (electrons)");
     hPulseHeight[iroc][inpix]->SetYTitle("Number of Clusters");
@@ -1028,11 +1509,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   // 2D Pulse Height maps for All and Track6
-  double AvgPH2D[6][PLTU::NCOL][PLTU::NROW];
-  int NAvgPH2D[6][PLTU::NCOL][PLTU::NROW];
-  double AvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
-  int NAvgPH2DTrack6[6][PLTU::NCOL][PLTU::NROW];
-  for (int i = 0; i != 6; ++i) {
+  double AvgPH2D[NROC][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2D[NROC][PLTU::NCOL][PLTU::NROW];
+  double AvgPH2DTrack6[NROC][PLTU::NCOL][PLTU::NROW];
+  int NAvgPH2DTrack6[NROC][PLTU::NCOL][PLTU::NROW];
+  for (int i = 0; i != NROC; ++i) {
     for (int icol = 0; icol != PLTU::NCOL; ++icol) {
       for (int irow = 0; irow != PLTU::NROW; ++irow) {
         AvgPH2D[i][icol][irow] = 0;
@@ -1044,24 +1525,31 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   }
 
   // Pulse height average counts and averages.  Also define TGraphs
-  int NAvgPH[6][4];
-  double AvgPH[6][4];
-  TGraphErrors gAvgPH[6][4];
-  for (int i = 0; i != 6; ++i) {
+  int NAvgPH[NROC][4];
+  double AvgPH[NROC][4];
+  std::vector< std::vector< TGraphErrors > > gAvgPH;
+
+  for (int i = 0; i != NROC; ++i) {
+
+    std::vector< TGraphErrors > tmp_gr_vector;
+
     for (int j = 0; j != 4; ++j) {
       NAvgPH[i][j] = 0;
       AvgPH[i][j] = 0;
-      gAvgPH[i][j].SetName( Form("PulseHeightTime_ROC%i_NPix%i", i, j) );
-      gAvgPH[i][j].SetTitle( Form("Average Pulse Height ROC %i NPix %i", i, j) );
-      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
-      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
-      gAvgPH[i][j].SetLineColor(HistColors[j]);
-      gAvgPH[i][j].SetMarkerColor(HistColors[j]);
-      gAvgPH[i][j].SetMinimum(0);
-      gAvgPH[i][j].SetMaximum(60000);
-      gAvgPH[i][j].GetXaxis()->SetTitle("Event Number");
-      gAvgPH[i][j].GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      TGraphErrors gr;
+      gr.SetName( Form("PulseHeightTime_ROC%i_NPix%i", i, j) );
+      gr.SetTitle( Form("Average Pulse Height ROC %i NPix %i", i, j) );
+      gr.GetXaxis()->SetTitle("Event Number");
+      gr.GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      gr.SetLineColor(HistColors[j]);
+      gr.SetMarkerColor(HistColors[j]);
+      gr.SetMinimum(0);
+      gr.SetMaximum(60000);
+      gr.GetXaxis()->SetTitle("Event Number");
+      gr.GetYaxis()->SetTitle("Average Pulse Height (electrons)");
+      tmp_gr_vector.push_back(gr);
     }
+    gAvgPH.push_back(tmp_gr_vector);
   }
 
   // Track Chi2 Distribution
@@ -1083,7 +1571,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
 
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != NROC; ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
         Form("Residual_ROC%i",iroc), 100, -.15, .15, 100, -.15, .15));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
@@ -1092,13 +1580,12 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
            Form("ResidualYdX_ROC%i",iroc), 200, -1, 1, 100, -.5, .5));
   }
 
-	float_t  onepc[6];
-	float_t  twopc[6];
-	float_t threepc[6];
+	float_t  onepc[NROC];
+	float_t  twopc[NROC];
+	float_t threepc[NROC];
 
   int const TimeWidth = 20000;
   int NGraphPoints = 0;
-
 
   // "times" for counting
   int const StartTime = 0;
@@ -1106,18 +1593,18 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
+
     ThisTime = ievent;
+
     // print progress
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
-    //if (BFR.HitPlaneBits() != 0x0) {
-      hCoincidenceMap.Fill(BFR.HitPlaneBits());
-    //}
+    hCoincidenceMap.Fill(BFR.HitPlaneBits());
 
     if (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
-      for (int i = 0; i != 6; ++i) {
+      for (int i = 0; i != NROC; ++i) {
         for (int j = 0; j != 4; ++j) {
           gAvgPH[i][j].Set(NGraphPoints+1);
           gAvgPH[i][j].SetPoint(NGraphPoints, ThisTime - TimeWidth/2, AvgPH[i][j]);
@@ -1132,7 +1619,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
     // draw tracks
     static int ieventdraw = 0;
-    if (ieventdraw < 20 && BFR.NClusters() >= 6) {
+    if (ieventdraw < 20 && BFR.NClusters() >= NROC) {
       BFR.DrawTracksAndHits( TString::Format(OutDir + "/Tracks_Ev%i.gif", ++ieventdraw).Data() );
     }
 
@@ -1144,18 +1631,11 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
       for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
         PLTCluster* Cluster = Plane->Cluster(icluster);
 
-        //printf("Event %6i   ROC %i   NHits %3i   Charge %9.0f   Col %3i  Row %3i",
-        //    ievent, iplane, Cluster->NHits(), Cluster->Charge(), Cluster->SeedHit()->Column(), Cluster->SeedHit()->Row());
-        //for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
-        //  printf(" %5i", Cluster->Hit(ihit)->ADC());
-        //}
-        //printf("\n");
-        if (iplane < 6) {
+        if (iplane < NROC) {
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
           hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
 
 					if (Cluster->Charge() > 300000) {
-              //printf("High Charge: %13.3E\n", Cluster->Charge());
               continue;
           }
           PLTU::AddToRunningAverage(AvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
@@ -1183,10 +1663,10 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
         PLTHit* Hit = Plane->Hit(ihit);
 
 
-        if (Hit->ROC() < 6) {
+        if (Hit->ROC() < NROC) {
           hOccupancy[Hit->ROC()].Fill(Hit->Column(), Hit->Row());
         } else {
-          std::cerr << "Oops, ROC >= 6?" << std::endl;
+          std::cerr << "Oops, ROC >= NROC?" << std::endl;
         }
       }
 
@@ -1208,7 +1688,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
     }
 
     if (BFR.NTracks() == 1 &&
-        BFR.Track(0)->NClusters() == 6 &&
+        BFR.Track(0)->NClusters() == NROC &&
         BFR.Track(0)->Cluster(0)->Charge() < 300000 &&
         BFR.Track(0)->Cluster(1)->Charge() < 300000 &&
         BFR.Track(0)->Cluster(2)->Charge() < 300000 &&
@@ -1256,7 +1736,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
           }
           PLTU::AddToRunningAverage(AvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2DTrack6[Cluster->ROC()][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
 
-          if (Track->IsFiducial(1, 5, Alignment, PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
+          if (Track->IsFiducial(1, 5, *(BFR.GetAlignment()), PLTPlane::kFiducialRegion_Diamond_m2_m2)) {
             hOccupancyTrack6[Cluster->ROC()].Fill(Cluster->PX(), Cluster->PY());
           }
 
@@ -1293,7 +1773,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
 
 
   // Catch up on PH by time graph
-    for (int i = 0; i != 6; ++i) {
+    for (int i = 0; i != NROC; ++i) {
       for (int j = 0; j != 4; ++j) {
         gAvgPH[i][j].Set(NGraphPoints+1);
         gAvgPH[i][j].SetPoint(NGraphPoints, NGraphPoints*TimeWidth + TimeWidth/2, AvgPH[i][j]);
@@ -1309,7 +1789,7 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   Can.cd();
 
 
-  for (int iroc = 0; iroc != 6; ++iroc) {
+  for (int iroc = 0; iroc != NROC; ++iroc) {
 
     // Draw Occupancy histograms
     hOccupancy[iroc].SetMinimum(0);
@@ -1604,15 +2084,19 @@ int TestPSIBinaryFileReader (std::string const InFileName, TFile * out_f, std::s
   gStyle->SetOptStat(0);
 
 
-  WriteHTML(PlotsDir + RunNumber, CalibrationList);
+  WriteHTML(PlotsDir + RunNumber,
+            GetCalibrationFilename(telescopeID));
 
   return 0;
 }
 
 
-int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, std::string const CalibrationList, TString const RunNumber)
+int DoAlignment (std::string const InFileName,
+                 TFile * out_f,
+                 TString const RunNumber,
+                 int telescopeID)
 {
-  /* TestPSIBinaryFileReaderAlign: Produce alignment constants and save
+  /* DoAlignment: Produce alignment constants and save
   them to NewAlignment.dat
   */
 
@@ -1620,8 +2104,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 	TString const OutDir = PlotsDir + RunNumber;
 
   gStyle->SetOptStat(0);
-
-
 
   std::vector<float> x_align;
   std::vector<float> y_align;
@@ -1635,24 +2117,34 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     r_align.push_back(0);
   }
 
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID, true));
+  BFR.GetAlignment()->SetErrors(telescopeID, true);
+
+  // Apply Masking
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
+
+  BFR.CalculateLevels(10000, OutDir);
+
 
   for (int ialign=0; ialign!=2;ialign++){
 
 
-  // Start with initial Alignment (X,Y offsets and rotations set to zero)
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
-
   for (int iroc=1;iroc!=5;iroc++){
-    Alignment.AddToLX( 1, iroc, x_align[iroc] );
-    Alignment.AddToLY( 1, iroc, y_align[iroc] );
-    //Alignment.AddToLR( 1, iroc, r_align[iroc] );
+    BFR.GetAlignment()->AddToLX( 1, iroc, x_align[iroc] );
+    BFR.GetAlignment()->AddToLY( 1, iroc, y_align[iroc] );
+    //BFR.GetAlignment()->AddToLR( 1, iroc, r_align[iroc] );
   }
 
 
-  for (int iroc_align = 1; iroc_align != 5; ++iroc_align) {
+  for (int iroc_align = 1; iroc_align != 6; ++iroc_align) {
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
+
+    BFR.ResetFile();
+    BFR.SetPlaneUnderTest( iroc_align );
 
     // Prepare Residual histograms
     // hResidual:    x=dX / y=dY
@@ -1663,15 +2155,6 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     std::vector< TH2F > hResidualYdX;
 
 
-    PSIBinaryFileReader BFR(InFileName, CalibrationList);
-    BFR.SetTrackingAlignment(&Alignment);
-    FILE* f = fopen("MyGainCal.dat", "w");
-    BFR.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
-    BFR.CalculateLevels(10000 ,OutDir);
-    BFR.SetPlaneUnderTest( iroc_align );
-
 
     // Reset residual histograms
     hResidual.clear();
@@ -1679,7 +2162,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
     hResidualYdX.clear();
     for (int iroc = 0; iroc != 6; ++iroc){
       hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                  Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
+                                  Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
       hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
                                      Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
       hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
@@ -1718,8 +2201,8 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
       float track_TX = Track->TX(iroc_align);
       float track_TY = Track->TY(iroc_align);
 
-      float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iroc_align);
-      float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iroc_align);
+      float track_LX = BFR.GetAlignment()->TtoLX( track_TX, track_TY, 1, iroc_align);
+      float track_LY = BFR.GetAlignment()->TtoLY( track_TX, track_TY, 1, iroc_align);
 
       float d_LX =  (track_LX - h_LX);
       float d_LY =  (track_LY - h_LY);
@@ -1748,14 +2231,14 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
 
 
-  std::cout << "Before: " << Alignment.LX(1,iroc_align) << std::endl;
+  std::cout << "Before: " << BFR.GetAlignment()->LX(1,iroc_align) << std::endl;
 
   x_align[iroc_align] +=  hResidual[iroc_align].GetMean(1);
   y_align[iroc_align] +=  hResidual[iroc_align].GetMean(2);
   r_align[iroc_align] +=  hResidualXdY[iroc_align].GetCorrelationFactor();
 
 
-  std::cout << "After: " << Alignment.LX(1,iroc_align) << std::endl;
+  std::cout << "After: " << BFR.GetAlignment()->LX(1,iroc_align) << std::endl;
 
 
   TCanvas Can;
@@ -1793,7 +2276,7 @@ int TestPSIBinaryFileReaderAlign (std::string const InFileName, TFile * out_f, s
 
 
 } // end loop over rocs
-Alignment.WriteAlignmentFile("NewAlignment.dat");
+BFR.GetAlignment()->WriteAlignmentFile("NewAlignment.dat");
 
 } // end alignment loop
 
@@ -1803,19 +2286,10 @@ Alignment.WriteAlignmentFile("NewAlignment.dat");
 std::cout << "PART TWO!!!!!" << std::endl;
 
 
+for (int ialign=1; ialign!=15;ialign++){
 
-// Start with initial Alignment (X,Y offsets and rotations set to zero)
-PLTAlignment Alignment;
-Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope_initial.dat");
-
-for (int iroc=1;iroc!=5;iroc++){
-  Alignment.AddToLX( 1, iroc, x_align[iroc] );
-  Alignment.AddToLY( 1, iroc, y_align[iroc] );
-  //Alignment.AddToLR( 1, iroc, r_align[iroc] );
-}
-
-
-for (int ialign=1; ialign!=5;ialign++){
+  BFR.ResetFile();
+  BFR.SetAllPlanes();
 
   // Prepare Residual histograms
   // hResidual:    x=dX / y=dY
@@ -1824,15 +2298,7 @@ for (int ialign=1; ialign!=5;ialign++){
   std::vector< TH2F > hResidual;
   std::vector< TH2F > hResidualXdY;
   std::vector< TH2F > hResidualYdX;
-
-  PSIBinaryFileReader BFR(InFileName, CalibrationList);
-  BFR.SetTrackingAlignment(&Alignment);
-  FILE* f = fopen("MyGainCal.dat", "w");
-  BFR.GetGainCal()->PrintGainCal(f);
-  fclose(f);
-  BFR.ReadPixelMask( "outerPixelMask.txt");
-  BFR.CalculateLevels(10000 ,OutDir);
-
+  std::vector< TGraph > gResidualXdY;
 
   // Reset residual histograms
   hResidual.clear();
@@ -1840,11 +2306,12 @@ for (int ialign=1; ialign!=5;ialign++){
   hResidualYdX.clear();
   for (int iroc = 0; iroc != 6; ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
-                                Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
+                                Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
-                                   Form("ResidualXdY_ROC%i",iroc), 133, -1, 0.995, 100, -.5, .5));
+                                   Form("ResidualXdY_ROC%i",iroc), 35, -0.2, 0.2, 100, -.2, .2));
     hResidualYdX.push_back( TH2F(  Form("ResidualYdX_ROC%i",iroc),
-                                   Form("ResidualYdX_ROC%i",iroc), 201, -1, 1, 100, -.5, .5));
+                                   Form("ResidualYdX_ROC%i",iroc), 41, -.2, .2, 100, -.2, .2));
+    gResidualXdY.push_back( TGraph() );
   }
 
   // Event Loop
@@ -1859,6 +2326,7 @@ for (int ialign=1; ialign!=5;ialign++){
     //  continue;
 
     for (int iroc=0; iroc!=6; iroc++){
+
       float d_LX = Track->LResidualX(iroc);
       float d_LY = Track->LResidualY(iroc);
 
@@ -1875,14 +2343,47 @@ for (int ialign=1; ialign!=5;ialign++){
         }
       }
 
+      // Hits instead of Clusters for Alignment
+      // float h_LX = -999;
+      // float h_LY = -999;
+      // float max_charge = 0;
+      // for (int i=0; i != BFR.Plane(iroc)->Cluster(0)->NHits(); ++i){
+      //
+      //   PLTHit * Hit = BFR.Plane(iroc)->Cluster(0)->Hit(i);
+      //
+      //   if (Hit->Charge() > max_charge){
+      //     max_charge = Hit->Charge();
+      //     h_LX = Hit->LX();
+      //     h_LY = Hit->LY();
+      //   }
+      // }
+      //
+      // if (fabs(h_LX)>10 || fabs(h_LY)>10)
+      //     continue
+      //
+      // float track_TX = Track->TX(iroc);
+      // float track_TY = Track->TY(iroc);
+      //
+      // float track_LX = Alignment.TtoLX( track_TX, track_TY, 1, iroc);
+      // float track_LY = Alignment.TtoLY( track_TX, track_TY, 1, iroc);
+      //
+      // float d_LX =  (track_LX - h_LX);
+      // float d_LY =  (track_LY - h_LY);
+
+
       // dX vs dY
       hResidual[iroc].Fill( d_LX, d_LY);
 
-      // X vs dY
-      hResidualXdY[iroc].Fill( cl_LX, d_LY);
+      if ((fabs(d_LX) < 1000) && (fabs(d_LY) < 1000)){
+          // X vs dY
+          hResidualXdY[iroc].Fill( cl_LX, d_LY);
 
-      // Y vs dX
-      hResidualYdX[iroc].Fill( cl_LY, d_LX);
+          // Y vs dX
+          hResidualYdX[iroc].Fill( cl_LY, d_LX);
+
+          gResidualXdY[iroc].SetPoint(gResidualXdY[iroc].GetN(), cl_LX, d_LY );
+        }
+
 
 
     }
@@ -1890,19 +2391,31 @@ for (int ialign=1; ialign!=5;ialign++){
 
   } // end event loop
 
-  for (int iroc=1; iroc!=5; iroc++){
+  for (int iroc=1; iroc!=6; iroc++){
   std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
-  Alignment.AddToLX(1, iroc, hResidual[iroc].GetMean(1));
-  Alignment.AddToLY(1, iroc, hResidual[iroc].GetMean(2));
+  BFR.GetAlignment()->AddToLX(1, iroc, hResidual[iroc].GetMean(1));
+  BFR.GetAlignment()->AddToLY(1, iroc, hResidual[iroc].GetMean(2));
 
   float angle = atan(hResidualXdY[iroc].GetCorrelationFactor()) ;
-  Alignment.AddToLR(1, iroc, angle/10.);
 
+
+  TF1 linear_fun = TF1("","[0]+[1]*x");
+  gResidualXdY[iroc].Fit(&linear_fun);
+
+
+  float other_angle = atan(linear_fun.GetParameter(1));
+
+  BFR.GetAlignment()->AddToLR(1, iroc, other_angle/3.);
+
+  std::cout << "ROC: " << iroc << " Angle: " << angle << " Other Angle:" << other_angle << std::endl;
 
   TCanvas Can;
   Can.cd();
+
+  gResidualXdY[iroc].Draw("AP*");
+  Can.SaveAs( OutDir+"/"+TString::Format("gRes%i",iroc) + ".gif");
 
   // 2D Residuals
   hResidual[iroc].Draw("colz");
@@ -1931,26 +2444,39 @@ for (int ialign=1; ialign!=5;ialign++){
 
   } // end alignment loop
 
-  Alignment.WriteAlignmentFile("NewAlignment.dat");
+  BFR.GetAlignment()->WriteAlignmentFile("NewAlignment.dat");
 
   return 0;
 }
 
 
-int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
-                                      TFile * out_f,
-                                      std::string const CalibrationList,
-                                      TString const RunNumber){
+int FindResiduals(std::string const InFileName,
+                  TFile * out_f,
+                  TString const RunNumber,
+                  int telescopeID){
 
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber;
 
   gStyle->SetOptStat(0);
 
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  // Initialize Reader
+  PSIBinaryFileReader BFR(InFileName,
+                          GetCalibrationFilename(telescopeID),
+                          GetAlignmentFilename(telescopeID));
+  BFR.GetAlignment()->SetErrors(telescopeID, true);
 
-  for (int ires=0; ires != 10; ires++){
+  FILE* f = fopen("MyGainCal.dat", "w");
+  BFR.GetGainCal()->PrintGainCal(f);
+  fclose(f);
+  BFR.ReadPixelMask(GetMaskingFilename(telescopeID));
+  BFR.CalculateLevels(10000 ,OutDir);
+
+
+  for (int ires=0; ires != 8; ires++){
+
+    BFR.ResetFile();
+    BFR.SetAllPlanes();
 
     TH1F hChi2_6_X( "", "", 100, 0, 10);
     TH1F hChi2_6_Y( "", "", 100, 0, 10);
@@ -1961,27 +2487,18 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
     std::vector<float> chi2_5_y;
 
     // Determine the 6-plane CHi2
-    {
-    PSIBinaryFileReader BFR(InFileName, CalibrationList);
-    BFR.SetTrackingAlignment(&Alignment);
-    FILE* f = fopen("MyGainCal.dat", "w");
-    BFR.GetGainCal()->PrintGainCal(f);
-    fclose(f);
-    BFR.ReadPixelMask( "outerPixelMask.txt");
-    BFR.CalculateLevels(10000 ,OutDir);
-
     // Event Loop
     for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
+
       if (! (BFR.NTracks()==1))
-      continue;
+        continue;
 
       PLTTrack * Track = BFR.Track(0);
       hChi2_6_X.Fill( Track->Chi2X() );
       hChi2_6_Y.Fill( Track->Chi2Y() );
 
     } // end event loop
-    } // end getting 6-plane Chi2
 
 
 
@@ -1993,14 +2510,9 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
 
       // Determine the 5-plane CHi2
       {
-      PSIBinaryFileReader BFR(InFileName, CalibrationList);
-      BFR.SetTrackingAlignment(&Alignment);
-      FILE* f = fopen("MyGainCal.dat", "w");
-      BFR.GetGainCal()->PrintGainCal(f);
-      fclose(f);
+      // Initialize Reader
+      BFR.ResetFile();
       BFR.SetPlaneUnderTest( iplane );
-      BFR.ReadPixelMask( "outerPixelMask.txt");
-      BFR.CalculateLevels(10000 ,OutDir);
 
       // Event Loop
       for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -2094,16 +2606,16 @@ int TestPSIBinaryFileReaderResiduals (std::string const InFileName,
 
       }
 
-      Alignment.SetErrorX(imax_x, Alignment.GetErrorX(imax_x)*(chi2_6_x-chi2_5_x[imax_x]));
-      Alignment.SetErrorY(imax_y, Alignment.GetErrorY(imax_y)*(chi2_6_y-chi2_5_y[imax_y]));
+      BFR.GetAlignment()->SetErrorX(imax_x, BFR.GetAlignment()->GetErrorX(imax_x)*(chi2_6_x-chi2_5_x[imax_x]));
+      BFR.GetAlignment()->SetErrorY(imax_y, BFR.GetAlignment()->GetErrorY(imax_y)*(chi2_6_y-chi2_5_y[imax_y]));
 
 
       for (int ic=0; ic!=6; ic++){
-        Alignment.SetErrorX(ic, Alignment.GetErrorX(ic)*(chi2_6_x/4.));
-        Alignment.SetErrorY(ic, Alignment.GetErrorY(ic)*(chi2_6_y/4.));
+        BFR.GetAlignment()->SetErrorX(ic, BFR.GetAlignment()->GetErrorX(ic)*(chi2_6_x/4.));
+        BFR.GetAlignment()->SetErrorY(ic, BFR.GetAlignment()->GetErrorY(ic)*(chi2_6_y/4.));
 
-        std::cout << "X ROC RES: " << ic << " " << Alignment.GetErrorX(ic) <<std::endl;
-        std::cout << "Y ROC RES: " << ic << " " << Alignment.GetErrorY(ic) <<std::endl;
+        std::cout << "X ROC RES: " << ic << " " << BFR.GetAlignment()->GetErrorX(ic) <<std::endl;
+        std::cout << "Y ROC RES: " << ic << " " << BFR.GetAlignment()->GetErrorY(ic) <<std::endl;
       }
 
 
@@ -2299,30 +2811,70 @@ void WriteHTML (TString const OutDir, TString const CalFile)
 
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"MaxCharge_ROC%i.gif\"><img width=\"150\" src=\"MaxCharge_ROC%i.gif\"></a>\n", i, i);
+    f << Form("<a href=\"SumCharge_ROC%i.gif\"><img width=\"150\" src=\"SumCharge_ROC%i.gif\"></a>\n", i, i);
     f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"Charge_ROC%i.gif\"><img width=\"150\" src=\"Charge_ROC%i.gif\"></a>\n", i, i);
+    f << Form("<a href=\"1stCharge_ROC%i.gif\"><img width=\"150\" src=\"1stCharge_ROC%i.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"2ndCharge_ROC%i.gif\"><img width=\"150\" src=\"2ndCharge_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
 
 
 
   for (int i = 1; i != 5; i++)
-    f << Form("<a href=\"Charge_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge_ROC%i_profile.gif\"></a>\n", i, i);
+    f << Form("<a href=\"SumCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge30_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge30_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"SumCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge2_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-   f << Form("<a href=\"Charge45_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge45_ROC%i_profile.gif\"></a>\n", i, i);
+   f << Form("<a href=\"SumCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge3_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
 
   for (int i = 1; i != 5; i++)
-  f << Form("<a href=\"Charge60_ROC%i_profile.gif\"><img width=\"150\" src=\"Charge60_ROC%i_profile.gif\"></a>\n", i, i);
+  f << Form("<a href=\"SumCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"SumCharge4_ROC%i_profile.gif\"></a>\n", i, i);
   f << "<br>\n";
+
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"1stCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"1stCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge2_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"1stCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge3_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"1stCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"1stCharge4_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+    f << Form("<a href=\"2ndCharge_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"2ndCharge2_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge2_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+   f << Form("<a href=\"2ndCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge3_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+  for (int i = 1; i != 5; i++)
+  f << Form("<a href=\"2ndCharge3_ROC%i_profile.gif\"><img width=\"150\" src=\"2ndCharge4_ROC%i_profile.gif\"></a>\n", i, i);
+  f << "<br>\n";
+
+
+
 
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"SinglePlaneTestChi2_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestChi2_ROC%i.gif\"></a>\n", i, i);
@@ -2344,6 +2896,7 @@ f << "<br>\n";
   for (int i = 1; i != 5; i++)
     f << Form("<a href=\"SinglePlaneTestDR_ROC%i.gif\"><img width=\"150\" src=\"SinglePlaneTestDR_ROC%i.gif\"></a>\n", i, i);
   f << "<br>\n";
+
 
   // EVENT DISPLAYS
   f << "<h2>Event Displays</h2>\n";
@@ -2379,29 +2932,25 @@ f << "<br>\n";
 }
 
 
-
-
-
-
-
 int main (int argc, char* argv[])
 {
   if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [CalibrationList.txt] [doAlign]" << std::endl;
-    std::cerr << "doAlign: 0 for reading alignment from file, 1 for producing alignment file" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " InFileName action telescopeUD" << std::endl;
+    std::cerr << "action: 0 for analysis, 1 for producing alignment file, 2 for finding residuals" << std::endl;
     return 1;
   }
 
-  /* There are now two useage modes: default and alignment
+  /* There three useage modes: analysis, alignment and residuals
 
-  default uses the Alignment_ETHTelescope.dat file and analyzes the given run
-    producing Occupancy, PulseHeight and tracking plots.
+  analysis uses alignment and residuals for the given telescope to perform
+    global and single plane studies
 
   alignment starts with all alignment constants zero and does several iterations
     to minimize the residuals. All planes are shifted in x and y and rotated
     around the z-axis. Residual plots of the last iteration are saved.
-    As output the file NewAlignment.dat is produced. To actually use it, do:
-    mv NewAlignment.dat ALIGNMENT/Alignment_ETHTelescope
+    As output the file NewAlignment.dat is produced.
+
+  residuals tries to find the correct residuals for tracking
   */
 
   std::string const InFileName = argv[1];
@@ -2410,23 +2959,44 @@ int main (int argc, char* argv[])
   TString const RunNumber = FullRunName(Index+5,6);
   gSystem->mkdir("./plots/" + RunNumber);
 
-  std::string CalibrationList = argv[2];
+  // 0: Analysis
+  // 1: Alignment
+  // 2: Residuals
+  int action = atoi(argv[2]);
 
+  // Telescope IDs:
+  // 1: First May-Testbeam Telescope (Si, PolyA, PolyD, S86,  S105, Si)
+  // 2: Second May-Tesbeam Telescope (Si, PolyB, PolyD, S108, Si,   Si)
+  // 3: First Silicon + 1 Diamond Telescope (July Testbeam)
+  // 4: Two-Plane Silicon Telescope (July Testbeam)
+  int telescopeID = atoi(argv[3]);
 
   // Open a ROOT file to store histograms in
   // do it here and pass to all functions we call
   TString const PlotsDir = "plots/";
   TString const OutDir = PlotsDir + RunNumber + "/";
-  TFile out_f( OutDir + "histos.root","recreate");
+  TFile out_f( OutDir + "histos.root", "recreate");
 
-  int doAlign = atoi(argv[3]);
+  // ALIGNMENT
+  if (action==1)
+    DoAlignment(InFileName,
+                &out_f,
+                RunNumber,
+                telescopeID);
 
-  if (doAlign==1)
-    TestPSIBinaryFileReaderAlign(InFileName, &out_f, CalibrationList, RunNumber);
-  else if (doAlign==2)
-      TestPSIBinaryFileReaderResiduals(InFileName, &out_f, CalibrationList, RunNumber);
+  // RESIDUAL CALCULATION
+  else if (action==2)
+    FindResiduals(InFileName,
+                  &out_f,
+                  RunNumber,
+                  telescopeID);
+
+  // ANALYSIS
   else
-    TestPSIBinaryFileReader(InFileName, &out_f, CalibrationList, RunNumber);
+    TestPSIBinaryFileReader(InFileName,
+                            &out_f,
+                            RunNumber,
+                            telescopeID);
 
 
   return 0;

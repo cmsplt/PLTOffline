@@ -19,11 +19,7 @@ typedef std::vector<Digits> Vd;
 
 PLTTracking::PLTTracking ()
 {
-
-  for (int i=0;i!=6;i++){
-    fUsePlanesForTracking[i]=2;
-  }
-  fDoSinglePlaneEfficiency = false;
+  SetAllPlanes();
 }
 
 
@@ -32,10 +28,7 @@ PLTTracking::PLTTracking (PLTAlignment* Alignment, TrackingAlgorithm const Algor
   SetTrackingAlignment(Alignment);
   SetTrackingAlgorithm(Algorithm);
 
-  for (int i=0;i!=6;i++){
-    fUsePlanesForTracking[i]=2;
-  }
-  fDoSinglePlaneEfficiency = false;
+  SetAllPlanes();
 }
 
 
@@ -69,6 +62,15 @@ int PLTTracking::GetTrackingAlgorithm ()
   return fTrackingAlgorithm;
 }
 
+
+void PLTTracking::SetAllPlanes(){
+
+  for (int i=0;i!=6;i++){
+    fUsePlanesForTracking[i]=2;
+  }
+  fDoSinglePlaneEfficiency = false;
+
+}
 
 void PLTTracking::SetPlaneUnderTest( int put){
 

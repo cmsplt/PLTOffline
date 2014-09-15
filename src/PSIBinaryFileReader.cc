@@ -25,7 +25,9 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName)
 }
 
 
-PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::string const CalibrationList)
+PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
+                                          std::string const CalibrationList,
+                                          std::string const AlignmentFileName)
 {
   // constructor
   fEOF = 0;
@@ -49,7 +51,12 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fCL >> fCalibrationFile[3];
   fCL >> fCalibrationFile[4];
   fCL >> fCalibrationFile[5];
-
+  fCL >> fRawCalibrationFile[0];
+  fCL >> fRawCalibrationFile[1];
+  fCL >> fRawCalibrationFile[2];
+  fCL >> fRawCalibrationFile[3];
+  fCL >> fRawCalibrationFile[4];
+  fCL >> fRawCalibrationFile[5];
 
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[0]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[1]);
@@ -58,9 +65,18 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, std::str
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
 
-  fAlignment.ReadAlignmentFile("ALIGNMENT/Alignment_ETHTelescope.dat");
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[0], 0);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[1], 1);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[2], 2);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[3], 3);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[4], 4);
+  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[5], 5);
+
+  fAlignment.ReadAlignmentFile(AlignmentFileName);
   SetTrackingAlignment(&fAlignment);
   SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_6PlanesHit);
+
+  std::cout << "Done with PSIBinaryFileReade constructor" << std::endl;
 
 }
 
@@ -85,6 +101,13 @@ bool PSIBinaryFileReader::OpenFile ()
   return false;
 }
 
+void PSIBinaryFileReader::ResetFile ()
+{
+  // Reset the file
+  std::cout << "Reset the file!" << std::endl;
+  fInputBinaryFile.close();
+  OpenFile();  
+}
 
 
 
@@ -433,10 +456,7 @@ int PSIBinaryFileReader::CalculateLevels (int const NMaxEvents,TString const Out
   hTBMLevels.Draw("hist");
   Can.SaveAs(OutDir + "LevelsTBM.gif");
 
-  // Reset the file
-  std::cout << "Reset the file!" << std::endl;
-  fInputBinaryFile.close();
-  OpenFile();
+  ResetFile();
 
   return 0;
 }
@@ -458,8 +478,8 @@ void PSIBinaryFileReader::DecodeHits ()
   int const NROCs = UBCount - 5;
   //std::cout << "fBufferSize: " << fBufferSize << std::endl;
   //std::cout << "NROCs: " << NROCs << std::endl;
-  static int iBadData = 0;
-  static int iGoodData = 0;
+  //static int iBadData = 0;
+  //static int iGoodData = 0;
   if (NROCs > NMAXROCS) {
     //DrawWaveform(TString::Format("BadWave_%i.gif", iBadData++));
     std::cerr << "WARNING: NROCs > NMAXROCS.  Too many UBs.  Skipping this event" << std::endl;
@@ -495,7 +515,11 @@ void PSIBinaryFileReader::DecodeHits ()
       if (!IsPixelMasked( 1*100000 + iroc*10000 + colrow.first*100 + colrow.second)){
         //printf("Hit iroc %2i  col %2i  row %2i  PH: %4i\n", iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
         PLTHit* Hit = new PLTHit(1, iroc, colrow.first, colrow.second, fData[ UBPosition[3 + iroc] + 2 + 6 + ihit * 6 ]);
-        fGainCal.SetCharge(*Hit);
+
+	// Fits (use for Telescope 1 at the moment)
+        fGainCal.SetCharge(*Hit);	
+	// Linear Interpolation (use for Telescope 2 at the moment)
+        //fGainInterpolator.SetCharge(*Hit);
         fAlignment.AlignHit(*Hit);
         fHits.push_back(Hit);
         fPlaneMap[Hit->ROC()].AddHit(Hit);

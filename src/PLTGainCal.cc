@@ -6,12 +6,14 @@ PLTGainCal::PLTGainCal ()
 {
   ResetGC();
   fIsGood = false;
+  fIsExternalFunction = false;
 }
 
 PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
 {
   ResetGC();
   fIsGood = false;
+  fIsExternalFunction = false;
   fNParams = NParams;
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
@@ -133,6 +135,7 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
   }
   TString CheckFirstLine;
   CheckFirstLine.ReadLine(InFile);
+
   if (CheckFirstLine.BeginsWith("Parameters of the vcal vs. pulse height fits")) {
     std::cout << "PLTGainCal setting fIsExternalFunction" << std::endl;
     fIsExternalFunction = true;
@@ -181,7 +184,7 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
 }
 
 int PLTGainCal::GetHardwareID (int const Channel)
-{ 
+{
   return fHardwareMap[Channel];
 }
 
@@ -299,9 +302,6 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName, int cons
 
   // Get blank line out of the way
   FunctionLine.ReadLine(f);
-
-  
-
 
   std::string line;
   std::getline(f, line);

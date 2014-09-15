@@ -25,63 +25,6 @@ void PLTTrack::AddCluster (PLTCluster* in)
 int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
 {
 
-  // Use the residuals as uncertainties
-  //std::vector<float> UncertsX;
-  //std::vector<float> UncertsY;
-
-
-  // // Initial Values for Alignment
-  // if (false){
-  //   UncertsX.push_back( 0.015);
-  //   UncertsX.push_back( 0.015);
-  //   UncertsX.push_back( 0.015);
-  //   UncertsX.push_back( 0.015);
-  //   UncertsX.push_back( 0.015);
-  //   UncertsX.push_back( 0.015);
-  //
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.010);
-  // }
-  // // Telescope 2
-  // else if (false){
-  //
-  //   UncertsX.push_back( 0.011 * 1.07599 * (4.9/4)*0.818072* (4.8/4));
-  //   UncertsX.push_back( 0.007 * 0.664035* (4.9/4)*0.748706* (4.8/4));
-  //   UncertsX.push_back( 0.011 * 0.590592* (4.9/4)*0.862891* (4.8/4));
-  //   UncertsX.push_back( 0.011 * 0.61544* (4.9/4)*0.847775* (4.8/4));
-  //   UncertsX.push_back( 0.006 * 0.680986* (4.9/4)*0.749404* (4.8/4));
-  //   UncertsX.push_back( 0.011 * 0.890617* (4.9/4)*0.866757* (4.8/4));
-  //
-  //
-  //   UncertsY.push_back( 0.011 * (3.26493/4) * 1.1732 * (4.95337/4) * (4.26719/4));
-  //   UncertsY.push_back( 0.006 * (3.26493/4) * 0.814698*(4.95337/4)*0.670769* (4.26719/4));
-  //   UncertsY.push_back( 0.011 * (3.26493/4) * 0.594904*(4.95337/4)* (4.26719/4));
-  //   UncertsY.push_back( 0.011 * (3.26493/4) * 0.561002*(4.95337/4)* (4.26719/4));
-  //   UncertsY.push_back( 0.006 * (3.26493/4) * 0.685312*(4.95337/4)*0.641011* (4.26719/4)*0.689615);
-  //   UncertsY.push_back( 0.011 * (3.26493/4) * 1.02268*(4.95337/4)* (4.26719/4));
-  // }
-  // // Telescope 1
-  // else if (true){
-  //   UncertsX.push_back( 0.013);
-  //   UncertsX.push_back( 0.006);
-  //   UncertsX.push_back( 0.010);
-  //   UncertsX.push_back( 0.012);
-  //   UncertsX.push_back( 0.007);
-  //   UncertsX.push_back( 0.012);
-  //
-  //   UncertsY.push_back( 0.012);
-  //   UncertsY.push_back( 0.005);
-  //   UncertsY.push_back( 0.010);
-  //   UncertsY.push_back( 0.011);
-  //   UncertsY.push_back( 0.007);
-  //   UncertsY.push_back( 0.012);
-  // }
-
-
 
   if (DEBUG)
     std::cout << "Entering PLTTrack::MakeTrack. fClusters.size()= " << fClusters.size() << std::endl;

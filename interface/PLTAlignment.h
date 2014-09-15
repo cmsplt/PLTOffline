@@ -103,7 +103,7 @@ class PLTAlignment
     void SetErrorX(int plane, float val ){ fErrorsX[plane]=val;};
     void SetErrorY(int plane, float val ){ fErrorsY[plane]=val;};
 
-    void SetErrorsTelescope1();
+    void SetErrors(int telescopeID, bool initial = false);
 
   private:
     std::map< std::pair<int, int>, CP > fConstantMap;

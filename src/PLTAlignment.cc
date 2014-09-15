@@ -597,19 +597,59 @@ void PLTAlignment::AddToGZ (int const ch, float val)
   fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
 }
 
-void PLTAlignment::SetErrorsTelescope1(){
+void PLTAlignment::SetErrors(int telescopeID, bool initial){
 
-  SetErrorX( 0, 0.0140731);
-  SetErrorX( 1, 0.00361882);
-  SetErrorX( 2, 0.00918365);
-  SetErrorX( 3, 0.00958796);
-  SetErrorX( 4, 0.00507182);
-  SetErrorX( 5, 0.0145948);
+  if (initial){
+    SetErrorX( 0, 0.004);
+    SetErrorX( 1, 0.004);
+    SetErrorX( 2, 0.004);
+    SetErrorX( 3, 0.004);
+    SetErrorX( 4, 0.004);
+    SetErrorX( 5, 0.004);
 
-  SetErrorY( 0, 0.0150418);
-  SetErrorY( 1, 0.00300886);
-  SetErrorY( 2, 0.00657946);
-  SetErrorY( 3, 0.00800457);
-  SetErrorY( 4, 0.0038472);
-  SetErrorY( 5, 0.0150418);
+    SetErrorY( 0, 0.003);
+    SetErrorY( 1, 0.003);
+    SetErrorY( 2, 0.003);
+    SetErrorY( 3, 0.003);
+    SetErrorY( 4, 0.003);
+    SetErrorY( 5, 0.003);
+  }
+  else{
+    if (telescopeID == 1){
+      SetErrorX( 0, 0.0138452);
+      SetErrorX( 1, 0.0041562);
+      SetErrorX( 2, 0.00850018);
+      SetErrorX( 3, 0.00796671);
+      SetErrorX( 4, 0.00778308);
+      SetErrorX( 5, 0.0142984);
+
+      SetErrorY( 0, 0.013026);
+      SetErrorY( 1, 0.00384812);
+      SetErrorY( 2, 0.00728567);
+      SetErrorY( 3, 0.00688992);
+      SetErrorY( 4, 0.00460671);
+      SetErrorY( 5, 0.0130273);
+    }
+    else if (telescopeID == 2){
+      SetErrorX( 0, 0.0116691);
+      SetErrorX( 1, 0.00476967);
+      SetErrorX( 2, 0.00974399);
+      SetErrorX( 3, 0.00772797);
+      SetErrorX( 4, 0.00423922);
+      SetErrorX( 5, 0.0116691);
+
+      SetErrorY( 0, 0.0135081);
+      SetErrorY( 1, 0.00424304);
+      SetErrorY( 2, 0.00661225);
+      SetErrorY( 3, 0.00689123);
+      SetErrorY( 4, 0.00310896);
+      SetErrorY( 5, 0.0104977);
+    }
+    else{
+      std::cout << "ERROR: No Errors defined for telescopeID==" << telescopeID << std::endl;
+      std::cout << "Exiting.." << std::endl;
+      std::exit(0);
+    }
+  }
+
 }

@@ -1,83 +1,51 @@
 #!/usr/bin/env python
 
 """
-Analyze multiple runs from PSI testbeam in May 2014
+Analyze multiple runs from PSI testbeam in May 2014.
+Extract the efficiency as a function of flux.
 """
 
 # ##############################
 # Imports
-###############################
+# ##############################
 
 import sys
 
 import ROOT
+
+import RunInfos
+
+ROOT.gStyle.SetPadLeftMargin(0.15)
+ROOT.gStyle.SetPadBottomMargin(0.15)
+ROOT.gROOT.ForceStyle()
+
+
+###############################
+# Read telescope from the commandline
+###############################
+
+if not len(sys.argv)==2:
+    print "Wrong number of input arguments!"
+    print "Usage: {0} telescopeID".format(sys.argv[0])
+    sys.exit()
+else:
+    telescope = int(sys.argv[1])
 
 
 ###############################
 # Configuration
 ###############################
 
-telescope = 1
 nslices = 5
 
-
-###############################
-# Define Runs
-###############################
-
-if telescope == 0:
-
-    # For testing
-    di_runs = {316: 1.6}
-
-    li_runs_up = [316]
-    li_runs_down = []
-    li_runs_final = []
-
-elif telescope == 1:
-
-    # Flux in kHz
-    # (taken from Steve's Spreadsheet)
-    di_runs = {
-        322: 1.6,
-        325: 12.9,
-        327: 130.6,
-        330: 1167.,
-        333: 20809.,
-        338: 1137.,
-        340: 125.4,
-        343: 10.8,
-        347: 1.4,
-        348: 1.5,
-        350: 20809.2,
-        352: 21387.3,
-    }
-
-    li_runs_up = [322, 325, 327, 330, 333]
-    li_runs_down = [338, 340, 343, 347, 348]
-    li_runs_final = [350, 352]
-
-elif telescope == 2:
-    di_runs = {
-        466: 2.,
-        467: 18.2,
-        469: 1313.9,
-        470: 9445.1,
-        471: 1269.4,
-        472: 1272.8,
-        473: 143.4,
-        474: 13.6,
-        475: 2.0,
-        476: 9398.8,
-        478: 22138.7
-    }
-    li_runs_up = [466, 467, 469, 470]
-    li_runs_down = [471, 472, 473, 474, 475]
-    li_runs_final = [476, 478]
-
-else:
-    print "Invalid Telescope: ", telescope
-    print "Exiting.."
+try:
+    di_runs = RunInfos.di_di_runs[telescope]
+    li_runs_up = RunInfos.di_li_runs_up[telescope]
+    li_runs_down = RunInfos.di_li_runs_down[telescope]
+    li_runs_final = RunInfos.di_li_runs_final[telescope]
+    di_rocs = RunInfos.di_di_rocs[telescope]
+except KeyError:
+    print "Invalid telescope! Exiting.."
     sys.exit()
 
 
@@ -87,6 +55,11 @@ else:
 ###############################
 
 def eff_and_unc(h_num, h_denom):
+    """ Calculate efficiency and uncertainty
+    :param h_num: Numerator TH2
+    :param h_denom: Denominator TH2
+    :return: Efficiency, Uncertainty Error Up, Uncertainty Error Low (as a tuple floats)
+    """
     num = 0
     denom = 0
 
@@ -157,16 +130,16 @@ for i_run, run in enumerate(di_runs):
     f = ROOT.TFile.Open(input_rootfile_name)
 
     # Silicon-based efficiency
-    for iroc in range(6):
-        nums_si[run].append(f.Get("SiliconEfficiencyNumeratorROC" + str(iroc)).GetVal())
-        denoms_si[run].append(f.Get("SiliconEfficiencyDenominatorROC" + str(iroc)).GetVal())
+    for i_roc in range(6):
+        nums_si[run].append(f.Get("SiliconEfficiencyNumeratorROC" + str(i_roc)).GetVal())
+        denoms_si[run].append(f.Get("SiliconEfficiencyDenominatorROC" + str(i_roc)).GetVal())
 
     # Tracking-based efficiency
-    for iroc in range(1, 5):
+    for i_roc in range(1, 5):
 
         # First get the full-run efficiency
-        eff, unc_up, unc_low = eff_and_unc(f.Get("PlaneEfficiency_ROC" + str(iroc)),
-                                           f.Get("TracksPassing_ROC" + str(iroc)))
+        eff, unc_up, unc_low = eff_and_unc(f.Get("PlaneEfficiency_ROC" + str(i_roc)),
+                                           f.Get("TracksPassing_ROC" + str(i_roc)))
         eff_tr[run].append(eff)
         unc_up_tr[run].append(unc_up)
         unc_low_tr[run].append(unc_low)
@@ -177,8 +150,8 @@ for i_run, run in enumerate(di_runs):
         li_uncs_low = []
         for islice in range(nslices):
             eff_slice, unc_up_slice, unc_low_slice = eff_and_unc(
-                f.Get("Numerator_ROC{0}_slice{1}".format(iroc, islice)),
-                f.Get("Denominator_ROC{0}_slice{1}".format(iroc, islice)))
+                f.Get("Numerator_ROC{0}_slice{1}".format(i_roc, islice)),
+                f.Get("Denominator_ROC{0}_slice{1}".format(i_roc, islice)))
 
             li_effs.append(eff_slice)
             li_uncs_up.append(unc_up_slice)
@@ -192,26 +165,31 @@ for i_run, run in enumerate(di_runs):
 
 
 ###############################
-# Prepare pretty ROOT
-###############################
-
-ROOT.gStyle.SetOptStat(0)
-
-c = ROOT.TCanvas("", "", 800, 800)
-
-legend_origin_x = 0.2
-legend_origin_y = 0.2
-legend_size_x = 0.1
-legend_size_y = 0.045 * 4
-
-c.SetLogx(1)
-
-
-###############################
 # make_plots
 ###############################
 
 def make_plots(add_si, do_zoom, do_slice):
+    # Prepare pretty ROOT
+
+    ROOT.gStyle.SetOptStat(0)
+
+    c = ROOT.TCanvas("", "", 800, 800)
+
+
+
+    c.SetGrid(1,1)
+
+    legend_origin_x = 0.2
+    legend_origin_y = 0.2
+    legend_size_x = 0.1
+    if add_si:
+        legend_size_y = 0.062 * 4
+    else:
+        legend_size_y = 0.062 * 3
+
+    c.SetLogx(1)
+
+
     # Loop over ROCs
     for i_roc in range(1, 5):
 
@@ -222,20 +200,29 @@ def make_plots(add_si, do_zoom, do_slice):
                               legend_origin_y + legend_size_y)
         legend.SetBorderSize(1)
         legend.SetFillColor(0)
-        legend.SetTextSize(0.04)
+        legend.SetTextSize(0.06)
         legend.SetBorderSize(0)
 
         # Prepare 'background' TH2.
         if do_zoom:
-            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0.4, 1.1)
+            h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.05)
         else:
             h = ROOT.TH2F("", "", 100, 1, 40000, 100, 0., 1.1)
+
+        h.GetXaxis().SetTitleSize(0.06)
+        h.GetYaxis().SetTitleSize(0.06)
+        h.GetXaxis().SetLabelSize(0.06)
+        h.GetYaxis().SetLabelSize(0.06)
+            
+
         h.GetXaxis().SetTitle("Flux [kHz/cm^{2}]")
         h.GetYaxis().SetTitle("#varepsilon")
         h.Draw()
 
         # Prepare efficiency TGraphs
         li_grs = []
+
+
         for direction in ["up", "down", "final"]:
 
             # Choose runs to use
@@ -282,25 +269,27 @@ def make_plots(add_si, do_zoom, do_slice):
                 legend.AddEntry(gr_si, "Without Tracking (Require Silicon Hits)", "P")
 
             if direction == "up":
-                legend.AddEntry(gr_tr, "Tracking (Up)", "P")
+                legend.AddEntry(gr_tr, "Increasing Flux", "P")
             elif direction == "down":
-                legend.AddEntry(gr_tr, "Tracking (Down)", "P")
+                legend.AddEntry(gr_tr, "Decreasing Flux", "P")
             elif direction == "final":
-                legend.AddEntry(gr_tr, "Tracking (Final)", "P")
+                legend.AddEntry(gr_tr, "Highest Flux", "P")
 
             # Markers
             gr_si.SetMarkerStyle(2)
-            gr_tr.SetMarkerSize(1)
-            gr_tr.SetMarkerColor(ROOT.kRed)
+            gr_tr.SetMarkerSize(1.5)
             # going up
             if direction == "up":
                 gr_tr.SetMarkerStyle(22)
+                gr_tr.SetMarkerColor(ROOT.kRed)
             #  down
             elif direction == "down":
                 gr_tr.SetMarkerStyle(23)
+                gr_tr.SetMarkerColor(ROOT.kBlue)
             # final high flux
             else:
                 gr_tr.SetMarkerStyle(21)
+                gr_tr.SetMarkerColor(ROOT.kGreen)
 
             # Protect graphs from autodelete
             li_grs.append(gr_si)
@@ -309,15 +298,14 @@ def make_plots(add_si, do_zoom, do_slice):
             if add_si:
                 gr_si.Draw("PSAME")
             gr_tr.Draw("PSAME")
-        legend.Draw()
+            legend.Draw()
 
-        outfile_name = "Eff_Telescope{0}_ROC{1}".format(telescope, i_roc)
+        outfile_name = "Eff_Telescope{0}_{1}_{2}".format(telescope, di_rocs[i_roc], "all")
         if do_slice:
             outfile_name += "_sliced"
         c.Print(outfile_name + ".png")
-        # End loop over ROCs
 
 # End of Make Plots
 
-make_plots(add_si=True, do_zoom=False, do_slice=False)
-make_plots(add_si=False, do_zoom=False, do_slice=True)
+make_plots(add_si=False, do_zoom=False, do_slice=False)
+#make_plots(add_si=False, do_zoom=True, do_slice=True)

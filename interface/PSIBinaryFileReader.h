@@ -6,6 +6,7 @@
 
 #include "PLTTelescope.h"
 #include "PLTGainCal.h"
+#include "PSIGainInterpolator.h"
 #include "PLTAlignment.h"
 #include "PLTTracking.h"
 
@@ -13,11 +14,12 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
 {
   public:
     PSIBinaryFileReader (std::string const);
-    PSIBinaryFileReader (std::string const, std::string const);
+    PSIBinaryFileReader (std::string const, std::string const, std::string const);
     ~PSIBinaryFileReader ();
 
     std::string fBinaryFileName;
     bool OpenFile ();
+    void ResetFile ();
     void Clear ();
 
     void ReadPixelMask (std::string const);
@@ -47,6 +49,11 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
       return &fGainCal;
     }
 
+    PLTAlignment* GetAlignment()
+    {
+      return &fAlignment;
+    }
+
     const std::set<int> * GetPixelMask(){
       return &fPixelMask;
     }
@@ -71,12 +78,14 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     std::vector<PLTHit*> fHits;
 
     PLTGainCal fGainCal;
+    PSIGainInterpolator fGainInterpolator;
     PLTAlignment fAlignment;
 
     std::map<int, PLTPlane> fPlaneMap;
 
     std::string fBaseCalDir;
     std::string fCalibrationFile[6];
+    std::string fRawCalibrationFile[6];
 
 };
 
