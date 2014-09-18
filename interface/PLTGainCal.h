@@ -70,7 +70,7 @@ class PLTGainCal
     static int const NCHNS =   MAXCHNS;
     static int const NROWS =  PLTU::NROW;
     static int const NCOLS =  PLTU::NCOL;
-    static int const NROCS =   6;
+    static int const NROCS =   4;
 
     static int const IROWMIN = PLTU::FIRSTCOL;
     static int const IROWMAX = PLTU::LASTCOL;

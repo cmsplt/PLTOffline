@@ -1,4 +1,4 @@
-Calibrations
+../Calibrations
 Telescope_Si0_DiaB_DiaD_DiaS108_Si4_Si1_20140601_2136/phCalibration_C0.dat.fit.dat
 Telescope_Si0_DiaB_DiaD_DiaS108_Si4_Si1_20140601_2136/phCalibration_C7.dat.fit.dat
 Telescope_Si0_DiaB_DiaD_DiaS108_Si4_Si1_20140601_2136/phCalibration_C9.dat.fit.dat
