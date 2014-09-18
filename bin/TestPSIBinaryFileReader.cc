@@ -143,7 +143,7 @@ std::string GetMaskingFilename(int telescopeID){
   if (telescopeID == 1)
     return "outerPixelMask_Telescope1.txt";
   else if (telescopeID == 2)
-    return "outerPixelMask_Telescope2.txt"
+    return "outerPixelMask_Telescope2.txt";
   else if (telescopeID == 5)
     return "outerPixelMask_Telescope5.txt";
   else{
