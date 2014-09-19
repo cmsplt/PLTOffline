@@ -62,7 +62,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
   private:
     int fHeader;
     int fNextHeader;
-    static int const NMAXROCS = 6;
+    static int const NMAXROCS = 4;
     static int const MAXNDATA = 2000;
     int fBuffer[MAXNDATA];
     int fBufferSize;
@@ -84,8 +84,8 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     std::map<int, PLTPlane> fPlaneMap;
 
     std::string fBaseCalDir;
-    std::string fCalibrationFile[6];
-    std::string fRawCalibrationFile[6];
+    std::string fCalibrationFile[4];
+    std::string fRawCalibrationFile[4];
 
 };
 

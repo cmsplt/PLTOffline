@@ -1274,15 +1274,17 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   //              hot_pixels,
   //              telescopeID);
 
-  int n_events = TestPlaneEfficiencySilicon(InFileName,
-                                            out_f,
-                                            RunNumber,
-                                            hot_pixels,
-                                            telescopeID);
 
   // For Telescopes from May testbeam:
   //   Do single plane studies
   if ((telescopeID == 1) || (telescopeID == 2)){
+
+    int n_events = TestPlaneEfficiencySilicon(InFileName,
+					      out_f,
+					      RunNumber,
+					      hot_pixels,
+					      telescopeID);
+    
     for (int iplane=1; iplane != 5; iplane++){
       std::cout << "Going to call TestPlaneEfficiency " << iplane << std::endl;
 

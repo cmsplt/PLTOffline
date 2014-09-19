@@ -645,6 +645,18 @@ void PLTAlignment::SetErrors(int telescopeID, bool initial){
       SetErrorY( 4, 0.00310896);
       SetErrorY( 5, 0.0104977);
     }
+    else if (telescopeID == 5){
+      SetErrorX( 0, 0.01);
+      SetErrorX( 1, 0.01);
+      SetErrorX( 2, 0.01);
+      SetErrorX( 3, 0.01);
+
+      SetErrorY( 0, 0.01);
+      SetErrorY( 1, 0.01);
+      SetErrorY( 2, 0.01);
+      SetErrorY( 3, 0.01);
+
+    }
     else{
       std::cout << "ERROR: No Errors defined for telescopeID==" << telescopeID << std::endl;
       std::cout << "Exiting.." << std::endl;

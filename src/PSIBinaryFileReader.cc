@@ -49,28 +49,28 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
   fCL >> fCalibrationFile[1];
   fCL >> fCalibrationFile[2];
   fCL >> fCalibrationFile[3];
-  fCL >> fCalibrationFile[4];
-  fCL >> fCalibrationFile[5];
+//  fCL >> fCalibrationFile[4];
+//  fCL >> fCalibrationFile[5];
   fCL >> fRawCalibrationFile[0];
   fCL >> fRawCalibrationFile[1];
   fCL >> fRawCalibrationFile[2];
   fCL >> fRawCalibrationFile[3];
-  fCL >> fRawCalibrationFile[4];
-  fCL >> fRawCalibrationFile[5];
+//  fCL >> fRawCalibrationFile[4];
+//  fCL >> fRawCalibrationFile[5];
 
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[0]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[1]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[2]);
   fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[3]);
-  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
-  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
+//  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[4]);
+//  fGainCal.ReadGainCalFile(fBaseCalDir + "/" + fCalibrationFile[5]);
 
   fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[0], 0);
   fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[1], 1);
   fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[2], 2);
   fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[3], 3);
-  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[4], 4);
-  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[5], 5);
+//  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[4], 4);
+//  fGainInterpolator.ReadFile(fBaseCalDir + "/" + fRawCalibrationFile[5], 5);
 
   fAlignment.ReadAlignmentFile(AlignmentFileName);
   SetTrackingAlignment(&fAlignment);
@@ -288,7 +288,8 @@ int PSIBinaryFileReader::GetNextEvent ()
   Clear();
 
   // Simple cheat to always have 6 planes
-  for (int i = 0; i != 6; ++i) {
+  // (well, 4 for now)
+  for (int i = 0; i != 4; ++i) {
     fPlaneMap[i].SetROC(i);;
   }
 
