@@ -1,4 +1,4 @@
-Calibrations
+../Calibrations
 Telescope_PadTest_17092014_1706/phCalibration_C0.dat.fit.dat
 Telescope_PadTest_17092014_1706/phCalibration_C1.dat.fit.dat
 Telescope_PadTest_17092014_1706/phCalibration_C2.dat.fit.dat
