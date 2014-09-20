@@ -61,6 +61,8 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
       return &fPixelMask;
     }
 
+    long long GetTime () {return fTime;}
+
 
   private:
     int fHeader;

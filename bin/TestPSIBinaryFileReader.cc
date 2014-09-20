@@ -22,6 +22,7 @@
 #include "TH3F.h"
 #include "TProfile2D.h"
 #include "TParameter.h"
+#include "TTree.h"
 
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
@@ -1606,6 +1607,15 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   int const StartTime = 0;
   int ThisTime;
 
+  // tree for timing information
+  TTree *time_tree = new TTree("time_tree", "time_tree");
+  
+  long long br_time;
+  int br_ievent;
+
+  time_tree->Branch("time", &br_time);
+  time_tree->Branch("ievent", &br_ievent);
+  
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
@@ -1615,6 +1625,10 @@ int TestPSIBinaryFileReader (std::string const InFileName,
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
+
+    br_time = BFR.GetTime();
+    br_ievent = ievent;
+    time_tree->Fill();
 
     hCoincidenceMap.Fill(BFR.HitPlaneBits());
 
@@ -1785,6 +1799,8 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
 
   } // End of Event Loop
+
+  time_tree->Write();
 
 
   // Catch up on PH by time graph
