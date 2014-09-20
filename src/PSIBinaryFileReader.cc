@@ -13,7 +13,10 @@
 #include "TLine.h"
 
 
-PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName)
+
+
+PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName, 
+					  int const nmaxrocs) : NMAXROCS(nmaxrocs)
 {
   // constructor
   fEOF = 0;
@@ -22,12 +25,23 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName)
     std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
     throw;
   }
+
+  // Initialize fLevelsROC with zeros
+  for (int i_roc=0; i_roc != NMAXROCS; i_roc++){    
+    std::vector<float> tmp;
+    for (int i_lev=0; i_lev != 6; i_lev++){
+      tmp.push_back(0.);
+    }
+    fLevelsROC.push_back(tmp);    
+  }
+
 }
 
 
 PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
                                           std::string const CalibrationList,
-                                          std::string const AlignmentFileName)
+                                          std::string const AlignmentFileName,
+					  int const nmaxrocs) : NMAXROCS(nmaxrocs)
 {
   // constructor
   fEOF = 0;
@@ -35,6 +49,16 @@ PSIBinaryFileReader::PSIBinaryFileReader (std::string const InFileName,
   if (!OpenFile()) {
     std::cerr << "ERROR: cannot open input file: " << InFileName << std::endl;
     throw;
+  }
+
+
+  // Initialize fLevelsROC with zeros
+  for (int i_roc=0; i_roc != NMAXROCS; i_roc++){    
+    std::vector<float> tmp;
+    for (int i_lev=0; i_lev != 6; i_lev++){
+      tmp.push_back(0.);
+    }
+    fLevelsROC.push_back(tmp);    
   }
 
 

@@ -411,7 +411,7 @@ int FindHotPixels (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
@@ -560,7 +560,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
   BFR.SetPlaneUnderTest(plane_under_test);
 
@@ -1174,7 +1174,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
@@ -1307,7 +1307,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
@@ -2135,7 +2135,7 @@ int DoAlignment (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID, true));
+                          GetAlignmentFilename(telescopeID, true), 4);
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   // Apply Masking
@@ -2478,7 +2478,7 @@ int FindResiduals(std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   FILE* f = fopen("MyGainCal.dat", "w");
