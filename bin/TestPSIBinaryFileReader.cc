@@ -2072,8 +2072,10 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
   TCanvas Can2("CoincidenceMap", "CoincidenceMap", 1200, 400);
   Can2.cd();
+  Can2.SetLogy(1);
   hCoincidenceMap.Draw("");
   Can2.SaveAs(OutDir+"Occupancy_Coincidence.gif");
+  Can2.SetLogy(0);
 
   Can.cd();
   hTrackSlopeX.Draw("hist");
@@ -2970,8 +2972,8 @@ int main (int argc, char* argv[])
 
   std::string const InFileName = argv[1];
   TString const FullRunName = InFileName;
-  Int_t const Index = FullRunName.Index("bt05r",0);
-  TString const RunNumber = FullRunName(Index+5,6);
+  Int_t const Index = FullRunName.Index("bt2014_09r",0);
+  TString const RunNumber = FullRunName(Index+10,6);
   gSystem->mkdir("./plots/" + RunNumber);
 
   // 0: Analysis
