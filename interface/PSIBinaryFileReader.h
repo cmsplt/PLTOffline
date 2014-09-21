@@ -13,8 +13,11 @@
 class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
 {
   public:
-    PSIBinaryFileReader (std::string const);
-    PSIBinaryFileReader (std::string const, std::string const, std::string const);
+    PSIBinaryFileReader (std::string const, int const );
+    PSIBinaryFileReader (std::string const, 
+			 std::string const, 
+			 std::string const,
+			 int const );
     ~PSIBinaryFileReader ();
 
     std::string fBinaryFileName;
@@ -58,11 +61,13 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
       return &fPixelMask;
     }
 
+    long long GetTime () {return fTime;}
+
 
   private:
     int fHeader;
     int fNextHeader;
-    static int const NMAXROCS = 4;
+    const int  NMAXROCS;
     static int const MAXNDATA = 2000;
     int fBuffer[MAXNDATA];
     int fBufferSize;
@@ -73,7 +78,7 @@ class PSIBinaryFileReader : public PLTTelescope, public PLTTracking
     long long fTime;
     int fData[MAXNDATA];
     static int const UBLevel = -680;
-    float fLevelsROC[NMAXROCS][6];
+    std::vector< std::vector< float > > fLevelsROC;
     std::set<int> fPixelMask;
     std::vector<PLTHit*> fHits;
 

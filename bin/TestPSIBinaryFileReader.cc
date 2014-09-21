@@ -22,6 +22,7 @@
 #include "TH3F.h"
 #include "TProfile2D.h"
 #include "TParameter.h"
+#include "TTree.h"
 
 #include "PSIBinaryFileReader.h"
 #include "PLTPlane.h"
@@ -411,7 +412,7 @@ int FindHotPixels (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
@@ -560,7 +561,7 @@ void TestPlaneEfficiency (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
   BFR.SetPlaneUnderTest(plane_under_test);
 
@@ -1174,7 +1175,7 @@ int TestPlaneEfficiencySilicon (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
 
   // Apply Masking
@@ -1307,7 +1308,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID);
   FILE* f = fopen("MyGainCal.dat", "w");
   BFR.GetGainCal()->PrintGainCal(f);
@@ -1606,6 +1607,15 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   int const StartTime = 0;
   int ThisTime;
 
+  // tree for timing information
+  TTree *time_tree = new TTree("time_tree", "time_tree");
+  
+  long long br_time;
+  int br_ievent;
+
+  time_tree->Branch("time", &br_time);
+  time_tree->Branch("ievent", &br_ievent);
+  
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
@@ -1615,6 +1625,10 @@ int TestPSIBinaryFileReader (std::string const InFileName,
     if (ievent % 10000 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
+
+    br_time = BFR.GetTime();
+    br_ievent = ievent;
+    time_tree->Fill();
 
     hCoincidenceMap.Fill(BFR.HitPlaneBits());
 
@@ -1785,6 +1799,8 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
 
   } // End of Event Loop
+
+  time_tree->Write();
 
 
   // Catch up on PH by time graph
@@ -2137,7 +2153,7 @@ int DoAlignment (std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID, true));
+                          GetAlignmentFilename(telescopeID, true), 4);
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   // Apply Masking
@@ -2480,7 +2496,7 @@ int FindResiduals(std::string const InFileName,
   // Initialize Reader
   PSIBinaryFileReader BFR(InFileName,
                           GetCalibrationFilename(telescopeID),
-                          GetAlignmentFilename(telescopeID));
+                          GetAlignmentFilename(telescopeID), 4);
   BFR.GetAlignment()->SetErrors(telescopeID, true);
 
   FILE* f = fopen("MyGainCal.dat", "w");
