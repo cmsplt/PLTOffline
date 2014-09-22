@@ -29,8 +29,21 @@ ROOT.gROOT.ForceStyle()
 # Configuration
 ###############################
 
-run = 12
+run = 16
+do_test    = True
 find_align = False
+plot_drift = True
+
+di_offsets = {6:  0.0003045,
+              12:-0.00030472,
+              16:-0.000167307,
+}
+
+di_slopes = {6:  2.155918e-06,
+             12: 1.95599961e-06,
+             16: 1.821545e-06,
+}
+
 
 # Branchnames:
 # Event Numbers
@@ -45,32 +58,29 @@ try:
 except:
     pass
 
+if do_test:
+    test_string = "_test"
+else:
+    test_string = ""
+
+
 ###############################
 # Helper Function
 # pixel_to_pad_time
 ###############################
-
-di_offsets = {6: 0.0003045,
-              12:-0.00030472}
-
-
-di_slopes = {6: (10.0958e-07 + 1.7608e-06-6.14462e-07),
-             12: +2.62498e-06-9.95939e-09-6.59021e-07}
 
 def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
     
     # How many ticks have passed since first pixel time-stamp
     delta_pixel = pixel_now - pixel_0
 
-    # Convert ticks to seconds (1 tick ~ 25 ns)
-    
-
+    # Convert ticks to seconds (1 tick ~ 25 ns)            
     delta_second = delta_pixel * 25e-9 + di_offsets[run]
 
     # Add time difference (in seconds) to initial pad time
     return pad_0 + delta_second +  di_slopes[run] * (pad_now - pad_0)
 
-# End of pixel-to-pad conversion
+# End of pixel-to-pad time conversion
 
 
 ###############################
@@ -79,8 +89,6 @@ def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
 
 basedir_pad = "../../drs4_data/"
 basedir_pixel = "../plots/"
-
-
 
 if run < 10:
     format_pad = "{0}run_2014_09r00000{1}.root"
@@ -183,10 +191,12 @@ if find_align:
 
                 best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
                 h.Fill(best_match[1])
-                i_pixel = best_match[0]
-                #print i_pixel, i_pad
 
-
+                # Set the starting-value for the next iteration 
+                # Our basis assumption is no-missing event
+                i_pixel = best_match[0] + 1
+            # End of loop over pad events
+            
             h.Draw()
             c.Print("run_{0}/ipad_{1}_ipixel_{2}.pdf".format(run, i_align_pad, i_align_pixel))
 
@@ -194,64 +204,96 @@ if find_align:
             print h.GetMean(), h.GetRMS()
         
 
+###############################
+# Look at time drift
+###############################
+
+if plot_drift:
+
+    if do_test:
+        print "Doing Test - restricting to max 20k events"
+        max_events = min(20000, tree_pad.GetEntries()-1)
+
+        # Update final-times for test analysis
+        tree_pad.GetEntry(max_events)
+        tree_pixel.GetEntry(max_events)        
+        final_t_pad = getattr(tree_pad, br_t_pad)
+        final_t_pixel = getattr(tree_pixel, br_t_pixel)
+
+    else:
+        max_events = tree_pad.GetEntries()-1
 
 
-h = ROOT.TH1D("","",500, -0.007, 0.007)
-h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
 
+    if do_test:
+        h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
+    else:
+        h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
 
+    h = ROOT.TH1D("","",500, -0.007, 0.007)
+    h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
 
-h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
+    tree_pad.GetEntry(0)
+    tree_pixel.GetEntry(0)
 
-tree_pixel.GetEntry(0)
-tree_pad.GetEntry(0)
+    initial_t_pad = getattr(tree_pad, br_t_pad)
+    initial_t_pixel = getattr(tree_pixel, br_t_pixel)
+        
+    i_pixel = 20
+
+    for i_pad in xrange(20,max_events):
+
+        if i_pad % 1000 == 0:
+            print "{0} / {1}".format(i_pad, max_events)
+
+        tree_pad.GetEntry(i_pad)
+        time_pad = getattr(tree_pad, br_t_pad)
+
     
-initial_t_pad = getattr(tree_pad, br_t_pad)
-initial_t_pixel = getattr(tree_pixel, br_t_pixel)
+        delta_ts = []
+        for i_pixel_test in range(i_pixel-6, i_pixel+6):        
 
-i_pixel = 20
+            if i_pixel_test < 0:
+                continue
 
-for i_pad in xrange(tree_pad.GetEntries()):
+            tree_pixel.GetEntry(i_pixel_test)        
+            time_pixel = getattr(tree_pixel, br_t_pixel)
 
-    if i_pad % 1000 == 0:
-        print i_pad
+            #print "\t\t", i_pixel_test, time_pixel
 
-    tree_pad.GetEntry(i_pad)
-    time_pad = getattr(tree_pad, br_t_pad)
+            delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
+                                                              initial_t_pixel, 
+                                                              time_pad, 
+                                                              initial_t_pad) - time_pad])
 
-    #print time_pad
+        best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
+        #print i_pad, time_pad, best_match, delta_ts
+        
+        h_delta_n.Fill(best_match[0]-i_pixel+1)
 
-    delta_ts = []
-    for i_pixel_test in range(i_pixel-6, i_pixel+6):        
+        # Set the starting-value for the next iteration 
+        # Our basis assumption is no-missing event
+        i_pixel = best_match[0] 
 
-        tree_pixel.GetEntry(i_pixel_test)        
-        time_pixel = getattr(tree_pixel, br_t_pixel)
-
-        delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
-                                                          initial_t_pixel, 
-                                                          time_pad, 
-                                                          initial_t_pad) - time_pad])
-
-    best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
-
-    h_delta_n.Fill(best_match[0]-i_pixel+1)
-
-    i_pixel = best_match[0]
-    
-    h.Fill(best_match[1])
-    h2.Fill(time_pad-initial_t_pad, best_match[1])
+        h.Fill(best_match[1])
+        h2.Fill(time_pad-initial_t_pad, best_match[1])
+    # End of loop over pad events
 
 
+    h2.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
+    h2.GetYaxis().SetTitle("Events")
+    h.Draw()
+    c.Print("run_{0}/residual{1}.png".format(run, test_string))
 
-h.Draw()
-c.Print("run_{0}/residual.png".format(run))
+    fun = ROOT.TF1("fun", "[0]+[1]*x")
+    h2.Fit(fun,"","")
+    h2.GetXaxis().SetTitle("t_{pad} [s]")
+    h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
+    h2.Draw()
+    c.Print("run_{0}/time{1}.png".format(run, test_string))
 
-fun = ROOT.TF1("fun", "[0]+[1]*x")
-h2.Fit(fun,"","")
-h2.Draw()
-c.Print("run_{0}/time.png".format(run))
-
-h_delta_n.Draw()
-c.Print("run_{0}/delta_n.png".format(run))
-
+    c.SetLogy(1)
+    h_delta_n.Draw()
+    c.Print("run_{0}/delta_n{1}.png".format(run, test_string))
+    c.SetLogy(0)
 
