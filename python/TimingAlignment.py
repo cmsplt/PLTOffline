@@ -20,8 +20,9 @@ import ROOT
 
 c = ROOT.TCanvas("","",800,800)
 
-ROOT.gStyle.SetPadLeftMargin(0.15)
-ROOT.gStyle.SetPadBottomMargin(0.15)
+ROOT.gStyle.SetPadLeftMargin(0.2)
+ROOT.gStyle.SetPadRightMargin(0.2)
+ROOT.gStyle.SetPadBottomMargin(0.2)
 ROOT.gROOT.ForceStyle()
 
 
@@ -29,19 +30,21 @@ ROOT.gROOT.ForceStyle()
 # Configuration
 ###############################
 
-run = 16
-do_test    = True
+run = 38
+do_test    = False
 find_align = False
 plot_drift = True
 
 di_offsets = {6:  0.0003045,
               12:-0.00030472,
-              16:-0.000167307,
+              16: 0, #+0.002,
+              38: 0.000524543,
 }
 
 di_slopes = {6:  2.155918e-06,
              12: 1.95599961e-06,
-             16: 1.821545e-06,
+             16: 0, #1.821545e-06,
+             38: 1.9e-06,
 }
 
 
@@ -52,6 +55,10 @@ br_n_pixel = "ievent"
 # Time
 br_t_pad = "time_stamp" # [Unix Time]
 br_t_pixel = "time"     # clock-ticks (25 ns spacing)
+# Hit plane bits (pixel only)
+br_hit_plane_bits_pixel = "hit_plane_bits"
+# Calibration flag (pad only)
+br_calib_flag_pad = "calibflag"
 
 try:
     os.mkdir("run_{0}".format(run))
@@ -156,11 +163,11 @@ print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
 ###############################
 
 if find_align:
-    for i_align_pixel in range(6):
+    for i_align_pixel in range(0,10):
 
         tree_pixel.GetEntry(i_align_pixel)
 
-        for i_align_pad in range(6):
+        for i_align_pad in range(0,10):
 
             tree_pad.GetEntry(i_align_pad)
 
@@ -169,16 +176,19 @@ if find_align:
 
             h = ROOT.TH1F("", "", 100, -0.005, 0.005)
 
-            i_pixel = 20
+            i_pixel = 0
 
-            for i_pad in xrange(20, 1000):
-
+            for i_pad in xrange(0, 1000):
+                
                 tree_pad.GetEntry(i_pad)
                 time_pad = getattr(tree_pad, br_t_pad)
 
                 delta_ts = []
 
                 for i_pixel_test in range(i_pixel+1-10, i_pixel+1+10):        
+
+                    if i_pixel_test < 0:
+                        continue
 
                     tree_pixel.GetEntry(i_pixel_test)        
                     time_pixel = getattr(tree_pixel, br_t_pixel)
@@ -208,11 +218,14 @@ if find_align:
 # Look at time drift
 ###############################
 
+align_event_pad = 0
+align_event_pixel = 4
+
 if plot_drift:
 
     if do_test:
         print "Doing Test - restricting to max 20k events"
-        max_events = min(20000, tree_pad.GetEntries()-1)
+        max_events = min(15000, tree_pad.GetEntries()-1)
 
         # Update final-times for test analysis
         tree_pad.GetEntry(max_events)
@@ -232,9 +245,10 @@ if plot_drift:
 
     h = ROOT.TH1D("","",500, -0.007, 0.007)
     h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
+    h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
 
-    tree_pad.GetEntry(0)
-    tree_pixel.GetEntry(0)
+    tree_pad.GetEntry(align_event_pad)
+    tree_pixel.GetEntry(align_event_pixel)
 
     initial_t_pad = getattr(tree_pad, br_t_pad)
     initial_t_pixel = getattr(tree_pixel, br_t_pixel)
@@ -266,19 +280,26 @@ if plot_drift:
                                                               time_pad, 
                                                               initial_t_pad) - time_pad])
 
+
         best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
-        #print i_pad, time_pad, best_match, delta_ts
-        
-        h_delta_n.Fill(best_match[0]-i_pixel+1)
 
-        # Set the starting-value for the next iteration 
-        # Our basis assumption is no-missing event
         i_pixel = best_match[0] 
+        tree_pixel.GetEntry(i_pixel)        
 
+        hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
+        calib_flag = getattr(tree_pad, br_calib_flag_pad)
+
+        h_calib_events.Fill(hit_plane_bits, calib_flag)
+        h_delta_n.Fill(best_match[0]-i_pixel+1)
         h.Fill(best_match[1])
         h2.Fill(time_pad-initial_t_pad, best_match[1])
-    # End of loop over pad events
 
+        #print i_pad, time_pad, best_match, delta_ts
+        #print best_match, delta_ts
+        #print hit_plane_bits, calib_flag        
+
+
+    # End of loop over pad events
 
     h2.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
     h2.GetYaxis().SetTitle("Events")
@@ -297,3 +318,10 @@ if plot_drift:
     c.Print("run_{0}/delta_n{1}.png".format(run, test_string))
     c.SetLogy(0)
 
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(1)
+    h_calib_events.GetXaxis().SetTitle("Pixel Plane Hit Bit")
+    h_calib_events.GetYaxis().SetTitle("Pad Calib. Flag.")
+    h_calib_events.Draw("COLZTEXT")
+    c.Print("run_{0}/calib_events{1}.png".format(run, test_string))

@@ -1612,9 +1612,11 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   
   long long br_time;
   int br_ievent;
+  int br_hit_plane_bits;
 
   time_tree->Branch("time", &br_time);
   time_tree->Branch("ievent", &br_ievent);
+  time_tree->Branch("hit_plane_bits", &br_hit_plane_bits);
   
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -1628,6 +1630,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
     br_time = BFR.GetTime();
     br_ievent = ievent;
+    br_hit_plane_bits = BFR.HitPlaneBits();
     time_tree->Fill();
 
     hCoincidenceMap.Fill(BFR.HitPlaneBits());
