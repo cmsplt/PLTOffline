@@ -10,6 +10,8 @@ Study timing between pixel and pad detectors.
 
 import os
 import sys
+import array
+import random
 
 import ROOT
 
@@ -33,7 +35,9 @@ c = ROOT.TCanvas("","",800,800)
 
 run = 70
 find_align = False
-do_test = False
+do_test = True
+
+campgain = "bt2014_09"
 
 di_offsets = {6:  0.0003045,
               12:-0.00030472,
@@ -64,27 +68,68 @@ di_align_pixel = {6: 0,
                   70: 6,
 }
 
-# Branchnames:
+if do_test:
+    test_string = "_test"
+else:
+    test_string = ""
+
+
+###############################
+# Prepare Input
+###############################
+
+# Input branch-names:
 # Event Numbers
 br_n_pad = "n"
 br_n_pixel = "ievent"
+
 # Time
 br_t_pad = "time_stamp" # [Unix Time]
 br_t_pixel = "time"     # clock-ticks (25 ns spacing)
+
 # Hit plane bits (pixel only)
 br_hit_plane_bits_pixel = "hit_plane_bits"
+
 # Calibration flag (pad only)
 br_calib_flag_pad = "calibflag"
+
+
+###############################
+# Prepare Output
+###############################
 
 try:
     os.mkdir("run_{0}".format(run))
 except:
     pass
 
-if do_test:
-    test_string = "_test"
-else:
-    test_string = ""
+# Output ROOT File
+filename_out = "run_{0}/track_info{1}.root".format(run, test_string)
+f_out = ROOT.TFile(filename_out, "recreate")
+
+# Output Tree
+tree_out = ROOT.TTree("track_info", "track_info")
+
+# Output branches
+out_branches = {}
+
+# Event Number (from pad)
+out_branches["n"] = array.array( 'i', [ 0 ] ) 
+tree_out.Branch( 'n', out_branches["n"], 'n/I' )
+
+# Did we accept this event in the pixel+timing analysis
+# Possible reasons for rejection:
+#   - could not find event in the pixel stream
+#   - event found in the pixel stream but time difference too large
+#   - event matched but no track from pixels
+out_branches["accepted"] = array.array( 'i', [ 0 ] )
+tree_out.Branch( 'accepted', out_branches["accepted"], 'accepted/I' )
+
+# Track interesect with pad (need to decide on unit and coordinates)
+out_branches["track_x"] = array.array( 'f', [ 0. ] ) 
+out_branches["track_y"] = array.array( 'f', [ 0. ] )
+tree_out.Branch( 'track_x', out_branches["track_x"], 'track_x/F' )
+tree_out.Branch( 'track_y', out_branches["track_y"], 'track_y/F' )
 
 
 ###############################
@@ -280,9 +325,9 @@ tree_pixel.GetEntry(align_event_pixel)
 initial_t_pad = getattr(tree_pad, br_t_pad)
 initial_t_pixel = getattr(tree_pixel, br_t_pixel)
 
-i_pixel = 20
+i_pixel = 0
 
-for i_pad in xrange(20,max_events):
+for i_pad in xrange(max_events):
 
     if i_pad % 1000 == 0:
         print "{0} / {1}".format(i_pad, max_events)
@@ -314,15 +359,29 @@ for i_pad in xrange(20,max_events):
     h.Fill(best_match[1])
     h2.Fill(time_pad-initial_t_pad, best_match[1])
 
-    # Look at calibration flags if we are happy with the timing
+    # Check if we are happy with the timing
     # (residual below 1 ms)
     if abs(best_match[1]) < 0.001:
         hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
         calib_flag = getattr(tree_pad, br_calib_flag_pad)
         h_calib_events.Fill(hit_plane_bits, calib_flag)
-    # done filling calibration histogram
-        
+
+        out_branches["n"][0] = getattr(tree_pad, br_n_pad)
+        out_branches["accepted"][0] = 1
+        out_branches["track_x"][0] = random.uniform(-1., 1.)
+        out_branches["track_y"][0] = random.uniform(-1., 1.)
+    else:
+        out_branches["n"][0] = getattr(tree_pad, br_n_pad)
+        out_branches["accepted"][0] = 0        
+        out_branches["track_x"][0] = -9999.
+        out_branches["track_y"][0] = -9999.
+    # done filling tree and calibration histogram
+
+    tree_out.Fill()            
 # End of loop over pad events
+
+f_out.Write()
+
 
 h2.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
 h2.GetYaxis().SetTitle("Events")
