@@ -18,19 +18,20 @@ import ROOT
 # Init ROOT
 ###############################
 
-c = ROOT.TCanvas("","",800,800)
-
-ROOT.gStyle.SetPadLeftMargin(0.2)
-ROOT.gStyle.SetPadRightMargin(0.2)
-ROOT.gStyle.SetPadBottomMargin(0.2)
+ROOT.gStyle.SetPadLeftMargin(0.15)
+ROOT.gStyle.SetPadRightMargin(0.14)
+ROOT.gStyle.SetPadBottomMargin(0.12)
+ROOT.gStyle.SetPadTopMargin(0.05)
 ROOT.gROOT.ForceStyle()
+
+c = ROOT.TCanvas("","",800,800)
 
 
 ###############################
 # Configuration
 ###############################
 
-run = 38
+run = 68
 do_test    = False
 find_align = False
 plot_drift = True
@@ -39,12 +40,35 @@ di_offsets = {6:  0.0003045,
               12:-0.00030472,
               16: 0, #+0.002,
               38: 0.000524543,
+              63: -0.000309106,
+              65: -0.000309106+0.000652562,
+              68: -0.0003-0.000552844,
 }
 
 di_slopes = {6:  2.155918e-06,
              12: 1.95599961e-06,
              16: 0, #1.821545e-06,
              38: 1.9e-06,
+             63: 1.8373896e-06,
+             65: 1.8640495999999998e-06,
+             68: 1.86405e-06+1.62769e-07,
+}
+
+di_align_pixel = {6: 0,
+                  12: 0, 
+                  16: 0,
+                  38: 4,
+                  63: 0,
+                  68: 6,
+}
+
+di_align_pad = {6: 0,
+                12: 0, 
+                16: 0,
+                38: 0,
+                63: 0,
+                65: 0,
+                68: 0,
 }
 
 
@@ -212,20 +236,21 @@ if find_align:
 
             print "Pad Event: {0}  Pixel Event:{1}".format(i_align_pad, i_align_pixel)
             print h.GetMean(), h.GetRMS()
-        
+
+    sys.exit()
 
 ###############################
 # Look at time drift
 ###############################
 
-align_event_pad = 0
-align_event_pixel = 4
+align_event_pad = di_align_pad[run]
+align_event_pixel = di_align_pixel[run]
 
 if plot_drift:
 
     if do_test:
-        print "Doing Test - restricting to max 20k events"
-        max_events = min(15000, tree_pad.GetEntries()-1)
+        print "Doing Test - restricting events"
+        max_events = min(25000, tree_pad.GetEntries()-1)
 
         # Update final-times for test analysis
         tree_pad.GetEntry(max_events)
@@ -235,7 +260,6 @@ if plot_drift:
 
     else:
         max_events = tree_pad.GetEntries()-1
-
 
 
     if do_test:
@@ -308,6 +332,7 @@ if plot_drift:
 
     fun = ROOT.TF1("fun", "[0]+[1]*x")
     h2.Fit(fun,"","")
+    h2.GetYaxis().SetTitleOffset(1.8)
     h2.GetXaxis().SetTitle("t_{pad} [s]")
     h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
     h2.Draw()
@@ -322,6 +347,7 @@ if plot_drift:
     ROOT.gStyle.SetOptStat(0)
     c.SetLogz(1)
     h_calib_events.GetXaxis().SetTitle("Pixel Plane Hit Bit")
-    h_calib_events.GetYaxis().SetTitle("Pad Calib. Flag.")
+    h_calib_events.GetYaxis().SetTitle("Pad Calibration Flag")
+    h_calib_events.GetYaxis().SetTitleOffset(1.5)
     h_calib_events.Draw("COLZTEXT")
     c.Print("run_{0}/calib_events{1}.png".format(run, test_string))
