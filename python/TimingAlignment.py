@@ -114,8 +114,8 @@ tree_out = ROOT.TTree("track_info", "track_info")
 out_branches = {}
 
 # Event Number (from pad)
-out_branches["n"] = array.array( 'i', [ 0 ] ) 
-tree_out.Branch( 'n', out_branches["n"], 'n/I' )
+out_branches["n_pad"] = array.array( 'i', [ 0 ] ) 
+tree_out.Branch( 'n_pad', out_branches["n_pad"], 'n_pad/I' )
 
 # Did we accept this event in the pixel+timing analysis
 # Possible reasons for rejection:
@@ -366,12 +366,12 @@ for i_pad in xrange(max_events):
         calib_flag = getattr(tree_pad, br_calib_flag_pad)
         h_calib_events.Fill(hit_plane_bits, calib_flag)
 
-        out_branches["n"][0] = getattr(tree_pad, br_n_pad)
+        out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
         out_branches["accepted"][0] = 1
         out_branches["track_x"][0] = random.uniform(-1., 1.)
         out_branches["track_y"][0] = random.uniform(-1., 1.)
     else:
-        out_branches["n"][0] = getattr(tree_pad, br_n_pad)
+        out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
         out_branches["accepted"][0] = 0        
         out_branches["track_x"][0] = -9999.
         out_branches["track_y"][0] = -9999.
