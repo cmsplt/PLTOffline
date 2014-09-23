@@ -1628,6 +1628,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
+    // Write out information for PAD studies
     br_time = BFR.GetTime();
     br_ievent = ievent;
     br_hit_plane_bits = BFR.HitPlaneBits();
@@ -1667,7 +1668,7 @@ int TestPSIBinaryFileReader (std::string const InFileName,
           hPulseHeight[iplane][0]->Fill(Cluster->Charge());
           hPulseHeightLong[iplane][0]->Fill(Cluster->Charge());
 
-					if (Cluster->Charge() > 300000) {
+	  if (Cluster->Charge() > 300000) {
               continue;
           }
           PLTU::AddToRunningAverage(AvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], NAvgPH2D[iplane][Cluster->SeedHit()->Column()][ Cluster->SeedHit()->Row()], Cluster->Charge());
@@ -1719,7 +1720,8 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
     }
 
-    if (BFR.NTracks() == 1 &&
+    if (telescopeID != 5 &&
+	BFR.NTracks() == 1 &&
         BFR.Track(0)->NClusters() == NROC &&
         BFR.Track(0)->Cluster(0)->Charge() < 300000 &&
         BFR.Track(0)->Cluster(1)->Charge() < 300000 &&
@@ -2118,7 +2120,6 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   hChi2Y.Draw("hist");
   Can.SaveAs(OutDir+"Chi2Y.gif");
   gStyle->SetOptStat(0);
-
 
   WriteHTML(PlotsDir + RunNumber,
             GetCalibrationFilename(telescopeID));
@@ -2711,10 +2712,12 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   }
   fCL.close();
 
+  int nplanes = 4;
+
   // LEVELS
   f << "<hr />\n";
   f << "<h2>Levels</h2>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Levels_ROC%i.gif\"><img width=\"150\" src=\"Levels_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
@@ -2723,38 +2726,38 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<hr />\n";
   f << "<h2>Occupancy</h2>" << std::endl;
   f << "<a href=\"Occupancy_Coincidence.gif\"><img width=\"900\" src=\"Occupancy_Coincidence.gif\"></a>\n<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i.gif\"><img width=\"150\" src=\"Occupancy_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_1DZ.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i_Quantile.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_Quantile.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy1DZ_ROC%i_Quantile.gif\"><img width=\"150\" src=\"Occupancy1DZ_ROC%i_Quantile.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
 
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"><img width=\"150\" src=\"Occupancy_ROC%i_3x3Efficiency_1DZ.gif\"></a>\n", i, i);
   }
 
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"NClusters_ROC%i.gif\"><img width=\"150\" src=\"NClusters_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"NHitsPerCluster_ROC%i.gif\"><img width=\"150\" src=\"NHitsPerCluster_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>" << std::endl;
@@ -2762,27 +2765,27 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   // PULSE HEIGHT
   f << "<hr />\n";
   f << "<h2>Pulse Height</h2>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeight_ROC%i.gif\"><img width=\"150\" src=\"PulseHeight_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightLong_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightLong_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightTime_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTime_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightAvg2D_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2D_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"OccupancyLowPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyLowPH_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"OccupancyHighPH_ROC%i.gif\"><img width=\"150\" src=\"OccupancyHighPH_ROC%i.gif\"></a>\n", i, i);
   }
 
@@ -2792,15 +2795,15 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<a href=\"TrackSlopeY.gif\"><img width=\"150\" src=\"TrackSlopeY.gif\"></a>\n";
 
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"OccupancyTrack6_ROC%i.gif\"><img width=\"150\" src=\"OccupancyTrack6_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightTrack6_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightAvg2DTrack6_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightAvg2DTrack6_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
@@ -2809,7 +2812,7 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<h2>Straight Tracks</h2>\n";
 
   f << "<br>\n";
-  for (int i = 0; i != 6; ++i) {
+  for (int i = 0; i != nplanes; ++i) {
     f << Form("<a href=\"PulseHeightOffline_ROC%i.gif\"><img width=\"150\" src=\"PulseHeightOffline_ROC%i.gif\"></a>\n", i, i);
   }
   f << "<br>\n";
@@ -2819,11 +2822,11 @@ void WriteHTML (TString const OutDir, TString const CalFile)
   f << "<h2>Track Residuals</h2>\n";
 
   f << "<br>" << std::endl;
-  for (int i = 0; i != 6; i++)
+  for (int i = 0; i != nplanes; i++)
     f << Form("<a href=\"Residual_ROC%i_X.gif\"><img width=\"150\" src=\"Residual_ROC%i_X.gif\"></a>\n", i, i);
   f << "<br>\n";
 
-  for (int i = 0; i != 6; i++)
+  for (int i = 0; i != nplanes; i++)
     f << Form("<a href=\"Residual_ROC%i_Y.gif\"><img width=\"150\" src=\"Residual_ROC%i_Y.gif\"></a>\n", i, i);
   f << "<br>\n";
 
@@ -2939,7 +2942,7 @@ f << "<br>\n";
 
   f << "<br>" << std::endl;
   for (int irow = 0; irow != 4; irow++){
-    for (int icol = 1; icol != 6; ++icol) {
+    for (int icol = 1; icol != nplanes; ++icol) {
       int i = irow*5+icol;
       f << Form("<a href=\"Tracks_Ev%i.gif\"><img width=\"150\" src=\"Tracks_Ev%i.gif\"></a>\n", i, i);
     }

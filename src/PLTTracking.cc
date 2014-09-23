@@ -65,7 +65,8 @@ int PLTTracking::GetTrackingAlgorithm ()
 
 void PLTTracking::SetAllPlanes(){
 
-  for (int i=0;i!=6;i++){
+  // TODO: make flexible!!!
+  for (int i=0;i!=4;i++) {
     fUsePlanesForTracking[i]=2;
   }
   fDoSinglePlaneEfficiency = false;

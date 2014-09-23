@@ -567,7 +567,8 @@ void PSIBinaryFileReader::DecodeHits ()
   }
   // Otherwise require exactly one hit per plane
   else {
-    if (NClusters() == 6 && HitPlaneBits() == 0x3f) {
+    // 6 AND 3F FOR 6PLANES: TODO -> make dynamic!!!
+    if (NClusters() == 4 && HitPlaneBits() == 0xf) {
       RunTracking( *((PLTTelescope*) this));
     }
   }

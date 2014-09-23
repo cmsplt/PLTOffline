@@ -63,7 +63,7 @@ class PLTTracking
     //  using the hitBit to speed things up.
     // For the planeEfficiency analysis this additional condition is not there and
     //  we check the single hit requirement in the tracking code directly.
-    int fUsePlanesForTracking[6];
+    int fUsePlanesForTracking[4]; // TODO: make flexible!!!
     bool fDoSinglePlaneEfficiency;
 
     static bool const DEBUG = false;
