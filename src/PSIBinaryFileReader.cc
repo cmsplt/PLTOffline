@@ -133,6 +133,7 @@ void PSIBinaryFileReader::ResetFile ()
 
   fInputBinaryFile.clear() ;
   fInputBinaryFile.seekg(0, fInputBinaryFile.beg) ;
+  fEOF = false;
  
 //  sleep(10);
 //

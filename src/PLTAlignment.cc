@@ -122,8 +122,8 @@ void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
 
     fprintf(Out, "\n");
     fprintf(Out, "%2i  -1        %15E      %15E  %15E  %15E  %15E\n", Channel, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ);
-
-    for (int iroc = 0; iroc != 6; ++iroc) {
+    // TODO: make flexible
+    for (int iroc = 0; iroc != 4; ++iroc) {
       std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, iroc);
 
       if (!fConstantMap.count(ChROC)) {

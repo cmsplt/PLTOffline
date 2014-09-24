@@ -127,8 +127,8 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
     else if (telescopeID==2)
       return "ALIGNMENT/Alignment_ETHTelescope_run466.dat";
     else if (telescopeID==5){
-      std::cout << "WARNING: USING INITIAL ALIGNMENT FOR 4-plane scope!" << std::endl;
-      return "ALIGNMENT/Alignment_ETHTelescope_initial_4planes.dat";
+      std::cout << "All good" << std::endl;
+      return "ALIGNMENT/Alignment_ETHTelescope_4planes_run63.dat";
     }
     else{
       std::cout << "ERROR: No Alignment file for telescopeID=" << telescopeID << std::endl;
@@ -447,7 +447,7 @@ int FindHotPixels (std::string const InFileName,
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
 
     // print progress
-    if (ievent % 10000 == 0) {
+    if (ievent % 1 == 0) {
       std::cout << "Processing event: " << ievent << std::endl;
     }
 
@@ -2137,8 +2137,8 @@ int DoAlignment (std::string const InFileName,
   them to NewAlignment.dat
   */
 
-	TString const PlotsDir = "plots/";
-	TString const OutDir = PlotsDir + RunNumber;
+  TString const PlotsDir = "plots/";
+  TString const OutDir = PlotsDir + RunNumber;
 
   gStyle->SetOptStat(0);
 
@@ -2147,7 +2147,7 @@ int DoAlignment (std::string const InFileName,
   std::vector<float> z_align;
   std::vector<float> r_align;
 
-  for (int i=0; i!=6;i++){
+  for (int i=0; i!=GetNumberOfROCS(telescopeID);i++){
     x_align.push_back(0);
     y_align.push_back(0);
     z_align.push_back(0);
@@ -2169,14 +2169,14 @@ int DoAlignment (std::string const InFileName,
   for (int ialign=0; ialign!=2;ialign++){
 
 
-  for (int iroc=1;iroc!=5;iroc++){
+  for (int iroc=1;iroc!=GetNumberOfROCS(telescopeID)-1;iroc++){
     BFR.GetAlignment()->AddToLX( 1, iroc, x_align[iroc] );
     BFR.GetAlignment()->AddToLY( 1, iroc, y_align[iroc] );
     //BFR.GetAlignment()->AddToLR( 1, iroc, r_align[iroc] );
   }
 
 
-  for (int iroc_align = 1; iroc_align != 6; ++iroc_align) {
+  for (int iroc_align = 1; iroc_align != GetNumberOfROCS(telescopeID); ++iroc_align) {
 
     std::cout << "GOING TO ALIGN: " << iroc_align << std::endl;
 
@@ -2192,12 +2192,11 @@ int DoAlignment (std::string const InFileName,
     std::vector< TH2F > hResidualYdX;
 
 
-
     // Reset residual histograms
     hResidual.clear();
     hResidualXdY.clear();
     hResidualYdX.clear();
-    for (int iroc = 0; iroc != 6; ++iroc){
+    for (int iroc = 0; iroc != GetNumberOfROCS(telescopeID); ++iroc){
       hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
                                   Form("Residual_ROC%i",iroc), 200, -.2, .2, 200, -.2, .2));
       hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
@@ -2211,11 +2210,13 @@ int DoAlignment (std::string const InFileName,
 
       if (! (BFR.NTracks()==1))
         continue;
-
+      
       PLTTrack * Track = BFR.Track(0);
 
       if (! BFR.Plane(iroc_align)->NClusters()==1)
         continue;
+
+      //std::cout << "blug" << std::endl;
 
       float max_charge = -1;
       float h_LX = -9999;
@@ -2232,9 +2233,6 @@ int DoAlignment (std::string const InFileName,
           }
       }
 
-      // float h_LX    = BFR.Plane(iroc_align)->Cluster(0)->LX();
-      // float h_LY    = BFR.Plane(iroc_align)->Cluster(0)->LY();
-
       float track_TX = Track->TX(iroc_align);
       float track_TY = Track->TY(iroc_align);
 
@@ -2244,12 +2242,13 @@ int DoAlignment (std::string const InFileName,
       float d_LX =  (track_LX - h_LX);
       float d_LY =  (track_LY - h_LY);
 
+      //std::cout << "Track LX/LY" << track_LX << " " << track_LY << std::endl;
+
       if (!(fabs(d_LX)<2))
         continue;
 
       if (!(fabs(d_LY)<2))
         continue;
-
 
       // dX vs dY
       hResidual[iroc_align].Fill( d_LX, d_LY);
@@ -2341,7 +2340,7 @@ for (int ialign=1; ialign!=15;ialign++){
   hResidual.clear();
   hResidualXdY.clear();
   hResidualYdX.clear();
-  for (int iroc = 0; iroc != 6; ++iroc){
+  for (int iroc = 0; iroc != GetNumberOfROCS(telescopeID); ++iroc){
     hResidual.push_back( TH2F(  Form("Residual_ROC%i",iroc),
                                 Form("Residual_ROC%i",iroc), 400, -.8, .8, 400, -.8, .8));
     hResidualXdY.push_back( TH2F(  Form("ResidualXdY_ROC%i",iroc),
@@ -2362,7 +2361,7 @@ for (int ialign=1; ialign!=15;ialign++){
     //if (Track->Chi2()>12)
     //  continue;
 
-    for (int iroc=0; iroc!=6; iroc++){
+    for (int iroc=0; iroc!= GetNumberOfROCS(telescopeID); iroc++){
 
       float d_LX = Track->LResidualX(iroc);
       float d_LY = Track->LResidualY(iroc);
@@ -2428,7 +2427,7 @@ for (int ialign=1; ialign!=15;ialign++){
 
   } // end event loop
 
-  for (int iroc=1; iroc!=6; iroc++){
+  for (int iroc=1; iroc!=GetNumberOfROCS(telescopeID); iroc++){
   std::cout << "RESIDUALS: " << hResidual[iroc].GetMean(1) << " " << hResidual[iroc].GetMean(2) << std::endl;
   std::cout << "RESIDUALS RMS: " << hResidual[iroc].GetRMS(1) << " " << hResidual[iroc].GetRMS(2) <<std::endl;
 
