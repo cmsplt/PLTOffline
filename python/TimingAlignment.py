@@ -30,48 +30,80 @@ c = ROOT.TCanvas("","",800,800)
 
 
 ###############################
-# Configuration
+# Helper: print_usage
 ###############################
 
-run = 70
-find_align = False
-do_test = True
+def print_usage():
+    print "Usage: python {0} run do_initial".format(sys.argv[0])
+    print "run: run number (int)"
+    print "do_initial: do initial processing of run (to find timing and alignment event)"
+    print "Example: python 70 0"
+# End of print_usage
+
+
+###############################
+# Get configuration
+###############################
+
+if not len(sys.argv) == 3:
+    print_usage()
+    sys.exit()
+
+try:
+    run = int(sys.argv[1])
+    do_initial = int(sys.argv[2])
+except:
+    print_usage()
+    sys.exit()
+
+print "Going to process run {0} with do_inital = {1}".format(run, do_initial)
 
 campgain = "bt2014_09"
 
-di_offsets = {6:  0.0003045,
-              12:-0.00030472,
-              16: 0, #+0.002,
-              38: 0.000524543,
-              63: -0.000309106,
-              65: -0.000309106+0.000652562,
-              68: -0.0003-0.000552844,
-              70: -0.000281531-3.44699e-06,
-}
 
-di_slopes = {6:  2.155918e-06,
-             12: 1.95599961e-06,
-             16: 0, #1.821545e-06,
-             38: 1.9e-06,
-             63: 1.8373896e-06,
-             65: 1.8640495999999998e-06,
-             68: 1.86405e-06+1.62769e-07,
-             70: 1.86405e-06+1.62769e-07+4.34126e-08-1.59404e-07,
-}
+###############################
+# Class: RunTiming
+###############################
 
-di_align_pixel = {6: 0,
-                  12: 0, 
-                  16: 0,
-                  38: 4,
-                  63: 0,
-                  68: 6,
-                  70: 6,
-}
+class RunTiming:
+    """ Storage class for timing alignment information between pad and pixel data.
+    
+    Current memeber variables:
+    offset (in seconds)
+    slope (in seconds/second)
+    align_pixel (which pixel event to use for aligning clocks)    
+    """
 
-if do_test:
-    test_string = "_test"
-else:
-    test_string = ""
+    def __init__(self,
+                 offset = 0.,
+                 slope  = 1.9e-6,
+                 align_pixel = 0):
+        self.offset = offset
+        self.slope = slope
+        self.align_pixel = align_pixel
+    # End __init__
+    
+    def print_info(self):
+        print "RunTiming({0}, {1}, {2})".format(self.offset, 
+                                                self.slope, 
+                                                self.align_pixel)
+
+# Enf of class RunTiming
+
+
+###############################
+# Put additional run timings here
+###############################
+
+di_runs = {
+    6   : RunTiming( 0.0003045,  2.155918e-06, 0),
+    12  : RunTiming(-0.00030472, 1.955999e-06, 0),
+    38  : RunTiming( 0.00052454, 1.9e-06,      4),
+    63  : RunTiming(-0.00030911, 1.837389e-06, 0),
+    65  : RunTiming( 0.00034346, 1.864050e-06, 0),
+    68  : RunTiming(-0.00085284, 2.026819e-06, 6),
+    70  : RunTiming(-0.00028498, 1.910828e-06, 6)
+}
 
 
 ###############################
@@ -97,6 +129,11 @@ br_calib_flag_pad = "calibflag"
 ###############################
 # Prepare Output
 ###############################
+
+if do_initial:
+    test_string = "_initial"
+else:
+    test_string = ""
 
 try:
     os.mkdir("run_{0}".format(run))
@@ -143,10 +180,10 @@ def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
     delta_pixel = pixel_now - pixel_0
 
     # Convert ticks to seconds (1 tick ~ 25 ns)            
-    delta_second = delta_pixel * 25e-9 + di_offsets[run]
+    delta_second = delta_pixel * 25e-9 + di_runs[run].offset
 
     # Add time difference (in seconds) to initial pad time
-    return pad_0 + delta_second +  di_slopes[run] * (pad_now - pad_0)
+    return pad_0 + delta_second +  di_runs[run].slope * (pad_now - pad_0)
 
 # End of pixel-to-pad time conversion
 
@@ -223,7 +260,9 @@ print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
 # Try to find two good events for aligning times
 ###############################
 
-if find_align:
+if do_initial:
+
+    di_runs[run] = RunTiming()
 
     # Always try to align with first pad event
     tree_pad.GetEntry(0)
@@ -231,7 +270,7 @@ if find_align:
 
     # We are going to select the alignment event with the lowest residual RMS
     # Make a list of pairs: [pixel_event, residual RMS]
-    li_residual_rms = []
+    li_residuals_rms = []
 
     # Loop over potential pixel events for aligning:
     for i_align_pixel in xrange(20):
@@ -264,7 +303,6 @@ if find_align:
                                                                   time_pad, 
                                                                   initial_t_pad) - time_pad])
 
-
             best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
             h.Fill(best_match[1])
 
@@ -288,16 +326,18 @@ if find_align:
     
     print "Best pixel event for alignment: ", best_i_align_pixel
 
-    sys.exit()
+    di_runs[run].align_pixel = best_i_align_pixel
+
+    
 
 ###############################
 # Look at time drift
 ###############################
 
-align_event_pixel = di_align_pixel[run]
+align_event_pixel = di_runs[run].align_pixel
 
-if do_test:
-    print "Doing Test - restricting events"
+if do_initial:
+    print "Doing Initial run - restricting events"
     max_events = min(25000, tree_pad.GetEntries()-1)
 
     # Update final-times for test analysis
@@ -310,7 +350,7 @@ else:
     max_events = tree_pad.GetEntries()-1
 
 
-if do_test:
+if do_initial:
     h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
 else:
     h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
@@ -409,3 +449,9 @@ h_calib_events.GetYaxis().SetTitle("Pad Calibration Flag")
 h_calib_events.GetYaxis().SetTitleOffset(1.5)
 h_calib_events.Draw("COLZTEXT")
 c.Print("run_{0}/calib_events{1}.png".format(run, test_string))
+
+if do_initial:
+    di_runs[run].offset -= fun.GetParameter(0)
+    di_runs[run].slope  -= fun.GetParameter(1)
+    
+    di_runs[run].print_info()
