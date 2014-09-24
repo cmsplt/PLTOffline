@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <stdint.h>
+#include <stdlib.h>  
 
 #include "TGraph.h"
 #include "TString.h"
@@ -129,8 +130,13 @@ void PSIBinaryFileReader::ResetFile ()
 {
   // Reset the file
   std::cout << "Reset the file!" << std::endl;
-  fInputBinaryFile.close();
-  OpenFile();  
+
+  fInputBinaryFile.clear() ;
+  fInputBinaryFile.seekg(0, fInputBinaryFile.beg) ;
+ 
+//  sleep(10);
+//
+//  OpenFile();  
 }
 
 
