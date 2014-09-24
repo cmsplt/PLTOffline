@@ -127,7 +127,6 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
     else if (telescopeID==2)
       return "ALIGNMENT/Alignment_ETHTelescope_run466.dat";
     else if (telescopeID==5){
-      std::cout << "All good" << std::endl;
       return "ALIGNMENT/Alignment_ETHTelescope_4planes_run63.dat";
     }
     else{
@@ -2303,7 +2302,6 @@ int DoAlignment (std::string const InFileName,
 
 
   for (int i=1; i!=5;i++){
-
     std::cout << i << " " << x_align[i] << " " << y_align[i] << " " << z_align[i] << " " << r_align[i] <<std::endl;
   }
 
@@ -2446,6 +2444,15 @@ for (int ialign=1; ialign!=15;ialign++){
   BFR.GetAlignment()->AddToLR(1, iroc, other_angle/3.);
 
   std::cout << "ROC: " << iroc << " Angle: " << angle << " Other Angle:" << other_angle << std::endl;
+
+  for (int i=0; i!=4;i++){
+    printf("%2i   %1i        %15E                       %15E  %15E  %15E\n", 1, i, 
+	   BFR.GetAlignment()->LR(1,i), 
+	   BFR.GetAlignment()->LX(1,i), 
+	   BFR.GetAlignment()->LY(1,i), 
+	   BFR.GetAlignment()->LZ(1,i) );
+  }
+
 
   TCanvas Can;
   Can.cd();
