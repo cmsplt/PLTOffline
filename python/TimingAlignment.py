@@ -11,7 +11,6 @@ Study timing between pixel and pad detectors.
 import os
 import sys
 import array
-import random
 
 import ROOT
 
@@ -59,7 +58,6 @@ except:
 print "Going to process run {0} with do_inital = {1}".format(run, do_initial)
 
 campgain = "bt2014_09"
-
 
 ###############################
 # Class: RunTiming
@@ -119,11 +117,20 @@ br_n_pixel = "ievent"
 br_t_pad = "time_stamp" # [Unix Time]
 br_t_pixel = "time"     # clock-ticks (25 ns spacing)
 
-# Hit plane bits (pixel only)
+# Pixel only:
+# - Hit plane bits 
 br_hit_plane_bits_pixel = "hit_plane_bits"
+# -Tracks
+br_track_x = "track_x"
+br_track_y = "track_y"
 
-# Calibration flag (pad only)
+# Pad only:
+# - Calibration flag
 br_calib_flag_pad = "calibflag"
+# - Integral50
+br_integral50 = "Integral50"
+
+
 
 
 ###############################
@@ -162,11 +169,15 @@ tree_out.Branch( 'n_pad', out_branches["n_pad"], 'n_pad/I' )
 out_branches["accepted"] = array.array( 'i', [ 0 ] )
 tree_out.Branch( 'accepted', out_branches["accepted"], 'accepted/I' )
 
-# Track interesect with pad (need to decide on unit and coordinates)
+# Track interesect with pad
 out_branches["track_x"] = array.array( 'f', [ 0. ] ) 
 out_branches["track_y"] = array.array( 'f', [ 0. ] )
 tree_out.Branch( 'track_x', out_branches["track_x"], 'track_x/F' )
 tree_out.Branch( 'track_y', out_branches["track_y"], 'track_y/F' )
+
+# Pad integral
+out_branches["integral50"] = array.array( 'f', [ 0. ] ) 
+tree_out.Branch( 'integral50', out_branches["integral50"], 'integral50/F' )
 
 
 ###############################
@@ -196,13 +207,13 @@ basedir_pad = "../../drs4_data/"
 basedir_pixel = "../plots/"
 
 if run < 10:
-    format_pad = "{0}run_2014_09r00000{1}.root"
+    format_pad = "{0}run_2014_09r00000{1}_felix.root"
     format_pixel = "{0}00000{1}/histos.root"
 elif run < 100:
-    format_pad = "{0}run_2014_09r0000{1}.root"
+    format_pad = "{0}run_2014_09r0000{1}_felix.root"
     format_pixel = "{0}0000{1}/histos.root"
 else:
-    format_pad = "{0}run_2014_09ro00{1}.root"
+    format_pad = "{0}run_2014_09ro00{1}_felix.root"
     format_pixel = "{0}000{1}/histos.root"
 
 filename_pad = format_pad.format(basedir_pad, run)
@@ -358,6 +369,8 @@ else:
 h = ROOT.TH1D("","",500, -0.007, 0.007)
 h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
 h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
+h_integral = ROOT.TH3D("","", 100, -0.4, 0.4, 100, -0.4, 0.4, 200, -1000, 1000)
+h_tracks = ROOT.TH2D("","", 100, -0.4, 0.4, 100, -0.4, 0.4)
 
 tree_pad.GetEntry(0) # We always align to the first PAD event
 tree_pixel.GetEntry(align_event_pixel)
@@ -401,44 +414,49 @@ for i_pad in xrange(max_events):
 
     # Check if we are happy with the timing
     # (residual below 1 ms)
-    if abs(best_match[1]) < 0.001:
+    if abs(best_match[1]) < 0.001:        
         hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
         calib_flag = getattr(tree_pad, br_calib_flag_pad)
         h_calib_events.Fill(hit_plane_bits, calib_flag)
 
         out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
         out_branches["accepted"][0] = 1
-        out_branches["track_x"][0] = random.uniform(-1., 1.)
-        out_branches["track_y"][0] = random.uniform(-1., 1.)
-    else:
-        out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
-        out_branches["accepted"][0] = 0        
-        out_branches["track_x"][0] = -9999.
-        out_branches["track_y"][0] = -9999.
+        out_branches["track_x"][0] = getattr(tree_pixel, br_track_x)
+        out_branches["track_y"][0] = getattr(tree_pixel, br_track_y)
+        out_branches["integral50"][0] = getattr(tree_pad, br_integral50)
+
+        tree_out.Fill()            
+        
+        h_tracks.Fill(getattr(tree_pixel, br_track_x),
+                      getattr(tree_pixel, br_track_y))
+        
+        h_integral.Fill(getattr(tree_pixel, br_track_x),
+                        getattr(tree_pixel, br_track_y),
+                        getattr(tree_pad, br_integral50))
+
     # done filling tree and calibration histogram
 
-    tree_out.Fill()            
 # End of loop over pad events
 
-f_out.Write()
 
 
-h2.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
-h2.GetYaxis().SetTitle("Events")
+h.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
+h.GetYaxis().SetTitle("Events")
 h.Draw()
-c.Print("run_{0}/residual{1}.png".format(run, test_string))
+c.Print("run_{0}/residual{1}.pdf".format(run, test_string))
 
+print h2,c
 fun = ROOT.TF1("fun", "[0]+[1]*x")
 h2.Fit(fun,"","")
 h2.GetYaxis().SetTitleOffset(1.9)
 h2.GetXaxis().SetTitle("t_{pad} [s]")
 h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
 h2.Draw()
-c.Print("run_{0}/time{1}.png".format(run, test_string))
+c.Print("run_{0}/time{1}.pdf".format(run, test_string))
 
 c.SetLogy(1)
 h_delta_n.Draw()
-c.Print("run_{0}/delta_n{1}.png".format(run, test_string))
+c.Print("run_{0}/delta_n{1}.pdf".format(run, test_string))
 c.SetLogy(0)
 
 
@@ -448,7 +466,38 @@ h_calib_events.GetXaxis().SetTitle("Pixel Plane Hit Bit")
 h_calib_events.GetYaxis().SetTitle("Pad Calibration Flag")
 h_calib_events.GetYaxis().SetTitleOffset(1.5)
 h_calib_events.Draw("COLZTEXT")
-c.Print("run_{0}/calib_events{1}.png".format(run, test_string))
+c.Print("run_{0}/calib_events{1}.pdf".format(run, test_string))
+
+ROOT.gStyle.SetOptStat(0)
+c.SetLogz(1)
+h_tracks.GetXaxis().SetTitle("Pad position x [cm]")
+h_tracks.GetYaxis().SetTitle("Pad position y [cm]")
+h_tracks.GetYaxis().SetTitleOffset(1.5)
+h_tracks.Draw("COLZ")
+c.Print("run_{0}/tracks{1}.pdf".format(run, test_string))
+
+
+ROOT.gStyle.SetOptStat(0)
+c.SetLogz(0)
+proj = h_integral.Project3DProfile("xy")
+proj.SetTitle("")
+proj.GetXaxis().SetTitle("Pad Position x [cm]")
+proj.GetYaxis().SetTitle("Pad Position y [cm]")
+proj.GetXaxis().SetTitleOffset(1.2)
+proj.GetYaxis().SetTitleOffset(1.5)
+
+proj.SetMinimum(100)
+proj.SetMaximum(300)
+proj.Draw("COLZ")
+c.Print("run_{0}/integral{1}.pdf".format(run, test_string))
+
+proj.SetMinimum(-200)
+proj.SetMaximum(500)
+proj.Draw("COLZ")
+c.Print("run_{0}/integral{1}_fullrange.pdf".format(run, test_string))
+
+f_out.Write()
+
 
 if do_initial:
     di_runs[run].offset -= fun.GetParameter(0)
