@@ -203,17 +203,17 @@ def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
 # Get Trees
 ###############################
 
-basedir_pad = "../../drs4_data/"
+basedir_pad = "../../padreadout-devel/data/output/"
 basedir_pixel = "../plots/"
 
 if run < 10:
-    format_pad = "{0}run_2014_09r00000{1}_felix.root"
+    format_pad = "{0}run_2014_09r00000{1}.root"
     format_pixel = "{0}00000{1}/histos.root"
 elif run < 100:
-    format_pad = "{0}run_2014_09r0000{1}_felix.root"
+    format_pad = "{0}run_2014_09r0000{1}.root"
     format_pixel = "{0}0000{1}/histos.root"
 else:
-    format_pad = "{0}run_2014_09ro00{1}_felix.root"
+    format_pad = "{0}run_2014_09r000{1}.root"
     format_pixel = "{0}000{1}/histos.root"
 
 filename_pad = format_pad.format(basedir_pad, run)
