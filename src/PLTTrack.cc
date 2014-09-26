@@ -171,6 +171,12 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     gX.Fit( &funX, "Q" );
     gY.Fit( &funY, "Q" );
 
+    // Store fit results
+    fSlopeX = funX.GetParameter(0);
+    fSlopeY = funY.GetParameter(0);
+    fOffsetX = funX.GetParameter(1);
+    fOffsetY = funY.GetParameter(1);
+
     VX = funX.GetParameter(0);
     VY = funY.GetParameter(0);
     VZ = 1;
@@ -186,6 +192,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment, int nPlanes)
     VX = VX / Mod;
     VY = VY / Mod;
     VZ = VZ / Mod;
+
 
     // Compute the points in telescope coords where line passes each plane
     for (int ip = 0; ip < nPlanes ; ++ip) {
@@ -287,6 +294,7 @@ std::pair<float, float> PLTTrack::LResiduals (PLTCluster& Cluster, PLTAlignment&
   return std::make_pair( LPXY.first - Cluster.LX(), LPXY.second - Cluster.LY() );
 
 }
+
 
 
 bool PLTTrack::IsFiducial (PLTPlane* Plane, PLTAlignment& Alignment, PLTPlane::FiducialRegion FidRegion)

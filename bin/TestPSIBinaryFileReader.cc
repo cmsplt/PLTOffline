@@ -1612,10 +1612,13 @@ int TestPSIBinaryFileReader (std::string const InFileName,
   long long br_time;
   int br_ievent;
   int br_hit_plane_bits;
+  float br_track_x, br_track_y;
 
   time_tree->Branch("time", &br_time);
   time_tree->Branch("ievent", &br_ievent);
   time_tree->Branch("hit_plane_bits", &br_hit_plane_bits);
+  time_tree->Branch("track_x", &br_track_x);
+  time_tree->Branch("track_y", &br_track_y);
   
   // Event Loop
   for (int ievent = 0; BFR.GetNextEvent() >= 0; ++ievent) {
@@ -1631,6 +1634,20 @@ int TestPSIBinaryFileReader (std::string const InFileName,
     br_time = BFR.GetTime();
     br_ievent = ievent;
     br_hit_plane_bits = BFR.HitPlaneBits();
+
+    // Add track info    
+    if (BFR.NTracks()==1){
+      PLTTrack* Track = BFR.Track(0);
+      // Plane 1 is at 2 cm and plane 2 at 8 cm so 5 cm should be the middle
+      br_track_x = Track->ExtrapolateX(5.);
+      br_track_y = Track->ExtrapolateY(5.);      
+    }
+    else {
+      br_track_x = -999.;
+      br_track_y = -999.;
+    }
+        
+    // Done with timing tree
     time_tree->Fill();
 
     hCoincidenceMap.Fill(BFR.HitPlaneBits());
