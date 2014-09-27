@@ -35,7 +35,7 @@ c = ROOT.TCanvas("","",800,800)
 def print_usage():
     print "Usage: python {0} run action".format(sys.argv[0])
     print "run: run number (int)"
-    print "do_initial: do initial processing of run (to find timing and alignment event)"
+    print "action: 0=analyze    1=run on small sample     2=find alignment"
     print "Example: python 70 0"
 # End of print_usage
 
@@ -44,18 +44,21 @@ def print_usage():
 # Get configuration
 ###############################
 
+max_align_pad = 40
+max_align_pixel = 40
+
 if not len(sys.argv) == 3:
     print_usage()
     sys.exit()
 
 try:
     run = int(sys.argv[1])
-    do_initial = int(sys.argv[2])
+    action = int(sys.argv[2])
 except:
     print_usage()
     sys.exit()
 
-print "Going to process run {0} with do_inital = {1}".format(run, do_initial)
+print "Going to process run {0} with action = {1}".format(run, action)
 
 campgain = "bt2014_09"
 
@@ -107,6 +110,13 @@ di_runs = {
     70  : RunTiming(-0.00028498, 1.910828e-06, 6),
     109 :RunTiming(0.000323963498273, 1.81841520034e-06, 15, 1),
     131 : RunTiming(-0.000191132147971, 1.93697727798e-06, 13, 2),
+    134: RunTiming(-3.1728796239e-05, 1.64755689822e-06, 14, 0),
+    354: RunTiming(0, 1.66190809094e-06, 7, 0),
+    355: RunTiming(-0.000314315985828, 1.66190809094e-06, 2, 1),
+    360: RunTiming(-0.000185791051023, 1.59938328397e-06, 5, 1),
+    565: RunTiming(0.000473639852545, 1.87068995292e-06, 13, 1)
+
+    
 
 }
 
@@ -142,10 +152,16 @@ br_integral50 = "Integral50"
 # Prepare Output
 ###############################
 
-if do_initial:
-    test_string = "_initial"
-else:
+if action == 0:
     test_string = ""
+elif action == 1:
+    test_string = "_short"
+elif action == 2:
+    test_string = "_align"
+else:
+    print "Invalid action: ", action
+    print "Exiting"
+    sys.exit()
 
 try:
     os.mkdir("run_{0}".format(run))
@@ -276,7 +292,7 @@ print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
 # Try to find two good events for aligning times
 ###############################
 
-if False and do_initial:
+if action == 2:
 
     di_runs[run] = RunTiming()
 
@@ -288,13 +304,13 @@ if False and do_initial:
     li_residuals_rms = []
     
     # Loop over potential pad events for aligning:
-    for i_align_pad in xrange(40):
+    for i_align_pad in xrange(max_align_pad):
 
         tree_pad.GetEntry(i_align_pad)
         initial_t_pad = getattr(tree_pad, br_t_pad)
 
         # Loop over potential pixel events for aligning:
-        for i_align_pixel in xrange(40):
+        for i_align_pixel in xrange(max_align_pixel):
 
             tree_pixel.GetEntry(i_align_pixel)
 
@@ -353,15 +369,16 @@ if False and do_initial:
     print "Best pad / pixel event for alignment: ", best_i_align_pad, best_i_align_pixel
 
     di_runs[run].align_pixel = best_i_align_pixel
-    di_runs[run].align_pad = best_i_align_pixel
+    di_runs[run].align_pad = best_i_align_pad
+    di_runs[run].print_info()
 
-    
+    sys.exit()
 
 ###############################
 # Look at time drift
 ###############################
 
-if do_initial:
+if action == 1:
     print "Doing Initial run - restricting events"
     max_events = min(25000, tree_pad.GetEntries()-1)
 
@@ -375,11 +392,8 @@ else:
     max_events = tree_pad.GetEntries()-1
 
 
-if do_initial:
-    h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
-else:
-    h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
 
+h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
 h = ROOT.TH1D("","",500, -0.007, 0.007)
 h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
 h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
@@ -512,9 +526,6 @@ c.Print("run_{0}/integral{1}.pdf".format(run, test_string))
 
 f_out.Write()
 
-
-if do_initial:
-    di_runs[run].offset -= fun.GetParameter(0)
-    di_runs[run].slope  -= fun.GetParameter(1)
-    
-    di_runs[run].print_info()
+di_runs[run].offset -= fun.GetParameter(0)
+di_runs[run].slope  -= fun.GetParameter(1)    
+di_runs[run].print_info()
