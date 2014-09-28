@@ -139,7 +139,7 @@ Diamond("dummy", -1., 1., -1., 1.)
 
 Diamond("IIa-2", -0.2, 0.2, 0., 0.4)
 
-Diamond("IIa-3", -0.25, 0.15, -0.01, 0.35)
+Diamond("IIa-3", -0.25, 0.15, -0.05, 0.35)
 
 Diamond("IIa-3-wide-open", -0.5, 0.5, -0.25, 0.65)
 
@@ -162,6 +162,7 @@ class RunTiming:
     align_pad (which pad event to use for aligning clocks)    
     diamond_name (which diamond pad was used. This is mainly used for position information at the moment)
     bias_voltage
+    number of channels
     """
 
     def __init__(self,
@@ -170,23 +171,27 @@ class RunTiming:
                  align_pixel = 0,
                  align_pad = 0,
                  diamond_name = "dummy",
-                 bias_voltage = 0):
+                 bias_voltage = 0,
+                 n_channels = 3,
+             ):
         self.offset = offset
         self.slope = slope
         self.align_pixel = align_pixel
         self.align_pad = align_pad
         self.diamond_name = diamond_name
         self.bias_voltage = bias_voltage
+        self.n_channels = n_channels
     # End __init__
     
     def print_info(self):
-        print '{0}: RunTiming({1}, {2}, {3}, {4}, "{5}", {6}),'.format(run,
-                                                                       self.offset, 
-                                                                       self.slope, 
-                                                                       self.align_pixel,
-                                                                       self.align_pad,
-                                                                       self.diamond_name,
-                                                                       self.bias_voltage)
+        print '{0}: RunTiming({1}, {2}, {3}, {4}, "{5}", {6}, {7}),'.format(run,
+                                                                            self.offset, 
+                                                                            self.slope, 
+                                                                            self.align_pixel,
+                                                                            self.align_pad,
+                                                                            self.diamond_name,
+                                                                            self.bias_voltage,
+                                                                            self.n_channels)
 
     # End of print_info
         
@@ -214,10 +219,15 @@ di_runs = {
     358: RunTiming(0.000249032875294, 1.61704852897e-06, 12, 1, "IIa-2", 500),
     360: RunTiming(-0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500),
     362: RunTiming(0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500),
-    565: RunTiming(0.000473639852545, 1.87068995292e-06, 13, 1),
-    558: RunTiming(0.000549108871035, 1.69680504733e-06, 0, 0, "IIa-3", -500),
-    568: RunTiming(0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000),
-    630: RunTiming(0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500),
+
+    528: RunTiming(0, 1.69e-06, 0, 0, "IIa-3", -500, 3),
+
+    546: RunTiming(1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4),
+    558: RunTiming(0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4),
+    565: RunTiming(0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000, 4),
+    566: RunTiming(-9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000, 4),
+    568: RunTiming(0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000, 4),
+    630: RunTiming(0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500, 4),
 
 
 }
@@ -326,7 +336,11 @@ def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
 # Get Trees
 ###############################
 
-basedir_pad = "../../padreadout-devel-4chan/data/output/"
+if di_runs[run].n_channels == 4:
+    basedir_pad = "../../padreadout-devel-4chan/data/output/"
+else:
+    basedir_pad = "../../padreadout-devel/data/output/"
+
 basedir_pixel = "../plots/"
 
 if run < 10:
