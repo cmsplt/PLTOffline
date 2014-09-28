@@ -19,6 +19,7 @@ import ROOT
 
 import TimingAlignmentHelpers as TAH
 
+
 ###############################
 # Init ROOT
 ###############################
@@ -35,9 +36,6 @@ c = ROOT.TCanvas("","",800,800)
 ###############################
 # Configuration
 ###############################
-
-max_align_pad = 10
-max_align_pixel = 40
 
 if not len(sys.argv) == 3:
     TAH.print_usage()
@@ -86,8 +84,8 @@ TAH.RunTiming(360, -0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500)
 TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 
 TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25, 3)
-TAH.RunTiming(532, 3.07218236187e-05, 1.11450593334e-06, 16, 1, "IIa-3", -50, 3)
-
+TAH.RunTiming(532, -5.38246743255e-05, 1.97836071279e-06, 14, 1, "IIa-3", -50, 3)
+TAH.RunTiming(534, -0.000149410234456, 1.28514906983e-06, 0, 0, "IIa-3", -75, 3)
 
 TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4)
 TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4)
@@ -98,29 +96,39 @@ TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 
 
 
 ###############################
-# Prepare Input
+# Branch names
 ###############################
 
-# Input branch-names:
-# Event Numbers
-br_n_pad = "n"
-br_n_pixel = "ievent"
+branch_names = {
+    # Event Numbers
+    "n_pad"   : "n",
+    "n_pixel" :"ievent",
+    # Time
+    "t_pad"   : "time_stamp",  # [seconds]
+    "t_pixel" :"time",  # clock-ticks (25 ns spacing)
+    # Pixel only:
+    # - Hit plane bits 
+    "plane_bits_pixel": "hit_plane_bits",
+    # -Tracks
+    "track_x" : "track_x",
+    "track_y" : "track_y",
+    
+    # Pad only:
+    # - Calibration flag
+    "calib_flag_pad" : "calibflag",
+    # - Integral50
+    "integral_50_pad" : "Integral50"
+}
 
-# Time
+# Legacy! Remove ASAP
+br_n_pad = "n"
+br_n_pixel = "ievent" 
 br_t_pad = "time_stamp" # [Unix Time]
 br_t_pixel = "time"     # clock-ticks (25 ns spacing)
-
-# Pixel only:
-# - Hit plane bits 
 br_hit_plane_bits_pixel = "hit_plane_bits"
-# -Tracks
 br_track_x = "track_x"
 br_track_y = "track_y"
-
-# Pad only:
-# - Calibration flag
 br_calib_flag_pad = "calibflag"
-# - Integral50
 br_integral50 = "Integral50"
 
 
@@ -249,94 +257,9 @@ print "Pixel: Final n = {0}, Final t = {1}".format(final_n_pixel, final_t_pixel)
 print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
 
 
-###############################
-# Try to find two good events for aligning times
-###############################
-
-def find_alignment(run):
-
-    run_timing = TAH.RunTiming(run)
-
-    # We are going to select the alignment event with the lowest residual RMS
-    # Make a list of triples: [pixel_event, pad_event, residual RMS]
-    index_pixel = 0
-    index_pad = 1
-    index_rms = 2
-    li_residuals_rms = []
-    
-    # Loop over potential pad events for aligning:
-    for i_align_pad in xrange(max_align_pad):
-
-        tree_pad.GetEntry(i_align_pad)
-        initial_t_pad = getattr(tree_pad, br_t_pad)
-
-        # Loop over potential pixel events for aligning:
-        for i_align_pixel in xrange(max_align_pixel):
-
-            tree_pixel.GetEntry(i_align_pixel)
-
-            initial_t_pixel = getattr(tree_pixel, br_t_pixel)
-
-            h = ROOT.TH1F("", "", 100, -0.005, 0.005)
-
-            i_pixel = 0
-
-            for i_pad in xrange(0, 1000):
-
-                tree_pad.GetEntry(i_pad)
-                time_pad = getattr(tree_pad, br_t_pad)
-
-                delta_ts = []
-
-                for i_pixel_test in range(i_pixel+1-10, i_pixel+1+10):        
-
-                    if i_pixel_test < 0:
-                        continue
-
-                    tree_pixel.GetEntry(i_pixel_test)        
-                    time_pixel = getattr(tree_pixel, br_t_pixel)
-
-                    delta_ts.append( [i_pixel_test, TAH.pixel_to_pad_time(time_pixel, 
-                                                                          initial_t_pixel, 
-                                                                          time_pad, 
-                                                                          initial_t_pad,
-                                                                          run_timing.offset,
-                                                                          run_timing.slope) - time_pad])
-
-                best_match = sorted(delta_ts, key = lambda x:abs(x[1]))[0]
-                h.Fill(best_match[1])
-
-                # Set the starting-value for the next iteration 
-                # Our basis assumption is no-missing event
-                i_pixel = best_match[0] + 1
-                # End of loop over pad events
-
-            h.Draw()
-            c.Print("run_{0}/ipad_{1}_ipixel_{2}.pdf".format(run, i_align_pad, i_align_pixel))
-
-            print "Pad Event {0} / Pixel Event {1}: Mean: {2:2.6f} RMS:{3:2.6f}".format(i_align_pad, 
-                                                                                        i_align_pixel, 
-                                                                                        h.GetMean(), 
-                                                                                        h.GetRMS())
-            
-            # Make sure we have enough events actually in the histogram
-            if h.Integral() > 900:
-                li_residuals_rms.append( [i_align_pixel, i_align_pad, h.GetRMS()] )
-                            
-        # End of loop over pixel alignment events
-    # End of loop over pad alignment events
-
-    best_i_align_pixel = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pixel]
-    best_i_align_pad = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pad]
-    
-    print "Best pad / pixel event for alignment: ", best_i_align_pad, best_i_align_pixel
-
-    run_timing.align_pixel = best_i_align_pixel
-    run_timing.align_pad = best_i_align_pad
-    run_timing.print_info()
 
 if action == 2:
-    find_alignment(run)
+    TAH.find_alignment(run, tree_pixel, tree_pad, branch_names, c)
     sys.exit()
 
 ###############################

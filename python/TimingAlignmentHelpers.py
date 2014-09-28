@@ -17,19 +17,6 @@ import ROOT
 
 
 ###############################
-# Init ROOT
-###############################
-
-ROOT.gStyle.SetPadLeftMargin(0.15)
-ROOT.gStyle.SetPadRightMargin(0.14)
-ROOT.gStyle.SetPadBottomMargin(0.12)
-ROOT.gStyle.SetPadTopMargin(0.05)
-ROOT.gROOT.ForceStyle()
-
-c = ROOT.TCanvas("","",800,800)
-
-
-###############################
 # print_usage
 ###############################
 
@@ -186,95 +173,99 @@ class RunTiming:
                                                                             self.n_channels)
 
     # End of print_info
-
-    
 # End of class RunTiming
 
-#  
-#  ###############################
-#  # Try to find two good events for aligning times
-#  ###############################
-#  
-#  def find_alignment(run):
-#  
-#      di_runs[run] = RunTiming()
-#  
-#      # We are going to select the alignment event with the lowest residual RMS
-#      # Make a list of triples: [pixel_event, pad_event, residual RMS]
-#      index_pixel = 0
-#      index_pad = 1
-#      index_rms = 2
-#      li_residuals_rms = []
-#      
-#      # Loop over potential pad events for aligning:
-#      for i_align_pad in xrange(max_align_pad):
-#  
-#          tree_pad.GetEntry(i_align_pad)
-#          initial_t_pad = getattr(tree_pad, br_t_pad)
-#  
-#          # Loop over potential pixel events for aligning:
-#          for i_align_pixel in xrange(max_align_pixel):
-#  
-#              tree_pixel.GetEntry(i_align_pixel)
-#  
-#              initial_t_pixel = getattr(tree_pixel, br_t_pixel)
-#  
-#              h = ROOT.TH1F("", "", 100, -0.005, 0.005)
-#  
-#              i_pixel = 0
-#  
-#              for i_pad in xrange(0, 1000):
-#  
-#                  tree_pad.GetEntry(i_pad)
-#                  time_pad = getattr(tree_pad, br_t_pad)
-#  
-#                  delta_ts = []
-#  
-#                  for i_pixel_test in range(i_pixel+1-10, i_pixel+1+10):        
-#  
-#                      if i_pixel_test < 0:
-#                          continue
-#  
-#                      tree_pixel.GetEntry(i_pixel_test)        
-#                      time_pixel = getattr(tree_pixel, br_t_pixel)
-#  
-#                      delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
-#                                                                        initial_t_pixel, 
-#                                                                        time_pad, 
-#                                                                        initial_t_pad) - time_pad])
-#  
-#                  best_match = sorted(delta_ts, key = lambda x:abs(x[1]))[0]
-#                  h.Fill(best_match[1])
-#  
-#                  # Set the starting-value for the next iteration 
-#                  # Our basis assumption is no-missing event
-#                  i_pixel = best_match[0] + 1
-#                  # End of loop over pad events
-#  
-#              h.Draw()
-#              c.Print("run_{0}/ipad_{1}_ipixel_{2}.pdf".format(run, i_align_pad, i_align_pixel))
-#  
-#              print "Pad Event {0} / Pixel Event {1}: Mean: {2:2.6f} RMS:{3:2.6f}".format(i_align_pad, 
-#                                                                                          i_align_pixel, 
-#                                                                                          h.GetMean(), 
-#                                                                                          h.GetRMS())
-#              
-#              # Make sure we have enough events actually in the histogram
-#              if h.Integral() > 900:
-#                  li_residuals_rms.append( [i_align_pixel, i_align_pad, h.GetRMS()] )
-#                              
-#          # End of loop over pixel alignment events
-#      # End of loop over pad alignment events
-#  
-#      best_i_align_pixel = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pixel]
-#      best_i_align_pad = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pad]
-#      
-#      print "Best pad / pixel event for alignment: ", best_i_align_pad, best_i_align_pixel
-#  
-#      di_runs[run].align_pixel = best_i_align_pixel
-#      di_runs[run].align_pad = best_i_align_pad
-#      di_runs[run].print_info()
-#  
+ 
+###############################
+# find_alignment
+###############################
+ 
+def find_alignment(run, tree_pixel, tree_pad, branch_names, c):
+
+    max_align_pad = 10
+    max_align_pixel = 40
+
+    run_timing = RunTiming.runs[run]
+
+    # We are going to select the alignment event with the lowest residual RMS
+    # Make a list of triples: [pixel_event, pad_event, residual RMS]
+    index_pixel = 0
+    index_pad = 1
+    index_rms = 2
+    li_residuals_rms = []
+    
+    # Loop over potential pad events for aligning:
+    for i_align_pad in xrange(max_align_pad):
+
+        tree_pad.GetEntry(i_align_pad)
+        initial_t_pad = getattr(tree_pad, branch_names["t_pad"])
+
+        # Loop over potential pixel events for aligning:
+        for i_align_pixel in xrange(max_align_pixel):
+
+            tree_pixel.GetEntry(i_align_pixel)
+
+            initial_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
+
+            h = ROOT.TH1F("", "", 100, -0.005, 0.005)
+
+            i_pixel = 0
+
+            for i_pad in xrange(0, 1000):
+
+                tree_pad.GetEntry(i_pad)
+                time_pad = getattr(tree_pad, branch_names["t_pad"])
+
+                delta_ts = []
+
+                for i_pixel_test in range(i_pixel+1-10, i_pixel+1+10):        
+
+                    if i_pixel_test < 0:
+                        continue
+
+                    tree_pixel.GetEntry(i_pixel_test)        
+                    time_pixel = getattr(tree_pixel,  branch_names["t_pixel"])
+
+                    delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
+                                                                      initial_t_pixel, 
+                                                                      time_pad, 
+                                                                      initial_t_pad,
+                                                                      run_timing.offset,
+                                                                      run_timing.slope) - time_pad])
+
+                best_match = sorted(delta_ts, key = lambda x:abs(x[1]))[0]
+                h.Fill(best_match[1])
+
+                # Set the starting-value for the next iteration 
+                # Our basis assumption is no-missing event
+                i_pixel = best_match[0] + 1
+                # End of loop over pad events
+
+            h.Draw()
+            c.Print("run_{0}/ipad_{1}_ipixel_{2}.pdf".format(run, i_align_pad, i_align_pixel))
+
+            print "Pad Event {0} / Pixel Event {1}: Mean: {2:2.6f} RMS:{3:2.6f}".format(i_align_pad, 
+                                                                                        i_align_pixel, 
+                                                                                        h.GetMean(), 
+                                                                                        h.GetRMS())
+            
+            # Make sure we have enough events actually in the histogram
+            if h.Integral() > 900:
+                li_residuals_rms.append( [i_align_pixel, i_align_pad, h.GetRMS()] )
+                            
+        # End of loop over pixel alignment events
+    # End of loop over pad alignment events
+
+    best_i_align_pixel = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pixel]
+    best_i_align_pad = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pad]
+    
+    print "Best pad / pixel event for alignment: ", best_i_align_pad, best_i_align_pixel
+
+    run_timing.align_pixel = best_i_align_pixel
+    run_timing.align_pad = best_i_align_pad
+    run_timing.print_info()
+
+ 
 #  if action == 2:
 #      find_alignment(run)
 #      sys.exit()
