@@ -265,271 +265,325 @@ def find_alignment(run, tree_pixel, tree_pad, branch_names, c):
     run_timing.align_pad = best_i_align_pad
     run_timing.print_info()
 
- 
-#  if action == 2:
-#      find_alignment(run)
-#      sys.exit()
-#  
-#  ###############################
-#  # Look at time drift
-#  ###############################
-#  
-#  if action == 1:
-#      print "Doing Initial run - restricting events"
-#      max_events = min(25000, tree_pad.GetEntries()-1)
-#  
-#      # Update final-times for test analysis
-#      tree_pad.GetEntry(max_events)
-#      tree_pixel.GetEntry(max_events)        
-#      final_t_pad = getattr(tree_pad, br_t_pad)
-#      final_t_pixel = getattr(tree_pixel, br_t_pixel)
-#  
-#  else:
-#      max_events = tree_pad.GetEntries()-1
-#  
-#  
-#  # Book histograms
-#  h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
-#  h = ROOT.TH1D("","",500, -0.007, 0.007)
-#  h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
-#  h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
-#  
-#  h_tracks = ROOT.TH2D("","", 100, -1, 1, 100, -1, 1)
-#  h_integral = ROOT.TH3D("","", 100, -1, 1, 100, -1, 1, 200, -1000, 1000)
-#  
-#  h_tracks_zoom = ROOT.TH2D("","", 
-#                            50, # bins in x 
-#                            Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-#                            Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
-#                            50, # bins in y
-#                            Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-#                            Diamond.diamonds[di_runs[run].diamond_name].y_pos_max)
-#  
-#  h_integral_zoom = ROOT.TH3D("","", 
-#                              50, # bins in x 
-#                              Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-#                              Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
-#                              50, # bins in y
-#                              Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-#                              Diamond.diamonds[di_runs[run].diamond_name].y_pos_max,
-#                              200, -1000, 1000)
-#  
-#  # Also create a matrix of histograms for the PH as a function of the
-#  # location
-#  n_boxes = 5 # How many boxes per side. Will use the boundaries of the
-#              # diamond and the coordinate_to_box function
-#  integral_box_matrix = []
-#  for x_pos in range(n_boxes):
-#      tmp_li = []
-#      for y_pos in range(n_boxes):
-#          if di_runs[run].bias_voltage > 0:
-#              tmp_li.append(ROOT.TH1D("", "", 200, -500, 200))
-#          else:
-#              tmp_li.append(ROOT.TH1D("", "", 200, -200, 500))
-#      # End of x-loop
-#      integral_box_matrix.append(tmp_li)
-#  # End of y-loop        
-#  
-#          
-#  tree_pad.GetEntry(di_runs[run].align_pad)
-#  tree_pixel.GetEntry(di_runs[run].align_pixel)
-#  
-#  initial_t_pad = getattr(tree_pad, br_t_pad)
-#  initial_t_pixel = getattr(tree_pixel, br_t_pixel)
-#  
-#  i_pixel = 0
-#  
-#  for i_pad in xrange(max_events):
-#  
-#      if i_pad % 1000 == 0:
-#          print "{0} / {1}".format(i_pad, max_events)
-#  
-#      tree_pad.GetEntry(i_pad)
-#      time_pad = getattr(tree_pad, br_t_pad)
-#  
-#      delta_ts = []
-#      for i_pixel_test in range(i_pixel-6, i_pixel+6):        
-#  
-#          if i_pixel_test < 0:
-#              continue
-#  
-#          tree_pixel.GetEntry(i_pixel_test)        
-#          time_pixel = getattr(tree_pixel, br_t_pixel)
-#  
-#          delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
-#                                                            initial_t_pixel, 
-#                                                            time_pad, 
-#                                                            initial_t_pad) - time_pad])
-#  
-#  
-#      best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
-#  
-#      i_pixel = best_match[0] 
-#      tree_pixel.GetEntry(i_pixel)        
-#  
-#      h_delta_n.Fill(best_match[0]-i_pixel+1)
-#      h.Fill(best_match[1])
-#      h2.Fill(time_pad-initial_t_pad, best_match[1])
-#  
-#      # Check if we are happy with the timing
-#      # (residual below 1 ms)
-#      if abs(best_match[1]) < 0.001:        
-#          hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
-#          calib_flag = getattr(tree_pad, br_calib_flag_pad)
-#          h_calib_events.Fill(hit_plane_bits, calib_flag)
-#  
-#          out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
-#          out_branches["accepted"][0] = 1
-#          out_branches["track_x"][0] = getattr(tree_pixel, br_track_x)
-#          out_branches["track_y"][0] = getattr(tree_pixel, br_track_y)
-#          out_branches["integral50"][0] = getattr(tree_pad, br_integral50)
-#  
-#          tree_out.Fill()            
-#          
-#          h_tracks.Fill(getattr(tree_pixel, br_track_x),
-#                        getattr(tree_pixel, br_track_y))
-#  
-#          h_tracks_zoom.Fill(getattr(tree_pixel, br_track_x),
-#                             getattr(tree_pixel, br_track_y))
-#          
-#          h_integral.Fill(getattr(tree_pixel, br_track_x),
-#                          getattr(tree_pixel, br_track_y),
-#                          getattr(tree_pad, br_integral50))
-#  
-#          h_integral_zoom.Fill(getattr(tree_pixel, br_track_x),
-#                               getattr(tree_pixel, br_track_y),
-#                               getattr(tree_pad, br_integral50))
-#  
-#          ret = coordinate_to_box(getattr(tree_pixel, br_track_x), 
-#                                             getattr(tree_pixel, br_track_y),
-#                                             Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-#                                             Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
-#                                             Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-#                                             Diamond.diamonds[di_runs[run].diamond_name].y_pos_max, n_boxes)
-#          if ret != -1:
-#              x_box = ret[0]
-#              y_box = ret[1]
-#              integral_box_matrix[x_box][y_box].Fill( getattr(tree_pad, br_integral50))
-#          
-#  
-#      # done filling tree and calibration histogram
-#  
-#  # End of loop over pad events
-#  
-#  
-#  
-#  h.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
-#  h.GetYaxis().SetTitle("Events")
-#  h.Draw()
-#  c.Print("run_{0}/residual{1}.pdf".format(run, test_string))
-#  
-#  print h2,c
-#  fun = ROOT.TF1("fun", "[0]+[1]*x")
-#  h2.Fit(fun,"","")
-#  h2.GetYaxis().SetTitleOffset(1.9)
-#  h2.GetXaxis().SetTitle("t_{pad} [s]")
-#  h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
-#  h2.Draw()
-#  c.Print("run_{0}/time{1}.pdf".format(run, test_string))
-#  
-#  di_runs[run].offset -= fun.GetParameter(0)
-#  di_runs[run].slope  -= fun.GetParameter(1)    
-#  
-#  
-#  c.SetLogy(1)
-#  h_delta_n.Draw()
-#  c.Print("run_{0}/delta_n{1}.pdf".format(run, test_string))
-#  c.SetLogy(0)
-#  
-#  
-#  ROOT.gStyle.SetOptStat(0)
-#  c.SetLogz(1)
-#  h_calib_events.GetXaxis().SetTitle("Pixel Plane Hit Bit")
-#  h_calib_events.GetYaxis().SetTitle("Pad Calibration Flag")
-#  h_calib_events.GetYaxis().SetTitleOffset(1.5)
-#  h_calib_events.Draw("COLZTEXT")
-#  c.Print("run_{0}/calib_events{1}.pdf".format(run, test_string))
-#  
-#  ROOT.gStyle.SetOptStat(0)
-#  c.SetLogz(1)
-#  h_tracks.GetXaxis().SetTitle("Pad position x [cm]")
-#  h_tracks.GetYaxis().SetTitle("Pad position y [cm]")
-#  h_tracks.GetYaxis().SetTitleOffset(1.5)
-#  h_tracks.Draw("COLZ")
-#  c.Print("run_{0}/tracks{1}.pdf".format(run, test_string))
-#  
-#  ROOT.gStyle.SetOptStat(0)
-#  c.SetLogz(1)
-#  h_tracks_zoom.GetXaxis().SetTitle("Pad position x [cm]")
-#  h_tracks_zoom.GetYaxis().SetTitle("Pad position y [cm]")
-#  h_tracks_zoom.GetYaxis().SetTitleOffset(1.5)
-#  h_tracks_zoom.Draw("COLZ")
-#  c.Print("run_{0}/tracks_zoom{1}.pdf".format(run, test_string))
-#  
-#  
-#  ROOT.gStyle.SetOptStat(0)
-#  c.SetLogz(0)
-#  proj = h_integral.Project3DProfile("yx")
-#  proj.SetTitle("")
-#  proj.GetXaxis().SetTitle("Pad Position x [cm]")
-#  proj.GetYaxis().SetTitle("Pad Position y [cm]")
-#  proj.GetXaxis().SetTitleOffset(1.2)
-#  proj.GetYaxis().SetTitleOffset(1.5)
-#  
-#  proj.Draw("COLZ")
-#  c.Print("run_{0}/integral{1}_fullrange.pdf".format(run, test_string))
-#  
-#  
-#  ROOT.gStyle.SetOptStat(0)
-#  c.SetLogz(0)
-#  proj_zoom = h_integral_zoom.Project3DProfile("yx")
-#  proj_zoom.SetTitle("")
-#  proj_zoom.GetXaxis().SetTitle("Pad Position x [cm]")
-#  proj_zoom.GetYaxis().SetTitle("Pad Position y [cm]")
-#  proj_zoom.GetXaxis().SetTitleOffset(1.2)
-#  proj_zoom.GetYaxis().SetTitleOffset(1.5)
-#  
-#  proj_zoom.Draw("COLZ")
-#  c.Print("run_{0}/integral{1}_zoom_fullrange.pdf".format(run, test_string))
-#  
-#  
-#  if di_runs[run].bias_voltage > 0:
-#      proj.SetMinimum(-550)
-#      proj.SetMaximum(50)
-#  
-#      proj_zoom.SetMinimum(-550)
-#      proj_zoom.SetMaximum(50)
-#  else:
-#      proj.SetMinimum(-50)
-#      proj.SetMaximum(500)
-#  
-#      proj_zoom.SetMinimum(-50)
-#      proj_zoom.SetMaximum(500)
-#  
-#  proj.Draw("COLZ")
-#  c.Print("run_{0}/integral{1}.pdf".format(run, test_string))
-#  
-#  proj_zoom.Draw("COLZ")
-#  c.Print("run_{0}/integral_zoom{1}.pdf".format(run, test_string))
-#  
-#  
-#  
-#  
-#  
-#  for x_pos in range(n_boxes):
-#      for y_pos in range(n_boxes):
-#          
-#          fun = ROOT.TF1("", "gaus")
-#          integral_box_matrix[x_pos][y_pos].Fit(fun)
-#          print "XXX X: {0} Y: {1} Mean: {2:2.2f} RMS {3:2.2f}".format(x_pos, 
-#                                                                       y_pos, 
-#                                                                       fun.GetParameter(1), 
-#                                                                       fun.GetParameter(2))
-#          integral_box_matrix[x_pos][y_pos].Draw()
-#          c.Print("run_{0}/1d_integral_x_{1}_y_{2}{3}.pdf".format(run, x_pos, y_pos, test_string))
-#          c.Print("run_{0}/1d_integral_x_{1}_y_{2}{3}.png".format(run, x_pos, y_pos, test_string))
-#  
-#  
-#  f_out.Write()
-#  
-#  di_runs[run].print_info()
+
+###############################
+# analyze
+###############################
+
+def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
+
+    if action == 1:
+        test_string = "_short"
+    else:
+        test_string = ""
+
+    # Output ROOT File
+    filename_out = "run_{0}/track_info{1}.root".format(run, test_string)
+    f_out = ROOT.TFile(filename_out, "recreate")
+
+    # Output Tree
+    tree_out = ROOT.TTree("track_info", "track_info")
+
+    # Output branches
+    out_branches = {}
+
+    # Event Number (from pad)
+    out_branches["n_pad"] = array.array( 'i', [ 0 ] ) 
+    tree_out.Branch( 'n_pad', out_branches["n_pad"], 'n_pad/I' )
+
+    # Did we accept this event in the pixel+timing analysis
+    # Possible reasons for rejection:
+    #   - could not find event in the pixel stream
+    #   - event found in the pixel stream but time difference too large
+    #   - event matched but no track from pixels
+    out_branches["accepted"] = array.array( 'i', [ 0 ] )
+    tree_out.Branch( 'accepted', out_branches["accepted"], 'accepted/I' )
+
+    # Track interesect with pad
+    out_branches["track_x"] = array.array( 'f', [ 0. ] ) 
+    out_branches["track_y"] = array.array( 'f', [ 0. ] )
+    tree_out.Branch( 'track_x', out_branches["track_x"], 'track_x/F' )
+    tree_out.Branch( 'track_y', out_branches["track_y"], 'track_y/F' )
+
+    # Pad integral
+    out_branches["integral50"] = array.array( 'f', [ 0. ] ) 
+    tree_out.Branch( 'integral50', out_branches["integral50"], 'integral50/F' )
+
+
+    # Legacy! Remove ASAP
+    br_n_pad = "n"
+    br_n_pixel = "ievent" 
+    br_t_pad = "time_stamp" # [Unix Time]
+    br_t_pixel = "time"     # clock-ticks (25 ns spacing)
+    br_hit_plane_bits_pixel = "hit_plane_bits"
+    br_track_x = "track_x"
+    br_track_y = "track_y"
+    br_calib_flag_pad = "calibflag"
+    br_integral50 = "Integral50"
+
+
+    if action == 1:
+        print "Doing Initial run - restricting events"
+        max_events = min(25000, tree_pad.GetEntries()-1)
+    else:
+        max_events = tree_pad.GetEntries()-1
+
+    # Get the run-timing and diamond/mask
+    run_timing = RunTiming.runs[run]    
+    diamond = Diamond.diamonds[run_timing.diamond_name]
+
+    # Get initial-times
+    tree_pad.GetEntry(run_timing.align_pad)
+    tree_pixel.GetEntry(run_timing.align_pixel)        
+    initial_t_pad = getattr(tree_pad, branch_names["t_pad"])
+    final_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
+
+    # Get final-times
+    tree_pad.GetEntry(max_events)
+    tree_pixel.GetEntry(max_events)        
+    final_t_pad = getattr(tree_pad, br_t_pad)
+    final_t_pixel = getattr(tree_pixel, br_t_pixel)
+
+    # Book histograms
+    h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
+    h = ROOT.TH1D("","",500, -0.007, 0.007)
+    h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
+    h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
+
+    h_tracks = ROOT.TH2D("","", 100, -1, 1, 100, -1, 1)
+    h_integral = ROOT.TH3D("","", 100, -1, 1, 100, -1, 1, 200, -1000, 1000)
+
+    h_tracks_zoom = ROOT.TH2D("","", 
+                              50, # bins in x 
+                              diamond.x_pos_min,
+                              diamond.x_pos_max,
+                              50, # bins in y
+                              diamond.y_pos_min,
+                              diamond.y_pos_max)
+
+    h_integral_zoom = ROOT.TH3D("","", 
+                                50, # bins in x 
+                                diamond.x_pos_min,
+                                diamond.x_pos_max,
+                                50, # bins in y
+                                diamond.y_pos_min,
+                                diamond.y_pos_max,
+                                200, -1000, 1000)
+
+    # Also create a matrix of histograms for the PH as a function of the
+    # location
+    n_boxes = 5 # How many boxes per side. Will use the boundaries of the
+                # diamond and the coordinate_to_box function
+    integral_box_matrix = []
+    for x_pos in range(n_boxes):
+        tmp_li = []
+        for y_pos in range(n_boxes):
+            if run_timing.bias_voltage > 0:
+                tmp_li.append(ROOT.TH1D("", "", 200, -500, 200))
+            else:
+                tmp_li.append(ROOT.TH1D("", "", 200, -200, 500))
+        # End of x-loop
+        integral_box_matrix.append(tmp_li)
+    # End of y-loop        
+
+
+    tree_pad.GetEntry(run_timing.align_pad)
+    tree_pixel.GetEntry(run_timing.align_pixel)
+
+    initial_t_pad = getattr(tree_pad, br_t_pad)
+    initial_t_pixel = getattr(tree_pixel, br_t_pixel)
+
+    i_pixel = 0
+
+    for i_pad in xrange(max_events):
+
+        if i_pad % 1000 == 0:
+            print "{0} / {1}".format(i_pad, max_events)
+
+        tree_pad.GetEntry(i_pad)
+        time_pad = getattr(tree_pad, br_t_pad)
+
+        delta_ts = []
+        for i_pixel_test in range(i_pixel-6, i_pixel+6):        
+
+            if i_pixel_test < 0:
+                continue
+
+            tree_pixel.GetEntry(i_pixel_test)        
+            time_pixel = getattr(tree_pixel, br_t_pixel)
+
+            delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
+                                                                  initial_t_pixel, 
+                                                                  time_pad, 
+                                                                  initial_t_pad,
+                                                                  run_timing.offset,
+                                                                  run_timing.slope) - time_pad])
+
+        best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
+
+        i_pixel = best_match[0] 
+        tree_pixel.GetEntry(i_pixel)        
+
+        h_delta_n.Fill(best_match[0]-i_pixel+1)
+        h.Fill(best_match[1])
+        h2.Fill(time_pad-initial_t_pad, best_match[1])
+
+        # Check if we are happy with the timing
+        # (residual below 1 ms)
+        if abs(best_match[1]) < 0.001:        
+            hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
+            calib_flag = getattr(tree_pad, br_calib_flag_pad)
+            h_calib_events.Fill(hit_plane_bits, calib_flag)
+
+            out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
+            out_branches["accepted"][0] = 1
+            out_branches["track_x"][0] = getattr(tree_pixel, br_track_x)
+            out_branches["track_y"][0] = getattr(tree_pixel, br_track_y)
+            out_branches["integral50"][0] = getattr(tree_pad, br_integral50)
+
+            tree_out.Fill()            
+
+            h_tracks.Fill(getattr(tree_pixel, br_track_x),
+                          getattr(tree_pixel, br_track_y))
+
+            h_tracks_zoom.Fill(getattr(tree_pixel, br_track_x),
+                               getattr(tree_pixel, br_track_y))
+
+            h_integral.Fill(getattr(tree_pixel, br_track_x),
+                            getattr(tree_pixel, br_track_y),
+                            getattr(tree_pad, br_integral50))
+
+            h_integral_zoom.Fill(getattr(tree_pixel, br_track_x),
+                                 getattr(tree_pixel, br_track_y),
+                                 getattr(tree_pad, br_integral50))
+
+            ret = coordinate_to_box(getattr(tree_pixel, br_track_x), 
+                                        getattr(tree_pixel, br_track_y),
+                                        diamond.x_pos_min,
+                                        diamond.x_pos_max,
+                                        diamond.y_pos_min,
+                                        diamond.y_pos_max, 
+                                        n_boxes)
+            if ret != -1:
+                x_box = ret[0]
+                y_box = ret[1]
+                integral_box_matrix[x_box][y_box].Fill( getattr(tree_pad, br_integral50))
+
+
+        # done filling tree and calibration histogram
+
+    # End of loop over pad events
+
+
+
+    h.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
+    h.GetYaxis().SetTitle("Events")
+    h.Draw()
+    c.Print("run_{0}/residual{1}.pdf".format(run, test_string))
+
+    print h2,c
+    fun = ROOT.TF1("fun", "[0]+[1]*x")
+    h2.Fit(fun,"","")
+    h2.GetYaxis().SetTitleOffset(1.9)
+    h2.GetXaxis().SetTitle("t_{pad} [s]")
+    h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
+    h2.Draw()
+    c.Print("run_{0}/time{1}.pdf".format(run, test_string))
+
+    run_timing.offset -= fun.GetParameter(0)
+    run_timing.slope  -= fun.GetParameter(1)    
+
+
+    c.SetLogy(1)
+    h_delta_n.Draw()
+    c.Print("run_{0}/delta_n{1}.pdf".format(run, test_string))
+    c.SetLogy(0)
+
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(1)
+    h_calib_events.GetXaxis().SetTitle("Pixel Plane Hit Bit")
+    h_calib_events.GetYaxis().SetTitle("Pad Calibration Flag")
+    h_calib_events.GetYaxis().SetTitleOffset(1.5)
+    h_calib_events.Draw("COLZTEXT")
+    c.Print("run_{0}/calib_events{1}.pdf".format(run, test_string))
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(1)
+    h_tracks.GetXaxis().SetTitle("Pad position x [cm]")
+    h_tracks.GetYaxis().SetTitle("Pad position y [cm]")
+    h_tracks.GetYaxis().SetTitleOffset(1.5)
+    h_tracks.Draw("COLZ")
+    c.Print("run_{0}/tracks{1}.pdf".format(run, test_string))
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(1)
+    h_tracks_zoom.GetXaxis().SetTitle("Pad position x [cm]")
+    h_tracks_zoom.GetYaxis().SetTitle("Pad position y [cm]")
+    h_tracks_zoom.GetYaxis().SetTitleOffset(1.5)
+    h_tracks_zoom.Draw("COLZ")
+    c.Print("run_{0}/tracks_zoom{1}.pdf".format(run, test_string))
+
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(0)
+    proj = h_integral.Project3DProfile("yx")
+    proj.SetTitle("")
+    proj.GetXaxis().SetTitle("Pad Position x [cm]")
+    proj.GetYaxis().SetTitle("Pad Position y [cm]")
+    proj.GetXaxis().SetTitleOffset(1.2)
+    proj.GetYaxis().SetTitleOffset(1.5)
+
+    proj.Draw("COLZ")
+    c.Print("run_{0}/integral{1}_fullrange.pdf".format(run, test_string))
+
+
+    ROOT.gStyle.SetOptStat(0)
+    c.SetLogz(0)
+    proj_zoom = h_integral_zoom.Project3DProfile("yx")
+    proj_zoom.SetTitle("")
+    proj_zoom.GetXaxis().SetTitle("Pad Position x [cm]")
+    proj_zoom.GetYaxis().SetTitle("Pad Position y [cm]")
+    proj_zoom.GetXaxis().SetTitleOffset(1.2)
+    proj_zoom.GetYaxis().SetTitleOffset(1.5)
+
+    proj_zoom.Draw("COLZ")
+    c.Print("run_{0}/integral{1}_zoom_fullrange.pdf".format(run, test_string))
+
+
+    if run_timing.bias_voltage > 0:
+        proj.SetMinimum(-550)
+        proj.SetMaximum(50)
+
+        proj_zoom.SetMinimum(-550)
+        proj_zoom.SetMaximum(50)
+    else:
+        proj.SetMinimum(-50)
+        proj.SetMaximum(500)
+
+        proj_zoom.SetMinimum(-50)
+        proj_zoom.SetMaximum(500)
+
+    proj.Draw("COLZ")
+    c.Print("run_{0}/integral{1}.pdf".format(run, test_string))
+
+    proj_zoom.Draw("COLZ")
+    c.Print("run_{0}/integral_zoom{1}.pdf".format(run, test_string))
+
+    for x_pos in range(n_boxes):
+        for y_pos in range(n_boxes):
+
+            fun = ROOT.TF1("", "gaus")
+            integral_box_matrix[x_pos][y_pos].Fit(fun)
+            print "XXX X: {0} Y: {1} Mean: {2:2.2f} RMS {3:2.2f}".format(x_pos, 
+                                                                         y_pos, 
+                                                                         fun.GetParameter(1), 
+                                                                         fun.GetParameter(2))
+            integral_box_matrix[x_pos][y_pos].Draw()
+            c.Print("run_{0}/1d_integral_x_{1}_y_{2}{3}.pdf".format(run, x_pos, y_pos, test_string))
+            c.Print("run_{0}/1d_integral_x_{1}_y_{2}{3}.png".format(run, x_pos, y_pos, test_string))
+
+
+    f_out.Write()
+
+    run_timing.print_info()
