@@ -2,6 +2,8 @@
 
 """
 Study timing between pixel and pad detectors.
+
+Also produce tracking based analysis plots.
 """
 
 ###############################
@@ -15,6 +17,7 @@ import math
 
 import ROOT
 
+import TimingAlignmentHelpers as TAH
 
 ###############################
 # Init ROOT
@@ -30,207 +33,68 @@ c = ROOT.TCanvas("","",800,800)
 
 
 ###############################
-# Helper: print_usage
-###############################
-
-def print_usage():
-    print "Usage: python {0} run action".format(sys.argv[0])
-    print "run: run number (int)"
-    print "action: 0=analyze    1=run on small sample     2=find alignment"
-    print "Example: python 70 0"
-# End of print_usage
-
-
-###############################
-# Helper: coordinate_to_box
-###############################
-
-def coordinate_to_box(x, y, min_x, max_x, min_y, max_y, n):
-    """ Map x/y coordiantes into a n-times-n array of boxes.
-    Return [x_box, y_box]
-    Where x_box/y_box are the boxes-id to which the position is mapped.
-    The x_xbox/y_box range goes from 0 to n-1. 
-    Return the number -1 instead of a list if one of the positions is outside the target range
-    """
-    
-    # Make sure the input position is valid
-    if ( (x < min_x) or
-         (x > max_x) or
-         (y < min_y) or
-         (y > max_y)):
-        return -1
-
-    # What is the range that should go into one box
-    unit_length_x = 1.0 * (max_x - min_x) / n
-    unit_length_y = 1.0 * (max_y - min_y) / n
-    
-
-    # Convert 
-    # For example 1 .. 4 into 4 boxes:
-    # 0.0 .. 0.99999 into box 0
-    # 1.0 .. 1.99999 into box 1
-    # 2.0 .. 2.99999 into box 3
-    # 3.0 .. 3.99999 into box 4
-    x_box = int(math.floor((x-min_x)/unit_length_x))
-    y_box = int(math.floor((y-min_y)/unit_length_y))
-
-    return [x_box, y_box]
-# end of coordinate_to_box    
-
-
-###############################
-# Get configuration
+# Configuration
 ###############################
 
 max_align_pad = 10
 max_align_pixel = 40
 
 if not len(sys.argv) == 3:
-    print_usage()
+    TAH.print_usage()
     sys.exit()
 
 try:
     run = int(sys.argv[1])
     action = int(sys.argv[2])
 except:
-    print_usage()
+    TAH.print_usage()
     sys.exit()
 
 print "Going to process run {0} with action = {1}".format(run, action)
 
-campgain = "bt2014_09"
 
 ###############################
-# Class: Diamond
+# Diamonds
 ###############################
 
-class Diamond:
-    """ Storage class for diamond position related variables
-    
-    Current memeber variables:
-    name
-    x_pos_min
-    x_pos_max
-    y_pos_min
-    y_pos_max
-    """
-
-    diamonds = {}
-
-    def __init__(self,
-                 name,
-                 x_pos_min,
-                 x_pos_max,
-                 y_pos_min,
-                 y_pos_max):
-        self.name = name
-        self.x_pos_min = x_pos_min
-        self.x_pos_max = x_pos_max
-        self.y_pos_min = y_pos_min
-        self.y_pos_max = y_pos_max
-        
-        Diamond.diamonds[name] = self
-
-    # End __init__
-    
-# End of class Diamond
-
-Diamond("dummy", -1., 1., -1., 1.)
-
-Diamond("IIa-2", -0.2, 0.2, 0., 0.4)
-
-Diamond("IIa-3", -0.25, 0.15, -0.05, 0.35)
-
-Diamond("IIa-3-wide-open", -0.5, 0.5, -0.25, 0.65)
-
-Diamond("IIa-5-pedestal", -0.4, 0.4, 0.4, 0.6)
-
-    
+TAH.Diamond("dummy", -1., 1., -1., 1.)
+TAH.Diamond("IIa-2", -0.2, 0.2, 0., 0.4)
+TAH.Diamond("IIa-3", -0.25, 0.15, -0.05, 0.35)
+TAH.Diamond("IIa-3-wide-open", -0.5, 0.5, -0.25, 0.65)
+TAH.Diamond("IIa-5-pedestal", -0.4, 0.4, 0.4, 0.6)
 
 
 ###############################
-# Class: RunTiming
+# Run Timing Info
 ###############################
 
-class RunTiming:
-    """ Storage class for timing alignment information between pad and pixel data.
-    
-    Current memeber variables:
-    offset (in seconds)
-    slope (in seconds/second)
-    align_pixel (which pixel event to use for aligning clocks)    
-    align_pad (which pad event to use for aligning clocks)    
-    diamond_name (which diamond pad was used. This is mainly used for position information at the moment)
-    bias_voltage
-    number of channels
-    """
+TAH.RunTiming(6  ,  0.0003045,  2.155918e-06, 0, 0)
+TAH.RunTiming(12 , -0.00030472, 1.955999e-06, 0, 0)
+TAH.RunTiming(38 ,  0.00052454, 1.9e-06,      4, 0)
+TAH.RunTiming(63 , -0.00030911, 1.837389e-06, 0, 0)
+TAH.RunTiming(65 ,  0.00034346, 1.864050e-06, 0, 0)
+TAH.RunTiming(68 , -0.00085284, 2.026819e-06, 6, 0)
+TAH.RunTiming(70 , -0.00028498, 1.910828e-06, 6, 0)
+TAH.RunTiming(109, 0.000323963498273, 1.81841520034e-06, 15, 1)
+TAH.RunTiming(131, -0.000191132147971, 1.93697727798e-06, 13, 2)
+TAH.RunTiming(134, -3.1728796239e-05, 1.64755689822e-06, 14, 0)
+TAH.RunTiming(354, 0, 1.66190809094e-06, 7, 0, "IIa-2")
+TAH.RunTiming(355, -0.000314315985828, 1.66190809094e-06, 2, 1, "IIa-2", 500)
+TAH.RunTiming(356, -0.000695592438193, 1.61339888272e-06, 7, 0, "IIa-2", 500)
+TAH.RunTiming(358, 0.000249032875294, 1.61704852897e-06, 12, 1, "IIa-2", 500)
+TAH.RunTiming(360, -0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500)
+TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 
-    def __init__(self,
-                 offset = 0.,
-                 slope  = 1.9e-6,
-                 align_pixel = 0,
-                 align_pad = 0,
-                 diamond_name = "dummy",
-                 bias_voltage = 0,
-                 n_channels = 3,
-             ):
-        self.offset = offset
-        self.slope = slope
-        self.align_pixel = align_pixel
-        self.align_pad = align_pad
-        self.diamond_name = diamond_name
-        self.bias_voltage = bias_voltage
-        self.n_channels = n_channels
-    # End __init__
-    
-    def print_info(self):
-        print '{0}: RunTiming({1}, {2}, {3}, {4}, "{5}", {6}, {7}),'.format(run,
-                                                                            self.offset, 
-                                                                            self.slope, 
-                                                                            self.align_pixel,
-                                                                            self.align_pad,
-                                                                            self.diamond_name,
-                                                                            self.bias_voltage,
-                                                                            self.n_channels)
-
-    # End of print_info
-        
-# Enf of class RunTiming
+TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25, 3)
+TAH.RunTiming(532, 3.07218236187e-05, 1.11450593334e-06, 16, 1, "IIa-3", -50, 3)
 
 
-###############################
-# Put additional run timings here
-###############################
-
-di_runs = {
-    6   : RunTiming( 0.0003045,  2.155918e-06, 0, 0),
-    12  : RunTiming(-0.00030472, 1.955999e-06, 0, 0),
-    38  : RunTiming( 0.00052454, 1.9e-06,      4, 0),
-    63  : RunTiming(-0.00030911, 1.837389e-06, 0, 0),
-    65  : RunTiming( 0.00034346, 1.864050e-06, 0, 0),
-    68  : RunTiming(-0.00085284, 2.026819e-06, 6, 0),
-    70  : RunTiming(-0.00028498, 1.910828e-06, 6, 0),
-    109 :RunTiming(0.000323963498273, 1.81841520034e-06, 15, 1),
-    131 : RunTiming(-0.000191132147971, 1.93697727798e-06, 13, 2),
-    134: RunTiming(-3.1728796239e-05, 1.64755689822e-06, 14, 0),
-    354: RunTiming(0, 1.66190809094e-06, 7, 0, "IIa-2"),
-    355: RunTiming(-0.000314315985828, 1.66190809094e-06, 2, 1, "IIa-2", 500),
-    356: RunTiming(-0.000695592438193, 1.61339888272e-06, 7, 0, "IIa-2", 500),
-    358: RunTiming(0.000249032875294, 1.61704852897e-06, 12, 1, "IIa-2", 500),
-    360: RunTiming(-0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500),
-    362: RunTiming(0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500),
-
-    528: RunTiming(0, 1.69e-06, 0, 0, "IIa-3", -500, 3),
-
-    546: RunTiming(1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4),
-    558: RunTiming(0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4),
-    565: RunTiming(0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000, 4),
-    566: RunTiming(-9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000, 4),
-    568: RunTiming(0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000, 4),
-    630: RunTiming(0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500, 4),
-
-
-}
+TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4)
+TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4)
+TAH.RunTiming(565, 0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000, 4)
+TAH.RunTiming(566, -9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000, 4)
+TAH.RunTiming(568, 0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000, 4)
+TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500, 4)
 
 
 ###############################
@@ -314,29 +178,10 @@ tree_out.Branch( 'integral50', out_branches["integral50"], 'integral50/F' )
 
 
 ###############################
-# Helper Function
-# pixel_to_pad_time
-###############################
-
-def pixel_to_pad_time( pixel_now, pixel_0, pad_now, pad_0):
-    
-    # How many ticks have passed since first pixel time-stamp
-    delta_pixel = pixel_now - pixel_0
-
-    # Convert ticks to seconds (1 tick ~ 25 ns)            
-    delta_second = delta_pixel * 25e-9 + di_runs[run].offset
-
-    # Add time difference (in seconds) to initial pad time
-    return pad_0 + delta_second +  di_runs[run].slope * (pad_now - pad_0)
-
-# End of pixel-to-pad time conversion
-
-
-###############################
 # Get Trees
 ###############################
 
-if di_runs[run].n_channels == 4:
+if TAH.RunTiming.runs[run].n_channels == 4:
     basedir_pad = "../../padreadout-devel-4chan/data/output/"
 else:
     basedir_pad = "../../padreadout-devel/data/output/"
@@ -408,9 +253,9 @@ print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
 # Try to find two good events for aligning times
 ###############################
 
-if action == 2:
+def find_alignment(run):
 
-    di_runs[run] = RunTiming()
+    run_timing = TAH.RunTiming(run)
 
     # We are going to select the alignment event with the lowest residual RMS
     # Make a list of triples: [pixel_event, pad_event, residual RMS]
@@ -451,10 +296,12 @@ if action == 2:
                     tree_pixel.GetEntry(i_pixel_test)        
                     time_pixel = getattr(tree_pixel, br_t_pixel)
 
-                    delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
-                                                                      initial_t_pixel, 
-                                                                      time_pad, 
-                                                                      initial_t_pad) - time_pad])
+                    delta_ts.append( [i_pixel_test, TAH.pixel_to_pad_time(time_pixel, 
+                                                                          initial_t_pixel, 
+                                                                          time_pad, 
+                                                                          initial_t_pad,
+                                                                          run_timing.offset,
+                                                                          run_timing.slope) - time_pad])
 
                 best_match = sorted(delta_ts, key = lambda x:abs(x[1]))[0]
                 h.Fill(best_match[1])
@@ -475,7 +322,7 @@ if action == 2:
             # Make sure we have enough events actually in the histogram
             if h.Integral() > 900:
                 li_residuals_rms.append( [i_align_pixel, i_align_pad, h.GetRMS()] )
-
+                            
         # End of loop over pixel alignment events
     # End of loop over pad alignment events
 
@@ -484,12 +331,13 @@ if action == 2:
     
     print "Best pad / pixel event for alignment: ", best_i_align_pad, best_i_align_pixel
 
-    di_runs[run].align_pixel = best_i_align_pixel
-    di_runs[run].align_pad = best_i_align_pad
-    di_runs[run].print_info()
+    run_timing.align_pixel = best_i_align_pixel
+    run_timing.align_pad = best_i_align_pad
+    run_timing.print_info()
 
+if action == 2:
+    find_alignment(run)
     sys.exit()
-
 
 ###############################
 # Look at time drift
@@ -520,19 +368,19 @@ h_integral = ROOT.TH3D("","", 100, -1, 1, 100, -1, 1, 200, -1000, 1000)
 
 h_tracks_zoom = ROOT.TH2D("","", 
                           50, # bins in x 
-                          Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-                          Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
+                          TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_min,
+                          TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_max,
                           50, # bins in y
-                          Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-                          Diamond.diamonds[di_runs[run].diamond_name].y_pos_max)
+                          TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_min,
+                          TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_max)
 
 h_integral_zoom = ROOT.TH3D("","", 
                             50, # bins in x 
-                            Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-                            Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
+                            TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_min,
+                            TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_max,
                             50, # bins in y
-                            Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-                            Diamond.diamonds[di_runs[run].diamond_name].y_pos_max,
+                            TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_min,
+                            TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_max,
                             200, -1000, 1000)
 
 # Also create a matrix of histograms for the PH as a function of the
@@ -543,7 +391,7 @@ integral_box_matrix = []
 for x_pos in range(n_boxes):
     tmp_li = []
     for y_pos in range(n_boxes):
-        if di_runs[run].bias_voltage > 0:
+        if TAH.RunTiming.runs[run].bias_voltage > 0:
             tmp_li.append(ROOT.TH1D("", "", 200, -500, 200))
         else:
             tmp_li.append(ROOT.TH1D("", "", 200, -200, 500))
@@ -552,8 +400,8 @@ for x_pos in range(n_boxes):
 # End of y-loop        
 
         
-tree_pad.GetEntry(di_runs[run].align_pad)
-tree_pixel.GetEntry(di_runs[run].align_pixel)
+tree_pad.GetEntry(TAH.RunTiming.runs[run].align_pad)
+tree_pixel.GetEntry(TAH.RunTiming.runs[run].align_pixel)
 
 initial_t_pad = getattr(tree_pad, br_t_pad)
 initial_t_pixel = getattr(tree_pixel, br_t_pixel)
@@ -577,11 +425,12 @@ for i_pad in xrange(max_events):
         tree_pixel.GetEntry(i_pixel_test)        
         time_pixel = getattr(tree_pixel, br_t_pixel)
 
-        delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
-                                                          initial_t_pixel, 
-                                                          time_pad, 
-                                                          initial_t_pad) - time_pad])
-
+        delta_ts.append( [i_pixel_test, TAH.pixel_to_pad_time(time_pixel, 
+                                                              initial_t_pixel, 
+                                                              time_pad, 
+                                                              initial_t_pad,
+                                                              TAH.RunTiming.runs[run].offset,
+                                                              TAH.RunTiming.runs[run].slope) - time_pad])
 
     best_match =  sorted(delta_ts, key = lambda x:abs(x[1]))[0]
 
@@ -620,13 +469,13 @@ for i_pad in xrange(max_events):
         h_integral_zoom.Fill(getattr(tree_pixel, br_track_x),
                              getattr(tree_pixel, br_track_y),
                              getattr(tree_pad, br_integral50))
-
-        ret = coordinate_to_box(getattr(tree_pixel, br_track_x), 
-                                           getattr(tree_pixel, br_track_y),
-                                           Diamond.diamonds[di_runs[run].diamond_name].x_pos_min,
-                                           Diamond.diamonds[di_runs[run].diamond_name].x_pos_max,
-                                           Diamond.diamonds[di_runs[run].diamond_name].y_pos_min,
-                                           Diamond.diamonds[di_runs[run].diamond_name].y_pos_max, n_boxes)
+        
+        ret = TAH.coordinate_to_box(getattr(tree_pixel, br_track_x), 
+                                    getattr(tree_pixel, br_track_y),
+                                    TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_min,
+                                    TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].x_pos_max,
+                                    TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_min,
+                                    TAH.Diamond.diamonds[TAH.RunTiming.runs[run].diamond_name].y_pos_max, n_boxes)
         if ret != -1:
             x_box = ret[0]
             y_box = ret[1]
@@ -653,8 +502,8 @@ h2.GetYaxis().SetTitle("t_{pixel} - t_{pad} [s]")
 h2.Draw()
 c.Print("run_{0}/time{1}.pdf".format(run, test_string))
 
-di_runs[run].offset -= fun.GetParameter(0)
-di_runs[run].slope  -= fun.GetParameter(1)    
+TAH.RunTiming.runs[run].offset -= fun.GetParameter(0)
+TAH.RunTiming.runs[run].slope  -= fun.GetParameter(1)    
 
 
 c.SetLogy(1)
@@ -714,7 +563,7 @@ proj_zoom.Draw("COLZ")
 c.Print("run_{0}/integral{1}_zoom_fullrange.pdf".format(run, test_string))
 
 
-if di_runs[run].bias_voltage > 0:
+if TAH.RunTiming.runs[run].bias_voltage > 0:
     proj.SetMinimum(-550)
     proj.SetMaximum(50)
 
@@ -753,4 +602,4 @@ for x_pos in range(n_boxes):
 
 f_out.Write()
 
-di_runs[run].print_info()
+TAH.RunTiming.runs[run].print_info()
