@@ -37,13 +37,18 @@ c = ROOT.TCanvas("","",800,800)
 # Configuration
 ###############################
 
-if not len(sys.argv) == 3:
+if len(sys.argv) < 3:
     TAH.print_usage()
     sys.exit()
 
 try:
     run = int(sys.argv[1])
     action = int(sys.argv[2])
+
+    if action == 3:
+        diamond = sys.argv[3]
+        bias_voltage = int(sys.argv[4])
+
 except:
     TAH.print_usage()
     sys.exit()
@@ -87,6 +92,8 @@ TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 
 # IIa-3, positive voltage
 TAH.RunTiming(457, 1.81812073529e-05, 1.57043424908e-06, 0, 0, "IIa-3", 1000, 3)
+TAH.RunTiming(463, 0.000150546696306, 1.66309765368e-06, 1, 1, "IIa-3", 500, 3)
+RunTiming(467, -0.000353750981164, 1.60187924305e-06, 10, 1, "IIa-3", 500, 3)
 
 # IIa-3, negative voltage
 TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25, 3)
@@ -100,6 +107,9 @@ TAH.RunTiming(566, -9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000, 
 TAH.RunTiming(568, 0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000, 4)
 TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500, 4)
 
+
+if action == 3:
+    TAH.RunTiming(run, diamond_name = diamond, bias_voltage = bias_voltage)
 
 ###############################
 # Branch names
@@ -176,18 +186,42 @@ print "Pixel Tree: ", tree_pixel.GetEntries(), "entries"
 # Actual work
 ###############################
 
-TAH.print_run_info(run, tree_pixel, tree_pad, branch_names)
-
-if action == 2:
-    TAH.find_alignment(run, 
-                       tree_pixel, 
-                       tree_pad, 
-                       branch_names, 
-                       c)
-else:
+if (action == 0) or (action == 1):
+    TAH.print_run_info(run, tree_pixel, tree_pad, branch_names)
     TAH.analyze(run, 
                 action,
                 tree_pixel, 
                 tree_pad, 
                 branch_names, 
                 c)
+
+elif action == 2:
+    TAH.print_run_info(run, tree_pixel, tree_pad, branch_names)
+    TAH.find_alignment(run, 
+                       tree_pixel, 
+                       tree_pad, 
+                       branch_names, 
+                       c)
+
+elif action == 3:
+
+    TAH.find_alignment(run, 
+                       tree_pixel, 
+                       tree_pad, 
+                       branch_names, 
+                       c)
+
+    TAH.analyze(run, 
+                1,
+                tree_pixel, 
+                tree_pad, 
+                branch_names, 
+                c)
+
+    TAH.analyze(run, 
+                0,
+                tree_pixel, 
+                tree_pad, 
+                branch_names, 
+                c)
+

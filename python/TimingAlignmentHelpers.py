@@ -233,6 +233,9 @@ def find_alignment(run, tree_pixel, tree_pad, branch_names, c):
     index_rms = 2
     li_residuals_rms = []
     
+    found_good_match = False
+    good_match_threshold = 0.00045 # RMS below 450 ns should be a good match
+    
     # Loop over potential pad events for aligning:
     for i_align_pad in xrange(max_align_pad):
 
@@ -287,12 +290,20 @@ def find_alignment(run, tree_pixel, tree_pad, branch_names, c):
                                                                                         i_align_pixel, 
                                                                                         h.GetMean(), 
                                                                                         h.GetRMS())
-            
+                        
             # Make sure we have enough events actually in the histogram
             if h.Integral() > 900:
                 li_residuals_rms.append( [i_align_pixel, i_align_pad, h.GetRMS()] )
+                
+                # if we found a good match we can stop
+                if h.GetRMS() < good_match_threshold:
+                    found_good_match = True
+                    break
                             
         # End of loop over pixel alignment events
+
+        if found_good_match:
+            break        
     # End of loop over pad alignment events
 
     best_i_align_pixel = sorted(li_residuals_rms, key = lambda x: abs(x[index_rms]))[0][index_pixel]
