@@ -4,6 +4,7 @@
 Helper functions for TimingAlignment.py
 """
 
+
 ###############################
 # Imports
 ###############################
@@ -177,6 +178,44 @@ class RunTiming:
 
  
 ###############################
+# print_run_info
+###############################
+ 
+def print_run_info(run, tree_pixel, tree_pad, branch_names):
+
+    # Get the intial numbers for pad and pixel (use nominal first events)
+    tree_pad.GetEntry(0)
+    tree_pixel.GetEntry(0)
+
+    # Start with nominal (0/0) event align
+    # Try to find better pair of events below
+    initial_n_pad = getattr(tree_pad, branch_names["n_pad"])
+    initial_n_pixel = getattr(tree_pixel, branch_names["n_pixel"])
+
+    initial_t_pad = getattr(tree_pad, branch_names["t_pad"])
+    initial_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
+
+    print "Pad: Initial n = {0}, Initial t = {1}".format(initial_n_pad, initial_t_pad)
+    print "Pixel: Initial n = {0}, Initial t = {1}".format(initial_n_pixel, initial_t_pixel)
+
+    # Get the final numbers for pad and pixel
+    tree_pad.GetEntry(tree_pad.GetEntries()-1)
+    tree_pixel.GetEntry(tree_pixel.GetEntries()-1)
+
+    final_n_pad = getattr(tree_pad,branch_names["n_pad"])
+    final_n_pixel = getattr(tree_pixel, branch_names["n_pixel"])
+
+    final_t_pad = getattr(tree_pad, branch_names["t_pad"])
+    final_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
+
+    print "Pad: Final n = {0}, Final t = {1}".format(final_n_pad, final_t_pad)
+    print "Pixel: Final n = {0}, Final t = {1}".format(final_n_pixel, final_t_pixel)
+
+    print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
+# end print_run_info
+
+
+###############################
 # find_alignment
 ###############################
  
@@ -310,18 +349,6 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     tree_out.Branch( 'integral50', out_branches["integral50"], 'integral50/F' )
 
 
-    # Legacy! Remove ASAP
-    br_n_pad = "n"
-    br_n_pixel = "ievent" 
-    br_t_pad = "time_stamp" # [Unix Time]
-    br_t_pixel = "time"     # clock-ticks (25 ns spacing)
-    br_hit_plane_bits_pixel = "hit_plane_bits"
-    br_track_x = "track_x"
-    br_track_y = "track_y"
-    br_calib_flag_pad = "calibflag"
-    br_integral50 = "Integral50"
-
-
     if action == 1:
         print "Doing Initial run - restricting events"
         max_events = min(25000, tree_pad.GetEntries()-1)
@@ -341,8 +368,8 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     # Get final-times
     tree_pad.GetEntry(max_events)
     tree_pixel.GetEntry(max_events)        
-    final_t_pad = getattr(tree_pad, br_t_pad)
-    final_t_pixel = getattr(tree_pixel, br_t_pixel)
+    final_t_pad = getattr(tree_pad, branch_names["t_pad"])
+    final_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
 
     # Book histograms
     h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
@@ -390,8 +417,8 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     tree_pad.GetEntry(run_timing.align_pad)
     tree_pixel.GetEntry(run_timing.align_pixel)
 
-    initial_t_pad = getattr(tree_pad, br_t_pad)
-    initial_t_pixel = getattr(tree_pixel, br_t_pixel)
+    initial_t_pad = getattr(tree_pad, branch_names["t_pad"])
+    initial_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
 
     i_pixel = 0
 
@@ -401,7 +428,7 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
             print "{0} / {1}".format(i_pad, max_events)
 
         tree_pad.GetEntry(i_pad)
-        time_pad = getattr(tree_pad, br_t_pad)
+        time_pad = getattr(tree_pad, branch_names["t_pad"])
 
         delta_ts = []
         for i_pixel_test in range(i_pixel-6, i_pixel+6):        
@@ -410,7 +437,7 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
                 continue
 
             tree_pixel.GetEntry(i_pixel_test)        
-            time_pixel = getattr(tree_pixel, br_t_pixel)
+            time_pixel = getattr(tree_pixel, branch_names["t_pixel"])
 
             delta_ts.append( [i_pixel_test, pixel_to_pad_time(time_pixel, 
                                                                   initial_t_pixel, 
@@ -431,50 +458,42 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
         # Check if we are happy with the timing
         # (residual below 1 ms)
         if abs(best_match[1]) < 0.001:        
-            hit_plane_bits = getattr(tree_pixel, br_hit_plane_bits_pixel)
-            calib_flag = getattr(tree_pad, br_calib_flag_pad)
-            h_calib_events.Fill(hit_plane_bits, calib_flag)
-
-            out_branches["n_pad"][0] = getattr(tree_pad, br_n_pad)
+            
+            hit_plane_bits = getattr(tree_pixel, branch_names["plane_bits_pixel"])
+            calib_flag = getattr(tree_pad, branch_names["calib_flag_pad"])
+            track_x = getattr(tree_pixel, branch_names["track_x"])
+            track_y = getattr(tree_pixel, branch_names["track_y"])
+            integral50 = getattr(tree_pad, branch_names["integral_50_pad"])
+            
+            out_branches["n_pad"][0] = getattr(tree_pad, branch_names["n_pad"])
             out_branches["accepted"][0] = 1
-            out_branches["track_x"][0] = getattr(tree_pixel, br_track_x)
-            out_branches["track_y"][0] = getattr(tree_pixel, br_track_y)
-            out_branches["integral50"][0] = getattr(tree_pad, br_integral50)
+            out_branches["track_x"][0] = track_x
+            out_branches["track_y"][0] = track_y
+            out_branches["integral50"][0] = integral50
+            tree_out.Fill()
+            
+                                                            
+            h_calib_events.Fill(hit_plane_bits, calib_flag)
+            h_tracks.Fill(track_x, track_y)
+            h_tracks_zoom.Fill(track_x, track_y)
+            h_integral.Fill(track_x, track_y, integral50)
+            h_integral_zoom.Fill(track_x, track_y, integral50)
 
-            tree_out.Fill()            
+            ret = coordinate_to_box(track_x,
+                                    track_y,
+                                    diamond.x_pos_min,
+                                    diamond.x_pos_max,
+                                    diamond.y_pos_min,
+                                    diamond.y_pos_max, 
+                                    n_boxes)
 
-            h_tracks.Fill(getattr(tree_pixel, br_track_x),
-                          getattr(tree_pixel, br_track_y))
-
-            h_tracks_zoom.Fill(getattr(tree_pixel, br_track_x),
-                               getattr(tree_pixel, br_track_y))
-
-            h_integral.Fill(getattr(tree_pixel, br_track_x),
-                            getattr(tree_pixel, br_track_y),
-                            getattr(tree_pad, br_integral50))
-
-            h_integral_zoom.Fill(getattr(tree_pixel, br_track_x),
-                                 getattr(tree_pixel, br_track_y),
-                                 getattr(tree_pad, br_integral50))
-
-            ret = coordinate_to_box(getattr(tree_pixel, br_track_x), 
-                                        getattr(tree_pixel, br_track_y),
-                                        diamond.x_pos_min,
-                                        diamond.x_pos_max,
-                                        diamond.y_pos_min,
-                                        diamond.y_pos_max, 
-                                        n_boxes)
             if ret != -1:
                 x_box = ret[0]
                 y_box = ret[1]
-                integral_box_matrix[x_box][y_box].Fill( getattr(tree_pad, br_integral50))
-
-
+                integral_box_matrix[x_box][y_box].Fill(integral50)
+                                
         # done filling tree and calibration histogram
-
     # End of loop over pad events
-
-
 
     h.GetXaxis().SetTitle("t_{pixel} - t_{pad} [s]")
     h.GetYaxis().SetTitle("Events")
@@ -587,3 +606,4 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     f_out.Write()
 
     run_timing.print_info()
+# end of analyze

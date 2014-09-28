@@ -76,6 +76,8 @@ TAH.RunTiming(70 , -0.00028498, 1.910828e-06, 6, 0)
 TAH.RunTiming(109, 0.000323963498273, 1.81841520034e-06, 15, 1)
 TAH.RunTiming(131, -0.000191132147971, 1.93697727798e-06, 13, 2)
 TAH.RunTiming(134, -3.1728796239e-05, 1.64755689822e-06, 14, 0)
+
+# IIa-2, positive voltage
 TAH.RunTiming(354, 0, 1.66190809094e-06, 7, 0, "IIa-2")
 TAH.RunTiming(355, -0.000314315985828, 1.66190809094e-06, 2, 1, "IIa-2", 500)
 TAH.RunTiming(356, -0.000695592438193, 1.61339888272e-06, 7, 0, "IIa-2", 500)
@@ -83,12 +85,14 @@ TAH.RunTiming(358, 0.000249032875294, 1.61704852897e-06, 12, 1, "IIa-2", 500)
 TAH.RunTiming(360, -0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500)
 TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 
+# IIa-3, positive voltage
 TAH.RunTiming(457, 1.81812073529e-05, 1.57043424908e-06, 0, 0, "IIa-3", 1000, 3)
 
+# IIa-3, negative voltage
 TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25, 3)
 TAH.RunTiming(532, -5.38246743255e-05, 1.97836071279e-06, 14, 1, "IIa-3", -50, 3)
 TAH.RunTiming(534, -0.00016191126604, 1.64201756052e-06, 0, 0, "IIa-3", -75, 3)
-
+# 4-channel runs from here on
 TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4)
 TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4)
 TAH.RunTiming(565, 0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000, 4)
@@ -168,41 +172,11 @@ print "PAD Tree: ", tree_pad.GetEntries(), "entries"
 print "Pixel Tree: ", tree_pixel.GetEntries(), "entries"
 
 
-# ###############################
-# # Gather Information on Run
-# ###############################
-# 
-# # Get the intial numbers for pad and pixel
-# tree_pad.GetEntry(0)
-# tree_pixel.GetEntry(0)
-# 
-# # Start with nominal (0/0) event align
-# # Try to find better pair of events below
-# initial_n_pad = getattr(tree_pad, br_n_pad)
-# initial_n_pixel = getattr(tree_pixel, br_n_pixel)
-# 
-# initial_t_pad = getattr(tree_pad, br_t_pad)
-# initial_t_pixel = getattr(tree_pixel, br_t_pixel)
-# 
-# print "Pad: Initial n = {0}, Initial t = {1}".format(initial_n_pad, initial_t_pad)
-# print "Pixel: Initial n = {0}, Initial t = {1}".format(initial_n_pixel, initial_t_pixel)
-# 
-# # Get the final numbers for pad and pixel
-# tree_pad.GetEntry(tree_pad.GetEntries()-1)
-# tree_pixel.GetEntry(tree_pixel.GetEntries()-1)
-# 
-# final_n_pad = getattr(tree_pad, br_n_pad)
-# final_n_pixel = getattr(tree_pixel, br_n_pixel)
-# 
-# final_t_pad = getattr(tree_pad, br_t_pad)
-# final_t_pixel = getattr(tree_pixel, br_t_pixel)
-# 
-# print "Pad: Final n = {0}, Final t = {1}".format(final_n_pad, final_t_pad)
-# print "Pixel: Final n = {0}, Final t = {1}".format(final_n_pixel, final_t_pixel)
-# 
-# print "Duration: {0} seconds".format(final_t_pad - initial_t_pad)
+###############################
+# Actual work
+###############################
 
-
+TAH.print_run_info(run, tree_pixel, tree_pad, branch_names)
 
 if action == 2:
     TAH.find_alignment(run, 
@@ -210,7 +184,6 @@ if action == 2:
                        tree_pad, 
                        branch_names, 
                        c)
-
 else:
     TAH.analyze(run, 
                 action,
