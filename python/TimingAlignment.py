@@ -93,25 +93,21 @@ TAH.RunTiming(360, -0.000185791051023, 1.59938328397e-06, 5, 1, "IIa-2", 500)
 TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 
 # IIa-3, positive voltage
-TAH.RunTiming(457, 1.81812073529e-05, 1.57043424908e-06, 0, 0, "IIa-3", 1000, 3)
-TAH.RunTiming(463, 0.000150546696306, 1.66309765368e-06, 1, 1, "IIa-3", 500, 3)
-RunTiming(467, -0.000353750981164, 1.60187924305e-06, 10, 1, "IIa-3", 500, 3)
+TAH.RunTiming(457, 1.81812073529e-05, 1.57043424908e-06, 0, 0, "IIa-3", 1000)
+TAH.RunTiming(463, 0.000150546696306, 1.66309765368e-06, 1, 1, "IIa-3", 500)
+RunTiming(467, -0.000353750981164, 1.60187924305e-06, 10, 1, "IIa-3", 500)
 
 # IIa-3, negative voltage
-TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25, 3)
-TAH.RunTiming(532, -5.38246743255e-05, 1.97836071279e-06, 14, 1, "IIa-3", -50, 3)
-TAH.RunTiming(534, -0.00016191126604, 1.64201756052e-06, 0, 0, "IIa-3", -75, 3)
-# 4-channel runs from here on
-TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500, 4)
-TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500, 4)
-TAH.RunTiming(565, 0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000, 4)
-TAH.RunTiming(566, -9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000, 4)
-TAH.RunTiming(568, 0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000, 4)
-TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500, 4)
+TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25)
+TAH.RunTiming(532, -5.38246743255e-05, 1.97836071279e-06, 14, 1, "IIa-3", -50)
+TAH.RunTiming(534, -0.00016191126604, 1.64201756052e-06, 0, 0, "IIa-3", -75)
+TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500)
+TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500)
+TAH.RunTiming(565, 0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000)
+TAH.RunTiming(566, -9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000)
+TAH.RunTiming(568, 0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000)
+TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500)
 
-
-if action == 3:
-    TAH.RunTiming(run, diamond_name = diamond, bias_voltage = bias_voltage)
 
 ###############################
 # Branch names
@@ -153,11 +149,7 @@ except:
 # Get Trees
 ###############################
 
-if TAH.RunTiming.runs[run].n_channels == 4:
-    basedir_pad = "../../padreadout-devel-4chan/data/output/"
-else:
-    basedir_pad = "../../padreadout-devel/data/output/"
-
+basedir_pad = "../../padreadout-devel/data/output/"
 basedir_pixel = "../plots/"
 
 if run < 10:
@@ -206,6 +198,8 @@ elif action == 2:
                        c)
 
 elif action == 3:
+
+    TAH.RunTiming(run, diamond_name = diamond, bias_voltage = bias_voltage)
 
     TAH.find_alignment(run, 
                        tree_pixel, 

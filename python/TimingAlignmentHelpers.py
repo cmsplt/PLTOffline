@@ -135,7 +135,6 @@ class RunTiming:
     align_pad (which pad event to use for aligning clocks)    
     diamond_name (which diamond pad was used. This is mainly used for position information at the moment)
     bias_voltage
-    number of channels
     """
     
     runs = {}
@@ -148,7 +147,6 @@ class RunTiming:
                  align_pad = 0,
                  diamond_name = "dummy",
                  bias_voltage = 0,
-                 n_channels = 3,
              ):
         self.run = run
         self.offset = offset
@@ -157,21 +155,19 @@ class RunTiming:
         self.align_pad = align_pad
         self.diamond_name = diamond_name
         self.bias_voltage = bias_voltage
-        self.n_channels = n_channels
 
         RunTiming.runs[run] = self
 
     # End __init__
     
     def print_info(self):
-        print 'RunTiming({0}, {1}, {2}, {3}, {4}, "{5}", {6}, {7}),'.format(self.run,
-                                                                            self.offset, 
-                                                                            self.slope, 
-                                                                            self.align_pixel,
-                                                                            self.align_pad,
-                                                                            self.diamond_name,
-                                                                            self.bias_voltage,
-                                                                            self.n_channels)
+        print 'TAH.RunTiming({0}, {1}, {2}, {3}, {4}, "{5}", {6})'.format(self.run,
+                                                                          self.offset, 
+                                                                          self.slope, 
+                                                                          self.align_pixel,
+                                                                          self.align_pad,
+                                                                          self.diamond_name,
+                                                                          self.bias_voltage)
 
     # End of print_info
 # End of class RunTiming
