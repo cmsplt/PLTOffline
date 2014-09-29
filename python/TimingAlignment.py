@@ -24,6 +24,8 @@ import TimingAlignmentHelpers as TAH
 # Init ROOT
 ###############################
 
+ROOT.gStyle.SetPalette(53)
+
 ROOT.gStyle.SetPadLeftMargin(0.15)
 ROOT.gStyle.SetPadRightMargin(0.14)
 ROOT.gStyle.SetPadBottomMargin(0.12)

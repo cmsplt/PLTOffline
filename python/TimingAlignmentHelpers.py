@@ -23,8 +23,8 @@ import ROOT
 
 def print_usage():
     print "Usage: python {0} run action".format(sys.argv[0])
-    print "run: run number (int)"
-    print "action: 0=analyze    1=run on small sample     2=find alignment"
+    print "run: run number (int) [diamond-mask (only for action=3) bias-voltage (only for action=3)]"
+    print "action: 0=analyze    1=run on small sample     2=find alignment    3=do everything"
     print "Example: python 70 0"
 # End of print_usage
 
@@ -234,7 +234,7 @@ def find_alignment(run, tree_pixel, tree_pad, branch_names, c):
     li_residuals_rms = []
     
     found_good_match = False
-    good_match_threshold = 0.00045 # RMS below 450 ns should be a good match
+    good_match_threshold = 0.000390 # RMS below 390 ns should be a good match
     
     # Loop over potential pad events for aligning:
     for i_align_pad in xrange(max_align_pad):
