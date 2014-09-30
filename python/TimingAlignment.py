@@ -14,16 +14,48 @@ import os
 import sys
 import array
 import math
+import argparse
 
 import ROOT
 
 import TimingAlignmentHelpers as TAH
 
 
+
+
+
+###############################
+# Configuration
+###############################
+parser = argparse.ArgumentParser(description='Timing Alignment of DRS4-Board with CMS - PixelTestboard.',
+                                  epilog="Example  python {0} 70 0".format(sys.argv[0]))
+#def print_usage():
+#    print "Usage: python {0} run action".format(sys.argv[0])
+#    print "run: run number (int) [diamond-mask (only for action=3) bias-voltage (only for action=3)]"
+#    print "action: 0=analyze    1=run on small sample     2=find alignment    3=do everything"
+#    print "Example: python 70 0"
+
+parser.add_argument('run',metavar='R', type=int,help='run: run number (int)')
+parser.add_argument('action',metavar='A', type=int,help='action: 0=analyze    1=run on small sample     2=find alignment    3=do everything')
+parser.add_argument('-diamond',type=str,help='only needed for action=3')
+parser.add_argument('-voltage',type=int,help='only needed for action=3')
+args = parser.parse_args()
+
+run = args.run
+action = args.action
+if action ==3:
+  diamond = args.diamond
+  bias_voltage = args.voltage
+
+print 'Run',args.run
+print 'action',args.action
+print 'diamond',args.diamond
+print 'voltag',args.voltage
+
+
 ###############################
 # Init ROOT
 ###############################
-
 ROOT.gStyle.SetPalette(53)
 
 ROOT.gStyle.SetPadLeftMargin(0.15)
@@ -31,29 +63,7 @@ ROOT.gStyle.SetPadRightMargin(0.14)
 ROOT.gStyle.SetPadBottomMargin(0.12)
 ROOT.gStyle.SetPadTopMargin(0.05)
 ROOT.gROOT.ForceStyle()
-
 c = ROOT.TCanvas("","",800,800)
-
-
-###############################
-# Configuration
-###############################
-
-if len(sys.argv) < 3:
-    TAH.print_usage()
-    sys.exit()
-
-try:
-    run = int(sys.argv[1])
-    action = int(sys.argv[2])
-
-    if action == 3:
-        diamond = sys.argv[3]
-        bias_voltage = int(sys.argv[4])
-
-except:
-    TAH.print_usage()
-    sys.exit()
 
 print "Going to process run {0} with action = {1}".format(run, action)
 
@@ -67,6 +77,7 @@ TAH.Diamond("IIa-2", -0.2, 0.2, 0., 0.4)
 TAH.Diamond("IIa-3", -0.25, 0.15, -0.05, 0.35)
 TAH.Diamond("IIa-3-wide-open", -0.5, 0.5, -0.25, 0.65)
 TAH.Diamond("IIa-5-pedestal", -0.4, 0.4, 0.4, 0.6)
+TAH.Diamond("2A87-E", -0.2, 0.1, -.05, 0.3)
 
 
 ###############################
@@ -95,7 +106,7 @@ TAH.RunTiming(362, 0.00042190730171, 1.64763938056e-06, 1, 1, "IIa-2", 500)
 # IIa-3, positive voltage
 TAH.RunTiming(457, 1.81812073529e-05, 1.57043424908e-06, 0, 0, "IIa-3", 1000)
 TAH.RunTiming(463, 0.000150546696306, 1.66309765368e-06, 1, 1, "IIa-3", 500)
-RunTiming(467, -0.000353750981164, 1.60187924305e-06, 10, 1, "IIa-3", 500)
+#RunTiming(467, -0.000353750981164, 1.60187924305e-06, 10, 1, "IIa-3", 500)
 
 # IIa-3, negative voltage
 TAH.RunTiming(528, -0.000415933095508, 1.60475855132e-06, 6, 1, "IIa-3", -25)
@@ -103,10 +114,17 @@ TAH.RunTiming(532, -5.38246743255e-05, 1.97836071279e-06, 14, 1, "IIa-3", -50)
 TAH.RunTiming(534, -0.00016191126604, 1.64201756052e-06, 0, 0, "IIa-3", -75)
 TAH.RunTiming(546, 1.52929003315e-05, 1.69038314973e-06, 0, 0, "IIa-3", -500)
 TAH.RunTiming(558, 0.000554312131921, 1.75928791575e-06, 0, 0, "IIa-3", -500)
-TAH.RunTiming(565, 0.000473639852545, 1.87068995292e-06, 13, 1, "IIa-3-wide-open", -1000)
+TAH.RunTiming(565, 0.000486774113148, 1.69386102118e-06, 13, 1, "IIa-3-wide-open", -1000)
 TAH.RunTiming(566, -9.5862348191e-05, 1.64943513686e-06, 16, 1, "IIa-3", -1000)
 TAH.RunTiming(568, 0.000443434862615, 1.57788860683e-06, 11, 1, "IIa-3-wide-open", -1000)
 TAH.RunTiming(630, 0.00028963428651, 1.70790800374e-06, 0, 0, "IIa-5-pedestal", 500)
+
+
+#2A87-E
+#TAH.RunTiming(835, -0.000389567120076, 1.82800169927e-06, 12, 1, "2A87-E", -500)
+TAH.RunTiming(835, -0.000407923105343, 1.78550487335e-06, 12, 1, "2A87-E", -500)
+
+
 
 
 ###############################
@@ -152,15 +170,8 @@ except:
 basedir_pad = "../../padreadout-devel/data/output/"
 basedir_pixel = "../plots/"
 
-if run < 10:
-    format_pad = "{0}run_2014_09r00000{1}.root"
-    format_pixel = "{0}00000{1}/histos.root"
-elif run < 100:
-    format_pad = "{0}run_2014_09r0000{1}.root"
-    format_pixel = "{0}0000{1}/histos.root"
-else:
-    format_pad = "{0}run_2014_09r000{1}.root"
-    format_pixel = "{0}000{1}/histos.root"
+format_pad = "{0}run_2014_09r{1:06d}.root"
+format_pixel = "{0}{1:06d}/histos.root"
 
 filename_pad = format_pad.format(basedir_pad, run)
 filename_pixel = format_pixel.format(basedir_pixel, run)
