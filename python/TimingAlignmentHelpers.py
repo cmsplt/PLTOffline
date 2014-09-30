@@ -337,6 +337,9 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     out_branches["n_pad"] = array.array( 'i', [ 0 ] ) 
     tree_out.Branch( 'n_pad', out_branches["n_pad"], 'n_pad/I' )
 
+    out_branches["t_pad"] = array.array( 'f', [ 0 ] ) 
+    tree_out.Branch( 't_pad', out_branches["t_pad"], 't_pad/F' )
+
     # Did we accept this event in the pixel+timing analysis
     # Possible reasons for rejection:
     #   - could not find event in the pixel stream
@@ -379,15 +382,15 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
     final_t_pixel = getattr(tree_pixel, branch_names["t_pixel"])
 
     # Book histograms
-    h2 = ROOT.TH2D("", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
-    h = ROOT.TH1D("","",500, -0.007, 0.007)
-    h_delta_n = ROOT.TH1D("", "", 21, -10, 10)
-    h_calib_events = ROOT.TH2D("", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
+    h2 = ROOT.TH2D("h2", "", 2000, 0, final_t_pad-initial_t_pad, 300, -0.01, 0.01)
+    h = ROOT.TH1D("h","",500, -0.007, 0.007)
+    h_delta_n = ROOT.TH1D("h_delta_n", "", 21, -10, 10)
+    h_calib_events = ROOT.TH2D("h_calib_events", "", 16, -0.5, 15.5, 2, -0.5, 1.5)
 
-    h_tracks = ROOT.TH2D("","", 100, -1, 1, 100, -1, 1)
-    h_integral = ROOT.TH3D("","", 100, -1, 1, 100, -1, 1, 200, -1000, 1000)
+    h_tracks = ROOT.TH2D("h_tracks","", 100, -1, 1, 100, -1, 1)
+    h_integral = ROOT.TH3D("h_integral","", 100, -1, 1, 100, -1, 1, 200, -1000, 1000)
 
-    h_tracks_zoom = ROOT.TH2D("","", 
+    h_tracks_zoom = ROOT.TH2D("h_tracks_zoom","", 
                               50, # bins in x 
                               diamond.x_pos_min,
                               diamond.x_pos_max,
@@ -395,7 +398,7 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
                               diamond.y_pos_min,
                               diamond.y_pos_max)
 
-    h_integral_zoom = ROOT.TH3D("","", 
+    h_integral_zoom = ROOT.TH3D("h_integral_zoom","", 
                                 50, # bins in x 
                                 diamond.x_pos_min,
                                 diamond.x_pos_max,
@@ -473,6 +476,7 @@ def analyze(run, action, tree_pixel, tree_pad, branch_names, c):
             integral50 = getattr(tree_pad, branch_names["integral_50_pad"])
             
             out_branches["n_pad"][0] = getattr(tree_pad, branch_names["n_pad"])
+            out_branches["t_pad"][0] = time_pad
             out_branches["accepted"][0] = 1
             out_branches["track_x"][0] = track_x
             out_branches["track_y"][0] = track_y
