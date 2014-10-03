@@ -1,0 +1,60 @@
+## makefile for decode.C
+ANALYSIS	:= ./TestPSIBinaryFileReader
+ANA_OPT		:= 0 5
+INPUT		:= input
+OUTPUT		:= plots
+RUNS		:= bt2014_09r
+IN_NAME		:= mtb.bin
+OUT_NAME	:= analyzed.txt
+SOURCES     := $(wildcard $(INPUT)/$(RUNS)*/$(IN_NAME))
+OBJECTS     := $(patsubst $(INPUT)/$(RUNS)%/$(IN_NAME),$(OUTPUT)/%/$(OUT_NAME),$(SOURCES))
+
+
+RM          := rm
+MV			:= mv
+TOUCH		:= touch
+
+
+
+# Rules ====================================
+#all: $(SOURCES) $(EXECUTABLE)
+all: printer analysis
+
+printer:
+	$ @echo "INPUT   $(INPUT)"
+	$ @echo ""
+	$ @echo "SOURCES $(SOURCES)"
+	$ @echo ""
+	$ @echo "OBJECTS $(OBJECTS)"
+
+analysis: $(OBJECTS) $(ANALYSIS)
+
+#$(OBJECTS): |$(OUTPUT)
+
+#$(SOURCES):
+#	$ @echo "SOURCES: $(SOURCES)"
+
+#$(OUTPUT):
+#	mkdir -p $(OUTPUT)
+#
+
+$(OUTPUT)/%/$(OUT_NAME): $(INPUT)/$(RUNS)%/mtb.bin
+	$ @echo ""
+	#$(INPUT)/$(RUNS)$%/mtb.bin
+	$ @echo "<	$<"
+	$ @echo ">	$>"
+	$ @echo "@	$@" 
+	$ @echo "%	$%"
+	$(ANALYSIS) $< $(ANA_OPT)
+	$(TOUCH) $@
+
+#$(OUTPUT)/%.root:  $(INPUT)/%.dat $(ANALYSIS)
+#	#$(ANALYSIS) $< $(ANA_OPT)
+#	$(MV) $(patsubst $(OUTPUT)/%.root, $(INPUT)/%.root,$@) $@
+## $(EXECUTABLE): $(OBJECTS)
+## 	$(CC) $(LDFLAGS) -o $@ $<  $(LIBS)
+
+clean:
+	find $(SRCDIR) -name '*.o' -exec $(RM) -v {} ';' 
+	$(RM) decode
+
