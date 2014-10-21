@@ -111,7 +111,10 @@ std::string GetAlignmentFilename(int telescopeID, bool useInitial=0){
     if ((telescopeID==1) || (telescopeID==2)){
       return "ALIGNMENT/Alignment_ETHTelescope_initial.dat";
     }
-    else if ((telescopeID==5) || (telescopeID==6)){
+    else if (telescopeID==5){
+      return "ALIGNMENT/Alignment_ETHTelescope_initial_4planes.dat";
+    }
+    else if (telescopeID==6){
       return "ALIGNMENT/Alignment_ETHTelescope_initial_4planes.dat";
     }
     else{
@@ -183,7 +186,7 @@ int GetNumberOfROCS(int telescopeID){
     return 6;
   else if (telescopeID == 4)
     return 2;
-  else if ((telescopeID == 5) || (telescopeID == 6))
+  else if ((telescopeID == 5)||(telescopeID == 6))
     return 4;
   else{
     std::cout << "ERROR: Number of ROCs not defined for telescopeID=" << telescopeID << std::endl;
@@ -1743,7 +1746,8 @@ int TestPSIBinaryFileReader (std::string const InFileName,
 
     }
 
-    if (telescopeID != 5 &&
+    if (telescopeID != 5 && 
+	telescopeID != 6 &&
 	BFR.NTracks() == 1 &&
         BFR.Track(0)->NClusters() == NROC &&
         BFR.Track(0)->Cluster(0)->Charge() < 300000 &&
@@ -3024,9 +3028,6 @@ int main (int argc, char* argv[])
 
   std::string const InFileName = argv[1];
   TString const FullRunName = InFileName;
-  Int_t const Index = FullRunName.Index("bt2014_09r",0);
-  TString const RunNumber = FullRunName(Index+10,6);
-  gSystem->mkdir("./plots/" + RunNumber);
 
   // 0: Analysis
   // 1: Alignment
@@ -3041,6 +3042,18 @@ int main (int argc, char* argv[])
   // 5: Four-Plane Silicon Telescope (September Testbeam at PSI)
   // 6: Four-Plane Silicon Telescope (October Testbeam at CERN)
   int telescopeID = atoi(argv[3]);
+
+
+  
+  Int_t  Index;
+  if (telescopeID == 5)
+    Index = FullRunName.Index("bt2014_09r",0);
+  else if (telescopeID == 6)
+    Index = FullRunName.Index("bt2014_10r",0);
+
+  TString const RunNumber = FullRunName(Index+10,6);
+  gSystem->mkdir("./plots/" + RunNumber);
+
 
   // Open a ROOT file to store histograms in
   // do it here and pass to all functions we call
