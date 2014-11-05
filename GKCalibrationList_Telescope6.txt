@@ -1,12 +1,12 @@
 ../Calibrations
-Telescope_PadTest_17092014_1706/phCalibration_C0.dat.fit.dat
-Telescope_PadTest_17092014_1706/phCalibration_C1.dat.fit.dat
-Telescope_PadTest_17092014_1706/phCalibration_C2.dat.fit.dat
-Telescope_PadTest_17092014_1706/phCalibration_C4.dat.fit.dat
-Telescope_PadTest_17092014_1706/phCalibration_C0.dat
-Telescope_PadTest_17092014_1706/phCalibration_C1.dat
-Telescope_PadTest_17092014_1706/phCalibration_C2.dat
-Telescope_PadTest_17092014_1706/phCalibration_C4.dat
+Telescope_CERN_17102014_1130/phCalibration_C0.dat.fit.dat
+Telescope_CERN_17102014_1130/phCalibration_C1.dat.fit.dat
+Telescope_CERN_17102014_1130/phCalibration_C2.dat.fit.dat
+Telescope_CERN_17102014_1130/phCalibration_C4.dat.fit.dat
+Telescope_CERN_17102014_1130/phCalibration_C0.dat
+Telescope_CERN_17102014_1130/phCalibration_C1.dat
+Telescope_CERN_17102014_1130/phCalibration_C2.dat
+Telescope_CERN_17102014_1130/phCalibration_C4.dat
 
 
 
