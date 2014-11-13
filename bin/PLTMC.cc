@@ -92,7 +92,7 @@ void GetTracksCollisions (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
       std::pair<float, float> LXY = Alignment.TtoLXY(T[0], T[1], Channel, iroc);
       std::pair<int, int>     PXY = Alignment.PXYfromLXY(LXY);
 
-      // Add some jitter
+      // Add some jitter if you want
       PXY.first  += (int) gRandom->Gaus(0, 1.2);
       PXY.second += (int) gRandom->Gaus(0, 1.2);
       int const PX = PXY.first;
@@ -728,20 +728,20 @@ int PLTMC ()
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
   //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_IdealCastor.dat");
   //Alignment.ReadAlignmentFile("straight");
-  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_Straight.dat");
-  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
+  Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_1Telescope.dat");
+  //Alignment.ReadAlignmentFile("ALIGNMENT/Alignment_PLTMC.dat");
 
 
   // Vector of hits for each event
   std::vector<PLTHit*> Hits;
-  int const NEvents = 100;
+  int const NEvents = 10000;
   for (int ievent = 1; ievent <= NEvents; ++ievent) {
 
     if (ievent % 10000 == 0) {
       printf("ievent = %12i\n", ievent);
     }
 
-    switch (3) {
+    switch (0) {
       case 0:
         GetTracksCollisions(Hits, Alignment);
         break;
@@ -795,6 +795,7 @@ int PLTMC ()
       n = 0x00000000;
       PLTHit* Hit = Hits[ihit];
       //printf("Channel ROC Row Col ADC: %2i %1i %2i %2i %4i %12i\n", Hit->Channel(), Hit->ROC(), Hit->Row(), Hit->Column(), Hit->ADC(), ievent);
+
 
       n |= (Hit->Channel() << 26);
       n |= ( (Hit->ROC() + 1) << 21);
