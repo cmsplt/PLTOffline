@@ -24,9 +24,17 @@
 int GenerateAlignment (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
-  TCanvas canvas2;
+  TCanvas canvas1;
 
-  TH1F histo = TH1F("histo", "x residuals", 200, -0.4, 0.4);
+  TH1F histo = TH1F("histo", "x residuals ROC 0", 200, -0.4, 0.4);
+  TH1F histo1 = TH1F("histo1", "x residuals ROC 1", 200, -0.4, 0.4);
+  TH1F histo2 = TH1F("histo2", "x residuals ROC 2", 200, -0.4, 0.4);
+  TH1F histoy = TH1F("histoy", "y residuals ROC 0", 200, -0.4, 0.4);
+  TH1F histoy1 = TH1F("histoy1", "y residuals ROC 1", 200, -0.4, 0.4);
+  TH1F histoy2 = TH1F("histoy2", "y residuals ROC 2", 200, -0.4, 0.4);
+//  histo2.SetFillColor(3);
+
+
   // Set some basic style
   PLTU::SetStyle();
 
@@ -52,33 +60,62 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
 
         // Grab the track
         PLTTrack* Track = Telescope->Track(0);
+        for (int iii = 0; iii <= 2; ++iii){
+
+          float myLResidualX;
+          myLResidualX = Track->LResidualX(iii);
+          float myLResidualY;
+          myLResidualY = Track->LResidualY(iii);
+          float xslope, yslope;
+          xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
+          yslope = (Track->TY(7.54)-Track->TY(0.0))/3; 
 
 
-        float myLResidualX;
-        myLResidualX = Track->LResidualX(2);
-        float myLResidualY;
-        myLResidualY = Track->LResidualY(2);
-        float xtrack, ytrack, xhit, yhit,z;
-        float xresidual = fabs(xtrack-xhit);
-        float yresidual = fabs(ytrack-yhit);
-        std::cout<< "Telescope: " << Telescope->Channel() << " myLResidualX  " << myLResidualX << " myLResidualY " << myLResidualY << std::endl;
-
-        histo.Fill(myLResidualX);
+          std::cout<< "Plane: "<<iii<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iii)->TX()<< " real y " << Track->Cluster(iii)->TY()<< " real z " << Track->Cluster(iii)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+          if (iii==0){
+            histoy.Fill(myLResidualY);
+            histo.Fill(myLResidualX);
+          }
+          if (iii==1){
+            histoy1.Fill(myLResidualY);
+            histo1.Fill(myLResidualX);
+          }
+          if (iii==2){
+            histoy2.Fill(myLResidualY);
+            histo2.Fill(myLResidualX);
+          }
         }
-
 
       }
 
 
     }
+  }
+  canvas1.Divide(1,2);
+
   gStyle->SetOptStat(1111);
-  canvas2.cd();
-  
+  canvas1.cd(1);
   histo.Draw(); 
-  canvas2.SaveAs("myLresidualX.gif");
+  canvas1.cd(2);
+  histoy.Draw();
+  canvas1.SaveAs("Residual_ROC0.gif");
+
+  canvas1.cd(1);
+  histo1.Draw(); 
+  canvas1.cd(2);
+  histoy1.Draw();
+  canvas1.SaveAs("Residual_ROC1.gif");
+
+  canvas1.cd(1);
+  histo2.Draw(); 
+  canvas1.cd(2);
+  histoy2.Draw();
+  canvas1.SaveAs("Residual_ROC2.gif");
+
+
+
 
   return 0;
-
 
 
 }
