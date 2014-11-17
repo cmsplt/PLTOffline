@@ -32,7 +32,6 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   TH1F histoy = TH1F("histoy", "y residuals ROC 0", 200, -0.4, 0.4);
   TH1F histoy1 = TH1F("histoy1", "y residuals ROC 1", 200, -0.4, 0.4);
   TH1F histoy2 = TH1F("histoy2", "y residuals ROC 2", 200, -0.4, 0.4);
-//  histo2.SetFillColor(3);
 
 
   // Set some basic style
@@ -71,7 +70,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
           yslope = (Track->TY(7.54)-Track->TY(0.0))/3; 
 
 
-          std::cout<< "Plane: "<<iii<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iii)->TX()<< " real y " << Track->Cluster(iii)->TY()<< " real z " << Track->Cluster(iii)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+//          std::cout<< "Plane: "<<iii<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iii)->TX()<< " real y " << Track->Cluster(iii)->TY()<< " real z " << Track->Cluster(iii)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
           if (iii==0){
             histoy.Fill(myLResidualY);
             histo.Fill(myLResidualX);
@@ -113,8 +112,13 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   canvas1.SaveAs("Residual_ROC2.gif");
 
 
+  float RxMean0 = histo.GetMean();
+  float RxMean1 = histo1.GetMean();
+  float RxMean2 = histo2.GetMean();
 
-
+  float x
+  if (RxMean1/RxMean0 == 2){
+    
   return 0;
 
 
