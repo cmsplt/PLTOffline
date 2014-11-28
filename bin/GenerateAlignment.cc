@@ -59,35 +59,32 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
 
         // Grab the track
         PLTTrack* Track = Telescope->Track(0);
-        for (int iii = 0; iii <= 2; ++iii){
+        for (int iroc = 0; iroc <= 2; ++iroc){
 
           float myLResidualX;
-          myLResidualX = Track->LResidualX(iii);
+          myLResidualX = Track->LResidualX(iroc);
           float myLResidualY;
-          myLResidualY = Track->LResidualY(iii);
+          myLResidualY = Track->LResidualY(iroc);
           float xslope, yslope;
           xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
           yslope = (Track->TY(7.54)-Track->TY(0.0))/3; 
 
 
-//          std::cout<< "Plane: "<<iii<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iii)->TX()<< " real y " << Track->Cluster(iii)->TY()<< " real z " << Track->Cluster(iii)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
-          if (iii==0){
+          //          std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+          if (iroc==0){
             histoy.Fill(myLResidualY);
             histo.Fill(myLResidualX);
           }
-          if (iii==1){
+          if (iroc==1){
             histoy1.Fill(myLResidualY);
             histo1.Fill(myLResidualX);
           }
-          if (iii==2){
+          if (iroc==2){
             histoy2.Fill(myLResidualY);
             histo2.Fill(myLResidualX);
           }
         }
-
       }
-
-
     }
   }
   canvas1.Divide(1,2);
@@ -110,34 +107,32 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   canvas1.cd(2);
   histoy2.Draw();
   canvas1.SaveAs("Residual_ROC2.gif");
+  
 
+  std::vector<float> x_position;
+  std::vector<float> y_position;
+  std::vector<float> r_position;
 
-  float RxMean0 = histo.GetMean();
-  float RxMean1 = histo1.GetMean();
-  float RxMean2 = histo2.GetMean();
-
-  float x
-  if (RxMean1/RxMean0 == 2){
+  for (iroc = 0; iroc<=2; ++iroc){
+    x_position.push_back(0);
+    y_position.push_back(0);
+    r_position.push_back(0);
     
-  return 0;
 
 
-}
+  int main (int argc, char* argv[]){
+    if (argc != 4) {
+      std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << "  " << "[GainCalFileName.dat]" << "  " << "[AlignmentFileName.dat]" << std::endl;
+      return 1;
+    }
+
+    std::string const DataFileName = argv[1];
+    std::string const GainCalFileName= argv[2];
+    std::string const AlignmentFileName= argv[3];
+
+    GenerateAlignment(DataFileName, GainCalFileName, AlignmentFileName);
 
 
-int main (int argc, char* argv[]){
-if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << "  " << "[GainCalFileName.dat]" << "  " << "[AlignmentFileName.dat]" << std::endl;
-    return 1;
+    return 0;
+
   }
-
-  std::string const DataFileName = argv[1];
-  std::string const GainCalFileName= argv[2];
-  std::string const AlignmentFileName= argv[3];
-
-  GenerateAlignment(DataFileName, GainCalFileName, AlignmentFileName);
-
-
-return 0;
-
-}
