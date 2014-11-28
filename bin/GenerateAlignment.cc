@@ -113,12 +113,16 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   std::vector<float> y_position;
   std::vector<float> r_position;
 
-  for (iroc = 0; iroc<=2; ++iroc){
+  for (int iroc = 0; iroc<=2; ++iroc){
     x_position.push_back(0);
     y_position.push_back(0);
     r_position.push_back(0);
     
+    PLTAlignment();
 
+
+  }    
+}
 
   int main (int argc, char* argv[]){
     if (argc != 4) {
