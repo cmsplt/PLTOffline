@@ -69,6 +69,16 @@ void PLTEvent::SetDefaults ()
   return;
 }
 
+
+
+PLTAlignment* PLTEvent::GetAlignment ()
+{
+  return &fAlignment;
+}
+
+
+
+
 size_t PLTEvent::NPlanes ()
 {
   // Number of planes in the event
