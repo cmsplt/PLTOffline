@@ -54,6 +54,7 @@ ReadEvent
 RunBasicTeststandAnalysis
 RunTeststandGainCal
 ScalarTree
+setup_april.sh
 ShowEvent
 ShowGainCalPoints
 SkimEvents
