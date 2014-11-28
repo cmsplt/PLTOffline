@@ -41,6 +41,8 @@ class PLTEvent : public PLTTracking
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
     void SetPlaneClustering (PLTPlane::Clustering, PLTPlane::FiducialRegion);
 
+    PLTAlignment* GetAlignment ();
+
     unsigned long EventNumber ()
     { 
       return fEvent;
