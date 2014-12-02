@@ -81,7 +81,7 @@ int OccupancyPlots (std::string const DataFileName)
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, true);
+  PLTEvent Event(DataFileName);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
   PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_All;
   //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
@@ -301,7 +301,7 @@ int OccupancyPlots (std::string const DataFileName)
 
     // Draw the 2D and 1D distribution on occupancy canvas
     cOccupancyMap[Channel]->cd(ROC+1);
-    hOccupancyMap[id]->Draw("colz");
+    it->second->Draw("colz");
     cOccupancyMap[Channel]->cd(ROC+3+1)->SetLogy(1);
     hOccupancy1D->SetMinimum(0.5);
     hOccupancy1D->Clone()->Draw("hist");
