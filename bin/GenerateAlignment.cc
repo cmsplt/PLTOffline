@@ -107,7 +107,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       int const Channel = it->first / 10;
       int const ROC     = it->first % 10;
       int const id      = it->first;
-      const char* BUFF = Form("X_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      const char* BUFF = Form("./plots/Alignment/X_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
       canvas1.cd(1);
       h_xResiduals[id]->Draw();
       canvas1.SaveAs(BUFF);
@@ -116,7 +116,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       int const Channel = it->first / 10;
       int const ROC     = it->first % 10;
       int const id      = it->first;
-      const char* BUFF = Form("Y_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      const char* BUFF = Form("./plots/Alignment/Y_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
       canvas1.cd(1);
       h_yResiduals[id]->Draw();
       canvas1.SaveAs(BUFF);
@@ -125,7 +125,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       int const Channel = it->first / 10;
       int const ROC     = it->first % 10;
       int const id      = it->first;
-      const char* BUFF = Form("XdY_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      const char* BUFF = Form("./plots/Alignment/XdY_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
       canvas1.cd(1);
       h_xdyResiduals[id]->Draw();
       canvas1.SaveAs(BUFF);
@@ -135,8 +135,11 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         y_position[id] = (h_yResiduals[id]->GetMean());
         r_position[id] = (h_xdyResiduals[id]->GetCorrelationFactor());
       }    
-    }
-    //  PLTAlignment* NewAlignment = Event.GetAlignment();
+    }  
+   // PLTAlignment* NewAlignment = OldAlignment;
+   // PLTAlignment::CP* ConstMap = NewAlignment->GetCP();  
+    
+
   }
   return(0);
 }
