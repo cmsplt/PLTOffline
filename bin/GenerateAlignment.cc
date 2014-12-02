@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 #include "PLTAlignment.h"
 #include "PLTEvent.h"
 #include "PLTU.h"
@@ -24,16 +25,6 @@
 int GenerateAlignment (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
-  TCanvas canvas1;
-
-  TH1F histo = TH1F("histo", "x residuals ROC 0", 200, -0.4, 0.4);
-  TH1F histo1 = TH1F("histo1", "x residuals ROC 1", 200, -0.4, 0.4);
-  TH1F histo2 = TH1F("histo2", "x residuals ROC 2", 200, -0.4, 0.4);
-  TH1F histoy = TH1F("histoy", "y residuals ROC 0", 200, -0.4, 0.4);
-  TH1F histoy1 = TH1F("histoy1", "y residuals ROC 1", 200, -0.4, 0.4);
-  TH1F histoy2 = TH1F("histoy2", "y residuals ROC 2", 200, -0.4, 0.4);
-
-
   // Set some basic style
   PLTU::SetStyle();
 
@@ -42,101 +33,127 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_Diamond);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_Diamond);
 
-  // Loop over all events in file
-  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
-      std::cout << "Processing entry: " << ientry << std::endl;
+  TCanvas canvas1;
+  PLTAlignment* OldAlignment = Event.GetAlignment();
+  std::map<int, TH1F*>  h_xResiduals;
+  std::map<int, TH1F*>  h_yResiduals;
+  std::map<int, TH2F*>  h_xdyResiduals;
+
+  std::vector<int> Channel = OldAlignment->GetListOfChannels(); 
+  int ChN = 0;
+  for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
+    ++ChN;
+    for (int iroc=0; iroc<3; ++iroc){
+      int id = 10 *(*ich) + iroc;
+      if (h_xResiduals.count(id) == 0){
+        const char* BUFF = Form("X_Residual_Ch%02i_ROC%1i", *ich, iroc);
+        h_xResiduals[id] = new TH1F( BUFF, BUFF, 200, -0.2, 0.2);
+      }
+      if (h_yResiduals.count(id) == 0){
+        const char* BUFF =  Form ("Y_Residual_Ch%02i_ROC%1i", *ich, iroc);
+        h_yResiduals[id] = new TH1F( BUFF, BUFF, 200, -0.2, 0.2);
+      }
+      if (h_xdyResiduals.count(id) == 0){
+        const char* BUFF =  Form ("XdY_Residual_Ch%02i_ROC%1i", *ich, iroc);
+        h_xdyResiduals[id] = new TH2F( BUFF, BUFF, 133, -1, 0.995, 100, -0.5, 0.5);
+      }
     }
+    // Loop over all events in file
+    for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+      if (ientry % 10000 == 0) {
+        std::cout << "Processing entry: " << ientry << std::endl;
+      }
 
 
-    // Loop over all planes with hits in event
-    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
+      // Loop over all planes with hits in event
+      for (size_t it = 0; it != Event.NTelescopes(); ++it) {
 
-      // THIS telescope is
-      PLTTelescope* Telescope = Event.Telescope(it);
+        // THIS telescope is
+        PLTTelescope* Telescope = Event.Telescope(it);
 
-      if (Telescope->NTracks() == 1 && Telescope->NClusters() == 3) {
+        if (Telescope->NTracks() == 1 && Telescope->NClusters() == 3) {
+          int channel = Telescope->Channel();
+          // Grab the track
+          PLTTrack* Track = Telescope->Track(0);
+          for (int iroc = 0; iroc <= 2; ++iroc){
+            PLTCluster* Cluster = Track->Cluster(iroc);
+            float myLResidualX;
+            float myLX;
+            myLX = Cluster->LX();
+            myLResidualX = Track->LResidualX(iroc);
+            float myLResidualY;
+            float myLY;
+            myLY = Cluster->LY();
+            myLResidualY = Track->LResidualY(iroc);
+            float xslope, yslope;
+            xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
+            yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
+            int PlaneID = 10*channel+iroc;
+            h_xResiduals[PlaneID]->Fill(myLResidualX);
+            h_yResiduals[PlaneID]->Fill(myLResidualY);
+            h_xdyResiduals[PlaneID]->Fill(myLX,myLResidualY);
 
-        // Grab the track
-        PLTTrack* Track = Telescope->Track(0);
-        for (int iroc = 0; iroc <= 2; ++iroc){
-
-          float myLResidualX;
-          myLResidualX = Track->LResidualX(iroc);
-          float myLResidualY;
-          myLResidualY = Track->LResidualY(iroc);
-          float xslope, yslope;
-          xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
-          yslope = (Track->TY(7.54)-Track->TY(0.0))/3; 
-
-
-          //          std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
-          if (iroc==0){
-            histoy.Fill(myLResidualY);
-            histo.Fill(myLResidualX);
-          }
-          if (iroc==1){
-            histoy1.Fill(myLResidualY);
-            histo1.Fill(myLResidualX);
-          }
-          if (iroc==2){
-            histoy2.Fill(myLResidualY);
-            histo2.Fill(myLResidualX);
+            //          std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
           }
         }
       }
     }
+
+    std::map<int,float> x_position;
+    std::map<int,float> y_position;
+    std::map<int,float> r_position;
+
+    for (std::map<int, TH1F*>::iterator it = h_xResiduals.begin(); it !=h_xResiduals.end(); ++it){
+      int const Channel = it->first / 10;
+      int const ROC     = it->first % 10;
+      int const id      = it->first;
+      const char* BUFF = Form("X_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      canvas1.cd(1);
+      h_xResiduals[id]->Draw();
+      canvas1.SaveAs(BUFF);
+    }
+    for (std::map<int, TH1F*>::iterator it = h_yResiduals.begin(); it !=h_yResiduals.end(); ++it){
+      int const Channel = it->first / 10;
+      int const ROC     = it->first % 10;
+      int const id      = it->first;
+      const char* BUFF = Form("Y_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      canvas1.cd(1);
+      h_yResiduals[id]->Draw();
+      canvas1.SaveAs(BUFF);
+    }
+    for (std::map<int, TH2F*>::iterator it = h_xdyResiduals.begin(); it !=h_xdyResiduals.end(); ++it){
+      int const Channel = it->first / 10;
+      int const ROC     = it->first % 10;
+      int const id      = it->first;
+      const char* BUFF = Form("XdY_Residual_Ch%02i_ROC%i.gif",Channel,ROC); 
+      canvas1.cd(1);
+      h_xdyResiduals[id]->Draw();
+      canvas1.SaveAs(BUFF);
+
+      if (x_position.count(id)==0 && y_position.count(id)==0 && r_position.count(id)==0){
+        x_position[id] = (h_xResiduals[id]->GetMean());
+        y_position[id] = (h_yResiduals[id]->GetMean());
+        r_position[id] = (h_xdyResiduals[id]->GetCorrelationFactor());
+      }    
+    }
+    //  PLTAlignment* NewAlignment = Event.GetAlignment();
   }
-  canvas1.Divide(1,2);
-
-  gStyle->SetOptStat(1111);
-  canvas1.cd(1);
-  histo.Draw(); 
-  canvas1.cd(2);
-  histoy.Draw();
-  canvas1.SaveAs("Residual_ROC0.gif");
-
-  canvas1.cd(1);
-  histo1.Draw(); 
-  canvas1.cd(2);
-  histoy1.Draw();
-  canvas1.SaveAs("Residual_ROC1.gif");
-
-  canvas1.cd(1);
-  histo2.Draw(); 
-  canvas1.cd(2);
-  histoy2.Draw();
-  canvas1.SaveAs("Residual_ROC2.gif");
-  
-
-  std::vector<float> x_position;
-  std::vector<float> y_position;
-  std::vector<float> r_position;
-
-  for (int iroc = 0; iroc<=2; ++iroc){
-    x_position.push_back(0);
-    y_position.push_back(0);
-    r_position.push_back(0);
-    
-    PLTAlignment();
-
-
-  }    
+  return(0);
 }
 
-  int main (int argc, char* argv[]){
-    if (argc != 4) {
-      std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << "  " << "[GainCalFileName.dat]" << "  " << "[AlignmentFileName.dat]" << std::endl;
-      return 1;
-    }
-
-    std::string const DataFileName = argv[1];
-    std::string const GainCalFileName= argv[2];
-    std::string const AlignmentFileName= argv[3];
-
-    GenerateAlignment(DataFileName, GainCalFileName, AlignmentFileName);
-
-
-    return 0;
-
+int main (int argc, char* argv[]){
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " [DataFile.dat]" << "  " << "[GainCalFileName.dat]" << "  " << "[AlignmentFileName.dat]" << std::endl;
+    return 1;
   }
+
+  std::string const DataFileName = argv[1];
+  std::string const GainCalFileName= argv[2];
+  std::string const AlignmentFileName= argv[3];
+
+  GenerateAlignment(DataFileName, GainCalFileName, AlignmentFileName);
+
+
+  return 0;
+
+}
