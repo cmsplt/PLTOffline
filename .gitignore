@@ -1,7 +1,5 @@
 *.gif
 
-plots/*.gif
-plots/Alignment/*
 lib/*
 AnalysisPSI
 Apollo
