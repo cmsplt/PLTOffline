@@ -134,11 +134,18 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         x_position[id] = (h_xResiduals[id]->GetMean());
         y_position[id] = (h_yResiduals[id]->GetMean());
         r_position[id] = (h_xdyResiduals[id]->GetCorrelationFactor());
+
+        PLTAlignment NewAlignment = *OldAlignment;
+        //std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
+        PLTAlignment::CP* ConstMap = NewAlignment.GetCP(Channel,ROC);  
+        ConstMap->LX = ConstMap->LX - x_position[id];
+        ConstMap->LY = ConstMap->LY - y_position[id];
+        std::string NewAlignmentFileName = AlignmentFileName + "NEW.dat";
+        NewAlignment.WriteAlignmentFile( NewAlignmentFileName );
+
       }    
     }  
-   // PLTAlignment* NewAlignment = OldAlignment;
-   // PLTAlignment::CP* ConstMap = NewAlignment->GetCP();  
-    
+
 
   }
   return(0);
