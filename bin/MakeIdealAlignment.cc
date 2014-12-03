@@ -24,8 +24,10 @@ int MakeStraightAlignment (std::string const FileName)
 
   float const Radius = 4.698;
 
-  fprintf(f, "# numbers are:\n");
-  fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
+  fprintf(f, "#first line:  Channel,-1, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ \n");
+  fprintf(f, "#subsequent lines:  Channel, iroc, C.LR, C.LX, C.LY, C.LZ \n");
+  //fprintf(f, "# numbers are:\n");
+  //fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
   for (int ich = 1; ich <= 16; ++ich) {
 
     double Phi    = (ich - 3.) * TMath::Pi() / 4.;
