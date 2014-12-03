@@ -114,7 +114,8 @@ void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
   for (std::map<int, TelescopeAlignmentStruct>::iterator it = fTelescopeMap.begin(); it != fTelescopeMap.end(); ++it) {
     int const Channel = it->first;
     TelescopeAlignmentStruct& Tele = it->second;
-
+    fprintf(Out, "#first line:  Channel,-1, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ \n");
+    fprintf(Out, "#subsequent lines:  Channel, iroc, C.LR, C.LX, C.LY, C.LZ \n");
     fprintf(Out, "\n");
     fprintf(Out, "%2i  -1        %15E      %15E  %15E  %15E  %15E\n", Channel, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ);
 
