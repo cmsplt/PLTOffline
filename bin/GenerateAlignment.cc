@@ -35,6 +35,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
 
   TCanvas canvas1;
   PLTAlignment* OldAlignment = Event.GetAlignment();
+  gStyle->SetOptStat(1111);
   std::map<int, TH1F*>  h_xResiduals;
   std::map<int, TH1F*>  h_yResiduals;
   std::map<int, TH2F*>  h_xdyResiduals;
@@ -47,11 +48,11 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       int id = 10 *(*ich) + iroc;
       if (h_xResiduals.count(id) == 0){
         const char* BUFF = Form("X_Residual_Ch%02i_ROC%1i", *ich, iroc);
-        h_xResiduals[id] = new TH1F( BUFF, BUFF, 200, -0.2, 0.2);
+        h_xResiduals[id] = new TH1F( BUFF, BUFF, 100, -0.2, 0.2);
       }
       if (h_yResiduals.count(id) == 0){
         const char* BUFF =  Form ("Y_Residual_Ch%02i_ROC%1i", *ich, iroc);
-        h_yResiduals[id] = new TH1F( BUFF, BUFF, 200, -0.2, 0.2);
+        h_yResiduals[id] = new TH1F( BUFF, BUFF, 100, -0.2, 0.2);
       }
       if (h_xdyResiduals.count(id) == 0){
         const char* BUFF =  Form ("XdY_Residual_Ch%02i_ROC%1i", *ich, iroc);
@@ -102,6 +103,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     std::map<int,float> x_position;
     std::map<int,float> y_position;
     std::map<int,float> r_position;
+    PLTAlignment NewAlignment = *OldAlignment;
 
     for (std::map<int, TH1F*>::iterator it = h_xResiduals.begin(); it !=h_xResiduals.end(); ++it){
       int const Channel = it->first / 10;
@@ -129,26 +131,27 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       canvas1.cd(1);
       h_xdyResiduals[id]->Draw();
       canvas1.SaveAs(BUFF);
+    }
+    for (std::map<int, TH1F*>::iterator it = h_xResiduals.begin(); it !=h_xResiduals.end(); ++it){
+      int const Channel = it->first / 10;
+      int const ROC     = it->first % 10;
+      int const id      = it->first;
+      if (x_position.count(id)==0){x_position[id] = (h_xResiduals[id]->GetMean());}
+      if (y_position.count(id)==0){y_position[id] = (h_yResiduals[id]->GetMean());}
+      if (r_position.count(id)==0){r_position[id] = (h_xdyResiduals[id]->GetCorrelationFactor());}
 
-      if (x_position.count(id)==0 && y_position.count(id)==0 && r_position.count(id)==0){
-        x_position[id] = (h_xResiduals[id]->GetMean());
-        y_position[id] = (h_yResiduals[id]->GetMean());
-        r_position[id] = (h_xdyResiduals[id]->GetCorrelationFactor());
-
-        PLTAlignment NewAlignment = *OldAlignment;
-        //std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
-        PLTAlignment::CP* ConstMap = NewAlignment.GetCP(Channel,ROC);  
-        ConstMap->LX = ConstMap->LX - x_position[id];
-        ConstMap->LY = ConstMap->LY - y_position[id];
-        std::string NewAlignmentFileName = AlignmentFileName + "NEW.dat";
-        NewAlignment.WriteAlignmentFile( NewAlignmentFileName );
-
-      }    
-    }  
+      //std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
+      PLTAlignment::CP* ConstMap = NewAlignment.GetCP(Channel,ROC);  
+      ConstMap->LX = ConstMap->LX + x_position[id];
+      ConstMap->LY = ConstMap->LY + y_position[id];
+    }    
+    std::string NewAlignmentFileName =  "./NEW_Alignment.dat";
+    NewAlignment.WriteAlignmentFile( NewAlignmentFileName );
+    
 
 
-  }
-  return(0);
+}
+return(0);
 }
 
 int main (int argc, char* argv[]){
