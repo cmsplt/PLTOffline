@@ -267,20 +267,24 @@ int GenerateAlignmentRot (std::string const DataFileName, std::string const Gain
       canvas1.SaveAs(BUFF);
     }
     else continue;
-    for (std::map<int, TH1F*>::iterator it = h_xResiduals.begin(); it !=h_xResiduals.end(); ++it){
+    
+    for (std::map<int, TGraph*>::iterator it = g_xdyResiduals.begin(); it !=g_xdyResiduals.end(); ++it){
       int const Channel = it->first / 10;
       int const ROC     = it->first % 10;
       int const id      = it->first;
       // if (x_position.count(id)==0){x_position[id] = (h_xResiduals[id]->GetMean());}
       // if (y_position.count(id)==0){y_position[id] = (h_yResiduals[id]->GetMean());}
-      TF1 linear_fun = TF1("","[0]+[1]*x");
-      g_xdyResiduals[id]->Fit(&linear_fun);
-      PLTAlignment::CP* ConstMap = RotAlignment.GetCP(Channel,ROC);  
-      float other_angle = atan(linear_fun.GetParameter(1));
+      if (it->second->GetN() != 0){
+        TF1 linear_fun = TF1("","[0]+[1]*x");
+        g_xdyResiduals[id]->Fit(&linear_fun);
+        PLTAlignment::CP* ConstMap = RotAlignment.GetCP(Channel,ROC);  
+        float other_angle = atan(linear_fun.GetParameter(1));
 
-      ConstMap->LR = ConstMap->LR + other_angle/3.;
-      std::cout << "ROC: " << id << " Other Angle:" << other_angle << std::endl;
-      std::cout << "Channel: " << Channel << " ROC: " << ROC << " rotation: " << other_angle/3 << std::endl;
+        ConstMap->LR = ConstMap->LR + other_angle/3.;
+        std::cout << "ROC: " << id << " Other Angle:" << other_angle << std::endl;
+        std::cout << "Channel: " << Channel << " ROC: " << ROC << " rotation: " << other_angle/3 << std::endl;
+      }
+      else continue;
     }    
     std::string RotAlignmentFileName =  "./ROT_Alignment.dat";
     RotAlignment.WriteAlignmentFile( RotAlignmentFileName );
