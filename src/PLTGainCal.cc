@@ -5,11 +5,13 @@
 PLTGainCal::PLTGainCal ()
 {
   fIsGood = false;
+  fIsExternalFunction = false;
 }
 
 PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
 {
   fIsGood = false;
+  fIsExternalFunction = false;
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
   } else if (NParams == 3) {
