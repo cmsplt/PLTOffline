@@ -134,6 +134,8 @@ void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
     }
   }
 
+  fclose(Out);
+
 
   return;
 }
