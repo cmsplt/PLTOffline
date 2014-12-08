@@ -47,6 +47,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
     ++ChN;
     for (int iroc=0; iroc<3; ++iroc){
+      std::cout <<"first creation loop: " << *ich << " : " << iroc << std::endl;
       int id = 10 *(*ich) + iroc;
       if (h_xResiduals.count(id) == 0){
         const char* BUFF = Form("X_Residual_Ch%02i_ROC%1i", *ich, iroc);
@@ -136,7 +137,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     PLTAlignment::CP* ConstMap = NewAlignment.GetCP(Channel,ROC);  
     ConstMap->LX = ConstMap->LX + x_position[id];
     ConstMap->LY = ConstMap->LY + y_position[id];
-    std::cout<<Channel<<" : "<<ROC<<std::endl;
+    std::cout<< "first changing loop: "<<Channel<<" : "<<ROC<<std::endl;
   }    
   std::string NewAlignmentFileName =  "./NEW_Alignment.dat";
   NewAlignment.WriteAlignmentFile( NewAlignmentFileName );
@@ -156,19 +157,26 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   PLTEvent Event2(DataFileName, GainCalFileName, NewAlignmentFileName);
   Event2.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
   Event2.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
+  std::cout << "DataFileName:    " << DataFileName << std::endl;
+  std::cout << "AlignmentFileName:    " << NewAlignmentFileName<< std::endl;
   PLTAlignment* NEWAlignment = Event2.GetAlignment();
   gStyle->SetOptStat(1111);
   std::map<int, TH1F*>  h_xResiduals2;
   std::map<int, TH1F*>  h_yResiduals2;
   std::map<int, TH2F*>  h_xdyResiduals2;
+  NEWAlignment->WriteAlignmentFile( "Dean_is_wrong_Alignment.dat" );
+
   //  std::map<int, TGraph*> g_xdyResiduals2;
   TracksN = 0;
-  Channel.clear();
-  Channel = NEWAlignment->GetListOfChannels(); 
+//  Channel.clear();
+  std::vector<int> Channel2 = NEWAlignment->GetListOfChannels(); 
+  //Channel = OldAlignment->GetListOfChannels(); 
+  
   ChN = 0;
-  for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
+  for (std::vector<int>::iterator ich = Channel2.begin(); ich != Channel2.end(); ++ich){
     ++ChN;
     for (int iroc=0; iroc<3; ++iroc){
+      std::cout <<"Second creation loop: " << *ich << " : " << iroc << std::endl;
       int id = 10 *(*ich) + iroc;
       if (h_xResiduals2.count(id) == 0){
         const char* BUFF = Form("X_Residual_Ch%02i_ROC%1i_Second", *ich, iroc);
@@ -332,9 +340,9 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   //  std::map<int, TGraph*> g_xdyResiduals3;
   TracksN = 0;
   Channel.clear();
-  Channel = ROTAlignment->GetListOfChannels(); 
+  std::vector<int> Channel3 = ROTAlignment->GetListOfChannels(); 
   ChN = 0;
-  for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
+  for (std::vector<int>::iterator ich = Channel3.begin(); ich != Channel3.end(); ++ich){
     ++ChN;
     for (int iroc=0; iroc<3; ++iroc){
       int id = 10 *(*ich) + iroc;
