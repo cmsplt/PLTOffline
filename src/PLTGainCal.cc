@@ -6,12 +6,20 @@ PLTGainCal::PLTGainCal ()
 {
   fIsGood = false;
   fIsExternalFunction = false;
+
+  // Need to create the GC data storage on the heap
+  GC = new GCOnTheHeap[MAXCHNS];
 }
 
 PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
 {
   fIsGood = false;
   fIsExternalFunction = false;
+
+  // Need to create the GC data storage on the heap
+  GC = new GCOnTheHeap[MAXCHNS];
+  
+
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
   } else if (NParams == 3) {
@@ -20,11 +28,14 @@ PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
     std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
     throw;
   }
+
 }
 
 
 PLTGainCal::~PLTGainCal ()
 {
+  // Do NOT forget to delete the memory you acquired from the heap
+  delete [] GC;
 }
 
 
@@ -79,7 +90,7 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
 {
   // Get charge, note roc number is 0, 1, 2
   int const adc = INadc;
-  if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS: %i\n", ch); };
+  if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
   if (row >= MAXROWS) { printf("ERROR: over MAXROWS: %i\n", row); };
   if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS: %i\n", col); };
 
@@ -210,6 +221,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
   }
 
+
   for (int i = 0; i != NCHNS; ++i) {
     for (int j = 0; j != NROCS; ++j) {
       for (int k = 0; k != PLTU::NCOL; ++k) {
@@ -234,7 +246,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 
     // Just remember that on the plane tester it's channel 22
 
-    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS %i\n", ch); };
+    if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS %i\n", row); };
     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS %i\n", col); };
     if (roc >= MAXROCS) { printf("ERROR: over MAXROCS %i\n", roc); };
@@ -267,6 +279,8 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     }
 
   }
+
+  f.close();
 
   // Apparently this file was read no problem...
   fIsGood = true;
@@ -378,6 +392,8 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
 
   }
 
+  f.close();
+
   // Apparently this file was read no problem...
   fIsGood = true;
 
@@ -479,7 +495,7 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
     ss.str(line.c_str());
     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
-    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
+    if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };
     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS\n"); };
     if (PLTGainCal::DEBUGLEVEL) {
@@ -510,6 +526,8 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
       }
     }
   }
+
+  f.close();
 
   // Apparently this file was read no problem...
   fIsGood = true;
@@ -571,7 +589,7 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
     ss.str(line.c_str());
     ss >> col >> row;
 
-    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
+    if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };
     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS\n"); };
     if (PLTGainCal::DEBUGLEVEL) {
@@ -602,6 +620,8 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
       }
     }
   }
+
+  f.close();
 
   // Apparently this file was read no problem...
   fIsGood = true;

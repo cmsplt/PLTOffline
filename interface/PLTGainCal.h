@@ -17,6 +17,10 @@
 #include "PLTU.h"
 
 
+
+
+
+
 class PLTGainCal
 {
   public:
@@ -59,24 +63,21 @@ class PLTGainCal
     int  fNParams; // how many parameters for this gaincal
     TF1 fFitFunction;
 
-    static int const MAXCHNS =  48;
-    static int const MAXROWS = 100;
-    static int const MAXCOLS = 100;
-    static int const MAXROCS =   3;
+    static int const MAXCHNS =   36;
+    static int const MAXROWS =   80;
+    static int const MAXCOLS =   52;
+    static int const MAXROCS =    3;
 
     static int const NCHNS =  36;
     static int const NROWS =  PLTU::NROW;
     static int const NCOLS =  PLTU::NCOL;
     static int const NROCS =   3;
 
-    static int const IROWMIN = PLTU::FIRSTCOL;
-    static int const IROWMAX = PLTU::LASTCOL;
-    static int const ICOLMIN = PLTU::FIRSTROW;
-    static int const ICOLMAX = PLTU::LASTROW;
 
     // ch,roc,col,row [3]
     //float GC[MAXCHNS][MAXROCS][MAXCOLS][MAXROWS][3];
-    float GC[NCHNS][NROCS][NCOLS][NROWS][6];
+    typedef float GCOnTheHeap[NROCS][NCOLS][NROWS][6];
+    GCOnTheHeap* GC;
 
     // Map for hardware locations by fed channel
     std::map<int, int> fHardwareMap;
