@@ -70,11 +70,11 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
     // Make a plane
     TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4, 0.4, 0.03);
     plane->SetLineColor(kBlue);
-
+		
     // Translation and rotation of this plane in global space
     TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);
-    TGeoCombiTrans  *TransRot;// = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
-    if (C->GRY < 1.0) {
+    TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
+    if (C->GRY < 3.0) {
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } else {
       TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
@@ -88,7 +88,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
 
   Replica->AddNode(CP, 1);
   Top->AddNode(Replica, 1);
-  Top->AddNode(BeamPipe, 1);
+//  Top->AddNode(BeamPipe, 1);
 
 
   //--- close the geometry
@@ -145,63 +145,63 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   SetupGeometry(GeoManager, Alignment);
 
 
-  TEveTrackList *list = new TEveTrackList();
-  TEveTrackPropagator* prop = list->GetPropagator();
-  prop->SetFitDaughters(kFALSE);
-  prop->SetMaxZ(185);
-
-  TEveRecTrackD *rc = new TEveRecTrackD();
-
-
-  std::map<int, int> NTrackMap;
-
-  // Loop over all events in file
-  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
-      std::cout << "Processing entry: " << ientry << std::endl;
-    }
-
-
-    // Loop over all planes with hits in event
-    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
-
-      // THIS telescope is
-      PLTTelescope* Telescope = Event.Telescope(it);
-
-      if (NTrackMap[Telescope->Channel()] > 10) continue;
-
-
-      printf("Number of tracks: %i\n", Telescope->NTracks());
-      for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
-        PLTTrack* T = Telescope->Track(itrack);
-
-        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
-        rc->fV.Set(TrXY.first, TrXY.second, 0);
-        rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
-        rc->fSign = 0;
-
-        printf("Track: O V - %15.3E %15.3E %15.3E -  %15.3E %15.3E %15.3E\n", T->fGOX, T->fGOY, T->fGOZ, T->fGVX, T->fGVY, T->fGVZ);
-
-        //list->Delete();
-        TEveTrack* track = new TEveTrack(rc, prop);
-        track->SetLineColor(0);
-        track->MakeTrack();
-        //gEve->AddElement(list);
-        //list->AddElement(track);
-        gEve->AddElement(track);
-        ++NTrackMap[Telescope->Channel()];
-      }
-
-      gEve->Redraw3D(kTRUE);
-      gSystem->ProcessEvents();
-
-
-    }
-
-
-  }
-
-  return 0;
+//  TEveTrackList *list = new TEveTrackList();
+//  TEveTrackPropagator* prop = list->GetPropagator();
+//  prop->SetFitDaughters(kFALSE);
+//  prop->SetMaxZ(185);
+//
+//  TEveRecTrackD *rc = new TEveRecTrackD();
+//
+//
+//  std::map<int, int> NTrackMap;
+//
+//  // Loop over all events in file
+//  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+//    if (ientry % 10000 == 0) {
+//      std::cout << "Processing entry: " << ientry << std::endl;
+//    }
+//
+//
+//    // Loop over all planes with hits in event
+//    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
+//
+//      // THIS telescope is
+//      PLTTelescope* Telescope = Event.Telescope(it);
+//
+//      if (NTrackMap[Telescope->Channel()] > 10) continue;
+//
+//
+//      printf("Number of tracks: %i\n", Telescope->NTracks());
+//      for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
+//        PLTTrack* T = Telescope->Track(itrack);
+//
+//        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
+//        rc->fV.Set(TrXY.first, TrXY.second, 0);
+//        rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
+//        rc->fSign = 0;
+//
+//        printf("Track: O V - %15.3E %15.3E %15.3E -  %15.3E %15.3E %15.3E\n", T->fGOX, T->fGOY, T->fGOZ, T->fGVX, T->fGVY, T->fGVZ);
+//
+//        //list->Delete();
+//        TEveTrack* track = new TEveTrack(rc, prop);
+//        track->SetLineColor(0);
+//        track->MakeTrack();
+//        //gEve->AddElement(list);
+//        //list->AddElement(track);
+//        gEve->AddElement(track);
+//        ++NTrackMap[Telescope->Channel()];
+//      }
+//
+//      gEve->Redraw3D(kTRUE);
+//      gSystem->ProcessEvents();
+//
+//
+//    }
+//
+//
+//  }
+//
+//  return 0;
 }
 
 
