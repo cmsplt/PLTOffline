@@ -75,3 +75,7 @@ dumpPixffil
 dumpPixffil_orig
 splitintoev
 tree1
+*.*~
+PLTGeometryExport
+Alignment.root
+Alignment.xml
