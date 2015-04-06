@@ -121,9 +121,6 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
   return;
 }
 
-
-
-
 int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
