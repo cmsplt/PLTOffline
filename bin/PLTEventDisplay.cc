@@ -75,10 +75,14 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
     TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);
     TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
     if (C->GRY < 3.0) {
+      //continue for just the Minus Z side
+      //continue;
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } 
     else {
-      TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ - C->LZ), Rotation);
+      //continue for just the Plus Z side
+      //continue;
+      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, -(C->GZ - C->LZ), Rotation);
     }
 
     CP->AddNode(plane,  10*It->first + It->second, TransRot);
@@ -131,8 +135,8 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
+  //PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
@@ -159,6 +163,8 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
+    if (ientry == 6) break;
+
     }
 
 
@@ -169,8 +175,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       PLTTelescope* Telescope = Event.Telescope(it);
 
 
-
-      if (NTrackMap[Telescope->Channel()] > 10) continue;
+//      if (NTrackMap[Telescope->Channel()] > 10) continue;
 
 
       printf("Number of tracks: %i\n", Telescope->NTracks());
@@ -193,16 +198,10 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
         gEve->AddElement(track);
         ++NTrackMap[Telescope->Channel()];
       }
-
       gEve->Redraw3D(kTRUE);
       gSystem->ProcessEvents();
-
-
     }
-
-
   }
-
   return 0;
 }
 

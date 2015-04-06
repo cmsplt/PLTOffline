@@ -283,7 +283,7 @@ void PLTAlignment::VTtoVGXYZ (std::vector<float>& VOUT, float const TX, float co
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
-    std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
+    std::cerr << "ERROR: cannot grab the constant map for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
     return;
     throw;
   }

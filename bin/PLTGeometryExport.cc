@@ -75,7 +75,6 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } else {
       TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
-      exit(0);
     }
 
     CP->AddNode(plane,  10*It->first + It->second, TransRot);
