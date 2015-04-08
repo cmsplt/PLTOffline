@@ -92,12 +92,11 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
     // Translation and rotation of this plane in global space
     TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);
     TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
-    if (C->GRY < 1.0) {
+    if (C->GRY < -1.0) {
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } 
     else {
-      //      TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ - C->LZ), Rotation);
-      continue;
+      TransRot = new TGeoCombiTrans(- C->GX, - C->GY, - (C->GZ - C->LZ), Rotation);  
     }
 
     CP->AddNode(plane,  10*It->first + It->second, TransRot);

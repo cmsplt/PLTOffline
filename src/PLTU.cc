@@ -36,7 +36,7 @@ namespace PLTU
     gStyle->SetStatY(0.88);
     gStyle->SetStatH(0.25);
     gStyle->SetCanvasBorderMode(0);
-    gStyle->SetLegendFillColor(0);
+    //    gStyle->SetLegendFillColor(0);
     gStyle->SetLegendBorderSize(0);
 
 
