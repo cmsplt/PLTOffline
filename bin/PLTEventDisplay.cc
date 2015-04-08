@@ -6,16 +6,36 @@
 //
 ////////////////////////////////////////////////////////////////////
 
+/* from track.C under eve
+#include "TEveTrackPropagator.h"
+#include "TEveTrack.h"
+#include "TEveVSDStructs.h"
+#include "TEveManager.h"
+#include "TEveViewer.h"
+#include "TSystem.h"
+#include "TGLViewer.h"
+#include "TMath.h"
+
+#include "TEveViewer.h"
+#include "TEvePointSet.h"
+
+#include <iostream>
+*/
+
+
 
 #include <iostream>
 #include <string>
 #include <map>
 
+
+
+
 #include "PLTEvent.h"
 #include "PLTU.h"
 
 #include "TEveTrack.h"
-#include "TEveTrack.h"
+
 #include "TEvePointSet.h"
 #include "TEveStraightLineSet.h"
 
@@ -38,8 +58,6 @@
 #include "TEveGeoNode.h"
 #include "TSystem.h"
 #include "TApplication.h"
-
-
 
 
 void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
@@ -74,15 +92,12 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
     // Translation and rotation of this plane in global space
     TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);
     TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
-    if (C->GRY < 3.0) {
-      //continue for just the Minus Z side
-      //continue;
+    if (C->GRY < 1.0) {
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } 
     else {
-      //continue for just the Plus Z side
-      //continue;
-      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, -(C->GZ - C->LZ), Rotation);
+      //      TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ - C->LZ), Rotation);
+      continue;
     }
 
     CP->AddNode(plane,  10*It->first + It->second, TransRot);
@@ -121,6 +136,9 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
   return;
 }
 
+
+
+
 int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
@@ -132,8 +150,8 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
-  //PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
@@ -151,17 +169,20 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   prop->SetFitDaughters(kFALSE);
   prop->SetMaxZ(185);
 
+  //  TEveRecTrackD *rc = new TEveVSDStructs::TEveRecTrackD();
+
+  
+  
+  //  TEveRecTrackD *rc = new TEveRecTrackD();
+  
   TEveRecTrackD *rc = new TEveRecTrackD();
-
-
+   TEveTrack *track = 0;
   std::map<int, int> NTrackMap;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
-    if (ientry == 6) break;
-
     }
 
 
@@ -171,8 +192,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
 
-
-//      if (NTrackMap[Telescope->Channel()] > 10) continue;
+      if (NTrackMap[Telescope->Channel()] > 10) continue;
 
 
       printf("Number of tracks: %i\n", Telescope->NTracks());
@@ -195,13 +215,18 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
         gEve->AddElement(track);
         ++NTrackMap[Telescope->Channel()];
       }
+
       gEve->Redraw3D(kTRUE);
       gSystem->ProcessEvents();
+
+
     }
+
+
   }
+
   return 0;
 }
-
 
 
 int main (int argc, char* argv[])

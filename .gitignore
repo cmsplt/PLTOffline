@@ -79,3 +79,4 @@ tree1
 PLTGeometryExport
 Alignment.root
 Alignment.xml
+*.sh
