@@ -10,6 +10,8 @@ EXEOBJS  = $(patsubst bin/%.cc,lib/%.o,$(wildcard bin/*.cc))
 LINKDEFCC  = $(patsubst dict/%_linkdef.h,dict/%_dict.cc,$(wildcard dict/*_linkdef.h))
 LINKDEFOBJ  = $(patsubst dict/%_linkdef.h,lib/%_dict.o,$(wildcard dict/*_linkdef.h))
 
+print-%:
+	@echo $*=$($*)
 
 all: $(LINKDEFCC) $(LINKDEFOBJ) $(OBJS) $(EXEOBJS) $(SCRIPTS) $(EXECS)
 
@@ -18,6 +20,10 @@ lib/%.o : src/%.cc
 
 lib/%.o : bin/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+# build test only
+#lib/%.o : test/%.cc
+#	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 lib/%.o : scripts/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
