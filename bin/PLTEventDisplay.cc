@@ -175,7 +175,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   //  TEveRecTrackD *rc = new TEveRecTrackD();
   
   TEveRecTrackD *rc = new TEveRecTrackD();
-   TEveTrack *track = 0;
+  TEveTrack *track = 0;
   std::map<int, int> NTrackMap;
 
   // Loop over all events in file
@@ -218,9 +218,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       gEve->Redraw3D(kTRUE);
       gSystem->ProcessEvents();
 
-
     }
-
 
   }
 
