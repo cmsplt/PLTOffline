@@ -21,10 +21,6 @@ lib/%.o : src/%.cc
 lib/%.o : bin/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-# build test only
-#lib/%.o : test/%.cc
-#	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
-
 lib/%.o : scripts/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
 

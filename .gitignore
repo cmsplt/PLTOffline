@@ -80,3 +80,5 @@ PLTGeometryExport
 Alignment.root
 Alignment.xml
 *.sh
+test/*
+*/#*.*#
