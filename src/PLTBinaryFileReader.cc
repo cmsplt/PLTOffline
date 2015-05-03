@@ -193,7 +193,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         }
       }
 
-    } else if ( ((n1 & 0xff000000) == 0x50000000 && ((n2 & 0xfff00) >> 8) == 5 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) && ((n1 & 0xfff00) >> 8) == 5 ) && (n1 & 0xff) == 0 ){
+    } else if ( ((n1 & 0xff000000) == 0x50000000 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) ) && (n1 & 0xff) == 0 ){
       // Found the header and it has correct FEDID
       wordcount = 1;
       bheader = true;
