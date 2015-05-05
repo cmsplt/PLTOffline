@@ -1,7 +1,5 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
-// Created on: Fri Mar 16 12:43:08 CET 2012
 //
 // Working version Created by Grant Riley <Grant.Riley@cern.ch>
 // Thrus Nov 13 2014

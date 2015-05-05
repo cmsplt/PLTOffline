@@ -297,21 +297,21 @@ int GainCalFastFits (TString const InFileName)
     TCanvas Can;
     Can.cd();
     It->second->Draw("colz");
-    Can.SaveAs(TString("plots/") + It->second->GetName() + SUFFIX);
+    Can.SaveAs(TString("plots/GainCal/") + It->second->GetName() + SUFFIX);
   }
   for (std::map<int, TH2F*>::iterator It = hBadFitMap.begin(); It != hBadFitMap.end(); ++It) {
     It->second->Write();
     TCanvas Can;
     Can.cd();
     It->second->Draw("colz");
-    Can.SaveAs(TString("plots/") + It->second->GetName() + SUFFIX);
+    Can.SaveAs(TString("plots/GainCal/") + It->second->GetName() + SUFFIX);
   }
   for (std::map<int, TH2F*>::iterator It = hAllFitMap.begin(); It != hAllFitMap.end(); ++It) {
     It->second->Write();
     TCanvas Can;
     Can.cd();
     It->second->Draw("colz");
-    Can.SaveAs(TString("plots/") + It->second->GetName() + SUFFIX);
+    Can.SaveAs(TString("plots/GainCal/") + It->second->GetName() + SUFFIX);
   }
 
   // Plot the Good values
@@ -500,7 +500,7 @@ int GainCalFastFits (TString const InFileName)
     h4.Draw();
     h4b.Draw("sames");
 
-    can.Print(TString::Format("plots/GainCalFitParams_Channel%i_ROC%1i", channel, roc) + SUFFIX);
+    can.Print(TString::Format("plots/GainCal/GainCalFitParams_Channel%i_ROC%1i", channel, roc) + SUFFIX);
     
   }
 
