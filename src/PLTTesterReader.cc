@@ -333,23 +333,25 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   TSpectrum Spectrum(20);
   Spectrum.SetAverageWindow(20);//probably does nothing
   int const NPeaks = Spectrum.Search(&hCLROCLevels);
-  float* Peaks = Spectrum.GetPositionX();
+  double* Peaks = Spectrum.GetPositionX();
   std::sort(Peaks, Peaks + NPeaks);
 
   //printf("Peak positions after sort\n");
   //printf(" %f %f %f %f %f %f\n", Peaks[0], Peaks[1], Peaks[2], Peaks[3], Peaks[4], Peaks[5]);
 
-  TMarker pPoint[NPeaks];
+  TMarker* pPoint[NPeaks];
   for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].SetX(Peaks[i]);
-    pPoint[i].SetY(hCLROCLevels.GetBinContent(hCLROCLevels.FindBin(Peaks[i])));
-    pPoint[i].SetMarkerStyle(3);
+    pPoint[i] = new TMarker();
+    pPoint[i]->SetX(Peaks[i]);
+    pPoint[i]->SetY(hCLROCLevels.GetBinContent(hCLROCLevels.FindBin(Peaks[i])));
+    pPoint[i]->SetMarkerStyle(3);
   }
 
   float const hHistMaxY = hCLROCLevels.GetMaximum();
 
-  TLine lLine[NPeaks];
+  TLine* lLine[NPeaks];
   for (int i = 0; i < NPeaks - 1; ++i) {
+    lLine[i] = new TLine();
     float xp = Peaks[i];
     float yp = Peaks[i + 1];
     xp = xp + (yp - xp) / 2.0;
@@ -360,9 +362,9 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
       LevelsROC[i] = xp;
     }
 
-    lLine[i].SetLineColor(2);
-    lLine[i].SetX1(xp);  lLine[i].SetX2(xp);
-    lLine[i].SetY1(1);   lLine[i].SetY2(hHistMaxY);
+    lLine[i]->SetLineColor(2);
+    lLine[i]->SetX1(xp);  lLine[i]->SetX2(xp);
+    lLine[i]->SetY1(1);   lLine[i]->SetY2(hHistMaxY);
   }
 
 
@@ -373,8 +375,8 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   hCLROCLevels.Draw("hist");
   hCLROCLevels.Write();
   for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].Draw("same");
-    lLine[i].Draw("same");
+    pPoint[i]->Draw("same");
+    lLine[i]->Draw("same");
   }
   cCLROCLevels.SaveAs(fOutDir + "/CL_LevelsROC.gif");
   cCLROCLevels.Write();
@@ -441,7 +443,7 @@ std::pair<int, int> PLTTesterReader::fill_pixel_info(int* evt , int ctr)
 
 
 
-  return std::make_pair<int, int>(finalcol, finalrow);
+  return std::make_pair(finalcol, finalrow);
 }
 
 

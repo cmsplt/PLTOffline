@@ -71,7 +71,7 @@ int PLTCluster::PZ ()
 
 std::pair<int, int> PLTCluster::PCenter ()
 {
-  return std::make_pair<int, int>(SeedHit()->Column(), SeedHit()->Row());
+  return std::make_pair(SeedHit()->Column(), SeedHit()->Row());
 }
 
 
@@ -106,7 +106,7 @@ float PLTCluster::LY ()
 std::pair<float, float> PLTCluster::LCenter ()
 {
   return LCenterOfMass();
-  //return std::make_pair<float, float>(SeedHit()->LX(), SeedHit()->LY());
+  //return std::make_pair(SeedHit()->LX(), SeedHit()->LY());
 }
 
 
@@ -155,7 +155,7 @@ float PLTCluster::GZ ()
 std::pair<float, float> PLTCluster::GCenter ()
 {
   return GCenterOfMass();
-  //return std::make_pair<float, float>(SeedHit()->GX(), SeedHit()->GY());
+  //return std::make_pair(SeedHit()->GX(), SeedHit()->GY());
 }
 
 
@@ -183,10 +183,10 @@ std::pair<float, float> PLTCluster::LCenterOfMass ()
   // If charge sum is zero return average
   if (ChargeSum <= 0.0) {
     // std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::LCenterOfMass()" << std::endl;
-    std::make_pair<float, float>(X / (float) NHits(), Y / (float) NHits());
+    std::make_pair(X / (float) NHits(), Y / (float) NHits());
   }
 
-  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+  return std::make_pair(X / ChargeSum, Y / ChargeSum);
 }
 
 
@@ -210,7 +210,7 @@ std::pair<float, float> PLTCluster::GCenterOfMass ()
   // If charge sum is zero or less return average
   if (ChargeSum <= 0.0) {
     //std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::GCenterOfMass()" << std::endl;
-    std::make_pair<float, float>(X / (float) NHits(), Y / (float) NHits());
+    std::make_pair(X / (float) NHits(), Y / (float) NHits());
   }
 
   // Put fiducial warning here?
@@ -218,7 +218,7 @@ std::pair<float, float> PLTCluster::GCenterOfMass ()
   // Just for printing diagnostics
   //printf("GCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
 
-  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+  return std::make_pair(X / ChargeSum, Y / ChargeSum);
 }
 
 
@@ -242,7 +242,7 @@ std::pair<float, float> PLTCluster::TCenterOfMass ()
   // If charge sum is zero or less return average
   if (ChargeSum <= 0.0) {
     //std::cerr << "WARNING: ChargeSum <= 0 in PLTCluster::GCenterOfMass()" << std::endl;
-    std::make_pair<float, float>(X / (float) NHits(), Y / (float) NHits());
+    std::make_pair(X / (float) NHits(), Y / (float) NHits());
   }
 
   // Put fiducial warning here?
@@ -250,5 +250,5 @@ std::pair<float, float> PLTCluster::TCenterOfMass ()
   // Just for printing diagnostics
   //printf("GCenterOfMass: %12E  %12E\n", X / ChargeSum, Y / ChargeSum);
 
-  return std::make_pair<float, float>(X / ChargeSum, Y / ChargeSum);
+  return std::make_pair(X / ChargeSum, Y / ChargeSum);
 }

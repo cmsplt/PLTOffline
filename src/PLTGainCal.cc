@@ -201,7 +201,7 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
   int icol;
   int ich;
 
-  ifstream f(GainCalFileName.c_str());
+  std::ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
     throw;
@@ -303,7 +303,7 @@ void PLTGainCal::ReadGainCalFileExt (std::string const GainCalFileName)
   fHardwareMap[ch] = 1000*mf + 100*mfc + hub;
   printf("Adding ch %i -> %i %i %i\n", ch, mf, mfc, hub);
 
-  ifstream f(GainCalFileName.c_str());
+  std::ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
     throw;
@@ -463,7 +463,7 @@ void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
   int ich;
   int iroc;
 
-  ifstream f(GainCalFileName.c_str());
+  std::ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
     throw;
@@ -576,7 +576,7 @@ void PLTGainCal::ReadTesterGainCalFile (std::string const GainCalFileName)
 
 
   // Open the gaincal file.  If I can't read it we are in trouble.. throw something ugly.
-  ifstream f(GainCalFileName.c_str());
+  std::ifstream f(GainCalFileName.c_str());
   if (!f) {
     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
     throw;

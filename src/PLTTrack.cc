@@ -327,7 +327,7 @@ std::pair<float, float> PLTTrack::GXYatGZ (float const GZ, PLTAlignment& Alignme
 
   std::vector<float> G;
   Alignment.TtoGXYZ(G, TX(T[2]), TY(T[2]), T[2], fClusters[0]->Channel(), 0);
-  return std::make_pair<float, float>(G[0], G[1]);
+  return std::make_pair(G[0], G[1]);
 }
 
 

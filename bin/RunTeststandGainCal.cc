@@ -79,7 +79,7 @@ std::pair<int, int> fill_pixel_info(int* evt , int ctr)
 
 
 
-  return std::make_pair<int, int>(finalcol, finalrow);
+  return std::make_pair(finalcol, finalrow);
 }
 
 
@@ -202,7 +202,7 @@ int RunTeststandGainCal (std::string const InFileName)
   TSpectrum Spectrum(20);
   Spectrum.SetAverageWindow(20);//probably does nothing
   int const NPeaks = Spectrum.Search(&hROCLevels);
-  float* Peaks = Spectrum.GetPositionX();
+  double* Peaks = Spectrum.GetPositionX();
   std::sort(Peaks, Peaks + NPeaks);//new, dangerous. 
   //print aft
   printf("Peak positions after sort\n");
@@ -213,17 +213,19 @@ int RunTeststandGainCal (std::string const InFileName)
     exit(1);
   }
 
-  TMarker pPoint[NPeaks];
+  TMarker* pPoint[NPeaks];
   for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].SetX(Peaks[i]);
-    pPoint[i].SetY(hROCLevels.GetBinContent(hROCLevels.FindBin(Peaks[i])));
-    pPoint[i].SetMarkerStyle(3);
+    pPoint[i] = new TMarker();
+    pPoint[i]->SetX(Peaks[i]);
+    pPoint[i]->SetY(hROCLevels.GetBinContent(hROCLevels.FindBin(Peaks[i])));
+    pPoint[i]->SetMarkerStyle(3);
   }
 
   float const hHistMaxY = hROCLevels.GetMaximum();
 
-  TLine lLine[NPeaks];
+  TLine* lLine[NPeaks];
   for (int i = 0; i < NPeaks; ++i) {
+    lLine[i] = new TLine();
     float xp = Peaks[i];
     float yp = Peaks[i + 1];
     xp = xp + (yp - xp) / 2.0;
@@ -233,9 +235,9 @@ int RunTeststandGainCal (std::string const InFileName)
       LevelsROC[i] = xp;
     }
 
-    lLine[i].SetLineColor(2);
-    lLine[i].SetX1(xp);  lLine[i].SetX2(xp);
-    lLine[i].SetY1(1);   lLine[i].SetY2(hHistMaxY);
+    lLine[i]->SetLineColor(2);
+    lLine[i]->SetX1(xp);  lLine[i]->SetX2(xp);
+    lLine[i]->SetY1(1);   lLine[i]->SetY2(hHistMaxY);
   }
 
 
@@ -244,8 +246,8 @@ int RunTeststandGainCal (std::string const InFileName)
   cROCLevels.cd()->SetLogy(1);
   hROCLevels.Draw("hist");
   for (int i = 0; i < NPeaks; ++i) {
-    pPoint[i].Draw("same");
-    lLine[i].Draw("same");
+    pPoint[i]->Draw("same");
+    lLine[i]->Draw("same");
   }
   cROCLevels.SaveAs("LevelsROC.eps");
 

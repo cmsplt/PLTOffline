@@ -42,7 +42,8 @@ int PlotPixelVsTimeMagTest (std::string const InFileName, std::string const Curr
   // Read input file
   std::ifstream InFile(InFileName.c_str());
   if (!InFile.is_open()) {
-    std::cerr << "ERROR: cannot open file: " << InFileName << std::endl;
+    std::cerr << "ERROR: cannot open file: ";
+    std::cerr << InFileName << std::endl;
     throw;
   }
 
@@ -54,7 +55,8 @@ int PlotPixelVsTimeMagTest (std::string const InFileName, std::string const Curr
 
   std::ifstream InCurrentsFile(CurrentFileName.c_str());
   if (!InCurrentsFile.is_open()) {
-    std::cerr << "ERROR: cannot open file: " << InCurrentsFile << std::endl;
+    std::cerr << "ERROR: cannot open file: ";
+    std::cerr << CurrentFileName << std::endl;
     throw;
   }
 

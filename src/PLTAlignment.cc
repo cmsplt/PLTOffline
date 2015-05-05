@@ -46,7 +46,7 @@ void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
     LineStream.str(InLine);
 
     LineStream >> Channel >> ROC;
-    std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+    std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
 
     // read one line at a time
     float R, RZ, RY, X, Y, Z;
@@ -121,7 +121,7 @@ void PLTAlignment::WriteAlignmentFile (std::string const OutFileName)
     fprintf(Out, "%2i  -1        %15E      %15E  %15E  %15E  %15E\n", Channel, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ);
 
     for (int iroc = 0; iroc != 3; ++iroc) {
-      std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, iroc);
+      std::pair<int, int> ChROC = std::make_pair(Channel, iroc);
 
       if (!fConstantMap.count(ChROC)) {
         std::cerr << "ERROR: No entry in fConstantMap for Ch ROC: " << Channel << " " << iroc << std::endl;
@@ -169,12 +169,12 @@ int PLTAlignment::PYfromLY (float const ly)
 
 std::pair<int, int> PLTAlignment::PXYfromLXY (std::pair<float, float> const& LXY)
 {
-  return std::make_pair<int, int>( PXfromLX(LXY.first), PYfromLY(LXY.second));
+  return std::make_pair( PXfromLX(LXY.first), PYfromLY(LXY.second));
 }
 
 std::pair<float, float> PLTAlignment::PXYDistFromLXYDist (std::pair<float, float> const& LXYDist)
 {
-  return std::make_pair<float, float>( LXYDist.first / (float)  PLTU::PIXELWIDTH, LXYDist.second / (float)  PLTU::PIXELHEIGHT);
+  return std::make_pair( LXYDist.first / (float)  PLTU::PIXELWIDTH, LXYDist.second / (float)  PLTU::PIXELHEIGHT);
 }
 
 
@@ -250,12 +250,12 @@ float PLTAlignment::TtoLY (float const TX, float const TY, int const Channel, in
 
 std::pair<float, float> PLTAlignment::TtoLXY (float const TX, float const TY, int const Channel, int const ROC)
 {
-  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
     std::cerr << "ERROR: cannot grab the constant mape for this CH ROC: " << CHROC.first << " " << CHROC.second << std::endl;
-    return std::make_pair<float, float>(-999, -999);
+    return std::make_pair(-999, -999);
   }
 
 
@@ -272,14 +272,14 @@ std::pair<float, float> PLTAlignment::TtoLXY (float const TX, float const TY, in
 
   //printf("XY DIFF %12.3f  %12.3f\n", TX - LX, TY - LY);
 
-  return std::make_pair<float, float>(LX, LY);
+  return std::make_pair(LX, LY);
 }
 
 
 void PLTAlignment::VTtoVGXYZ (std::vector<float>& VOUT, float const TX, float const TY, float const TZ, int const Channel, int const ROC)
 {
   // Get the constants for this telescope/plane etc
-  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
@@ -314,7 +314,7 @@ void PLTAlignment::VTtoVGXYZ (std::vector<float>& VOUT, float const TX, float co
 
 void PLTAlignment::LtoTXYZ (std::vector<float>& VOUT, float const LX, float const LY, int const Channel, int const ROC)
 {
-  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
@@ -345,7 +345,7 @@ void PLTAlignment::LtoTXYZ (std::vector<float>& VOUT, float const LX, float cons
 void PLTAlignment::TtoGXYZ (std::vector<float>& VOUT, float const TX, float const TY, float const TZ, int const Channel, int const ROC)
 {
   // Get the constants for this telescope/plane etc
-  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
@@ -398,7 +398,7 @@ void PLTAlignment::GtoTXYZ (std::vector<float>& VOUT, float const GX, float cons
   // This translates global coordinates back to the telescope coordinates
 
   // Get the constants for this telescope/plane etc
-  std::pair<int, int> CHROC = std::make_pair<int, int>(Channel, ROC);
+  std::pair<int, int> CHROC = std::make_pair(Channel, ROC);
   CP* C = fConstantMap.count(CHROC) == 1 ? &fConstantMap[CHROC] : (CP*) 0x0;
 
   if (!C) {
@@ -446,60 +446,60 @@ void PLTAlignment::GtoTXYZ (std::vector<float>& VOUT, float const GX, float cons
 
 float PLTAlignment::LR (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LR;
+  return fConstantMap[ std::make_pair(ch, roc) ].LR;
 }
 
 
 float PLTAlignment::LX (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LX;
+  return fConstantMap[ std::make_pair(ch, roc) ].LX;
 }
 
 
 float PLTAlignment::LY (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY;
+  return fConstantMap[ std::make_pair(ch, roc) ].LY;
 }
 
 
 float PLTAlignment::LZ (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ;
+  return fConstantMap[ std::make_pair(ch, roc) ].LZ;
 }
 
 
 float PLTAlignment::GRZ (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GRZ;
+  return fConstantMap[ std::make_pair(ch, roc) ].GRZ;
 }
 
 
 float PLTAlignment::GRY (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GRY;
+  return fConstantMap[ std::make_pair(ch, roc) ].GRY;
 }
 
 
 float PLTAlignment::GX (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GX;
+  return fConstantMap[ std::make_pair(ch, roc) ].GX;
 }
 
 
 float PLTAlignment::GY (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GY;
+  return fConstantMap[ std::make_pair(ch, roc) ].GY;
 }
 
 
 float PLTAlignment::GZ (int const ch, int const roc)
 {
-  return fConstantMap[ std::make_pair<int, int>(ch, roc) ].GZ;
+  return fConstantMap[ std::make_pair(ch, roc) ].GZ;
 }
 
 PLTAlignment::CP* PLTAlignment::GetCP (int const ch, int const roc)
 {
-  std::pair<int, int> CHROC = std::make_pair<int, int>(ch, roc);
+  std::pair<int, int> CHROC = std::make_pair(ch, roc);
   if (fConstantMap.count(CHROC)) {
     return &fConstantMap[ CHROC ];
   }
@@ -542,38 +542,38 @@ std::vector<int> PLTAlignment::GetListOfChannels ()
 
 void PLTAlignment::AddToLR (int const ch, int const roc, float val)
 {
-  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LR;
-  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LR = oldval+val;
+  float oldval = fConstantMap[ std::make_pair(ch, roc) ].LR;
+  fConstantMap[ std::make_pair(ch, roc) ].LR = oldval+val;
 }
 
 
 void PLTAlignment::AddToLX (int const ch, int const roc, float val)
 {
-  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LX;
-  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LX = oldval+val;
+  float oldval = fConstantMap[ std::make_pair(ch, roc) ].LX;
+  fConstantMap[ std::make_pair(ch, roc) ].LX = oldval+val;
 }
 
 
 void PLTAlignment::AddToLY (int const ch, int const roc, float val)
 {
-  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY;
-  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LY = oldval+val;
+  float oldval = fConstantMap[ std::make_pair(ch, roc) ].LY;
+  fConstantMap[ std::make_pair(ch, roc) ].LY = oldval+val;
 }
 
 
 void PLTAlignment::AddToLZ (int const ch, int const roc, float val)
 {
-  float oldval = fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ;
-  fConstantMap[ std::make_pair<int, int>(ch, roc) ].LZ = oldval+val;
+  float oldval = fConstantMap[ std::make_pair(ch, roc) ].LZ;
+  fConstantMap[ std::make_pair(ch, roc) ].LZ = oldval+val;
 }
 
 void PLTAlignment::AddToGX (int const ch, float val)
 {
   float oldval = fTelescopeMap[ch].GX;
   fTelescopeMap[ch].GX  = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GX = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GX = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GX = oldval+val;
+  fConstantMap[ std::make_pair(ch, 0) ].GX = oldval+val;
+  fConstantMap[ std::make_pair(ch, 1) ].GX = oldval+val;
+  fConstantMap[ std::make_pair(ch, 2) ].GX = oldval+val;
 }
 
 
@@ -581,9 +581,9 @@ void PLTAlignment::AddToGY (int const ch, float val)
 {
   float oldval = fTelescopeMap[ch].GY;
   fTelescopeMap[ch].GY  = val;
-  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GY = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GY = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GY = oldval+val;
+  fConstantMap[ std::make_pair(ch, 0) ].GY = oldval+val;
+  fConstantMap[ std::make_pair(ch, 1) ].GY = oldval+val;
+  fConstantMap[ std::make_pair(ch, 2) ].GY = oldval+val;
 }
 
 
@@ -591,8 +591,8 @@ void PLTAlignment::AddToGZ (int const ch, float val)
 {
   float oldval = fTelescopeMap[ch].GZ;
   fTelescopeMap[ch].GZ  = val;
-  fConstantMap[ std::make_pair<int, int>(ch, 0) ].GZ = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 1) ].GZ = oldval+val;
-  fConstantMap[ std::make_pair<int, int>(ch, 2) ].GZ = oldval+val;
+  fConstantMap[ std::make_pair(ch, 0) ].GZ = oldval+val;
+  fConstantMap[ std::make_pair(ch, 1) ].GZ = oldval+val;
+  fConstantMap[ std::make_pair(ch, 2) ].GZ = oldval+val;
 }
 

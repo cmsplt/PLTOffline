@@ -55,7 +55,12 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   float CY[NC];
   float CZ[NC];
 
-  TLine Line[3][NT];
+  TLine* Line[3][NT];
+  for (int i = 0; i != 3; ++i) {
+    for (int j = 0; j != NT; ++j) {
+      Line[i][j] = new TLine();
+    }
+  }
 
   TH2F* HistCharge[3];
   for (int i = 0; i != 3; ++i) {
@@ -113,32 +118,32 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     PLTTrack* T = fTracks[i];
 
     // XZ
-    Line[0][i].SetX1(0);
-    Line[0][i].SetX2(7.5);
-    Line[0][i].SetY1(T->TX(0));
-    Line[0][i].SetY2(T->TX(7.5));
-    Line[0][i].SetLineColor(i+1);
+    Line[0][i]->SetX1(0);
+    Line[0][i]->SetX2(7.5);
+    Line[0][i]->SetY1(T->TX(0));
+    Line[0][i]->SetY2(T->TX(7.5));
+    Line[0][i]->SetLineColor(i+1);
 
     // YZ
-    Line[1][i].SetX1(0);
-    Line[1][i].SetX2(7.5);
-    Line[1][i].SetY1(T->TY(0));
-    Line[1][i].SetY2(T->TY(7.5));
-    Line[1][i].SetLineColor(i+1);
+    Line[1][i]->SetX1(0);
+    Line[1][i]->SetX2(7.5);
+    Line[1][i]->SetY1(T->TY(0));
+    Line[1][i]->SetY2(T->TY(7.5));
+    Line[1][i]->SetLineColor(i+1);
 
     // XY
-    Line[2][i].SetX1(T->TX(0));
-    Line[2][i].SetX2(T->TX(7.5));
-    Line[2][i].SetY1(T->TY(0));
-    Line[2][i].SetY2(T->TY(7.5));
-    Line[2][i].SetLineColor(i+1);
+    Line[2][i]->SetX1(T->TX(0));
+    Line[2][i]->SetX2(T->TX(7.5));
+    Line[2][i]->SetY1(T->TY(0));
+    Line[2][i]->SetY2(T->TY(7.5));
+    Line[2][i]->SetLineColor(i+1);
 
     //printf("XY 0 7: %9.3f %9.3f   %9.3f %9.3f\n", T->TX(0), T->TY(0), T->TX(7), T->TY(7));
   }
 
   //for (int i = 0; i != 3; ++i) {
   //  for (int j = 0; j != NT; ++j) {
-  //    Line[i][j].SetLineColor(4);
+  //    Line[i][j]->SetLineColor(4);
   //  }
   //}
 
@@ -162,7 +167,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     gXZ.Draw("A*");
   }
   for (int i = 0; i != NT; ++i) {
-    Line[0][i].Draw();
+    Line[0][i]->Draw();
   }
 
   C.cd(4);
@@ -182,7 +187,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     gYZ.Draw("A*");
   }
   for (int i = 0; i != NT; ++i) {
-    Line[1][i].Draw();
+    Line[1][i]->Draw();
   }
 
   //TVirtualPad* Pad = C.cd(3);
@@ -204,7 +209,7 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
     gXY.Draw("A*");
   }
   for (int i = 0; i != NT; ++i) {
-    Line[2][i].Draw();
+    Line[2][i]->Draw();
   }
 
   C.cd(2);
@@ -226,6 +231,9 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   for (int i = 0; i != 3; ++i) {
     delete HistCharge[i];
     delete HistChargeUnclustered[i];
+    for (int j = 0; j != NT; ++j) {
+      delete Line[i][j];
+    }
   }
 
   return;
