@@ -333,7 +333,7 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   TSpectrum Spectrum(20);
   Spectrum.SetAverageWindow(20);//probably does nothing
   int const NPeaks = Spectrum.Search(&hCLROCLevels);
-  double* Peaks = Spectrum.GetPositionX();
+  Float_t* Peaks = Spectrum.GetPositionX();
   std::sort(Peaks, Peaks + NPeaks);
 
   //printf("Peak positions after sort\n");

@@ -189,7 +189,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
   
   gEve->AddElement(ps);  
   gEve->Redraw3D();
-std::cout << count << std::endl;  
+//std::cout << count << std::endl;  
     
   TGeoNode* node = GeoManager->GetTopNode();
   TEveGeoTopNode* en = new TEveGeoTopNode(GeoManager, node);
