@@ -2,7 +2,7 @@
 //
 // Krishna Thapa <kthapa@cern.ch>
 //
-// Created on: Wed Apr 22 2014
+// Created on: Wed Apr 22 2015
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
   Replica->SetVisibility(kFALSE);
   TGeoVolume *CP= GeoManager->MakeBox("CP", Vacuum, 110., 50., 5.);
   CP->SetVisibility(kFALSE);
-  
+  /*
   // Setup plane geometry
   std::vector< std::pair<int, int> > ChannelROCs = Alignment.GetListOfChannelROCs();
   for (std::vector< std::pair<int, int> >::iterator It = ChannelROCs.begin(); It != ChannelROCs.end(); ++It) {
@@ -73,98 +73,137 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
     // C->LY=0(roc 0), 0.102 (roc1) or 0.204 (roc 2);        
     TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);    
     TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, C->GZ + C->LZ, Rotation);
-    if (C->GRY < -1.0) {
-      TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, C->GZ+C->LZ, Rotation);
-    } 
-    else {
-      //      TransRot = new TGeoCombiTrans(- C->GX, - C->GY, - (C->GZ - C->LZ), Rotation);  
+    if (C->GRY < 1.0) {
+      TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, (C->GZ + C->LZ), Rotation);
+    } else {
+      // uncomment the line below to get planes @ -Z
+      //      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
     }
-
+    
     CP->AddNode(plane,  10*It->first + It->second, TransRot);
   }
+  */
+  Replica->AddNode(CP, 1);
+  Top->AddNode(Replica, 1);
   
-    Replica->AddNode(CP, 1);
-    Top->AddNode(Replica, 1);
+  //--- close the geometry
+  GeoManager->CloseGeometry();
+  GeoManager->SetVisLevel(4);
 
-    TEveManager::Create();
-    if (!gRandom)
-      gRandom = new TRandom(0);
-    TRandom& r= *gRandom;
+  // varialbes for tracks
+  TEveTrackList *list = new TEveTrackList();
+  TEveTrackPropagator* prop = list->GetPropagator();
+  prop->SetFitDaughters(kFALSE);
+  prop->SetMaxZ(185);
 
-    TEvePointSet* ps = new TEvePointSet();
-    ps->SetOwnIds(kTRUE);
+  TEveRecTrackD *rc = new TEveRecTrackD();
+  TEveTrack *track = 0;
+  std::map<int, int> NTrackMap;
 
+  // variables hits
+  TEveManager::Create();
+  if (!gRandom)
+    gRandom = new TRandom(0);
+  TRandom& r= *gRandom;
+  
+  TEvePointSet* ps = new TEvePointSet();
+  ps->SetOwnIds(kTRUE);
+  
+  // Loop over all events in file
+  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
+    
+    // For the Tracks:
+    
+    // Loop over all planes with hits in event
+    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
+      
+      // THIS telescope is
+      PLTTelescope* Telescope = Event.Telescope(it);
+      
+      if (NTrackMap[Telescope->Channel()] > 50) continue;
+      
+      if(Telescope->Channel() < 12){
+        for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
+        PLTTrack* T = Telescope->Track(itrack);
 
-    // Loop over all events in file
-    for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-     
-      // Loop over all planes with hits in event
-      for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
+        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
+        rc->fV.Set(TrXY.first, TrXY.second, 0);
+        rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
+        rc->fSign = 0;
         
-        // THIS plane is
-        PLTPlane* Plane = Event.Plane(ip);             
-        if (Plane->ROC() > 2) {
-          std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
-          continue;
+        TEveTrack* track = new TEveTrack(rc, prop);
+        track->SetLineColor(0);
+        track->MakeTrack();
+        gEve->AddElement(track);
+        ++NTrackMap[Telescope->Channel()];
         }
-        if (Plane->ROC() < 0) {
-          std::cerr << "WARNING: ROC < 0 found: " << Plane->ROC() << std::endl;
-          continue;
-        }
-        if (Plane->Channel() > 99) {
-          std::cerr << "WARNING: Channel > 99 found: " << Plane->Channel() << std::endl;
-          continue;
-        }
-              
-        for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
-          PLTCluster* Cluster = Plane->Cluster(icluster);
-         
-          // Loop over all hits on this plane          
-          for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
-           
-            // THIS hit is
-            PLTHit* Hit = Plane->Hit(ihit);
-                    
-          // ID thise plane and roc by 3 digit number          
-            int const id = 10 * Plane->Channel() + Plane->ROC();
+      }
+      gEve->Redraw3D(kTRUE);
+      gSystem->ProcessEvents();
 
-            // Only interested in forward channels for now.
-            if(Hit->Channel()<9){           
-              ps->SetNextPoint(Hit->GX(),Hit->GY(),Hit->GZ());            
+    }
+    
+    // For Hits      
+    // Loop over all planes with hits in event
+    for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
+           
+      // THIS plane is
+      PLTPlane* Plane = Event.Plane(ip);             
+      if (Plane->ROC() > 2) {
+        std::cerr << "WARNING: ROC > 2 found: " << Plane->ROC() << std::endl;
+        continue;
+      }
+      if (Plane->ROC() < 0) {
+        std::cerr << "WARNING: ROC < 0 found: " << Plane->ROC() << std::endl;
+        continue;
+      }
+      if (Plane->Channel() > 99) {
+        std::cerr << "WARNING: Channel > 99 found: " << Plane->Channel() << std::endl;
+        continue;
+      }
+      
+      for (size_t icluster = 0; icluster != Plane->NClusters(); ++icluster) {
+        PLTCluster* Cluster = Plane->Cluster(icluster);
+        
+        // Loop over all hits on this plane          
+        for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+          
+          // THIS hit is
+          PLTHit* Hit = Plane->Hit(ihit);
+          
+          // ID thise plane and roc by 3 digit number          
+          int const id = 10 * Plane->Channel() + Plane->ROC();
+          // Only interested in +z/forward channels for now.
+          if(Hit->Channel()<12){
+              ps->SetNextPoint(Hit->GX(),Hit->GY(),Hit->GZ());
               ps->SetPointId(new TNamed(Form("Point %d", id), ""));
-            }
-            
-          }
+          }            
         }
       }
     }
+  }
+  
+  ps->SetMarkerColor(TMath::Nint(r.Uniform(2, 5)));
+  ps->SetMarkerSize(r.Uniform(0, 1));
+  ps->SetMarkerStyle(0);
+  
+  gEve->AddElement(ps);  
+  gEve->Redraw3D();
+std::cout << count << std::endl;  
     
-    ps->SetMarkerColor(TMath::Nint(r.Uniform(2, 5)));
-    ps->SetMarkerSize(r.Uniform(0, 1));
-    ps->SetMarkerStyle(0);
-    
-    gEve->AddElement(ps);  
-    gEve->Redraw3D();
-    
-    //--- close the geometry
-    GeoManager->CloseGeometry();
-    
-    //--- draw the ROOT box.
-    GeoManager->SetVisLevel(4);
-    
-    TGeoNode* node = GeoManager->GetTopNode();
-    TEveGeoTopNode* en = new TEveGeoTopNode(GeoManager, node);
-    en->SetVisLevel(4);
-    en->GetNode()->GetVolume()->SetVisibility(kFALSE);
-    
-    gEve->AddGlobalElement(en);
-    gEve->Redraw3D(kTRUE);
-    gSystem->ProcessEvents();
-    
-    en->ExpandIntoListTreesRecursively();
-    
-    
-    return;
+  TGeoNode* node = GeoManager->GetTopNode();
+  TEveGeoTopNode* en = new TEveGeoTopNode(GeoManager, node);
+  en->SetVisLevel(4);
+  en->GetNode()->GetVolume()->SetVisibility(kFALSE);
+  
+  gEve->AddGlobalElement(en);
+  gEve->Redraw3D(kTRUE);
+  gSystem->ProcessEvents();
+  
+  en->ExpandIntoListTreesRecursively();
+  
+  
+  return;
 }
 
 
@@ -178,7 +217,8 @@ int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFile
   PLTU::SetStyle();
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName,false);
+    //  PLTEvent Event(DataFileName);  
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
@@ -208,22 +248,22 @@ int main (int argc, char* argv[])
   std::string const DataFileName = argv[1];
   std::string const GainCalFileName = argv[2];
   std::string const AlignmentFileName = argv[3];
-
+  
   TApplication theApp("PLT", &argc, argv);
-
+  
   gSystem->ResetSignal(kSigBus);
   gSystem->ResetSignal(kSigSegmentationViolation);
   gSystem->ResetSignal(kSigIllegalInstruction);
   gSystem->ResetSignal(kSigSystem);
   gSystem->ResetSignal(kSigPipe);
   gSystem->ResetSignal(kSigFloatingException);
-
-
+  
+  
   PLTHitDisplay(DataFileName, GainCalFileName, AlignmentFileName);
-
+  
   theApp.Run();
-
-
+  
+  
   TEveManager::Terminate();
   theApp.Terminate();
 
