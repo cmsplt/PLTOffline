@@ -11,7 +11,7 @@ PLTEvent::PLTEvent ()
 PLTEvent::PLTEvent (std::string const DataFileName, bool const IsText)
 {
   // Constructor, but you won't have the gaincal data..
-  fBinFile.SetIsText(IsText);
+  fBinFile.SetIsText(false);
   fBinFile.Open(DataFileName);
   SetDefaults();
 }
@@ -20,7 +20,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, bool const IsText)
 PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, bool const IsText)
 {
   // Constructor, which will also give you access to the gaincal values
-  fBinFile.SetIsText(IsText);
+  fBinFile.SetIsText(false);
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   
@@ -31,7 +31,7 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
 PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, bool const IsText)
 {
   // Constructor, which will also give you access to the gaincal values
-  fBinFile.SetIsText(IsText);
+  fBinFile.SetIsText(false);
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   fAlignment.ReadAlignmentFile(AlignmentFileName);

@@ -161,8 +161,8 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXZ.GetYaxis()->SetTitleOffset(0.5);
   gXZ.SetMarkerColor(40);
   gXZ.GetXaxis()->SetLimits(-0.5, 8);
-  gXZ.SetMinimum(-0.3);
-  gXZ.SetMaximum( 0.3);
+  gXZ.SetMinimum(-0.5);
+  gXZ.SetMaximum( 0.5);
   if (NC) {
     gXZ.Draw("A*");
   }
@@ -181,8 +181,8 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gYZ.GetYaxis()->SetTitleOffset(0.5);
   gYZ.SetMarkerColor(40);
   gYZ.GetXaxis()->SetLimits(-0.5, 8);
-  gYZ.SetMinimum(-0.3);
-  gYZ.SetMaximum( 0.6);
+  gYZ.SetMinimum(-0.5);
+  gYZ.SetMaximum( 0.8);
   if (NC) {
     gYZ.Draw("A*");
   }
@@ -202,9 +202,9 @@ void PLTTelescope::DrawTracksAndHits (std::string const Name)
   gXY.GetXaxis()->SetTitleOffset(0.7);
   gXY.GetYaxis()->SetTitleOffset(0.5);
   gXY.SetMarkerColor(40);
-  gXY.GetXaxis()->SetLimits(-0.3, 0.3);
-  gXY.SetMinimum(-0.3);
-  gXY.SetMaximum( 0.6);
+  gXY.GetXaxis()->SetLimits(-0.5, 0.5);
+  gXY.SetMinimum(-0.5);
+  gXY.SetMaximum( 0.8);
   if (NC) {
     gXY.Draw("A*");
   }

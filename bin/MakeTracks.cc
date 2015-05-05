@@ -112,6 +112,9 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   }
 
+
+  TFile *f = new TFile("histo_slopes.root","RECREATE");
+
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
   Can.cd(1);
@@ -135,8 +138,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   Can.cd(3+6);
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
   Can.SaveAs("plots/BeamSpot.gif");
-
-  TFile *f = new TFile("histo_slopes.root","RECREATE");
+  
+  HistBeamSpot[0]->Write();
+  HistBeamSpot[1]->Write();
+  HistBeamSpot[2]->Write();
 
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
     it->second->Write();

@@ -113,7 +113,7 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
   }
 
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
-    TString Name = TString::Format("NHitsPerEvent_Ch%02i.gif", it->first);
+    TString Name = TString::Format("plots/NHitsPerEvent_Ch%02i.gif", it->first);
     it->second->SaveAs( Name );
     delete it->second;
   }

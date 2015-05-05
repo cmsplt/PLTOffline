@@ -37,8 +37,8 @@ int TestGainCal (std::string const GainCalFileName)
   }
 
   for (int iroc = 1; iroc != 4; ++iroc) {
-    for (int icol = 13; icol <= 38; ++icol) {
-      for (int irow = 40; irow <= 79; ++irow) {
+    for (int icol = 0; icol <= 51; ++icol) {
+      for (int irow = 0; irow <= 79; ++irow) {
         for(int i = Begin; i < End; ++i) {
           X[i-Begin] = i;
           Y[i-Begin] = GainCal.GetCharge(22, iroc, icol, irow, i);
