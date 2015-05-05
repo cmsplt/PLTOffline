@@ -86,17 +86,17 @@ int PLTBinaryFileReader::convPXL (int IN)
 
 
 
-bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t unsigned word, std::vector<PLTHit*>& Hits)
+bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>& Hits)
 {
   if (word & 0xfffffff) {
 
-    const uint32_t unsigned plsmsk = 0xff;
-    const uint32_t unsigned pxlmsk = 0xff00;
-    const uint32_t unsigned dclmsk = 0x1f0000;
-    const uint32_t unsigned rocmsk = 0x3e00000;
-    const uint32_t unsigned chnlmsk = 0xfc000000;
-    uint32_t unsigned chan = ((word & chnlmsk) >> 26);
-    uint32_t unsigned roc  = ((word & rocmsk)  >> 21);
+    const uint32_t plsmsk = 0xff;
+    const uint32_t pxlmsk = 0xff00;
+    const uint32_t dclmsk = 0x1f0000;
+    const uint32_t rocmsk = 0x3e00000;
+    const uint32_t chnlmsk = 0xfc000000;
+    uint32_t chan = ((word & chnlmsk) >> 26);
+    uint32_t roc  = ((word & rocmsk)  >> 21);
 
     // Check for embeded special words: roc > 25 is special, not a hit
     if (roc > 25) {
@@ -163,7 +163,7 @@ int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned lon
 
 int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
-  uint32_t unsigned n1, n2;
+  uint32_t n1, n2;
 
   int wordcount = 0;
   bool bheader = true;

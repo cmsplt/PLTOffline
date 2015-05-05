@@ -42,7 +42,7 @@ int PlotThresholds (TString const InFileName)
     LineStr >> mf >> mfc >> hub >> col >> row >> roc >> vcal >> hits >> eff;
     Name.Form("%i%i%02i%i", mf, mfc, hub, roc);
     ROWCOL.Form("%02i%02i", col, row);
-    Map[Name][ROWCOL].push_back( std::make_pair<int, float>(vcal, eff) );
+    Map[Name][ROWCOL].push_back( std::make_pair(vcal, eff) );
   }
 
 

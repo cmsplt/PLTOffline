@@ -174,14 +174,14 @@ void PLTEvent::MakeEvent ()
 
   // Add hits to planes according to their channel-roc
   for (std::vector<PLTHit*>::iterator it = fHits.begin(); it != fHits.end(); ++it) {
-    std::pair<int, int> ChannelRoc = std::make_pair<int, int>((*it)->Channel(), (*it)->ROC());
+    std::pair<int, int> ChannelRoc = std::make_pair((*it)->Channel(), (*it)->ROC());
     fPlaneMap[ChannelRoc].AddHit( *it );
   }
 
   for (std::map< std::pair<int, int>, PLTPlane>::iterator it = fPlaneMap.begin(); it != fPlaneMap.end(); ++it) {
     int const Channel = it->first.first;
     for (int i = 0; i != 3; ++i) {
-      std::pair<int, int> ChROC = std::make_pair<int, int>(Channel, i);
+      std::pair<int, int> ChROC = std::make_pair(Channel, i);
       if (!fPlaneMap.count(ChROC)) {
         fPlaneMap[ ChROC ].SetChannel(Channel);
         fPlaneMap[ ChROC ].SetROC(i);

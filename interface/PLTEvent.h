@@ -59,23 +59,23 @@ class PLTEvent : public PLTTracking
       return &fGainCal;
     }
 
-    uint32_t unsigned Time ()
+    uint32_t Time ()
     {
       return fTime;
     }
 
-    void SetTime (uint32_t unsigned in)
+    void SetTime (uint32_t in)
     {
       fTime = in;
       return;
     }
 
-    uint32_t unsigned BX ()
+    uint32_t BX ()
     {
       return fBX;
     }
 
-    void SetBX (uint32_t unsigned in)
+    void SetBX (uint32_t in)
     {
       fBX = in;
       return;
