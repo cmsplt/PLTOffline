@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// Krishna Thapa, Grant Riley
 //
-// Created on: Sat Mar 17 12:33:14 CET 2012
+// Created on: Tue Mar 7, 2015
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -74,7 +74,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
     if (C->GRY < 1.0) {
       TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
     } else {
-      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
+      //      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
       //      exit(0);
     }
 
