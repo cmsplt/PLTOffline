@@ -19,7 +19,7 @@
 #include "TCanvas.h"
 
 
-int ShowGainCalPoints (std::string const InFileName, int const InmFec, int const InmFecChannel, int const InHubAddress, int const Inroc, int const Incol, int const Inrow)
+int ShowGainCalPoints (std::string const InFileName, int const InChannel, int const Inroc, int const Incol, int const Inrow)
 {
 
   std::ifstream f(InFileName.c_str());
@@ -34,25 +34,25 @@ int ShowGainCalPoints (std::string const InFileName, int const InmFec, int const
 
   std::stringstream s;
 
-  int mFec, mFecChannel, hubAddress, roc, col, row;
+  int channel, roc, col, row;
   float adc, vcal;
 
   int i = 0;
   for (std::string line; std::getline(f, line); ) {
     s.clear();
     s.str(line);
-    s >> mFec
-      >> mFecChannel
-      >> hubAddress
-      >> roc
+    s >> channel
       >> col
       >> row
+      >> roc
       >> adc
       >> vcal;
+//    std::cout<<" ch "<<channel<<" roc "<<roc<<" col "<<col<<" row "<<row<<std::endl;
+    if (channel == InChannel && roc == Inroc && col == Incol && row == Inrow) {
 
-    if (mFec == InmFec && mFecChannel == InmFecChannel && hubAddress == InHubAddress && roc == Inroc && col == Incol && row == Inrow) {
       ADC[i]  = adc;
       VCAL[i] = vcal;
+      std::cout<<"count "<< i<< " adc "<<adc<<"    "<<vcal<<std::endl;
       ++i;
       if (i == NMaxPoints) {
         break;
@@ -64,7 +64,7 @@ int ShowGainCalPoints (std::string const InFileName, int const InmFec, int const
   TCanvas c;
   c.cd();
   g.Draw("a*");
-  c.SaveAs("plots/GainCalPlot.eps");
+  c.SaveAs("plots/GainCalPlot.png");
 
 
   return 0;
@@ -73,20 +73,18 @@ int ShowGainCalPoints (std::string const InFileName, int const InmFec, int const
 
 int main (int argc, char* argv[])
 {
-  if (argc != 8) {
-    std::cerr << "Usage: " << argv[0] << " [InFileName] [mFec] [mFecChan] [hubAdd] [roc] [col] [row]" << std::endl;
+  if (argc != 6) {
+    std::cerr << "Usage: " << argv[0] << " [InFileName] [chan] [roc] [col] [row]" << std::endl;
     return 1;
   }
 
   std::string InFileName = argv[1];
-  int const mFec = atoi(argv[2]);
-  int const mFecChannel = atoi(argv[3]);
-  int const hubAddress = atoi(argv[4]);
-  int const roc = atoi(argv[5]);
-  int const col = atoi(argv[6]);
-  int const row = atoi(argv[7]);
+  int const channel = atoi(argv[2]);
+  int const roc = atoi(argv[3]);
+  int const col = atoi(argv[4]);
+  int const row = atoi(argv[5]);
 
-  ShowGainCalPoints(InFileName, mFec, mFecChannel, hubAddress, roc, col, row);
+  ShowGainCalPoints(InFileName, channel, roc, col, row);
 
   return 0;
 
