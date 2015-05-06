@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <string>
-
+#include <vector>
 #include "TMath.h"
 
 
@@ -23,15 +23,20 @@ int MakeStraightAlignment (std::string const FileName)
   }
 
   float const Radius = 4.698;
+  std::vector<int> ChNo;
 
+  for(int j =1; j <24; j+=j%3){
+    ChNo.push_back(j % 24);
+  }
+  
   fprintf(f, "#first line:  Channel,-1, Tele.GRZ, Tele.GRY, Tele.GX, Tele.GY, Tele.GZ \n");
   fprintf(f, "#subsequent lines:  Channel, iroc, C.LR, C.LX, C.LY, C.LZ \n");
   //fprintf(f, "# numbers are:\n");
   //fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
   for (int ich = 1; ich <= 16; ++ich) {
 
-    double Phi    = (ich - 3.) * TMath::Pi() / 4.;
-    double PhiDet = (ich - 1.) * TMath::Pi() / 4.;
+    double Phi    = (ich - 3.) * TMath::Pi() / 4. + TMath::Pi()/2 + TMath::Pi()/8;
+    double PhiDet = (ich - 3.) * TMath::Pi() / 4.;
     double Theta = ich < 9 ? 0 : TMath::Pi();
 
     float X = Radius * TMath::Cos(PhiDet);
@@ -49,7 +54,7 @@ int MakeStraightAlignment (std::string const FileName)
     //if (X > 0) X += 2.0;
     //if (X < 0) X -= 2.0;
 
-    fprintf(f, "%2i  %2i ", ich, -1);
+    fprintf(f, "%2i  %2i ", ChNo[ich-1], -1);
     fprintf(f, "    %15E", Phi);
     fprintf(f, "    %15E", Theta);
     fprintf(f, "    %15E", X);
@@ -57,7 +62,7 @@ int MakeStraightAlignment (std::string const FileName)
     fprintf(f, "    %15E", 171.41); //1450. for castor set-up
     fprintf(f, "\n");
     for (int iroc = 0; iroc != 3; ++iroc) {
-      fprintf(f, "%2i  %2i ", ich, iroc);
+      fprintf(f, "%2i  %2i ", ChNo[ich-1], iroc);
       fprintf(f, "    %15E", 0.);
       fprintf(f, "                   ");
       fprintf(f, "    %15E", 0.);
