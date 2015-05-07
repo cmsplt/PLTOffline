@@ -112,36 +112,36 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     
-    // For the Tracks:
-    
-    // Loop over all planes with hits in event
-    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
-      
-      // THIS telescope is
-      PLTTelescope* Telescope = Event.Telescope(it);
-      
-      if (NTrackMap[Telescope->Channel()] > 30) continue;
-      
-      if(Telescope->Channel() > 12){
-        for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
-        PLTTrack* T = Telescope->Track(itrack);
-
-        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
-        rc->fV.Set(TrXY.first, TrXY.second, 0);
-        rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
-        rc->fSign = 0;
-        
-        TEveTrack* track = new TEveTrack(rc, prop);
-        track->SetLineColor(0);
-        track->MakeTrack();
-        gEve->AddElement(track);
-        ++NTrackMap[Telescope->Channel()];
-        }
-      }
-      gEve->Redraw3D(kTRUE);
-      gSystem->ProcessEvents();
-
-    }
+//    // For the Tracks:
+//    
+//    // Loop over all planes with hits in event
+//    for (size_t it = 0; it != Event.NTelescopes(); ++it) {
+//      
+//      // THIS telescope is
+//      PLTTelescope* Telescope = Event.Telescope(it);
+//      
+//      if (NTrackMap[Telescope->Channel()] > 30) continue;
+//      
+//      if(Telescope->Channel() > 24){
+//        for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
+//        PLTTrack* T = Telescope->Track(itrack);
+//
+//        std::pair<float, float> TrXY = T->GXYatGZ(0, Alignment);
+//        rc->fV.Set(TrXY.first, TrXY.second, 0);
+//        rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
+//        rc->fSign = 0;
+//        
+//        TEveTrack* track = new TEveTrack(rc, prop);
+//        track->SetLineColor(0);
+//        track->MakeTrack();
+//        gEve->AddElement(track);
+//        ++NTrackMap[Telescope->Channel()];
+//        }
+//      }
+//      gEve->Redraw3D(kTRUE);
+//      gSystem->ProcessEvents();
+//
+//    }
     
     // For Hits      
     // Loop over all planes with hits in event
@@ -174,7 +174,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
           // ID thise plane and roc by 3 digit number          
           int const id = 10 * Plane->Channel() + Plane->ROC();
           // Only interested in +z/forward channels for now.
-          if(Hit->Channel()>12){
+          if(Hit->Channel()<24){
               ps->SetNextPoint(Hit->GX(),Hit->GY(),Hit->GZ());
               ps->SetPointId(new TNamed(Form("Point %d", id), ""));
           }            

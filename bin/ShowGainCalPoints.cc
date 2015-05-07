@@ -60,7 +60,7 @@ int ShowGainCalPoints (std::string const InFileName, int const InChannel, int co
     }
   }
 
-  TGraph g(i, ADC, VCAL);
+  TGraph g(i, VCAL, ADC);
   TCanvas c;
   c.cd();
   g.Draw("a*");
