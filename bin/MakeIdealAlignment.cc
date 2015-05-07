@@ -35,9 +35,10 @@ int MakeStraightAlignment (std::string const FileName)
   //fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
   for (int ich = 1; ich <= 16; ++ich) {
 
-    double Phi    = (ich - 3.) * TMath::Pi() / 4. + TMath::Pi()/2 + TMath::Pi()/8;
-    double PhiDet = (ich - 3.) * TMath::Pi() / 4.;
-    double Theta = ich < 9 ? 0 : TMath::Pi();
+    double halfrot = ich >= 9 ? TMath::Pi() : 0;
+    double Phi    = ((ich - 1.) * TMath::Pi() / 4. + TMath::Pi()/8 + halfrot );
+    double PhiDet = (( ich -  3.) * TMath::Pi() / 4. + TMath::Pi()/8 + TMath::Pi()-halfrot);
+    double Theta = ich >= 9 ? 0 : TMath::Pi();
 
     float X = Radius * TMath::Cos(PhiDet);
     float Y = Radius * TMath::Sin(PhiDet);
