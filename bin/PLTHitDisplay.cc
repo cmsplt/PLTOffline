@@ -120,9 +120,9 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
       
-      if (NTrackMap[Telescope->Channel()] > 50) continue;
+      if (NTrackMap[Telescope->Channel()] > 30) continue;
       
-      if(Telescope->Channel() < 12){
+      if(Telescope->Channel() > 12){
         for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         PLTTrack* T = Telescope->Track(itrack);
 
@@ -174,7 +174,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
           // ID thise plane and roc by 3 digit number          
           int const id = 10 * Plane->Channel() + Plane->ROC();
           // Only interested in +z/forward channels for now.
-          if(Hit->Channel()<12){
+          if(Hit->Channel()>12){
               ps->SetNextPoint(Hit->GX(),Hit->GY(),Hit->GZ());
               ps->SetPointId(new TNamed(Form("Point %d", id), ""));
           }            

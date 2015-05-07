@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////
+xset-back////////////////////////////////////////////////////////////////////
 //
 // Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
 //
@@ -42,7 +42,7 @@ int MakeStraightAlignment (std::string const FileName)
 
     float X = Radius * TMath::Cos(PhiDet);
     float Y = Radius * TMath::Sin(PhiDet);
-
+    
     //X = (X < 0.001 ? 0. : X);
     //Y = (Y < 0.001 ? 0. : Y);
     if (fabs(X) < 0.00001) {
