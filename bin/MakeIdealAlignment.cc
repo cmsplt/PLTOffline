@@ -34,6 +34,7 @@ int MakeStraightAlignment (std::string const FileName)
   //fprintf(f, "# numbers are:\n");
   //fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
   for (int ich = 1; ich <= 16; ++ich) {
+
     double halfrot = ich >= 9 ? TMath::Pi() : 0;
     double Phi    = (ich - 1.) * TMath::Pi() / 4. + TMath::Pi()/8 + halfrot;
     double PhiDet = (ich - 1.) * TMath::Pi() / 4. + TMath::Pi()/8+TMath::Pi()/2 + halfrot;
