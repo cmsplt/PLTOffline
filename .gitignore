@@ -1,6 +1,9 @@
 *.gif
 data
 lib/*
+PLTHitDisplay
+GainCalFits.root
+GainCalFits.dat
 AnalysisPSI
 Apollo
 BasicResiduals
