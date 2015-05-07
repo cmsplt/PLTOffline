@@ -45,7 +45,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   std::map<int, std::pair<TH1F*, TH1F*> > h_Slopes; 
   int TracksN = 0;
   std::vector<int> Channel = InitialAlignment->GetListOfChannels(); 
-  int ChN = 0;
+  int ChN = 1;
   for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
     ++ChN;
     if (h_Slopes.count(*ich) == 0){
@@ -72,14 +72,13 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   //input "InitialAlignment" output "RotatedAlignment"
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
+    if (ientry % 100 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
-
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
       if (Telescope->NTracks() == 1 && Telescope->NClusters() == 3) {
@@ -90,10 +89,12 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         float xslope, yslope;
         xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
         yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
-        h_Slopes[channel].first->Fill(xslope);
-        h_Slopes[channel].second->Fill(yslope);
+        std::cout<<"slopes"<<std::endl;      
+//        h_Slopes[channel].first->Fill(xslope);
+//        h_Slopes[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
           PLTCluster* Cluster = Track->Cluster(iroc);
+          std::cout<<"cluster"<<std::endl;
           float myLResidualX;
           float myLX;
           myLX = Cluster->LX();
@@ -105,7 +106,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
           int PlaneID = 10*channel+iroc;
           h_xResiduals[PlaneID]->Fill(myLResidualX);
           h_yResiduals[PlaneID]->Fill(myLResidualY);
-          //          std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+      //              std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
         }
       }
     }
@@ -126,7 +127,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   Channel = TempAlignment.GetListOfChannels(); 
   //Channel = OldAlignment->GetListOfChannels(); 
 
-  ChN = 0;
+  ChN = 1;
   for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
     ++ChN;
     if (h_Slopes2.count(*ich) == 0){
@@ -284,8 +285,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   PLTEvent Event2(DataFileName, GainCalFileName, RotAlignmentFileName);
   Event2.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
   Event2.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
-  //  std::cout << "DataFileName:    " << DataFileName << std::endl;
-  //  std::cout << "AlignmentFileName:    " << NewAlignmentFileName<< std::endl;
+    std::cout << "DataFileName:    " << DataFileName << std::endl;
+    std::cout << "AlignmentFileName:    " << RotAlignmentFileName<< std::endl;
   PLTAlignment* TransAlignment = Event2.GetAlignment();
   x_position.clear();
   y_position.clear();
@@ -311,8 +312,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         float xslope, yslope;
         xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
         yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
-        h_Slopes2[channel].first->Fill(xslope);
-        h_Slopes2[channel].second->Fill(yslope);
+//        h_Slopes2[channel].first->Fill(xslope);
+//        h_Slopes2[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
           PLTCluster* Cluster = Track->Cluster(iroc);
           float myLResidualX;
@@ -329,7 +330,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
           h_xdyResiduals2[PlaneID]->Fill(myLX,myLResidualY);
           h_ydxResiduals2[PlaneID]->Fill(myLY,myLResidualX);
           //          g_xdyResiduals2[PlaneID]->SetPoint(g_xdyResiduals2[PlaneID]->GetN(), myLX, myLResidualY );
-          //          std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+                    std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
         }
       }
     }
@@ -361,14 +362,14 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     }
     else continue;
   }
-  for (std::map<int, std::pair<TH1F*, TH1F*> >::iterator it = h_Slopes.begin(); it !=h_Slopes.end(); ++it){
+  for (std::map<int, std::pair<TH1F*, TH1F*> >::iterator it = h_Slopes2.begin(); it !=h_Slopes2.end(); ++it){
     int const Channel = it->first;
     if (it->second.second->GetEntries() != 0){
       const char* BUFF = Form("./plots/Alignment/X_Y_Slopes_Ch%02i.gif",Channel); 
       canvas3.cd(1);
-      h_Slopes[Channel].first->Draw();
+      h_Slopes2[Channel].first->Draw();
       canvas3.cd(2);
-      h_Slopes[Channel].second->Draw();
+      h_Slopes2[Channel].second->Draw();
       canvas3.SaveAs(BUFF);
     }
     else continue;
@@ -379,7 +380,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     int const id      = it->first;
     if (x_position.count(id)==0){x_position[id] = (h_xResiduals[id]->GetMean());}
     if (y_position.count(id)==0){y_position[id] = (h_yResiduals[id]->GetMean());}
-    //std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
+//    std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
     PLTAlignment::CP* ConstMap = TransAlignment->GetCP(Channel,ROC);  
     ConstMap->LX = ConstMap->LX + x_position[id];
     ConstMap->LY = ConstMap->LY + y_position[id];
@@ -393,7 +394,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   for (std::map<int, TH1F*>::iterator it = h_yResiduals.begin(); it !=h_yResiduals.end(); ++it){
     delete it->second; 
   }
-  for (std::map<int, std::pair<TH1F*, TH1F*> >::iterator it = h_Slopes.begin(); it != h_Slopes.end(); ++it){
+  for (std::map<int, std::pair<TH1F*, TH1F*> >::iterator it = h_Slopes2.begin(); it != h_Slopes2.end(); ++it){
     delete it->second.first; 
     delete it->second.second; 
   }
@@ -421,7 +422,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   TracksN = 0;
   Channel.clear();
   Channel = FinAlignment->GetListOfChannels(); 
-  ChN = 0;
+  ChN = 1;
   for (std::vector<int>::iterator ich = Channel.begin(); ich != Channel.end(); ++ich){
     ++ChN;
     if (h_Slopes3.count(*ich) == 0){
@@ -474,8 +475,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         float xslope, yslope;
         xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
         yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
-        h_Slopes3[channel].first->Fill(xslope);
-        h_Slopes3[channel].second->Fill(yslope);
+//        h_Slopes3[channel].first->Fill(xslope);
+//        h_Slopes3[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
           PLTCluster* Cluster = Track->Cluster(iroc);
           float myLResidualX;
