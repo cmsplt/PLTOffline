@@ -33,6 +33,7 @@ int MakeStraightAlignment (std::string const FileName)
   fprintf(f, "#subsequent lines:  Channel, iroc, C.LR, C.LX, C.LY, C.LZ \n");
   //fprintf(f, "# numbers are:\n");
   //fprintf(f, "# Channel   Plane   CWLRotation   LXTrans  LYTrans  LZTrans\n\n");
+    fprintf(f, "\n");
   for (int ich = 1; ich <= 16; ++ich) {
 
     double halfrot = ich >= 9 ? TMath::Pi() : 0;
