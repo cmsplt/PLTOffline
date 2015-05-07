@@ -31,21 +31,8 @@
 #include "PLTU_karen.h"
 #include "PLTU.h"
 
-
-
-
-
-
-
-
-
 // What image type do you want?
 TString const SUFFIX = ".gif";
-
-
-
-
-
 
 int Pack (int const channel, int const roc, int const col, int const row)
 {
@@ -129,7 +116,7 @@ int GainCalFastFits (TString const InFileName)
       >> adc
       >> vcal;
 
-
+    if (channel==1&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<"VCAL " <<vcal<<std::endl;}
     // Get a simple string for the pixel and pair adc and vcal for this hit
     // which gets added to the map
     int Id = Pack(channel, roc, col, row);
@@ -265,7 +252,7 @@ int GainCalFastFits (TString const InFileName)
       hBadFitMap[ROCId]->Fill(col, row);
       dBadFits->cd();
       g.Write();
-      printf("FitResult = %4i for %2i %1i %2i %2i\n", FitResult, channel, roc, col, row);
+//      printf("FitResult = %4i for %2i %1i %2i %2i\n", FitResult, channel, roc, col, row);
 
       ROCParam0_bad[ROCId].push_back(Param[0]);
       ROCParam1_bad[ROCId].push_back(Param[1]);

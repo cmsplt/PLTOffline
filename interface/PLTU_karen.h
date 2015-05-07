@@ -17,9 +17,9 @@
 
 namespace PLTU_karen
 {
-  int const FIRSTCOL = 13;
-  int const LASTCOL  = 38;
-  int const FIRSTROW = 41;
+  int const FIRSTCOL =  0;
+  int const LASTCOL  = 51;
+  int const FIRSTROW =  0;
   int const LASTROW  = 79;
   int const NCOL     = LASTCOL - FIRSTCOL + 1;
   int const NROW     = LASTROW - FIRSTROW + 1;
