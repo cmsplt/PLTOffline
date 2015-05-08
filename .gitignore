@@ -17,7 +17,7 @@ FindNoisyPixels
 FindTrims
 FitAddressLevels
 GainCalFastFits
-GenerateAlignment
+CalculateAlignment
 GeoTest
 GetEventsFromBinary
 GetParamsFromFile
