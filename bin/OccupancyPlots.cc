@@ -17,6 +17,7 @@
 
 
 #include "TH1F.h"
+#include "TFile.h"
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TStyle.h"
@@ -288,6 +289,8 @@ int OccupancyPlots (std::string const DataFileName)
   }
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
+  TFile *f = new TFile("histo_occupancy.root","RECREATE");
+
   for (std::map<int, TH2F*>::iterator it = hOccupancyMap.begin(); it != hOccupancyMap.end(); ++it) {
     // Decode the ID
     int const Channel = it->first / 10;
@@ -308,8 +311,6 @@ int OccupancyPlots (std::string const DataFileName)
     cOccupancyMap[Channel]->cd(ROC+6+1);
     hOccupancy1D->Draw("hist");
 
-
-
     // Grab the quantile you're interested in here
     Double_t QProbability[1] = { 0.95 }; // Quantile positions in [0, 1]
     Double_t QValue[1];                  // Quantile values
@@ -327,7 +328,6 @@ int OccupancyPlots (std::string const DataFileName)
     }
     cQuantileMap[Channel]->cd(ROC+3+1)->SetLogy(1);
     hOccupancy1D->Draw("hist");
-    
     // Grab a line and draw it on the plot
     TLine* LineQuantile = new TLine(QValue[0], hOccupancy1D->GetMaximum(), QValue[0], .5);
     LineQuantile->SetLineColor(2);
@@ -347,7 +347,6 @@ int OccupancyPlots (std::string const DataFileName)
     hProjectionX->GetYaxis()->CenterTitle();
     hProjectionX->SetTitleOffset(2, "Y");
     hProjectionX->Draw("hist");
-
     // Row projection
     cProjectionMap[Channel]->cd(ROC+6+1);
     TH1D* hProjectionY = it->second->ProjectionY();
@@ -399,8 +398,13 @@ int OccupancyPlots (std::string const DataFileName)
     cAllMap[Channel]->cd(ROC+6+1);
     hEfficiencyMap[id]->Draw("colz");
 
+  hOccupancyMap[id]->Write();
+  hQuantileMap[id]->Write();
+  hEfficiencyMap[id]->Write();
+  hEfficiency1DMap[id]->Write();
+  hCoincidenceMap[Channel]->Write();
   }
-
+f->Write();
 
   for (std::map<int, TH1F*>::iterator it = hCoincidenceMap.begin(); it != hCoincidenceMap.end(); ++it) {
     cCoincidenceMap[it->first]->cd();
