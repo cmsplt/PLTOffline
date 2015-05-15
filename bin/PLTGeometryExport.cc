@@ -63,9 +63,11 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
   for (std::vector< std::pair<int, int> >::iterator It = ChannelROCs.begin(); It != ChannelROCs.end(); ++It) {
     PLTAlignment::CP* C = Alignment.GetCP(*It);
 
-
+    // Aperture is defined by 2nd rock.
+    double aperture = It->second == 1 ? 0. : 0.2;
+    
     // Make a plane
-    TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4, 0.4, 0.03);
+    TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4+aperture, 0.4+aperture, 0.005);
     plane->SetLineColor(kBlue);
 
     // Translation and rotation of this plane in global space
