@@ -1,4 +1,5 @@
 *.gif
+*.root
 data
 lib/*
 PLTHitDisplay
