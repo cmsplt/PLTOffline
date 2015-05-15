@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// Fixed by Grant Riley
 //
-// Created on: Tue Oct 11 05:59:22 CEST 2011
+// Created on: May 15 2015
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,8 @@
 #include "PLTEvent.h"
 #include "PLTU.h"
 
+#include "PLTTrack.h"
+#include "PLTAlignment.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -24,14 +26,14 @@
 
 
 
-int TelescopeRotation (std::string const DataFileName)
+int TelescopeRotation (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   // Set some basic style
   PLTU::SetStyle();
   std::cout << "DataFileName:    " << DataFileName << std::endl;
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
 
@@ -46,12 +48,12 @@ int TelescopeRotation (std::string const DataFileName)
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
-    for (int it = 0; it != Event.NTelescopes(); ++it) {
+    for (unsigned it = 0; it != Event.NTelescopes(); ++it) {
       PLTTelescope* Telescope = Event.Telescope(it);
 
       int const Channel = Telescope->Channel();
 
-      if (Telescope->HitPlaneBits() != 0x7 || Telescope->NClusters() != 3) {
+      if (Telescope->NTracks() != 1 || Telescope->NClusters() != 3) {
         continue;
       }
 
@@ -60,15 +62,15 @@ int TelescopeRotation (std::string const DataFileName)
         sprintf(BUFF, "PX0MinusPX2_Ch%i", Channel);
 
         hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 40, -20, 20);
-        sprintf(BUFF, "PY0MinusPY2_Ch%i", Channel);
+        sprintf(BUFF, "plots/PY0MinusPY2_Ch%i", Channel);
         hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 40, -20, 20);
-        sprintf(BUFF, "P0MinusP2_Ch%i", Channel);
+        sprintf(BUFF, "plots/P0MinusP2_Ch%i", Channel);
         cMap[Channel] = new TCanvas(BUFF, BUFF, 600, 300);
         cMap[Channel]->Divide(2,1);
       }
-
-      float PXDiff = Telescope->Plane(0)->Cluster(0)->SeedHit()->Column() - Telescope->Plane(2)->Cluster(0)->SeedHit()->Column();
-      float PYDiff = Telescope->Plane(0)->Cluster(0)->SeedHit()->Row()    - Telescope->Plane(2)->Cluster(0)->SeedHit()->Row();
+      PLTTrack* Track = Telescope->Track(0);
+      float PXDiff = Track->Cluster(0)->SeedHit()->Column() - Track->Cluster(2)->SeedHit()->Column();
+      float PYDiff = Track->Cluster(0)->SeedHit()->Row()    - Track->Cluster(2)->SeedHit()->Row();
 
       hMap[10*Channel + 0]->Fill(PXDiff);
       hMap[10*Channel + 1]->Fill(PYDiff);
@@ -82,7 +84,7 @@ int TelescopeRotation (std::string const DataFileName)
     hMap[10*it->first + 0]->Draw();
     it->second->cd(2);
     hMap[10*it->first + 1]->Draw();
-    it->second->SaveAs(TString(it->second->GetName()) + ".eps");
+    it->second->SaveAs(TString(it->second->GetName()) + ".gif");
 
   }
 
@@ -92,14 +94,16 @@ int TelescopeRotation (std::string const DataFileName)
 
 int main (int argc, char* argv[])
 {
-  if (argc != 2) {
+  if (argc != 4) {
     std::cerr << "Usage: " << argv[0] << " [DataFileName]" << std::endl;
     return 1;
   }
 
   std::string const DataFileName = argv[1];
+  std::string const GainCalFileName = argv[2];
+  std::string const AlignmentFileName = argv[3];
 
-  TelescopeRotation(DataFileName);
+  TelescopeRotation(DataFileName, GainCalFileName, AlignmentFileName);
 
   return 0;
 }

@@ -89,12 +89,10 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         float xslope, yslope;
         xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
         yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
-        std::cout<<"slopes"<<std::endl;      
 //        h_Slopes[channel].first->Fill(xslope);
 //        h_Slopes[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
           PLTCluster* Cluster = Track->Cluster(iroc);
-          std::cout<<"cluster"<<std::endl;
           float myLResidualX;
           float myLX;
           myLX = Cluster->LX();
@@ -281,7 +279,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   //********************************************************************************************************************
   //Second Step --translation
   //input "RotatedAlignment" output "TransAlignment"
-
+std::cout<<"S E C O N D   T I E M M M M M M  M M M  M  M M M M  M  M M "<<std::endl;
   PLTEvent Event2(DataFileName, GainCalFileName, RotAlignmentFileName);
   Event2.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
   Event2.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
@@ -301,7 +299,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event2.NTelescopes(); ++it) {
-
+std::cout<<"Events"<<std::endl;
       // THIS telescope is
       PLTTelescope* Telescope = Event2.Telescope(it);
       if (Telescope->NTracks() == 1 && Telescope->NClusters() == 3) {
@@ -309,28 +307,30 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         // Grab the track
         ++TracksN;
         PLTTrack* Track = Telescope->Track(0);
-        float xslope, yslope;
-        xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
-        yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
+        float xslope2, yslope2;
+        xslope2 = (Track->TX(7.54)-Track->TX(0.0))/3;
+        yslope2 = (Track->TY(7.54)-Track->TY(0.0))/3;
+        std::cout<<"slopes"<<std::endl;      
 //        h_Slopes2[channel].first->Fill(xslope);
 //        h_Slopes2[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
           PLTCluster* Cluster = Track->Cluster(iroc);
-          float myLResidualX;
-          float myLX;
-          myLX = Cluster->LX();
-          myLResidualX = Track->LResidualX(iroc);
-          float myLResidualY;
-          float myLY;
-          myLY = Cluster->LY();
-          myLResidualY = Track->LResidualY(iroc);
+          std::cout<<"cluster"<<std::endl;
+          float myLResidualX2;
+          float myLX2;
+          myLX2 = Cluster->LX();
+          myLResidualX2 = Track->LResidualX(iroc);
+          float myLResidualY2;
+          float myLY2;
+          myLY2 = Cluster->LY();
+          myLResidualY2 = Track->LResidualY(iroc);
           int PlaneID = 10*channel+iroc;
-          h_xResiduals2[PlaneID]->Fill(myLResidualX);
-          h_yResiduals2[PlaneID]->Fill(myLResidualY);
-          h_xdyResiduals2[PlaneID]->Fill(myLX,myLResidualY);
-          h_ydxResiduals2[PlaneID]->Fill(myLY,myLResidualX);
+          h_xResiduals2[PlaneID]->Fill(myLResidualX2);
+          h_yResiduals2[PlaneID]->Fill(myLResidualY2);
+          h_xdyResiduals2[PlaneID]->Fill(myLX2,myLResidualY2);
+          h_ydxResiduals2[PlaneID]->Fill(myLY2,myLResidualX2);
           //          g_xdyResiduals2[PlaneID]->SetPoint(g_xdyResiduals2[PlaneID]->GetN(), myLX, myLResidualY );
-                    std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
+//                    std::cout<< "Plane: "<<iroc<< " slopeX  " << xslope << " slopeY  " << yslope << " real x " << Track->Cluster(iroc)->TX()<< " real y " << Track->Cluster(iroc)->TY()<< " real z " << Track->Cluster(iroc)->TZ()<< " ResidualY  " << myLResidualY <<" residualX "<< myLResidualX<< std::endl;
         }
       }
     }
@@ -399,8 +399,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     delete it->second.second; 
   }
 
-
-
+std::cout<<"THERIERJEREERED TEIEM"<<std::endl;
 
 
 
