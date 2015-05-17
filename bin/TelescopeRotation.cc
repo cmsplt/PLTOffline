@@ -23,8 +23,7 @@
 #include "TStyle.h"
 #include "TLine.h"
 #include "TROOT.h"
-
-
+#include "TFile.h"
 
 int TelescopeRotation (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
@@ -36,11 +35,12 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
-
+  TFile *f = new TFile("histo_telescoperotation.root","RECREATE");
 
   // Map for all ROC hists and canvas
   std::map<int, TH1F*> hMap;
   std::map<int, TCanvas*> cMap;
+  std::map<int, TH2F*> gMap;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -59,22 +59,49 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
 
       if (cMap.count(Channel) == 0) {
         char BUFF[500];
-        sprintf(BUFF, "PX0MinusPX2_Ch%i", Channel);
-
-        hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 40, -20, 20);
-        sprintf(BUFF, "plots/PY0MinusPY2_Ch%i", Channel);
-        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 40, -20, 20);
-        sprintf(BUFF, "plots/P0MinusP2_Ch%i", Channel);
-        cMap[Channel] = new TCanvas(BUFF, BUFF, 600, 300);
-        cMap[Channel]->Divide(2,1);
+        sprintf(BUFF, "Plane1_XResidual_Ch%i", Channel);
+        hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 100, -.5, .5);
+        sprintf(BUFF, "Plane1_YResidual_Ch%i", Channel);
+        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 100, -.5, .5);
+        sprintf(BUFF, "Plane2_XResidual_Ch%i", Channel);
+        hMap[10*Channel + 2] = new TH1F(BUFF, BUFF, 100, -.5, .5);
+        sprintf(BUFF, "Plane2_YResidual_Ch%i", Channel);
+        hMap[10*Channel + 3] = new TH1F(BUFF, BUFF, 100, -.5, .5);
+        sprintf(BUFF, "XDiffVY1_Ch%i", Channel);
+        gMap[10*Channel + 0] = new TH2F(BUFF, BUFF, 100, -.5, .5, 81, -.6, .6);
+        sprintf(BUFF, "XVYDiff1_Ch%i", Channel);
+        gMap[10*Channel + 1] = new TH2F(BUFF, BUFF, 60, -.5, .5, 100, -.5, .5);
+        sprintf(BUFF, "XDiffVY2_Ch%i", Channel);
+        gMap[10*Channel + 2] = new TH2F(BUFF, BUFF, 100, -.5, .5, 81, -.6, .6);
+        sprintf(BUFF, "XVYDiff2_Ch%i", Channel);
+        gMap[10*Channel + 3] = new TH2F(BUFF, BUFF, 60, -.5, .5, 100, -.5, .5);
+        sprintf(BUFF, "plots/Residuals_Ch%i", Channel);
+        cMap[Channel] = new TCanvas(BUFF, BUFF, 1600, 900);
+        cMap[Channel]->Divide(2,4);
       }
       PLTTrack* Track = Telescope->Track(0);
-      float PXDiff = Track->Cluster(0)->SeedHit()->Column() - Track->Cluster(2)->SeedHit()->Column();
-      float PYDiff = Track->Cluster(0)->SeedHit()->Row()    - Track->Cluster(2)->SeedHit()->Row();
+      float x0 = Track->Cluster(0)->SeedHit()->LX();
+      float x1 = Track->Cluster(1)->SeedHit()->LX();
+      float x2 = Track->Cluster(2)->SeedHit()->LX();
+      float y0 = Track->Cluster(0)->SeedHit()->LY();
+      float y1 = Track->Cluster(1)->SeedHit()->LY();
+      float y2 = Track->Cluster(2)->SeedHit()->LY();
+      float z1 = 3.77;
+      float z2 = 7.54;
+      
+      float PXDiff2 = (x2) - (x0+(z2)*(x1-x0)/(z1));
+      float PXDiff1 = (x1) - (x0+(z1)*(x2-x0)/(z2));
+      float PYDiff2 = (y2) - (y0+(z2)*(y1-y0)/(z1));
+      float PYDiff1 = (y1) - (y0+(z1)*(y2-y0)/(z2));
 
-      hMap[10*Channel + 0]->Fill(PXDiff);
-      hMap[10*Channel + 1]->Fill(PYDiff);
-
+      hMap[10*Channel + 0]->Fill(PXDiff1);
+      hMap[10*Channel + 1]->Fill(PYDiff1);
+      hMap[10*Channel + 2]->Fill(PXDiff2);
+      hMap[10*Channel + 3]->Fill(PYDiff2);
+      gMap[10*Channel + 0]->Fill(PXDiff1,y1);
+      gMap[10*Channel + 1]->Fill(x1,PYDiff1);
+      gMap[10*Channel + 2]->Fill(PXDiff2,y2);
+      gMap[10*Channel + 3]->Fill(x2,PYDiff2);
     }
 
   }
@@ -84,10 +111,22 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
     hMap[10*it->first + 0]->Draw();
     it->second->cd(2);
     hMap[10*it->first + 1]->Draw();
+    it->second->cd(3);
+    hMap[10*it->first + 2]->Draw();
+    it->second->cd(4);
+    hMap[10*it->first + 3]->Draw();
+    it->second->cd(5);
+    gMap[10*it->first + 0]->Draw("colz");
+    it->second->cd(6);
+    gMap[10*it->first + 1]->Draw("colz");
+    it->second->cd(7);
+    gMap[10*it->first + 2]->Draw("colz");
+    it->second->cd(8);
+    gMap[10*it->first + 3]->Draw("colz");
     it->second->SaveAs(TString(it->second->GetName()) + ".gif");
 
   }
-
+f->Write();
   return 0;
 }
 
