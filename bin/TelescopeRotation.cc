@@ -24,6 +24,7 @@
 #include "TLine.h"
 #include "TROOT.h"
 #include "TFile.h"
+#include "TProfile.h"
 
 int TelescopeRotation (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
@@ -40,7 +41,7 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
   // Map for all ROC hists and canvas
   std::map<int, TH1F*> hMap;
   std::map<int, TCanvas*> cMap;
-  std::map<int, TH2F*> gMap;
+  std::map<int, TProfile*> gMap;
   std::map<int, TH1F*> hClusterSize;
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -66,21 +67,21 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
         sprintf(BUFF, "ClusterSize%i_2", Channel);
         hClusterSize[10*Channel+2] = new TH1F(BUFF, BUFF, 4, 0, 3);
         sprintf(BUFF, "Plane1_XResidual_Ch%i", Channel);
-        hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 100, -.3, .3);
+        hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "Plane1_YResidual_Ch%i", Channel);
-        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 100, -.3, .3);
+        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 80, -.2, .2);
         sprintf(BUFF, "Plane2_XResidual_Ch%i", Channel);
-        hMap[10*Channel + 2] = new TH1F(BUFF, BUFF, 100, -.3, .3);
+        hMap[10*Channel + 2] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "Plane2_YResidual_Ch%i", Channel);
-        hMap[10*Channel + 3] = new TH1F(BUFF, BUFF, 100, -.3, .3);
+        hMap[10*Channel + 3] = new TH1F(BUFF, BUFF, 80, -.2, .2);
         sprintf(BUFF, "YVXDiff1_Ch%i", Channel);
-        gMap[10*Channel + 0] = new TH2F(BUFF, BUFF,81, -.6, .6, 100, -.3, .3);
+        gMap[10*Channel + 0] = new TProfile(BUFF, BUFF,100, -.5, .5,  -.3, .3);
         sprintf(BUFF, "XVYDiff1_Ch%i", Channel);
-        gMap[10*Channel + 1] = new TH2F(BUFF, BUFF, 60, -.5, .5, 100, -.3, .3);
+        gMap[10*Channel + 1] = new TProfile(BUFF, BUFF, 67, -.5, .5,  -.3, .3);
         sprintf(BUFF, "YVXDiff2_Ch%i", Channel);
-        gMap[10*Channel + 2] = new TH2F(BUFF, BUFF, 81, -.6, .6, 100, -.3, .3);
+        gMap[10*Channel + 2] = new TProfile(BUFF, BUFF, 80, -.5, .5,  -.3, .3);
         sprintf(BUFF, "XVYDiff2_Ch%i", Channel);
-        gMap[10*Channel + 3] = new TH2F(BUFF, BUFF, 60, -.5, .5, 100, -.3, .3);
+        gMap[10*Channel + 3] = new TProfile(BUFF, BUFF, 67, -.5, .5,  -.3, .3);
         sprintf(BUFF, "plots/Residuals_Ch%i", Channel);
         cMap[Channel] = new TCanvas(BUFF, BUFF, 1600, 900);
         cMap[Channel]->Divide(2,4);
@@ -154,7 +155,7 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
 
 int main (int argc, char* argv[])
 {
-  if (argc != 4 || argc != 5) {
+  if (argc != 4 ) {
     std::cerr << "Usage: " << argv[0] << " [DataFileName]" << " [GainCalFileName]" << " [AlignmentFileName]"  << std::endl;
     return 1;
   }

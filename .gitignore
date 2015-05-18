@@ -8,6 +8,7 @@ GainCalFits.dat
 AnalysisPSI
 Apollo
 BasicResiduals
+CalculateAlignment
 CheckAlignment
 CheckGainCalCoefs
 ConvertGainCoefs
