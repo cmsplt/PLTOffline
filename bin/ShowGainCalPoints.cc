@@ -64,7 +64,9 @@ int ShowGainCalPoints (std::string const InFileName, int const InChannel, int co
   TCanvas c;
   c.cd();
   g.Draw("a*");
-  c.SaveAs("plots/GainCalPlot.png");
+  char BUFF[500]; 
+  sprintf(BUFF, "GainCalPoints_Ch%i_ROC%i_COL%i_ROW%i.png", InChannel, Inroc, Incol, Inrow);
+  c.SaveAs(BUFF);
 
 
   return 0;
