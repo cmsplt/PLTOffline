@@ -87,3 +87,4 @@ Alignment.xml
 *.sh
 test/*
 */#*.*#
+.DS_Store
