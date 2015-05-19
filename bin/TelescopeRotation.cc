@@ -44,20 +44,24 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
   std::map<int, TProfile*> gMap;
   std::map<int, TH1F*> hClusterSize;
   // Loop over all events in file
+  int CounterTotal = 0;
+  int CounterFail= 0;
+  int CounterSuccess = 0;
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-
     for (unsigned it = 0; it != Event.NTelescopes(); ++it) {
       PLTTelescope* Telescope = Event.Telescope(it);
       
       int const Channel = Telescope->Channel();
-      
+      if (Channel == 1){ ++CounterTotal ;}    
       if (Telescope->NTracks() != 1 || Telescope->NClusters() != 3) {
-        continue;
+          if( Channel == 1 ) {++CounterFail;}
+          continue;
       }
-
+      if (Channel == 1){ ++CounterSuccess;}    
+     
       if (cMap.count(Channel) == 0) {
         char BUFF[500];
         sprintf(BUFF, "ClusterSize%i_0", Channel);
@@ -69,17 +73,17 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
         sprintf(BUFF, "Plane1_XResidual_Ch%i", Channel);
         hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "Plane1_YResidual_Ch%i", Channel);
-        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 80, -.2, .2);
+        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "Plane2_XResidual_Ch%i", Channel);
         hMap[10*Channel + 2] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "Plane2_YResidual_Ch%i", Channel);
-        hMap[10*Channel + 3] = new TH1F(BUFF, BUFF, 80, -.2, .2);
+        hMap[10*Channel + 3] = new TH1F(BUFF, BUFF, 40, -.2, .2);
         sprintf(BUFF, "YVXDiff1_Ch%i", Channel);
         gMap[10*Channel + 0] = new TProfile(BUFF, BUFF,100, -.5, .5,  -.3, .3);
         sprintf(BUFF, "XVYDiff1_Ch%i", Channel);
         gMap[10*Channel + 1] = new TProfile(BUFF, BUFF, 67, -.5, .5,  -.3, .3);
         sprintf(BUFF, "YVXDiff2_Ch%i", Channel);
-        gMap[10*Channel + 2] = new TProfile(BUFF, BUFF, 80, -.5, .5,  -.3, .3);
+        gMap[10*Channel + 2] = new TProfile(BUFF, BUFF, 100, -.5, .5,  -.3, .3);
         sprintf(BUFF, "XVYDiff2_Ch%i", Channel);
         gMap[10*Channel + 3] = new TProfile(BUFF, BUFF, 67, -.5, .5,  -.3, .3);
         sprintf(BUFF, "plots/Residuals_Ch%i", Channel);
@@ -90,6 +94,9 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
       if(Track->Cluster(0)->NHits()>=3 ||Track->Cluster(1)->NHits()>=3 ||Track->Cluster(2)->NHits()>=3 ){
         continue;
       }
+      if (Track->Cluster(0)->SeedHit()->Column()==0||Track->Cluster(0)->SeedHit()->Column()==51||Track->Cluster(0)->SeedHit()->Row()==0||Track->Cluster(0)->SeedHit()->Row()==79){continue;}
+      if (Track->Cluster(1)->SeedHit()->Column()==0||Track->Cluster(1)->SeedHit()->Column()==51||Track->Cluster(1)->SeedHit()->Row()==0||Track->Cluster(1)->SeedHit()->Row()==79){continue;}
+      if (Track->Cluster(2)->SeedHit()->Column()==0||Track->Cluster(2)->SeedHit()->Column()==51||Track->Cluster(2)->SeedHit()->Row()==0||Track->Cluster(2)->SeedHit()->Row()==79){continue;}
       float x0 = (Track->Cluster(0)->SeedHit()->Column()-26)*0.015;
       float x1 = (Track->Cluster(1)->SeedHit()->Column()-26)*0.015;
       float x2 = (Track->Cluster(2)->SeedHit()->Column()-26)*0.015;
@@ -126,9 +133,11 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
       }
     }
   }
+std::cout<<CounterTotal<<" = "<< CounterFail << " + " << CounterSuccess<<std::endl;
 
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
-    gStyle->SetOptStat(1111);
+    gStyle->SetOptStat(10);
+    gStyle->SetOptFit(1010);
     it->second->cd(1);
     hMap[10*it->first + 0]->Draw();
     it->second->cd(2);
@@ -138,13 +147,18 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
     it->second->cd(4);
     hMap[10*it->first + 3]->Draw();
     it->second->cd(5);
-    gMap[10*it->first + 0]->Draw("colz");
+    gMap[10*it->first + 0]->Fit("pol1","","",-0.3,0.3);
+    gMap[10*it->first + 0]->Draw();
     it->second->cd(6);
-    gMap[10*it->first + 1]->Draw("colz");
+    gMap[10*it->first + 1]->Fit("pol1","","",-0.3,0.3);
+    gMap[10*it->first + 1]->Draw();
     it->second->cd(7);
-    gMap[10*it->first + 2]->Draw("colz");
+    gMap[10*it->first + 2]->Fit("pol1","","",-0.3,0.3);
+    gMap[10*it->first + 2]->Draw();
     it->second->cd(8);
-    gMap[10*it->first + 3]->Draw("colz");
+    gMap[10*it->first + 3]->Fit("pol1","","",-0.3,0.3);
+    gMap[10*it->first + 3]->Draw();
+    gPad->Update();
     it->second->SaveAs(TString(it->second->GetName()) + ".gif");
 
   }

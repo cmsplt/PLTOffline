@@ -41,10 +41,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -76,10 +76,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.06, 0.06);
         MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.06, 0.06);
         MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
         Name = TString::Format("Slope2D_Ch%i", Telescope->Channel());
         MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
