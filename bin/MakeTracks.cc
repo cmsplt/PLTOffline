@@ -76,10 +76,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.06, 0.06);
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.02, 0.06);
         MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.06, 0.06);
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.04, 0.04);
         MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
         Name = TString::Format("Slope2D_Ch%i", Telescope->Channel());
         MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
@@ -91,7 +91,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
       if (Telescope->NClusters() > 3) continue;
 
 
-      if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 20) {
+      if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 10) {
         Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), NTrkEvMap[Telescope->Channel()]).Data() );
       }
 

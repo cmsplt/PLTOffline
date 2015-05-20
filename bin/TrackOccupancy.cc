@@ -62,13 +62,19 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
 
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         PLTTrack* Track = Telescope->Track(itrack);
-
+        PLTCluster* ClustTest = Track->Cluster(1);
+        PLTHit* HitTest = ClustTest->Hit(0);
+        float slopex = (Track->fTVX/Track->fTVZ);
+        float slopey = (Track->fTVY/Track->fTVZ);
+      if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
         for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
           PLTCluster* Cluster = Track->Cluster(icluster);
 
           for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
             PLTHit* Hit = Cluster->Hit(ihit);
+            if(ihit>0){continue;}
             hMap[Channel * 10 + Hit->ROC()]->Fill(Hit->Column(), Hit->Row());
+}
           }
         }
 
