@@ -31,6 +31,7 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
 
   // Map for all ROC hists and canvas
   std::map<int, TH2F*> hMap;
+  std::map<int, TCanvas*> cMap;
 
 
   // Loop over all events
@@ -52,12 +53,16 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
       int const Channel = Telescope->Channel();
 
       if (hMap.count(Channel * 10) == 0) {
+        char BUFF[500]; 
         TString Name = TString::Format("TrackOccupancy_Ch%02i_ROC%1i", Channel, 0);
         hMap[Channel * 10 + 0] = new TH2F(Name, Name, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
         Name = TString::Format("TrackOccupancy_Ch%02i_ROC%1i", Channel, 1);
         hMap[Channel * 10 + 1] = new TH2F(Name, Name, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
         Name = TString::Format("TrackOccupancy_Ch%02i_ROC%1i", Channel, 2);
         hMap[Channel * 10 + 2] = new TH2F(Name, Name, PLTU::NCOL-1, PLTU::FIRSTCOL, PLTU::LASTCOL, PLTU::NROW-1,PLTU::FIRSTROW, PLTU::LASTROW);
+        sprintf(BUFF, "plots/TrackOccupancy_%i", Channel);
+        cMap[Channel] = new TCanvas(BUFF, BUFF, 900, 300);
+        cMap[Channel]->Divide(3,1);
       }
 
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
@@ -84,18 +89,18 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
 
 
   // Loop over all histograms and draw them on the correct canvas in the correct pad
-  for (std::map<int, TH2F*>::iterator it = hMap.begin(); it != hMap.end(); ++it) {
+  for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
     //    std::cout << "Here again!" << std::endl;
     // Decode the ID
-    int const Channel = it->first / 10;
-    int const ROC     = it->first % 10;
 
     TString const Name = it->second->GetName();
-
-    TCanvas Can(Name, Name, 400, 400);
-    Can.cd();
-    it->second->Draw("zcol");
-    Can.SaveAs(Name + ".gif");
+    it->second->cd(1);
+    hMap[10*it->first + 0]->Draw("zcol");
+    it->second->cd(2);
+    hMap[10*it->first + 1]->Draw("zcol");
+    it->second->cd(3);
+    hMap[10*it->first + 2]->Draw("zcol");
+    it->second->SaveAs(Name + ".gif");
     delete it->second;
   }
 

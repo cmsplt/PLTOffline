@@ -52,9 +52,9 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   std::map<int, int> NTrkEvMap;
 
   TH2F* HistBeamSpot[3];
-  HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -50, 50, 25, -540, 340);
-  HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -50, 50, 25, -540, 340);
-  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 25, -50, 50, 25, -50, 50);
+  HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -25, 25, 25, -540, 540);
+  HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -25, 25, 25, -540, 540);
+  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 15, -10, 10, 15, -10, 10);
 
   std::map<int, TH1F*> MapSlopeY;
   std::map<int, TH1F*> MapSlopeX;
@@ -118,10 +118,16 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
   Can.cd(1);
+  HistBeamSpot[0]->SetXTitle("(cm)");
+  HistBeamSpot[0]->SetYTitle("(cm)");
   HistBeamSpot[0]->Draw("colz");
   Can.cd(2);
+  HistBeamSpot[1]->SetXTitle("(cm)");
+  HistBeamSpot[1]->SetYTitle("(cm)");
   HistBeamSpot[1]->Draw("colz");
   Can.cd(3);
+  HistBeamSpot[2]->SetXTitle("(cm)");
+  HistBeamSpot[2]->SetYTitle("(cm)");
   HistBeamSpot[2]->Draw("colz");
 
   Can.cd(1+3);
