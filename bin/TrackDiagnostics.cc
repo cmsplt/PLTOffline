@@ -44,7 +44,7 @@ int TrackDiagnostics (std::string const DataFileName, std::string const GainCalF
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -109,7 +109,7 @@ int TrackDiagnostics (std::string const DataFileName, std::string const GainCalF
         
         
       }
-      if (Telescope->NClusters() > 3) continue;
+//      if (Telescope->NClusters() > 3) continue;
 
 
 

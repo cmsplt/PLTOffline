@@ -90,7 +90,6 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     float const SumX = fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX();
     float const SumY = fClusters[0]->TY() + fClusters[1]->TY() + fClusters[2]->TY();
     float const SumZ = fClusters[0]->TZ() + fClusters[1]->TZ() + fClusters[2]->TZ();
-
     float const SumZ2 = fClusters[0]->TZ() * fClusters[0]->TZ()
                       + fClusters[1]->TZ() * fClusters[1]->TZ()
                       + fClusters[2]->TZ() * fClusters[2]->TZ();

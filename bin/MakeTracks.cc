@@ -41,10 +41,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_Diamond;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_3x3, FidRegionHits);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -52,9 +52,9 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   std::map<int, int> NTrkEvMap;
 
   TH2F* HistBeamSpot[3];
-  HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -50, 50, 25, -540, 340);
-  HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -50, 50, 25, -540, 340);
-  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 25, -50, 50, 25, -50, 50);
+  HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -25, 25, 25, -540, 540);
+  HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -25, 25, 25, -540, 540);
+  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 15, -10, 10, 15, -10, 10);
 
   std::map<int, TH1F*> MapSlopeY;
   std::map<int, TH1F*> MapSlopeX;
@@ -76,10 +76,10 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.02, 0.06);
         MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
         Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 50, -0.1, 0.1);
+        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.04, 0.04);
         MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
         Name = TString::Format("Slope2D_Ch%i", Telescope->Channel());
         MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
@@ -91,7 +91,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
       if (Telescope->NClusters() > 3) continue;
 
 
-      if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 20) {
+      if (Telescope->NTracks() > 0 && NTrkEvMap[Telescope->Channel()]++ < 10) {
         Telescope->DrawTracksAndHits( TString::Format("plots/Tracks_Ch%i_Ev%i.gif", Telescope->Channel(), NTrkEvMap[Telescope->Channel()]).Data() );
       }
 
@@ -118,10 +118,16 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
   Can.cd(1);
+  HistBeamSpot[0]->SetXTitle("(cm)");
+  HistBeamSpot[0]->SetYTitle("(cm)");
   HistBeamSpot[0]->Draw("colz");
   Can.cd(2);
+  HistBeamSpot[1]->SetXTitle("(cm)");
+  HistBeamSpot[1]->SetYTitle("(cm)");
   HistBeamSpot[1]->Draw("colz");
   Can.cd(3);
+  HistBeamSpot[2]->SetXTitle("(cm)");
+  HistBeamSpot[2]->SetYTitle("(cm)");
   HistBeamSpot[2]->Draw("colz");
 
   Can.cd(1+3);
