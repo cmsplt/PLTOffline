@@ -151,6 +151,22 @@ int TelescopeRotation (std::string const DataFileName, std::string const GainCal
         else if (Track->Cluster(N)->NHits()>=3){hClusterSize[10*Channel+N]->Fill(3);}
         else {hClusterSize[10*Channel+N]->Fill(0);}
       }
+        sprintf(BUFF, "PX0MinusPX2_Ch%i", Channel);
+
+        hMap[10*Channel + 0] = new TH1F(BUFF, BUFF, 40, -20, 20);
+        sprintf(BUFF, "plots/PY0MinusPY2_Ch%i", Channel);
+        hMap[10*Channel + 1] = new TH1F(BUFF, BUFF, 40, -20, 20);
+        sprintf(BUFF, "plots/P0MinusP2_Ch%i", Channel);
+        cMap[Channel] = new TCanvas(BUFF, BUFF, 600, 300);
+        cMap[Channel]->Divide(2,1);
+      }
+      PLTTrack* Track = Telescope->Track(0);
+      float PXDiff = Track->Cluster(0)->SeedHit()->Column() - Track->Cluster(2)->SeedHit()->Column();
+      float PYDiff = Track->Cluster(0)->SeedHit()->Row()    - Track->Cluster(2)->SeedHit()->Row();
+
+      hMap[10*Channel + 0]->Fill(PXDiff);
+      hMap[10*Channel + 1]->Fill(PYDiff);
+
     }
   }
 std::cout<<CounterTotal<<" = "<< CounterFail << " + " << CounterSuccess<<std::endl;
