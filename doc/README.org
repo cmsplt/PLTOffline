@@ -1,0 +1,37 @@
+#+TITLE: README for documentation generation
+#+AUTHOR: Krishna Thapa
+#+EMAIL: kthapa@cern.ch
+#+DATE: 05-24-2015
+#+STARTUP: content
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
+
+Steps to generate documentation.
+
+* Install doxygen
++ git clone https://github.com/doxygen/doxygen.git
++ cd doxygen
++ ./configure
++ ./make
++ make install
+
+* Generate the default configuration file
+
+  + doxygen -g
+  + Open Doxyfile in an editor and set the tags as:
+    - PROJECT_NAME = "PLTOffline"
+    - EXTRACT_ALL= YES
+    - EXTRACT_STATIC = YES
+    - INPUT = ../src ../bin ../plots ../interface
+    - INCLUDE_GRAPH = YES
+    - MACRO_EXPANSION = YES
+    - SEARCH_INCLUDES = YES
+    - CLASS_DIAGRAMS = YES
+    - CLASS_GRAPH = YES
+    - COLLABORATION_GRAPH = YES
+
+* Generate documentation
++ doxygen Doxyfile
+
+* View documentation
++ Open index.html file under the html directory.
