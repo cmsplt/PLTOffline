@@ -90,10 +90,13 @@ float PLTGainCal::GetCharge(int const ch, int const roc, int const col, int cons
 {
   // Get charge, note roc number is 0, 1, 2
   int const adc = INadc;
-  if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
-  if (row >= MAXROWS) { printf("ERROR: over MAXROWS: %i\n", row); };
-  if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS: %i\n", col); };
-
+  int errorcount = 0;
+  if (errorcount<20){
+    if (ch  >= MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
+    if (row >= MAXROWS) { printf("ERROR: over MAXROWS: %i\n", row); };
+    if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS: %i\n", col); };
+    ++errorcount;
+  }
   int irow = RowIndex(row);
   int icol = ColIndex(col);
   int ich  = ChIndex(ch);
@@ -245,11 +248,14 @@ void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
     ss >> ch >> roc >> col >> row;
 
     // Just remember that on the plane tester it's channel 22
-
+  int errorcount1=0;
+  if (errorcount1<20){
     if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS: ch = %i\n", ch); };
     if (row >= MAXROWS) { printf("ERROR: over MAXROWS %i\n", row); };
     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS %i\n", col); };
     if (roc >= MAXROCS) { printf("ERROR: over MAXROCS %i\n", roc); };
+    ++errorcount1;
+  }
     if (PLTGainCal::DEBUGLEVEL) {
       printf("%i %i %i\n", ch, row, col);
     }
