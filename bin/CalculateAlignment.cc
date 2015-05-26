@@ -21,6 +21,9 @@
 #include "TGraph.h"
 #include "TProfile.h"
 
+//Calculate alignment takes a data file of hopefully straight tracks and aligns the planes in all telescopes behind the first plane in the ideal way.
+//produces ROTATED_Alignment.dat after the fixes to Local Rotation and then Trans_Alignment after fixing the X and Y offsets remaining after rot fix.
+
 int GenerateAlignment (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
@@ -64,9 +67,9 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     ++ChN;
     if (h_Slopes1.count(*ich) == 0){
       const char* BUFF =  Form ("Y_Slope_Ch%02i_First", *ich);
-      h_Slopes1[*ich].second = new TH1F( BUFF, BUFF, 100, -0.2, 0.2);
+      h_Slopes1[*ich].second = new TH1F( BUFF, BUFF, 50, -0.1, 0.1);
       const char* BUFF2 =  Form ("X_Slope_Ch%02i_First", *ich);
-      h_Slopes1[*ich].first = new TH1F( BUFF2, BUFF2, 100, -0.2, 0.2);
+      h_Slopes1[*ich].first = new TH1F( BUFF2, BUFF2, 50, -0.1, 0.1);
     }
     for (int iroc=0; iroc<3; ++iroc){
       int id = 10 *(*ich) + iroc;
@@ -109,8 +112,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         ++TracksN;
         PLTTrack* Track = Telescope->Track(0);
         float xslope, yslope;
-        xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
-        yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
+        xslope = (Track->Cluster(2)->TX()-Track->Cluster(0)->TX())/7.54;
+        yslope = (Track->Cluster(2)->TY()-Track->Cluster(0)->TY())/7.54;
         h_Slopes1[channel].first->Fill(xslope);
         h_Slopes1[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
@@ -255,9 +258,9 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     ++ChN;
     if (h_Slopes2.count(*ich) == 0){
       const char* BUFF =  Form ("Y_Slope_Ch%02i_Second", *ich);
-      h_Slopes2[*ich].second = new TH1F( BUFF, BUFF, 100, -0.2, 0.2);
+      h_Slopes2[*ich].second = new TH1F( BUFF, BUFF, 50, -0.1, 0.1);
       const char* BUFF2 =  Form ("X_Slope_Ch%02i_Second", *ich);
-      h_Slopes2[*ich].first = new TH1F( BUFF2, BUFF2, 100, -0.2, 0.2);
+      h_Slopes2[*ich].first = new TH1F( BUFF2, BUFF2, 50, -0.1, 0.1);
     }
     for (int iroc=0; iroc<3; ++iroc){
       int id = 10 *(*ich) + iroc;
@@ -295,8 +298,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         ++TracksN;
         PLTTrack* Track = Telescope->Track(0);
         float xslope, yslope;
-        xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
-        yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
+        xslope = (Track->Cluster(2)->TX()-Track->Cluster(0)->TX())/7.54;
+        yslope = (Track->Cluster(2)->TY()-Track->Cluster(0)->TY())/7.54;
         h_Slopes2[channel].first->Fill(xslope);
         h_Slopes2[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
@@ -443,9 +446,9 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     ++ChN;
     if (h_Slopes3.count(*ich) == 0){
       const char* BUFF =  Form ("Y_Slope_Ch%02i_Third", *ich);
-      h_Slopes3[*ich].second = new TH1F( BUFF, BUFF, 100, -0.2, 0.2);
+      h_Slopes3[*ich].second = new TH1F( BUFF, BUFF, 50, -0.1, 0.1);
       const char* BUFF2 =  Form ("X_Slope_Ch%02i_Third", *ich);
-      h_Slopes3[*ich].first = new TH1F( BUFF2, BUFF2, 100, -0.2, 0.2);
+      h_Slopes3[*ich].first = new TH1F( BUFF2, BUFF2, 50, -0.1, 0.1);
     }
     for (int iroc=0; iroc<3; ++iroc){
       int id = 10 *(*ich) + iroc;
@@ -484,8 +487,8 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
         ++TracksN;
         PLTTrack* Track = Telescope->Track(0);
         float xslope, yslope;
-        xslope = (Track->TX(7.54)-Track->TX(0.0))/3;
-        yslope = (Track->TY(7.54)-Track->TY(0.0))/3;
+        xslope = (Track->Cluster(2)->TX()-Track->Cluster(0)->TX())/7.54;
+        yslope = (Track->Cluster(2)->TY()-Track->Cluster(0)->TY())/7.54;
         h_Slopes3[channel].first->Fill(xslope);
         h_Slopes3[channel].second->Fill(yslope);
         for (int iroc = 0; iroc <= 2; ++iroc){
