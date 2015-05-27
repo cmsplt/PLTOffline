@@ -223,7 +223,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
             } else {
               static int ievent = 0;
               if (ievent < 20) {
-                Telescope->DrawTracksAndHits( TString::Format("plots/Jeebus_%04i.gif", ievent++).Data());
+                Telescope->DrawTracksAndHits( TString::Format("plots/Track_%02i_%04i.gif", Channel,ievent++).Data());
               }
 	      hMapPulseHeights[Channel * 10 + 2]->Fill(0);
             }
