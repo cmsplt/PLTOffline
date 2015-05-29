@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <sstream>
 
 #include "PLTEvent.h"
 #include "PLTU.h"
@@ -41,8 +42,7 @@
 
 
 
-
-void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
+void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, int ZCfrom, int ZCto)
 {
   // Define some material and media
   TGeoMaterial *MatVacuum = new TGeoMaterial("Vacuum", 0,0,0);
@@ -62,29 +62,31 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
   std::vector< std::pair<int, int> > ChannelROCs = Alignment.GetListOfChannelROCs();
   for (std::vector< std::pair<int, int> >::iterator It = ChannelROCs.begin(); It != ChannelROCs.end(); ++It) {
     PLTAlignment::CP* C = Alignment.GetCP(*It);
+    if(It->first >= ZCfrom && It->second <= ZCto)
+    {
+      // Aperture is defined by 2nd rock.
+      double aperture = It->second == 1 ? 0. : 0.2;
+      
+      // Make a plane
+      TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4+aperture, 0.4+aperture, 0.005);
+      plane->SetLineColor(kBlue);
+      
+      // Translation and rotation of this plane in global space
+      TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), (C->GRZ + C->LR) * 180. / TMath::Pi(), 0, 0.);
+      TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
+      if (C->GRY < 3.0) {
+        TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, (C->GZ + C->LZ), Rotation);
+      } else {
+        TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, -(C->GZ + C->LZ), Rotation);
+        
+      }
 
-    // Aperture is defined by 2nd rock.
-    double aperture = It->second == 1 ? 0. : 0.2;
-    
-    // Make a plane
-    TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4+aperture, 0.4+aperture, 0.005);
-    plane->SetLineColor(kBlue);
-
-    // Translation and rotation of this plane in global space
-    TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);
-    TGeoCombiTrans  *TransRot;// = new TGeoCombiTrans(C->GX, C->GY, C->GZ + C->LZ, Rotation);
-    if (C->GRY < 1.0) {
-      TransRot = new TGeoCombiTrans(C->GX, C->GY, (C->GZ + C->LZ), Rotation);
-    } else {
-      //      TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
-      //      exit(0);
+      CP->AddNode(plane,  10*It->first + It->second, TransRot);
     }
-
-    CP->AddNode(plane,  10*It->first + It->second, TransRot);
     printf("Rotations: %15.3E  %15.3E\n", C->GRZ, C->GRY);
   }
 
-
+  
   Replica->AddNode(CP, 1);
   Top->AddNode(Replica, 1);
 
@@ -96,14 +98,14 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment)
   GeoManager->SetVisLevel(4);
   GeoManager->Export("Alignment.root");
   GeoManager->Export("Alignment.xml");
-
-   return;
+  
+  return;
 }
 
 
 
 
-int PLTEventDisplay (std::string const AlignmentFileName)
+int PLTEventDisplay (std::string const AlignmentFileName, int ZCfrom, int ZCto)
 {
 
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
@@ -123,7 +125,7 @@ int PLTEventDisplay (std::string const AlignmentFileName)
   filenmeXml="./ALIGNMENT/GeometryExport/" + AlignmentFileName + ".xml";
   */
 
-  SetupGeometry(GeoManager, Alignment);
+  SetupGeometry(GeoManager, Alignment, ZCfrom, ZCto);
   return 0;
 }
 
@@ -137,6 +139,17 @@ int main (int argc, char* argv[])
 
   std::string const AlignmentFileName = argv[1];
 
+  std::string tempStr;
+  int ZCfrom, ZCto;
+  
+  std::cout << "Enter as prescribed or any other strings for other choice"<<std::endl;
+  std::cout << "Channel from and to :: "<<std::endl;
+  std::getline (std::cin, tempStr);
+  std::stringstream(tempStr) >> ZCfrom;
+  std::cout << "Channelto:: "<<std::endl;
+  std::getline (std::cin, tempStr);
+  std::stringstream(tempStr) >> ZCto;
+  
   TApplication theApp("PLT", &argc, argv);
 
   gSystem->ResetSignal(kSigBus);
@@ -147,7 +160,7 @@ int main (int argc, char* argv[])
   gSystem->ResetSignal(kSigFloatingException);
 
 
-  PLTEventDisplay(AlignmentFileName);
+  PLTEventDisplay(AlignmentFileName, ZCfrom, ZCto);
 
   return 0;
 }
