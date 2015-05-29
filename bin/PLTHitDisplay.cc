@@ -81,12 +81,11 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
           // C->LZ=0(roc 0), 3.77 (roc1) or 7.54 (roc 2);
           // C->LY=0(roc 0), 0.102 (roc1) or 0.204 (roc 2);
           TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), (C->GRZ + C->LR) * 180. / TMath::Pi(), 0, 0.);    
-          TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, C->GZ + C->LZ, Rotation);
+          TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, C->GZ + C->LZ, Rotation);
           if (C->GRY< 3.0) {
-            TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, (C->GZ + C->LZ), Rotation);
+            TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, (C->GZ + C->LZ), Rotation);
           } else {
-            // uncomment the line below to get planes @ -Z
-            TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
+            TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, -(C->GZ + C->LZ), Rotation);
           }
 
           CP->AddNode(plane,  10*It->first + It->second, TransRot);
