@@ -83,7 +83,6 @@ tree1
 PLTGeometryExport
 Alignment.root
 Alignment.xml
-*.sh
 test/*
 */#*.*#
 .DS_Store
