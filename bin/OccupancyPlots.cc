@@ -235,7 +235,7 @@ int OccupancyPlots (std::string const DataFileName)
         if (NHits == 1) {
           Cluster->Hit(0)->Column();
           Cluster->Hit(0)->Row();
-          hOccupancyClMap[id][0]->Fill(12,12);
+//          hOccupancyClMap[id][0]->Fill(12,12);
           hOccupancyClMap[id][0]->Fill(Cluster->Hit(0)->Column(), Cluster->Hit(0)->Row());
         } else if (NHits == 2) {
           for (size_t ihit = 0; ihit != NHits; ++ihit) {

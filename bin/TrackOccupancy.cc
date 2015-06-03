@@ -23,8 +23,8 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
+  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -71,18 +71,16 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
         PLTHit* HitTest = ClustTest->Hit(0);
         float slopex = (Track->fTVX/Track->fTVZ);
         float slopey = (Track->fTVY/Track->fTVZ);
-      if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
-        for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
-          PLTCluster* Cluster = Track->Cluster(icluster);
-
-          for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
-            PLTHit* Hit = Cluster->Hit(ihit);
-            if(ihit>0){continue;}
-            hMap[Channel * 10 + Hit->ROC()]->Fill(Hit->Column(), Hit->Row());
-}
+        if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
+          for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
+            PLTCluster* Cluster = Track->Cluster(icluster);
+            for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
+              PLTHit* Hit = Cluster->Hit(ihit);
+              if(ihit>0){continue;}
+              hMap[Channel * 10 + Hit->ROC()]->Fill(Hit->Column(), Hit->Row());
+            }
           }
         }
-
       }
     }
   }

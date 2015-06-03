@@ -20,7 +20,7 @@
 #include "TF1.h"
 #include "TGraph.h"
 #include "TProfile.h"
-
+#include "TFile.h"
 //Calculate alignment takes a data file of hopefully straight tracks and aligns the planes in all telescopes behind the first plane in the ideal way.
 //produces ROTATED_Alignment.dat after the fixes to Local Rotation and then Trans_Alignment after fixing the X and Y offsets remaining after rot fix.
 
@@ -29,8 +29,11 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   std::cout << "GainCalFileName:    " << GainCalFileName << std::endl;
   //system( "head /data/dhidas/PLTMC/GainCalFits_Test.dat");
+  
   // Set some basic style
+  
   PLTU::SetStyle();
+  TFile *f = new TFile("histo_calculatealignment.root","RECREATE");
   TCanvas canvas1;
   TCanvas canvas2("Canvas2","Canvas2",800,600);
   TCanvas canvas3;
@@ -212,6 +215,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       angle[id] = atan(r_position[id]); 
     std::cout << "ChannelRoc: " << Channel<< ":" << ROC<< "  "<<func[id]->GetParName(1)<<" " << r_position[id] << " angle: " << angle[id]<< std::endl;
     }
+    f->Write();
     //std::cout << &NewAlignment << " vs " << OldAlignment << std::endl;
 //    PLTAlignment::CP* ConstMap2 = RotatedAlignment->GetCP(Channel,ROC);  
     RotatedAlignment->AddToLR(Channel,ROC,-angle[id]);
@@ -388,6 +392,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     }
     else continue;
   }
+  f->Write();
   //do Translational Correction
   for (std::map<int, TH1F*>::iterator it = h_xResiduals2.begin(); it !=h_xResiduals2.end(); ++it){
     int const Channel = it->first / 10;
@@ -581,6 +586,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     }
     else continue;
   }
+  f->Write();
   for (std::map<int, TH1F*>::iterator it = h_xResiduals3.begin(); it !=h_xResiduals3.end(); ++it){
     delete it->second; 
   }

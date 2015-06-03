@@ -23,11 +23,6 @@ int MakeTracks (std::string const, std::string const, std::string const);
 
 
 
-
-
-
-
-
 int MakeTracks (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
@@ -51,14 +46,17 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   std::map<int, int> NTrkEvMap;
 
-  TH2F* HistBeamSpot[3];
+  TH2F* HistBeamSpot[4];
   HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -25, 25, 25, -540, 540);
   HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -25, 25, 25, -540, 540);
   HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 15, -10, 10, 15, -10, 10);
+  HistBeamSpot[3] = new TH2F("BeamSpotZzoom", "BeamSpotZoom Z=0;X;Y;NTracks", 15, -2, 2, 15, -2, 2);
 
   std::map<int, TH1F*> MapSlopeY;
   std::map<int, TH1F*> MapSlopeX;
   std::map<int, TH2F*> MapSlope2D;
+  std::map<int, TH1F*> MapResidualY;
+  std::map<int, TH1F*> MapResidualX;
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -85,6 +83,24 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
         MapSlope2D[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
         MapSlope2D[Telescope->Channel()]->SetYTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
+        Name = TString::Format("ResidualY%i_ROC0", Telescope->Channel());
+        MapResidualY[Telescope->Channel()*10+0] = new TH1F(Name, Name, 40, -0.02, 0.06);
+        MapResidualY[Telescope->Channel()*10+0]->SetXTitle("Local Telescope Residual-Y (cm)");
+        Name = TString::Format("ResidualX%i_ROC0", Telescope->Channel());
+        MapResidualX[Telescope->Channel()*10+0] = new TH1F(Name, Name, 40, -0.04, 0.04);
+        MapResidualX[Telescope->Channel()*10+0]->SetXTitle("Local Telescope Residual-X (cm)");
+        Name = TString::Format("ResidualY%i_ROC1", Telescope->Channel());
+        MapResidualY[Telescope->Channel()*10+1] = new TH1F(Name, Name, 40, -0.02, 0.06);
+        MapResidualY[Telescope->Channel()*10+1]->SetXTitle("Local Telescope Residual-Y (cm)");
+        Name = TString::Format("ResidualX%i_ROC1", Telescope->Channel());
+        MapResidualX[Telescope->Channel()*10+1] = new TH1F(Name, Name, 40, -0.04, 0.04);
+        MapResidualX[Telescope->Channel()*10+1]->SetXTitle("Local Telescope Residual-X (cm)");
+        Name = TString::Format("ResidualY%i_ROC2", Telescope->Channel());
+        MapResidualY[Telescope->Channel()*10+2] = new TH1F(Name, Name, 40, -0.02, 0.06);
+        MapResidualY[Telescope->Channel()*10+2]->SetXTitle("Local Telescope Residual-Y (cm)");
+        Name = TString::Format("ResidualX%i_ROC2", Telescope->Channel());
+        MapResidualX[Telescope->Channel()*10+2] = new TH1F(Name, Name, 40, -0.04, 0.04);
+        MapResidualX[Telescope->Channel()*10+2]->SetXTitle("Local Telescope Residual-X (cm)");
       }
 
 
@@ -101,10 +117,17 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         HistBeamSpot[0]->Fill( Track->fPlaner[0][1], Track->fPlaner[0][2]);
         HistBeamSpot[1]->Fill( Track->fPlaner[1][0], Track->fPlaner[1][2]);
         HistBeamSpot[2]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
+        HistBeamSpot[3]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
 
         MapSlopeY[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
         MapSlopeX[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ);
         MapSlope2D[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ, Track->fTVY/Track->fTVZ);
+        MapResidualY[Telescope->Channel()*10+0]->Fill(Track->LResidualY(0));
+        MapResidualX[Telescope->Channel()*10+0]->Fill(Track->LResidualX(0));
+        MapResidualY[Telescope->Channel()*10+1]->Fill(Track->LResidualY(1));
+        MapResidualX[Telescope->Channel()*10+1]->Fill(Track->LResidualX(1));
+        MapResidualY[Telescope->Channel()*10+2]->Fill(Track->LResidualY(2));
+        MapResidualX[Telescope->Channel()*10+2]->Fill(Track->LResidualX(2));
 
       }
     }
@@ -148,6 +171,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[0]->Write();
   HistBeamSpot[1]->Write();
   HistBeamSpot[2]->Write();
+  HistBeamSpot[3]->Write();
 
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
     it->second->Write();
@@ -174,6 +198,22 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
     //it->second->Draw("hist");
     //Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
     //delete it->second;
+  }
+  for (std::map<int, TH1F*>::iterator it = MapResidualY.begin(); it != MapResidualY.end(); ++it) {
+    it->second->Write();
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    delete it->second;
+  }
+  for (std::map<int, TH1F*>::iterator it = MapResidualX.begin(); it != MapResidualX.end(); ++it) {
+    it->second->Write();
+    TCanvas Can;
+    Can.cd();
+    it->second->Draw("hist");
+    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    delete it->second;
   }
 
   f->Close();
