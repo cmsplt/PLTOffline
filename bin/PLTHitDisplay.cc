@@ -1,4 +1,6 @@
 ////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
 // Krishna Thapa <kthapa@cern.ch>
 //
@@ -8,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include "PLTEvent.h"
 #include "PLTU.h"
@@ -40,7 +43,7 @@
 
 
 //Setup the Geometry of hits and planes
-void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& Event, std::string ZC, std::string PlaneC, std::string TrackC, std::string HitC)
+void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& Event, int ZCfrom, int ZCto, std::string PlaneC, std::string TrackC, std::string HitC)
 {
   // Define some material and media
   TGeoMaterial *MatVacuum = new TGeoMaterial("Vacuum", 0,0,0);
@@ -62,32 +65,32 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
     std::vector< std::pair<int, int> > ChannelROCs = Alignment.GetListOfChannelROCs();
     for (std::vector< std::pair<int, int> >::iterator It = ChannelROCs.begin(); It != ChannelROCs.end(); ++It) {
       PLTAlignment::CP* C = Alignment.GetCP(*It);
-      
-      // Aperture is defined by 2nd rock.
-      double aperture = It->second == 1 ? 0. : 0.2;
-      
-      // Make a plane. Here, dx & dy are half lengths in X & Y
-      TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4+aperture, 0.4+aperture, 0.005);
-      plane->SetLineColor(kBlue);
-      
-      // Translation and rotation of this plane in global space
-      // Rotation angle comes from the alignment file: Tele. GRZ
-      // C->GZ=171.41;
-      // C->LZ=0(roc 0), 3.77 (roc1) or 7.54 (roc 2);
-      // C->LY=0(roc 0), 0.102 (roc1) or 0.204 (roc 2);
-      TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), C->GRZ * 180. / TMath::Pi(), 0, 0.);    
-      TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, C->GZ + C->LZ, Rotation);
-      if (ZC == "pz") {
-        TransRot = new TGeoCombiTrans(C->GX+C->LX, C->GY+C->LY, (C->GZ + C->LZ), Rotation);
-      } else {
-        // uncomment the line below to get planes @ -Z
-        TransRot = new TGeoCombiTrans(-C->GX, -C->GY, (-C->GZ - C->LZ), Rotation);
-      }
-      
-      CP->AddNode(plane,  10*It->first + It->second, TransRot);
+      if(It->first >= ZCfrom && It->second <= ZCto)
+        {
+          // Aperture is defined by 2nd rock.
+          double aperture = It->second == 1 ? 0. : 0.2;
+
+
+          // Make a plane. Here, dx & dy are half lengths in X & Y
+          TGeoVolume *plane = GeoManager->MakeBox("plane", Al, 0.4+aperture, 0.4+aperture, 0.005);
+          plane->SetLineColor(kBlue);
+
+          // Translation and rotation of this plane in global space
+          // Rotation angle comes from the alignment file: Tele. GRZ
+          // C->GZ=171.41;
+          // C->LZ=0(roc 0), 3.77 (roc1) or 7.54 (roc 2);
+          // C->LY=0(roc 0), 0.102 (roc1) or 0.204 (roc 2);
+          TGeoRotation    *Rotation = new TGeoRotation(TString::Format("RotationZ%i", 10*It->first + It->second), (C->GRZ + C->LR) * 180. / TMath::Pi(), 0, 0.);    
+          TGeoCombiTrans  *TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, C->GZ + C->LZ, Rotation);
+          if (C->GRY< 3.0) {
+            TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, (C->GZ + C->LZ), Rotation);
+          } else {
+            TransRot = new TGeoCombiTrans(C->GX + C->LX, C->GY + C->LY, -(C->GZ + C->LZ), Rotation);
+          }
+
+          CP->AddNode(plane,  10*It->first + It->second, TransRot);
+        }
     }
-  } else{
-    std::cout <<"Drawing hist without the planes\n"<<std::endl;
   }
   Replica->AddNode(CP, 1);
   Top->AddNode(Replica, 1);
@@ -116,8 +119,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
   ps->SetOwnIds(kTRUE);
 
   // variable for both tracks and hits
-  int chLimit = ZC == "pz" ? 13 : 24;
-  
+    
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
 
@@ -132,7 +134,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
       
         if (NTrackMap[Telescope->Channel()] > 30) continue;
 
-        if(Telescope->Channel() < chLimit){
+        if(Telescope->Channel() >= ZCfrom && Telescope -> Channel() <= ZCto){
           
           for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
             PLTTrack* T = Telescope->Track(itrack);
@@ -141,7 +143,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
             rc->fV.Set(TrXY.first, TrXY.second, 0);
             rc->fP.Set(T->fGVX, T->fGVY, T->fGVZ);
             rc->fSign = 0;
-        
+
             TEveTrack* track = new TEveTrack(rc, prop);
             track->SetLineColor(0);
             track->MakeTrack();
@@ -153,9 +155,8 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
         gSystem->ProcessEvents();
         
       }
-    } else {
-      //std::cout <<"Drawing without the tracks\n"<<std::endl;
     }
+
     // For Hits
     if(HitC == "y") {
     // Loop over all planes with hits in event
@@ -186,8 +187,8 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
           PLTHit* Hit = Plane->Hit(ihit);
           
           // ID thise plane and roc by 3 digit number          
-          int const id = 10 * Plane->Channel() + Plane->ROC();
-          if(Hit->Channel() < chLimit ){
+          int id = 10 * Plane->Channel() + Plane->ROC();
+          if(Hit->Channel() >=ZCfrom && Hit->Channel() <= ZCto ){
               ps->SetNextPoint(Hit->GX(),Hit->GY(),Hit->GZ());
               ps->SetPointId(new TNamed(Form("Point %d", id), ""));
           }            
@@ -223,7 +224,7 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
 
 
 //Setup events for geometry
-int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, std::string ZC, std::string PlaneC, std::string TrackC, std::string HitC)
+int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, int ZCfrom, int ZCto, std::string PlaneC, std::string TrackC, std::string HitC)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
@@ -245,7 +246,7 @@ int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFile
 
   // Geometry for Planes and the Hits.
   TGeoManager* GeoManager = new TGeoManager("PLT", "PLT Geometry");
-  SetupGeometry(GeoManager, Alignment,Event, ZC, PlaneC, TrackC, HitC);
+  SetupGeometry(GeoManager, Alignment, Event, ZCfrom, ZCto, PlaneC, TrackC, HitC);
 
   
   return 0;
@@ -264,11 +265,17 @@ int main (int argc, char* argv[])
   std::string const GainCalFileName = argv[2];
   std::string const AlignmentFileName = argv[3];
 
-  std::string ZC, PlaneC, TrackC, HitC = "";
+  std::string tempStr, PlaneC, TrackC, HitC = "";
+  int ZCfrom, ZCto;
 
   std::cout << "Enter as prescribed or any other strings for other choice"<<std::endl;
-  std::cout << "Enter pz for +Z Channels: "<<std::endl;
-  std::cin >> ZC;
+  std::cout << "Channel from and to :: "<<std::endl;
+  std::getline (std::cin, tempStr);
+  std::stringstream(tempStr) >> ZCfrom;
+  std::cout << "Channelto:: "<<std::endl;
+  std::getline (std::cin, tempStr);
+  std::stringstream(tempStr) >> ZCto;
+  
   std::cout << "Draw planes? y for yes: "<<std::endl;
   std::cin >> PlaneC;
   std::cout << "Draw tracks? y for yes: "<<std::endl;
@@ -286,7 +293,7 @@ int main (int argc, char* argv[])
   gSystem->ResetSignal(kSigFloatingException);
   
   
-  PLTHitDisplay(DataFileName, GainCalFileName, AlignmentFileName, ZC, PlaneC, TrackC, HitC);
+  PLTHitDisplay(DataFileName, GainCalFileName, AlignmentFileName, ZCfrom, ZCto, PlaneC, TrackC, HitC);
   
   theApp.Run();
   
