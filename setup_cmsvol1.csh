@@ -1,4 +1,4 @@
-setenv ROOTSYS "/nfs/cern/root_v5.34.28_x64"
+setenv ROOTSYS /nfs/cern/root_v5.34.28_x64
 setenv PATH $ROOTSYS/bin
 setenv LD_LIBRARY_PATH $ROOTSYS/lib
 
