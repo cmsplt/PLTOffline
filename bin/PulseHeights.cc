@@ -136,7 +136,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       }
       ++NGraphPoints;
 
-      std::cout << NGraphPoints << std::endl;
+//      std::cout << NGraphPoints << std::endl;
 
     }
 
@@ -354,7 +354,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         }
         printf("%6.0f ", Avg2D[id][ia][ja]);
       }
-      std::cout << std::endl;
+//      std::cout << std::endl;
     }
     hMap2D[id]->SetMaximum(60000);
     hMap2D[id]->SetStats(false);
