@@ -12,11 +12,12 @@
 
 #include "PLTEvent.h"
 #include "PLTU.h"
-
+#include "TFile.h"
 
 int TrackOccupancy (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
   std::cout << "DataFileName:    " << DataFileName << std::endl;
+  TFile *f = new TFile("histo_track_occupancy.root","RECREATE");
 
   // Set some basic style
   PLTU::SetStyle();
@@ -71,7 +72,8 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
         PLTHit* HitTest = ClustTest->Hit(0);
         float slopex = (Track->fTVX/Track->fTVZ);
         float slopey = (Track->fTVY/Track->fTVZ);
-        if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
+//        if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
+        if (HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
           for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
             PLTCluster* Cluster = Track->Cluster(icluster);
             for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
@@ -94,15 +96,18 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
     TString const Name = it->second->GetName();
     it->second->cd(1);
     hMap[10*it->first + 0]->Draw("zcol");
+    hMap[10*it->first + 0]->Write();
     it->second->cd(2);
     hMap[10*it->first + 1]->Draw("zcol");
+    hMap[10*it->first + 1]->Write();
     it->second->cd(3);
     hMap[10*it->first + 2]->Draw("zcol");
+    hMap[10*it->first + 2]->Write();
     it->second->SaveAs(Name + ".gif");
     delete it->second;
   }
 
-
+f->Write();
   return 0;
 }
 
