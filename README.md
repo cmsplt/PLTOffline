@@ -30,7 +30,7 @@ some exe's output root files and all exe's output plots to the ./plots/ director
 | Executable Name | Inputs | Outputs | Short Description|
 |:--------|:---------|:-------|:--------|
 |  |   |   |   |
-|  |   |   |   |
+| CalculateAlignment | Data, GainCal, Alignment  | TransAlignment.dat, ROTAlignment.dat, plots/Alignment/*.gif, calculatealignment.root  | lines up pixel hits from tracks behind each other my moving the planes. fixes translational offsets first, outputs TRANSAlignment.dat. Then fixes rotational misalignment and ouptus ROTAlignment.dat  |
 |  |   |   |   |
 |  |   |   |   |
 |  |   |   |   |
