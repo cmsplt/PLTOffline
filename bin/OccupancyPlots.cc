@@ -116,7 +116,7 @@ int OccupancyPlots (std::string const DataFileName)
   char BUFF[200];
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 1 == 0) {
+    if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
 
