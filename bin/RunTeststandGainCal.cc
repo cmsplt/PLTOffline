@@ -202,7 +202,7 @@ int RunTeststandGainCal (std::string const InFileName)
   TSpectrum Spectrum(20);
   Spectrum.SetAverageWindow(20);//probably does nothing
   int const NPeaks = Spectrum.Search(&hROCLevels);
-  Float_t* Peaks = Spectrum.GetPositionX();
+  Float_t* Peaks = (Float_t *) Spectrum.GetPositionX();
   std::sort(Peaks, Peaks + NPeaks);//new, dangerous. 
   //print aft
   printf("Peak positions after sort\n");
