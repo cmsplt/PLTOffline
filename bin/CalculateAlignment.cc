@@ -103,7 +103,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     if (ientry1 % 10000 == 0) {
       std::cout << "Processing entry: " << ientry1 << std::endl;
     }
-
+    if (ientry1>=3000000){break;}
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event1.NTelescopes(); ++it) {
@@ -291,6 +291,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
+    if (ientry>=3000000){break;}
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event2.NTelescopes(); ++it) {
@@ -481,6 +482,7 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
+    if (ientry>=3000000){break;}
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event3.NTelescopes(); ++it) {
 
