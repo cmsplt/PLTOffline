@@ -21,7 +21,7 @@
 #include "TStyle.h"
 #include "TLine.h"
 #include "TROOT.h"
-
+#include "TFile.h"
 // FUNCTION DEFINITIONS HERE
 
 
@@ -29,6 +29,7 @@
 
 int NumberOfHitsPerEvent(std::string const DataFileName)
 {
+  TFile f("HitsPerEvent.root","RECREATE");
   // Set some basic style
   PLTU::SetStyle();
 
@@ -36,10 +37,11 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
   PLTEvent Event(DataFileName);
 
   // Map for all ROC hists and canvas
+  TH1F tMap("tMap","Telescopes Per Event",17,0,16);
+  TH1F pMap("pMap","Planes hit per Event",49,0,48);
   std::map<int, TH1F*> hMap;
   std::map<int, TH1F*> hClMap;
   std::map<int, TH1F*> hHPCMap;
-
   std::map<int, TCanvas*> cMap;
 
   // Loop over all events in file
@@ -48,7 +50,9 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
     if (ientry % 10000 == 0) {
       std::cout << "Processing event: " << ientry << std::endl;
     }
-
+  //  if (ientry>=300000) {break;}
+    tMap.Fill(Event.NTelescopes());
+    pMap.Fill(Event.NPlanes());
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
 
@@ -111,7 +115,6 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
     cMap[Channel]->cd(ROC+1+6)->SetLogy(1);
     hHPCMap[it->first]->Draw();
   }
-
   for (std::map<int, TCanvas*>::iterator it = cMap.begin(); it != cMap.end(); ++it) {
     TString Name = TString::Format("plots/NHitsPerEvent_Ch%02i.gif", it->first);
     it->second->SaveAs( Name );
@@ -119,7 +122,7 @@ int NumberOfHitsPerEvent(std::string const DataFileName)
   }
 
 
-
+  f.Write();
   return 0;
 }
 
