@@ -41,8 +41,8 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
-    if (ientry >= 100000) break;
 
+    if (ientry >= 200000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -106,7 +106,6 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
     it->second->SaveAs(Name + ".gif");
     delete it->second;
   }
-
 f->Write();
   return 0;
 }

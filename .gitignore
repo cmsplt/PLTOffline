@@ -1,5 +1,6 @@
 *.gif
 *.root
+*.dat
 data
 lib/*
 PLTHitDisplay
@@ -19,6 +20,8 @@ FindNoisyPixels
 FindTrims
 FitAddressLevels
 GainCalFastFits
+GenerateAlignment
+TrackDiagnostics
 CalculateAlignment
 GeoTest
 GetEventsFromBinary
