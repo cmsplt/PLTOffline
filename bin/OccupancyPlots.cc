@@ -121,7 +121,7 @@ int OccupancyPlots (std::string const DataFileName)
     }
 
 
-    //if (ientry == 300000) break;
+    if (ientry == 300000) break;
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {

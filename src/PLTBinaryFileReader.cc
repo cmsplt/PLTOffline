@@ -163,7 +163,7 @@ int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned lon
 
 int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
-  uint32_t n1, n2;
+  uint32_t n1, n2, oldn1, oldn2;
 
   int wordcount = 0;
   bool bheader = true;
@@ -209,6 +209,11 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
       }
 
       while (bheader) {
+        // The older slink files contain a bug which can sometimes cause
+        // a pair of hits to be duplicated. To fix this, keep track of
+        // the previous words and only process the new ones if they're different.
+        oldn1=n1;
+        oldn2=n2;
         InFile.read((char *) &n2, sizeof n2);
         InFile.read((char *) &n1, sizeof n1);
         if (InFile.eof()) {
@@ -232,10 +237,39 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           Time = Time + 86400000 * fTimeMult;
           //std::cout << "Found Event Trailer: " << Event << std::endl;
         } else {
-          DecodeSpyDataFifo(n2, Hits);
-          DecodeSpyDataFifo(n1, Hits);
-        }
-      }
+	  // Older versions of the slink file contain a bug where there are occasionally
+	  // an odd number of 32-bit words between the header and trailer. In this case,
+	  // n1 is actually the first word of the trailer, so to figure out if that's happened,
+	  // peek at the next word and see if it is the other trailer word.
+
+          uint32_t peekWord;
+          InFile.read((char *) &peekWord, sizeof peekWord);
+          if (InFile.eof()) {
+            // shouldn't happen unless the event is truncated in some way
+            return -1;
+          }
+	  
+	  // If we did find the other half of the trailer, then react appropriately...
+          if ((peekWord & 0xff000000) == 0xa0000000) {
+            bheader = false;
+            Time = n1;
+            if (Time < fLastTime) {
+              ++fTimeMult;
+            }
+            fLastTime = Time;
+            Time = Time + 86400000 * fTimeMult;
+
+            // but don't forget to decode the first word
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits);
+          }
+          else {
+            // OK, it wasn't a trailer. Undo the peek and decode both words
+            InFile.seekg(-sizeof peekWord, std::ios_base::cur);
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits);
+            if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits);
+	  }
+	} // not a trailer
+      } // after header
     }
   }
 

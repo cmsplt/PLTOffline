@@ -49,8 +49,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   TH2F* HistBeamSpot[4];
   HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -25, 25, 25, -540, 540);
   HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -25, 25, 25, -540, 540);
-  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 15, -10, 10, 15, -10, 10);
-  HistBeamSpot[3] = new TH2F("BeamSpotZzoom", "BeamSpotZoom Z=0;X;Y;NTracks", 15, -2, 2, 15, -2, 2);
+  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 30, -10, 10, 15, -10, 10);
+  HistBeamSpot[3] = new TH2F("BeamSpotZzoom", "BeamSpotZoom Z=0;X;Y;NTracks", 30, -5, 5, 30, -5, 5);
 
   std::map<int, TH1F*> MapSlopeY;
   std::map<int, TH1F*> MapSlopeX;
@@ -61,9 +61,9 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
-      std::cout << "Processing entry: " << ientry << std::endl;
+//      std::cout << "Processing entry: " << ientry << std::endl;
     }
-
+    if (ientry>=20000){break;}
 
 
     // Loop over all planes with hits in event
@@ -118,7 +118,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         HistBeamSpot[1]->Fill( Track->fPlaner[1][0], Track->fPlaner[1][2]);
         HistBeamSpot[2]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
         HistBeamSpot[3]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
-
+        std::cout<<Track->fPlaner[2][1]<<std::endl;
         MapSlopeY[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
         MapSlopeX[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ);
         MapSlope2D[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ, Track->fTVY/Track->fTVZ);
@@ -141,17 +141,21 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
   Can.cd(1);
-  HistBeamSpot[0]->SetXTitle("(cm)");
-  HistBeamSpot[0]->SetYTitle("(cm)");
+  HistBeamSpot[0]->SetXTitle("X(cm)");
+  HistBeamSpot[0]->SetYTitle("Y(cm)");
   HistBeamSpot[0]->Draw("colz");
   Can.cd(2);
-  HistBeamSpot[1]->SetXTitle("(cm)");
-  HistBeamSpot[1]->SetYTitle("(cm)");
+  HistBeamSpot[1]->SetXTitle("X(cm)");
+  HistBeamSpot[1]->SetYTitle("Y(cm)");
   HistBeamSpot[1]->Draw("colz");
   Can.cd(3);
-  HistBeamSpot[2]->SetXTitle("(cm)");
-  HistBeamSpot[2]->SetYTitle("(cm)");
+  HistBeamSpot[2]->SetXTitle("X(cm)");
+  HistBeamSpot[2]->SetYTitle("Y(cm)");
   HistBeamSpot[2]->Draw("colz");
+
+  HistBeamSpot[3]->SetXTitle("X (cm)");
+  HistBeamSpot[3]->SetYTitle("Y (cm)");
+  HistBeamSpot[3]->Draw("colz");
 
   Can.cd(1+3);
   HistBeamSpot[0]->ProjectionX()->Draw("ep");
