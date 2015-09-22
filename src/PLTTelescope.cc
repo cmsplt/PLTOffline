@@ -327,7 +327,7 @@ int PLTTelescope::HitPlaneBits ()
 
 int PLTTelescope::NHitPlanes ()
 {
-  // This function return a binary representation of hit planes
+  // This function returns the number of planes with at least 1 hit
   int HitPlanes = 0;
 
   for (std::vector<PLTPlane*>::iterator it = fPlanes.begin(); it != fPlanes.end(); ++it) {
