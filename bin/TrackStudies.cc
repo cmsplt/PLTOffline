@@ -22,6 +22,9 @@
 #include "TROOT.h"
 #include "TFile.h"
 
+/*
+Generate per channel NTracks, NClusters, extra-clusters(ncluster>3), N_empty_events,N_events.
+ */
 
 int TrackStudies(std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName)
 {
