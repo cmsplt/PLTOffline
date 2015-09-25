@@ -61,13 +61,22 @@ int GainCalFastFits (TString const InFileName)
     throw;
   }
 
+  std::cout<<"InFileName: " << InFileName <<std::endl;
 
   // Set some basic style
   PLTU_karen::SetStyle();
 
-
+  // Assumes InFileName is in dir1/dir2/...Slink_day.time.dat format
+  
+  TObjArray *fname = InFileName.Tokenize("_");
+  TString str = ((TObjString *)fname->At(1))->GetString();
+  TObjArray *sstr = str.Tokenize(".");
+  TString yymmdd = ((TObjString *)sstr->At(0))->GetString();
+  TString hhmmss = ((TObjString *)sstr->At(1))->GetString();
+  
   // Open the output root file
-  TString const OutRootName = "GainCalFits.root";
+  TString const OutRootName = "GainCalFits_" + yymmdd + "." + hhmmss + ".root";
+  std::cout<<"RootFile: " << OutRootName <<std::endl;
   TFile fOutRoot(OutRootName, "recreate");
   if (!fOutRoot.IsOpen()) {
     std::cerr << "ERROR: Cannot open output root file: " << OutRootName << std::endl;
@@ -75,7 +84,8 @@ int GainCalFastFits (TString const InFileName)
   }
 
   // Open root file outout
-  TString const OutFitsName = "GainCalFits.dat";
+  TString const OutFitsName = "GainCalFits_" + yymmdd + "." + hhmmss + ".dat";
+  std::cout<<"Gaincal: " << OutFitsName <<std::endl;
   FILE* fOutFits = fopen(OutFitsName.Data(), "w");
   if (!fOutFits) {
     std::cerr << "ERROR: cannot open out data file: " << OutFitsName << std::endl;
