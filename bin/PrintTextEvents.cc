@@ -31,7 +31,7 @@ int PrintTextEvents(std::string const DataFileName, std::string const OutFileNam
       for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
         PLTHit* Hit = Plane->Hit(ihit);
         //printf("%2i %1i %2i %2i %4i %i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber());
-        fprintf(ff, "%2i %1i %2i %2i %4i %i\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber());
+        fprintf(ff, "%2i %1i %2i %2i %4i %i %u\n", Hit->Channel(), Hit->ROC(), Hit->Column(), Hit->Row(), Hit->ADC(), Event.EventNumber(), Event.Time());
       }
     }
 
