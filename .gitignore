@@ -1,8 +1,12 @@
 *.gif
 *.root
 *.dat
+*.txt
+
 data
 lib/*
+BinaryHitCounter
+HitsVsEvent
 PLTHitDisplay
 GainCalFits.root
 GainCalFits.dat
