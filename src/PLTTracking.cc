@@ -48,14 +48,15 @@ int PLTTracking::GetTrackingAlgorithm ()
 void PLTTracking::RunTracking (PLTTelescope& Telescope)
 {
   switch (fTrackingAlgorithm) {
-    case kTrackingAlgorithm_NoTracking:
-      break;
-    case kTrackingAlgorithm_01to2_All:
-      TrackFinder_01to2_All(Telescope);
-      break;
-    default:
-      std::cerr << "ERROR: PLTTracking::RunTracking() has no idea what tracking algorithm you want to use" << std::endl;
-      throw;
+  case kTrackingAlgorithm_NoTracking:
+    break;
+  case kTrackingAlgorithm_01to2_All:
+  case kTrackingAlgorithm_01to2_AllCombs:
+    TrackFinder_01to2_All(Telescope);
+    break;
+  default:
+    std::cerr << "ERROR: PLTTracking::RunTracking() has no idea what tracking algorithm you want to use" << std::endl;
+    throw;
   }
 
   return;
@@ -130,7 +131,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
 
 
         // If it's not too far off, keep it!
-        if (Distance < 0.2000) {
+        if (Distance < 0.2000 || fTrackingAlgorithm == kTrackingAlgorithm_01to2_AllCombs) {
           // Keep as possible track..
           PLTTrack* Track012 = new PLTTrack();
           Track012->AddCluster(P0->Cluster(iCL0));
@@ -145,13 +146,15 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
 
   }
 
-  int const NTracksBefore = (int) MyTracks.size();
-
-  // Grab the best tracks first and don't let there be overlap..
-  SortOutTracksNoOverlapBestD2(MyTracks);
-
-  if (DEBUG) {
-    printf("Found NTracks possible: %4i   Kept NTracks: %4i\n", NTracksBefore, (int) MyTracks.size());
+  if (fTrackingAlgorithm != kTrackingAlgorithm_01to2_AllCombs) {
+    int const NTracksBefore = (int) MyTracks.size();
+    
+    // Grab the best tracks first and don't let there be overlap..
+    SortOutTracksNoOverlapBestD2(MyTracks);
+    
+    if (DEBUG) {
+      printf("Found NTracks possible: %4i   Kept NTracks: %4i\n", NTracksBefore, (int) MyTracks.size());
+    }
   }
 
   for (size_t i = 0; i != MyTracks.size(); ++i) {
