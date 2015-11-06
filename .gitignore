@@ -5,6 +5,8 @@
 
 data
 lib/*
+AccidentalAnalysis
+TrackStudies
 BinaryHitCounter
 HitsVsEvent
 PLTHitDisplay
