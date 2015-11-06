@@ -69,6 +69,8 @@ int AccidentalAnalysis (std::string const DataFileName, std::string const GainCa
       // THIS telescope is
       PLTTelescope* Telescope = Event1.Telescope(it);
       if (Telescope->NTracks() >= 1 && Telescope->Plane(0)->NClusters() >= 1 && Telescope->Plane(1)->NClusters() >= 1 && Telescope->Plane(2)->NClusters() >= 1){
+        Evn = Event1.EventNumber();
+        Evt = Event1.Time();
         ChN = Telescope->Channel();
         //get tracks
         NCl = Telescope->NClusters();
