@@ -130,7 +130,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
 
 
         // If it's not too far off, keep it!
-        if (Distance < 0.2000) {
+        if (abs(Distance) >= 0.000) {
           // Keep as possible track..
           PLTTrack* Track012 = new PLTTrack();
           Track012->AddCluster(P0->Cluster(iCL0));
