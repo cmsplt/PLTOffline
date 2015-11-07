@@ -6,6 +6,8 @@
 data
 lib/*
 BinaryHitCounter
+TrackStudies
+AccidentalAnalysis
 HitsVsEvent
 PLTHitDisplay
 GainCalFits.root
