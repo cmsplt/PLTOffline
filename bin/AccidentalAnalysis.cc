@@ -62,8 +62,8 @@ int AccidentalAnalysis (std::string const DataFileName, std::string const GainCa
     if (ientry1 % 10000 == 0) {
       std::cout << "Processing entry: " << ientry1 << std::endl;
     }
-    if (ientry1>=4005000){break;}
-  if (ientry1>4000000){
+//    if (ientry1>=4005000){break;}
+  if (ientry1>0){
     // Loop over all planes with hits in event
     NCl = 0;
     for (size_t it = 0; it != Event1.NTelescopes(); ++it) {

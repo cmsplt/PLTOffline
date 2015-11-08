@@ -79,7 +79,7 @@ int AccidentalMeasurement (std::string const DataFileName, std::string const Gai
     if (ientry1 % 10000 == 0) {
       std::cout << "Processing entry: " << ientry1 << std::endl;
     }
-//    if (ientry1>=500000){break;}
+    if (ientry1>=1000000){break;}
     // Loop over all planes with hits in event
     NCl = 0;
     for (size_t it = 0; it != Event1.NTelescopes(); ++it) {
