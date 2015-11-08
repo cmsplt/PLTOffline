@@ -2,7 +2,7 @@
 setenv ROOTSYS /nfs/cern/root_v5.34.28_x64
 setenv PATH $ROOTSYS/bin:${PATH}
 setenv LD_LIBRARY_PATH {$ROOTSYS}/lib:${LD_LIBRARY_PATH}
-source /nfs/cern/root_v5.34.28_x64/bin/thisroot.csh
+echo "source /nfs/cern/root_v5.34.28_x64/bin/thisroot.csh"
 #export ROOTSYS=/data/CernRoot/root_v5.34.28/root
 #export PATH=$PATH:/data/CernRoot/root_v5.34.28/root/bin/
 #export LD_LIBRARY_PATH=/data/CernRoot/root_v5.34.28/root/lib/
