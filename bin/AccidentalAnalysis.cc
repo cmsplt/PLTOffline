@@ -95,12 +95,6 @@ int AccidentalAnalysis (std::string const DataFileName, std::string const GainCa
 
             Rx[NTk] = signx*(pow(Track->LResidualX(0),2)+pow(Track->LResidualX(1),2)+pow(Track->LResidualX(2),2));
             Ry[NTk] = signy*(pow(Track->LResidualY(0),2)+pow(Track->LResidualY(1),2)+pow(Track->LResidualY(2),2));
-//            Rx[NTk] = (pow((Track->TX(Telescope->Plane(0)->TZ()) - Track->Cluster(0)->TX()),2)   
-//                    + pow((Track->TX(Telescope->Plane(1)->TZ()) - Track->Cluster(1)->TX()),2)  
-//                    + pow((Track->TX(Telescope->Plane(2)->TZ()) - Track->Cluster(2)->TX()),2))*signx ; 
-//            Ry[NTk] = (pow((Track->TY(Telescope->Plane(0)->TZ()) - Track->Cluster(0)->TY()),2)   
-//                    + pow((Track->TY(Telescope->Plane(1)->TZ()) - Track->Cluster(1)->TY()),2)  
-//                    + pow((Track->TY(Telescope->Plane(2)->TZ()) - Track->Cluster(2)->TY()),2))*signy ; 
             D[NTk] = pow((Track->TX(Telescope->Plane(0)->TZ()) - Track->Cluster(0)->TX()),2) 
                    + pow((Track->TY(Telescope->Plane(0)->TZ()) - Track->Cluster(0)->TY()),2)
                    + pow((Track->TX(Telescope->Plane(1)->TZ()) - Track->Cluster(1)->TX()),2) 
