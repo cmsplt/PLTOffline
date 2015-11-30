@@ -130,7 +130,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
 
 
         // If it's not too far off, keep it!
-        if (Distance < 0.2000) {
+        //        if (Distance < 0.2000) {
           // Keep as possible track..
           PLTTrack* Track012 = new PLTTrack();
           Track012->AddCluster(P0->Cluster(iCL0));
@@ -138,7 +138,7 @@ void PLTTracking::TrackFinder_01to2_All (PLTTelescope& Telescope)
           Track012->AddCluster(P2->Cluster(iCL2));
           Track012->MakeTrack(*fAlignment);
           MyTracks.push_back(Track012);
-        }
+          //        }
 
       }
     }
