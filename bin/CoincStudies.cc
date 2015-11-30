@@ -129,12 +129,20 @@ int CoincStudies(std::string const DataFileName, std::string const GainCalFileNa
       std::ofstream meanRMS ("meanRMS_DC.txt");
       if(meanRMS.is_open()){
       
-        meanRMS<< "#Tm" << std::setw(5)<< "RxMean" <<std::setw(10) << "RxRMS"<< std::setw(10) << "RyMean" << std::setw(10) << "RyRMS" << std::setw(10)<< "SxMean" <<std::setw(10) << "SxRMS"<< std::setw(10) << "SyMean" << std::setw(10) << "SyRMS" << std::endl;
+        meanRMS<< "#Tm" << std::setw(5)<< "RxMean" <<std::setw(10) << "RxRMS"<< std::setw(10)
+               << "RyMean" << std::setw(10) << "RyRMS" << std::setw(10)<< "SxMean" <<std::setw(10)
+               << "SxRMS"<< std::setw(10) << "SyMean" << std::setw(10) << "SyRMS" << std::endl;
             
 
-        perROC << "#Tm" <<  std::setw(5) << "chNo"<<  std::setw(10) << "rocID" << std::setw(10) << "coinc" <<  std::setw(10) << "dcROC" << std::setw(10) << "dcCount" << std::setw(10)<< "ntgr" << std::setw(10) << "nempty" <<"\n";
+        perROC << "#Tm" <<  std::setw(5) << "chNo"<<  std::setw(10) << "rocID" << std::setw(10)
+               << "coinc" <<  std::setw(10) << "dcROC" << std::setw(10) << "dcCount"
+               << std::setw(10)<< "ntgr" << std::setw(10) << "nempty" <<"\n";
 
-        perChannel << "#Tm" << std::setw(5) << "chNo" << std::setw(10) << "dTrack" << std::setw(10) << "dTrackC" << std::setw(10) <<"NTracks" <<std::setw(10)<<"TrDC" << std::setw(10)<< "coinc" <<std::setw(10)<< "tcDC"<<std::setw(10)<<"NCoinc"<<std::setw(10) <<"nDC" <<std::setw(10) <<"NdcCount" <<std::setw(10) << "ntgr" << std::setw(10) << "nempty" <<std::setw(12) << "tFrom" <<  std::setw(12) << "tTo"<<"\n";
+        perChannel << "#Tm" << std::setw(5) << "chNo" << std::setw(10) << "dTrack" << std::setw(10)
+                   << "dTrackC" << std::setw(10) <<"NTracks" <<std::setw(10)<<"TrDC" << std::setw(10)
+                   << "coinc" <<std::setw(10)<< "tcDC"<<std::setw(10)<<"NCoinc"<<std::setw(10)
+                   <<"nDC" <<std::setw(10) <<"NdcCount" <<std::setw(10) << "ntgr" << std::setw(10)
+                   << "nempty" <<std::setw(12) << "tFrom" <<  std::setw(12) << "tTo"<<"\n";
 
     
         // Loop over all events in file
@@ -358,7 +366,10 @@ int CoincStudies(std::string const DataFileName, std::string const GainCalFileNa
             std::cout << snapshotC<<" vars: " <<RxH->GetRMS() << " " << RxH->GetMean()<<" " <<SxH->GetRMS() << " " << SxH->GetMean()<<" "<<RyH->GetRMS() << " " << RyH->GetMean()<<" " <<SyH->GetRMS() << " " << SyH->GetMean()<<std::endl; 
 
             
-            meanRMS<< snapshotC << std::setw(5)<< RxH->GetMean() <<std::setw(10) << RxH->GetRMS()<< std::setw(10) << RyH->GetMean() << std::setw(10) << RyH->GetRMS() << std::setw(10)<< SxH->GetMean() <<std::setw(10) << SxH->GetRMS()<< std::setw(10) << SyH->GetMean() << std::setw(10) << SyH->GetRMS() << std::endl;
+            meanRMS<< snapshotC << std::setw(12)<< RxH->GetMean() <<std::setw(12) << RxH->GetRMS()
+                   << std::setw(12) << RyH->GetMean() << std::setw(12) << RyH->GetRMS()
+                   << std::setw(12)<< SxH->GetMean() <<std::setw(12) << SxH->GetRMS()
+                   << std::setw(12) << SyH->GetMean() << std::setw(12) << SyH->GetRMS() << std::endl;
             
             
             
@@ -381,14 +392,25 @@ int CoincStudies(std::string const DataFileName, std::string const GainCalFileNa
 
 
 
-              tDC += cBoolRocMap[ch].second; // total DC cases
+              tDC += cBoolRocMap[it->first].second; // total DC cases
 
               // write to file: per ROC
-              perROC<< snapshotC << std::setw(5) << ch <<std::setw(10) << roc << std::setw(10) << cBoolRocMap[ch].first << std::setw(10) << cBoolRocMap[ch].second << std::setw(10)<<chBugMap[ch].first << std::setw(10) << NEvents << std::setw(10) << emptyEvents<<std::endl;
+              perROC<< snapshotC << std::setw(5) << ch <<std::setw(10) << roc << std::setw(10)
+                    << cBoolRocMap[it->first].first << std::setw(10) << cBoolRocMap[it->first].second
+                    << std::setw(10)<<chBugMap[ch].first << std::setw(10) << NEvents << std::setw(10)
+                    << emptyEvents<<std::endl;
             
               // write to file: per Channel
               if(roc == 2) {
-                perChannel << snapshotC << std::setw(5) << ch << std::setw(10) << cdTrackChMap[ch]<<std::setw(10)<< cdTrackChMapC[ch]<<std::setw(10) << cTrackChMap[ch].first << std::setw(10) << cTrackChMap[ch].second<<std::setw(10) << cBoolRocMap[ch].first << std::setw(10) << tDC << std::setw(10)<< cAllChMap[ch].first << std::setw(10) <<cAllChMap[ch].second << std::setw(10)<<chBugMap[ch].second<< std::setw(10) << NEvents << std::setw(10) << emptyEvents<<  std::setw(12) << timeStampWindow[snapshotC].first <<  std::setw(12) << timeStampWindow[snapshotC].second <<std::endl;    
+                perChannel << snapshotC << std::setw(5) << ch << std::setw(10) << cdTrackChMap[ch]
+                           << std::setw(10)<< cdTrackChMapC[ch]<<std::setw(10) << cTrackChMap[ch].first
+                           << std::setw(10) << cTrackChMap[ch].second<<std::setw(10)
+                           << cBoolRocMap[it->first].first << std::setw(10) << tDC << std::setw(10)
+                           << cAllChMap[ch].first << std::setw(10) <<cAllChMap[ch].second
+                           << std::setw(10)<<chBugMap[ch].second<< std::setw(10) << NEvents
+                           << std::setw(10) << emptyEvents<<  std::setw(12)
+                           << timeStampWindow[snapshotC].first <<  std::setw(12)
+                           << timeStampWindow[snapshotC].second <<std::endl;    
 
                 tDC = 0;       // reset to 0 for another channel
                 cdTrackChMap[ch] = 0;
@@ -396,8 +418,8 @@ int CoincStudies(std::string const DataFileName, std::string const GainCalFileNa
               }
             
             
-              cBoolRocMap[ch].first = 0;
-              cBoolRocMap[ch].second = 0;
+              cBoolRocMap[it->first].first = 0;
+              cBoolRocMap[it->first].second = 0;
 
             
             };
