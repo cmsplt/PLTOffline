@@ -21,6 +21,7 @@ CalculateAlignment
 CalculateAlignment
 CheckAlignment
 CheckGainCalCoefs
+ClusterLumi
 ConvertGainCoefs
 DeanTextToBinary
 dumpPixffil
@@ -53,6 +54,7 @@ OverlayPHLumi
 ParseCondDBData
 Plot3ParamFit
 PlotADCForVCal
+PlotBXDistribution
 PlotBuckets
 PlotEvent
 PlotFedTime
@@ -73,6 +75,7 @@ ProcessHistograms
 PulseHeights
 PulseHeightsSignalTrack
 PulseHeightsTrack
+ReadClusterLumi
 ReadEvent
 RunBasicTeststandAnalysis
 RunTeststandGainCal
