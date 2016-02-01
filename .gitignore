@@ -7,7 +7,6 @@ data
 lib/*
 BinaryHitCounter
 TrackStudies
-AccidentalMeasurment
 AccidentalAnalysis
 HitsVsEvent
 PLTHitDisplay
@@ -40,11 +39,13 @@ MakeLumiGraphs
 MakeStraightAlignment
 MakeTracks
 MakeTrimCalFileFake
+MeasureAccidentals
 NaiveROCCharge
 NumberOfHitsPerEvent
 OccupancyPlots
 OccupancyPlots3x3
 OverlayPHLumi
+ParseCondDBData
 PLTDatToWave
 PLTEventDisplay
 PLTMC

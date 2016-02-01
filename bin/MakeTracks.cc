@@ -33,63 +33,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   PLTU::SetStyle();
   gStyle->SetOptStat(1111);
 
-  // read the track quality vars
-  std::map<int, float> MeanSlopeY;
-  std::map<int, float> SigmaSlopeY;
-  std::map<int, float> MeanSlopeX;
-  std::map<int, float> SigmaSlopeX;
-  std::map<int, float> MeanResidualY;
-  std::map<int, float> SigmaResidualY;
-  std::map<int, float> MeanResidualX;
-  std::map<int, float> SigmaResidualX;
-
-  bool useTrackQuality = true;
-  FILE *qfile = fopen("TrackQuality-v2.txt", "r");
-  if (qfile == NULL) {
-    std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
-    useTrackQuality = false;
-  } else {
-    int nch, ch, roc;
-    float mean, sigma;
-    fscanf(qfile, "%d\n", &nch);
-    for (int i=0; i<nch; ++i) {
-      fscanf(qfile, "SlopeY_Ch%d %f %f\n", &ch, &mean, &sigma);
-      MeanSlopeY[ch] = mean;
-      SigmaSlopeY[ch] = sigma;
-    }
-    for (int i=0; i<nch; ++i) {
-      fscanf(qfile, "SlopeX_Ch%d %f %f\n", &ch, &mean, &sigma);
-      MeanSlopeX[ch] = mean;
-      SigmaSlopeX[ch] = sigma;
-    }
-    for (int i=0; i<nch*3; ++i) {
-      fscanf(qfile, "ResidualY%d_ROC%d %f %f\n", &ch, &roc, &mean, &sigma);
-      MeanResidualY[10*ch+roc] = mean;
-      SigmaResidualY[10*ch+roc] = sigma;
-    }
-    for (int i=0; i<nch*3; ++i) {
-      fscanf(qfile, "ResidualX%d_ROC%d %f %f\n", &ch, &roc, &mean, &sigma);
-      MeanResidualX[10*ch+roc] = mean;
-      SigmaResidualX[10*ch+roc] = sigma;
-    }
-    
-//     for (std::map<int, float>::iterator it = MeanSlopeY.begin(); it != MeanSlopeY.end(); ++it) {
-//     ch = it->first;
-//     std::cout << ch << " sX " << MeanSlopeX[ch] << "+/-" << SigmaSlopeX[ch]
-// 	      << " sY " << MeanSlopeY[ch] << "+/-" << SigmaSlopeY[ch]
-// 	      << " rX0 " << MeanResidualX[10*ch] << "+/-" << SigmaResidualX[10*ch]
-// 	      << " rX1 " << MeanResidualX[10*ch+1] << "+/-" << SigmaResidualX[10*ch+1]
-// 	      << " rX2 " << MeanResidualX[10*ch+2] << "+/-" << SigmaResidualX[10*ch+2]
-// 	      << " rY0 " << MeanResidualY[10*ch] << "+/-" << SigmaResidualY[10*ch]
-// 	      << " rY1 " << MeanResidualY[10*ch+1] << "+/-" << SigmaResidualY[10*ch+1]
-// 	      << " rY2 " << MeanResidualY[10*ch+2] << "+/-" << SigmaResidualY[10*ch+2]
-// 	      << std::endl;
-//     }
-//    return(0);
-
-    fclose(qfile);
-  } // read track quality file
-
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
@@ -97,7 +40,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
-  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_AllCombs);
 
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
@@ -116,18 +58,13 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   std::map<int, TH1F*> MapResidualY;
   std::map<int, TH1F*> MapResidualX;
 
-  int nTotTracks = 0;
-  int nGoodTracks = 0;
-  int nAllTriple = 0;
-  int nGoodTriple = 0;
-
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
-      std::cout << "Processing entry: " << ientry << std::endl;
+//      std::cout << "Processing entry: " << ientry << std::endl;
     }
-    if (ientry>=20000000){break;}
-    if (ientry>=2000000){break;}
+    if (ientry>=20000){break;}
+
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -166,29 +103,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         MapResidualX[Telescope->Channel()*10+2]->SetXTitle("Local Telescope Residual-X (cm)");
       }
 
-      if (Telescope->NTracks() > 0) {
-	nAllTriple++;
-	bool foundOneGoodTrack = false;
-	for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
-	  PLTTrack *tr = Telescope->Track(itrack);
-
-	  // apply track quality cuts
-	  int ch = Telescope->Channel();
-	  float slopeY = tr->fTVY/tr->fTVZ;
-	  float slopeX = tr->fTVX/tr->fTVZ;
-	  if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) continue;
-	  if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > 5.0) continue;
-	  foundOneGoodTrack = true;
-	  break;
-	}
-	if (foundOneGoodTrack) nGoodTriple++;
-      }
 
       if (Telescope->NClusters() > 3) continue;
 
@@ -204,7 +118,7 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         HistBeamSpot[1]->Fill( Track->fPlaner[1][0], Track->fPlaner[1][2]);
         HistBeamSpot[2]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
         HistBeamSpot[3]->Fill( Track->fPlaner[2][0], Track->fPlaner[2][1]);
-        //std::cout<<Track->fPlaner[2][1]<<std::endl;
+        std::cout<<Track->fPlaner[2][1]<<std::endl;
         MapSlopeY[Telescope->Channel()]->Fill(Track->fTVY/Track->fTVZ);
         MapSlopeX[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ);
         MapSlope2D[Telescope->Channel()]->Fill(Track->fTVX/Track->fTVZ, Track->fTVY/Track->fTVZ);
@@ -215,20 +129,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
         MapResidualY[Telescope->Channel()*10+2]->Fill(Track->LResidualY(2));
         MapResidualX[Telescope->Channel()*10+2]->Fill(Track->LResidualX(2));
 
-	nTotTracks++;
-	float slopeY = Track->fTVY/Track->fTVZ;
-	float slopeX = Track->fTVX/Track->fTVZ;
-	if (!useTrackQuality) continue;
-	int ch = Telescope->Channel();
-	if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) continue;
-	if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) continue;
-	if (fabs((Track->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) continue;
-	if (fabs((Track->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > 5.0) continue;
-	if (fabs((Track->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > 5.0) continue;
-	if (fabs((Track->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > 5.0) continue;
-	if (fabs((Track->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > 5.0) continue;
-	if (fabs((Track->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > 5.0) continue;
-	nGoodTracks++;
       }
     }
 
@@ -237,7 +137,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
 
   TFile *f = new TFile("histo_slopes.root","RECREATE");
-  FILE *textf = fopen("TrackQuality.txt", "w");
 
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
@@ -278,11 +177,8 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   HistBeamSpot[2]->Write();
   HistBeamSpot[3]->Write();
 
-  fprintf(textf, "%d\n", (int)MapSlopeY.size());
-
   for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
     it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
@@ -292,7 +188,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
     it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
@@ -302,15 +197,14 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
 
   for (std::map<int, TH2F*>::iterator it = MapSlope2D.begin(); it != MapSlope2D.end(); ++it) {
     it->second->Write();
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
+    //TCanvas Can;
+    //Can.cd();
+    //it->second->Draw("hist");
+    //Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    //delete it->second;
   }
   for (std::map<int, TH1F*>::iterator it = MapResidualY.begin(); it != MapResidualY.end(); ++it) {
     it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
@@ -319,7 +213,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   }
   for (std::map<int, TH1F*>::iterator it = MapResidualX.begin(); it != MapResidualX.end(); ++it) {
     it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
@@ -328,9 +221,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   }
 
   f->Close();
-  fclose(textf);
-  std::cout << "Total: " << nTotTracks << " and " << nGoodTracks << " were good " << std::endl;
-  std::cout << "Total: " << nAllTriple << " events with potential tracks and " << nGoodTriple << " were good" << std::endl;
 
   return 0;
 }
