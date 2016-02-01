@@ -1,0 +1,80 @@
+This directory contains all the results from measuring the missing triplet rate for the 2015 run and the
+scripts used to plot these results. Note that this procedure shares much in common (except for the first step)
+with the accidental rate measuring scripts, so please see that documentation as well for additional
+information.
+
+I hope that we won't have to run this correction any more in the future, but just in case, I've written this
+documentation here. Here's a quick rundown of the basic procedure:
+
+1) Run measureMissingTriplets. Note that this is part of the PLT *online* software, not this repository. For a
+regular fill, you just need one argument, the transparent buffer file. In this case the file will be divided
+into 5-minute increments. If you want to specify specific steps (e.g. for a VdM fill), then specify the
+timestamp file as the second argument. You can make this timestamp file from a VdM csv file by using
+scripts/extractVDMTimestamps.py on the online machines (although you'll need to edit to remove the separation
+column, which is included for reference), or just make it by hand (if you're feeling masochistic).
+
+This will produce the file MissingTripletRates.txt. Rename it to include the fill number; I also include
+"_raw" in the file name to differentiate it from the output of the next step.
+(e.g. MissingTripletRates_4381_raw.txt) and copy it to some more permanent location.
+
+The format of this file is as follows. First, the total number of data points in the file. Then, for each
+point, a line of the form
+begin timestamp,end timestamp,number of triggers,number of recorded triple coincidences,number of missed triple coincidences
+
+For a regular fill, each line should simply be a 5-minute interval. If you specified a timestamp file, then
+each line will be one line from the timestamp file.
+
+At the end of the file will be the per-scope data: first the number of scopes, and then a number of lines of
+the form
+scope number,number of recorded triple coincidences,number of missed triple coincidences
+
+Another option is to estimate the missing triplet rate from the pixel data instead of the transparent buffer
+data. See (6) below.
+
+2) Edit the file to clean it up a bit for the next step. First you'll need to remove the per-scope data at the
+bottom. Also, since the transparent buffer data generally includes some time before the beginning of stable
+beams (and possibly some time after the end of stable beams), you will want to take the first few lines out as
+well (basically until the luminosity reaches its normal value). Don't forget to decrease the number of data
+points in the first line when you do this. Save the result as something like MissingTripletRates_4381.txt.
+
+3) Get the CSV file containing the online luminosity. Presumably you've already done this for the accidental
+rate calculation, in which case you can just reuse that file. If not, see the directions there.
+
+4) Next, run ParseCondDBData, giving the accidental rate file and the CSV file as arguments. Sample
+invocation (if you're running from this folder):
+
+../ParseCondDBData MissingTripletRates_4381.txt ../AccidentalStudies/Fill4381.csv
+
+This will produce an output file CombinedRates.txt. You will also want to rename it (in this example, to
+CombinedRates_4381.txt). You will also need to make at least one modification: on the first line, add the
+number of bunches in the fill after the number of data points. There might also be some extra lines after the
+end of the fill that you may want to trim out (if you do this, don't forget to also change the number of data
+points).
+
+The format of this file is similar to the MissingTripletRates file, except there are two more fields: the number
+of online lumi points in this time period, and the total of the online lumi numbers in the time period.
+
+For some studies I've also made an additional version of the CombinedRates file (the version with _clean at
+the end) in which I've gone through and removed points affected by optimization scans. Similarly, for the VdM
+and mu scan files, there's also a _Central version which only includes the central points of the scans (since
+the accidental rate measurement becomes unreliable for large beam separation).
+
+5) Finally, plot. To plot a bunch of fills on the same plot, use PlotTransparentAllScans.C. To plot the
+accidental rates vs. the missing triplet rates for a single fill, use PlotAccAndTransparent.C. See those files
+for specific documentation.
+
+6) To run the estimation of the missing triplet rate using the pixel data, you can use MeasureMissRate here in
+the offline repository. Run it with ./MeasureMissRate <Slink file> [timestamp file, if desired]. This will
+produce a text file with a slightly different format: the first three columns are the same, and then there are
+four pairs of columns, which are the recorded triple coincidences and missed triple coincidences using each of
+the 4 possible algorithms for simulating the adjacency criterion that the ROCs use.
+
+Then you'll want to run this through ParseCondDBData as usual, but since it won't understand what to do with
+the extra columns, you'll have to cut them out, run ParseCondDBData, and then add them back in. Then you can
+use PlotPixelMissRateComparison.C to compare the missing triplet rate from the transparent buffer data to the
+missing triplet rate from the pixel data. Just specify the file names for the two cases in the script.
+
+Note that you should not expect agreement between the two methods. This is because that the ROCs are supposed
+to count adjacent columns as a single column, but they do not always, and the conditions under which they do
+so are not well-understood. This is why there are several different algorithms defined in MeasureMissRate,
+which attempt to reproduce the actual behavior of the ROCs, but none of them quite matches.
