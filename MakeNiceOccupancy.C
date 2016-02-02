@@ -31,12 +31,6 @@ void MakeNiceOccupancy(void) {
   gROOT->LoadMacro("tdrstyle.C");
   setTDRStyle();
 
-  gROOT->LoadMacro("CMS_lumi.C");
-  writeExtraText = true;       // if extra text
-  extraText  = "Preliminary";  // default extra text is "Preliminary"
-  int iPeriod = 4;
-  lumi_13TeV = "Fill 3851";
-
   // style from PLTU
   gROOT->SetStyle("Plain");                  
   gStyle->SetPalette(1);
