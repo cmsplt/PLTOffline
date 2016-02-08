@@ -1,3 +1,8 @@
+// MakeClusterLumiPlots.C
+//
+// This takes the ROOT file produced by ReadClusterLumi
+// and makes some nice plots from the results.
+
 void normalize(TGraph *g) {
   // Since TGraph doesn't include a Scale() function,
   // we have to modify the data in-place. This solution

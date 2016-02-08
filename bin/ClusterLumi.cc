@@ -1,8 +1,23 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// ClusterLumi.cc
 //
-// Created on: Tue May 24 09:54:58 CEST 2011
+// This script is a first attempt to measure the luminosity using
+// the Slink pixel data and counting clusters. Because running over
+// a full Slink file takes a while, this is split into two steps:
+// first run this script over the file to create a ntuple, and then
+// run ReadClusterLumi over the resulting ntuple to do the analysis
+// and make some plots.
+//
+// This script basically simply loops over all of the planes & scopes
+// and counts the number of planes with 1, 2, or 3 clusters, and then
+// the number of scopes with 1, 2, or 3 triple coincidences (please
+// note that the code refers to these as "tracks", but there is no
+// actual tracking is performed -- it simply identifies scopes where
+// there are at least 1, 2, or 3 clusters in each plane). The results
+// are then written out to the ntuple.
+//
+// Paul Lujan, September 4 2015
 //
 ////////////////////////////////////////////////////////////////////
 

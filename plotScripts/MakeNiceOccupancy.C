@@ -1,3 +1,13 @@
+// MakeNiceOccupancy
+//
+// Paul Lujan, June 2015
+//
+// A simple script to make nice plots (suitable for
+// approvals) from the occupancy data created by
+// OccupancyPlots. You will need to change the fill
+// number, the input file name (if applicable), and
+// channel that is selected (if desired).
+
 void DrawHeader(void) {
   TText *t1 = new TText(0.17, 0.92, "CMS");
   t1->SetNDC(true);

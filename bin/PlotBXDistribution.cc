@@ -1,8 +1,11 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// PlotBXDistribution
+// Paul Lujan
+// November 25, 2015
 //
-// Created on: Tue May 24 09:54:58 CEST 2011
+// A very simple script to look for the BX read out in each event
+// and plot the resulting distribution.
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -17,11 +20,7 @@
 
 #include "TH1F.h"
 #include "TFile.h"
-#include "TH2F.h"
 #include "TCanvas.h"
-#include "TStyle.h"
-#include "TLine.h"
-#include "TROOT.h"
 
 // FUNCTION DEFINITIONS HERE
 

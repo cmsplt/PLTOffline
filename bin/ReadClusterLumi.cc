@@ -1,8 +1,17 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// ReadClusterLumi.cc
 //
-// Created on: Tue May 24 09:54:58 CEST 2011
+// This script simply takes the output ntuple from ClusterLumi.cc
+// and processes it to make some plots of actual efficiencies.
+// See that script for more information.
+//
+// The reason for the separation into two scripts is that you can
+// try various algorithms for computing mu from the cluster/triplet
+// multiplicity without having to rerun over the whole raw Slink
+// file again (which is quite slow).
+//
+// Paul Lujan, September 4 2015
 //
 ////////////////////////////////////////////////////////////////////
 
