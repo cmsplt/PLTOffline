@@ -106,7 +106,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     }
     fclose(tfile);
     useTimestamps = true;
-    std::cout << nSteps << " timestamps" << std::endl;
+    // std::cout << nSteps << " timestamps" << std::endl;
     // for (unsigned int i=0; i<timestamps.size(); ++i) {
     //   std::cout << "start: " << timestamps[i].first << " end: " << timestamps[i].second << std::endl;
     // }
@@ -146,13 +146,13 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
   // Step-by-step slope plots
   TH1F *SlopeY_Step1 = new TH1F("SlopeY_Step1", "SlopeY_Step1", 40, -0.02, 0.06);
-  SlopeY_Step1->SetXTitle("Track SlopeY, all scopes, step 0");
+  SlopeY_Step1->SetXTitle("Track SlopeY, all scopes, step 1");
   TH1F *SlopeX_Step1 = new TH1F("SlopeX_Step1", "SlopeX_Step1", 40, -0.04, 0.04);
-  SlopeX_Step1->SetXTitle("Track SlopeX, all scopes, step 0");
+  SlopeX_Step1->SetXTitle("Track SlopeX, all scopes, step 1");
   TH1F *SlopeY_Step13 = new TH1F("SlopeY_Step13", "SlopeY_Step13", 40, -0.02, 0.06);
-  SlopeY_Step13->SetXTitle("Track SlopeY, all scopes, step 12");
+  SlopeY_Step13->SetXTitle("Track SlopeY, all scopes, step 13");
   TH1F *SlopeX_Step13 = new TH1F("SlopeX_Step13", "SlopeX_Step13", 40, -0.04, 0.04);
-  SlopeX_Step13->SetXTitle("Track SlopeX, all scopes, step 12");
+  SlopeX_Step13->SetXTitle("Track SlopeX, all scopes, step 13");
 
   int stepNumber = 0;
   uint32_t currentStepStart = 0;
@@ -405,6 +405,11 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
+  SlopeX_Step1->Write();
+  SlopeX_Step13->Write();
+  SlopeY_Step1->Write();
+  SlopeY_Step13->Write();
+  
   if (0) {
     TCanvas Can;
     Can.cd();

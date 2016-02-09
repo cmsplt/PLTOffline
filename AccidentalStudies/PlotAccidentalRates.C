@@ -6,8 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////
 
-// This script only plots the rates for a single fill. If you want
-// something more advanced, check out PlotAccidentalRatesAllScans.
+// This script only plots the rates for a single fill (currently the
+// VdM scans from fill 4266). If you want something more advanced,
+// check out PlotAccidentalRatesAllScans.
 
 #include <iostream>
 #include <string>
@@ -40,7 +41,7 @@ void PlotAccidentalRates(void) {
   std::vector<double> accidentalRateHz;
   std::vector<double> accidentalRateHzErr;
 
-  FILE *rfile = fopen("CombinedRates_MuScan1_Central.txt", "r");
+  FILE *rfile = fopen("CombinedRates_4266_AllScans_Central.txt", "r");
   if (rfile == NULL) {
     std::cerr << "Couldn't open combined rates file!" << std::endl;
     return(1);
@@ -90,15 +91,15 @@ void PlotAccidentalRates(void) {
 
   TCanvas *c2 = new TCanvas("c2", "c2", 600, 600);
   g2->Draw("AP");
-  g2->SetTitle("Accidental rate vs. fast-or lumi");
-  g2->GetXaxis()->SetTitle("Average fast-or lumi per bunch");
-  g2->GetYaxis()->SetTitle("Accidental rate in pixel data (% of tracks)");
+  g2->SetTitle("Accidental rate vs. online luminosity, VdM scans");
+  g2->GetXaxis()->SetTitle("Online per-bunch inst. lumi (Hz/#mub)");
+  g2->GetYaxis()->SetTitle("Measured accidental rate (%)");
   g2->GetYaxis()->SetTitleOffset(1.4);
   g2->SetMarkerStyle(kFullCircle);
   g2->SetMarkerColor(kBlue);
   g2->SetLineColor(kBlue);
   g2->SetMarkerSize(1);
-  TF1 *f2 = new TF1("f2", "pol1");
+  TF1 *f2 = new TF1("f2", "pol0"); // pol0 for VdM, pol1 for regular fills
   f2->SetLineColor(kBlue);
   f2->SetLineWidth(1);
   g2->Fit(f2);
@@ -118,5 +119,5 @@ void PlotAccidentalRates(void) {
   // f3->SetLineWidth(1);
   // g3->Fit(f3);
   
-  //c2->Print("AccidentalRate_MuScan1_Central_Final.png");
+  c2->Print("AccidentalRate_VdMScans_Central.png");
 }
