@@ -11,13 +11,16 @@ that it will measure the accidental rate for each step of the scan. You can make
 VdM csv file by using scripts/extractVDMTimestamps.py on the online machines (although you'll need to edit to
 remove the separation column, which is included for reference), or just make it by hand (fun).
 
-Sample invocation:
+Sample invocation for a regular fill (4444 in this example):
+./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCalFits_20150923.225334.dat
+ALIGNMENT/Trans_Alignment_4449.dat
 
+Sample invocation for a VdM scan (scan Y2 from fill 4266 in this example):
 ./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150825.003211.dat GainCalFits_20150923.225334.dat
-Trans_Alignment.dat AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
+ALIGNMENT/Trans_Alignment_4449.dat AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
 
-Running this produces AccidentalRates.txt. After producing AccidentalRates.txt, go ahead and rename it to
-something more useful.
+Running this produces AccidentalRates.txt. After producing AccidentalRates.txt, rename it to something more
+identifying (e.g., AccidentalRates_4444.txt).
 
 The format of this file is as follows. First, the total number of data points in the file. Then, for each
 point, a line of the form
@@ -33,10 +36,11 @@ invocation:
 
 ../ParseCondDBData AccidentalRates_4266_VdMScanX1.txt Fill4266.csv
 
-This will produce an output file CombinedRates.txt. You will also want to rename it. You will also need to
-make at least one modification: on the first line, add the number of bunches in the fill after the number of
-data points. There might also be some extra lines after the end of the fill that you may want to trim out (if
-you do this, don't forget to also change the number of data points).
+This will produce an output file CombinedRates.txt. You will also want to rename it to something like
+CombinedRates_4444.txt. You will also need to make at least one modification: on the first line, add the
+number of bunches in the fill after the number of data points. There might also be some extra lines after the
+end of the fill that you may want to trim out (if you do this, don't forget to also change the number of data
+points).
 
 The format of this file is similar to the AccidentalRates file, except there are two more fields: the number
 of online lumi points in this time period, and the total of the online lumi numbers in the time period.
