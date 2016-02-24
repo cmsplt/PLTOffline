@@ -214,6 +214,8 @@ void PlotAlignmentVsTime(void) {
 
   for (std::map<int, std::vector<double> >::const_iterator it = rot1.begin(); it != rot1.end(); ++it) {
     int chan = it->first;
+    // Skip the channels that were dead in 2015.
+    if (chan == 22 || chan == 23) continue;
     double minAbs = 1, minAvg = 1, maxAbs = -1, maxAvg = -1;
     makeHistograms(hAbs[nScope][0], hAvg[nScope][0], rot1[chan], minAbs, maxAbs, minAvg, maxAvg, summaryOff[0], summaryOn[0]);
     makeHistograms(hAbs[nScope][1], hAvg[nScope][1], rot2[chan], minAbs, maxAbs, minAvg, maxAvg, summaryOff[1], summaryOn[1]);
@@ -239,7 +241,7 @@ void PlotAlignmentVsTime(void) {
       hAbs[nScope][i]->SetMarkerStyle(kFullSquare);
     }
 
-    sprintf(title, "Alignment values, channel %d", chan);
+    sprintf(title, "Alignment values, FED channel %d", chan);
     hAbs[nScope][0]->SetTitle(title);
     hAbs[nScope][0]->GetXaxis()->SetTitle("Fill (brackets = magnet off)");
     hAbs[nScope][0]->GetYaxis()->SetTitle("Alignment ([rad] or [cm])");
@@ -269,7 +271,7 @@ void PlotAlignmentVsTime(void) {
       hAvg[nScope][i]->SetMarkerStyle(kFullSquare);
     }
 
-    sprintf(title, "Alignment difference from average value, channel %d", chan);
+    sprintf(title, "Alignment difference from average value, FED channel %d", chan);
     hAvg[nScope][0]->SetTitle(title);
     hAvg[nScope][0]->GetXaxis()->SetTitle("Fill (brackets = magnet off)");
     hAvg[nScope][0]->GetYaxis()->SetTitle("Alignment difference ([rad] or [cm])");
