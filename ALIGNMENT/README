@@ -13,6 +13,10 @@ files, but since these aren't really useful as a final product, I haven't includ
 Of the data alignment files here, Trans_Alignment_4449.dat is the "standard" alignment used for the
 calculation of accidentals and other similar tracking studies.
 
+Please note: Although these files include alignment for scopes +z far hubs 21 and 29 (FED channels 22 and 23),
+since these channels were not actually operational during the 25ns run period, the data for these scopes is
+simply the nominal alignment.
+
 Here's the full list of fills represented here. This covers the full 25ns 13 TeV pp run period (August
 13-November 2), but not the 50ns run period. Note that for all of the alignment calculations, the GainCal file
 GainCalFits_20150923.225334.dat was used.
