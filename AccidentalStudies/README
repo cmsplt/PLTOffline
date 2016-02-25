@@ -5,6 +5,9 @@ to plot these results. Here's a quick rundown of the basic procedure.
 alignment file. (You will also need the track quality file TrackQuality-v2.txt, whose name is hardcoded into
 MeasureAccidentals at the moment.)
 
+For the 2015 accidental analysis, the gain cal file used was GainCal/GainCalFits_20150923.225334.dat and the
+alignment file used was ALIGNMENT/Trans_Alignment_4449.dat.
+
 If this is a regular fill, you don't need a fourth argument; it will measure the accidental rate in
 five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the fourth argument, so
 that it will measure the accidental rate for each step of the scan. You can make this timestamp file from a
@@ -12,11 +15,11 @@ VdM csv file by using scripts/extractVDMTimestamps.py on the online machines (al
 remove the separation column, which is included for reference), or just make it by hand (fun).
 
 Sample invocation for a regular fill (4444 in this example):
-./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCalFits_20150923.225334.dat
+./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCal/GainCalFits_20150923.225334.dat
 ALIGNMENT/Trans_Alignment_4449.dat
 
 Sample invocation for a VdM scan (scan Y2 from fill 4266 in this example):
-./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150825.003211.dat GainCalFits_20150923.225334.dat
+./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150825.003211.dat GainCal/GainCalFits_20150923.225334.dat
 ALIGNMENT/Trans_Alignment_4449.dat AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
 
 Running this produces AccidentalRates.txt. After producing AccidentalRates.txt, rename it to something more

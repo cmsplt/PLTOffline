@@ -19,7 +19,7 @@ simply the nominal alignment.
 
 Here's the full list of fills represented here. This covers the full 25ns 13 TeV pp run period (August
 13-November 2), but not the 50ns run period. Note that for all of the alignment calculations, the GainCal file
-GainCalFits_20150923.225334.dat was used.
+GainCal/GainCalFits_20150923.225334.dat was used.
 
 4201 (Aug. 13, Slink_20150813.033604.dat) magnet ON
 4208 (Aug. 14, Slink_20150814.174340.dat) magnet OFF
