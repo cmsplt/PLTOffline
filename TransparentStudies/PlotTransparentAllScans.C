@@ -41,6 +41,24 @@ const char *fillLabels[nFiles] = {
   "Fill 4565 (Nov 2, B=3.8, 2232b)"
 };
 
+
+//const int nFiles = 4;
+//const char *fileNames[nFiles] = {
+//  "CombinedRates_4208_TrigCorr.txt",
+//  "CombinedRates_4208.txt",
+//  "CombinedRates_4341.txt",
+//  "CombinedRates_4545.txt",
+//
+//};
+//const char *fillLabels[nFiles] = {
+//  "Fill 4208 (Trig Corr, Aug 14,74b)",
+//  "Fill 4208 (Aug 14, 74b)",
+//  "Fill 4341 (Sep 09, 733b)",
+//  "Fill 4545 (Oct 29, 2232b)",
+//};
+
+
+
 std::vector<double> fastOrLumiAll;
 std::vector<double> fastOrLumiErrAll;
 std::vector<double> missRateAll;
