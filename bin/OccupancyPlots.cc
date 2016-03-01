@@ -6,10 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////
 
-
-
-
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <map>
 #include <numeric>
@@ -116,12 +114,20 @@ int OccupancyPlots (std::string const DataFileName)
   char BUFF[200];
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
-      std::cout << "Processing event: " << ientry << std::endl;
+    if (ientry % 500000 == 0) {
+      int nsec = Event.Time()/1000;
+      int hr = nsec/3600;
+      int min = (nsec-(hr*3600))/60;
+      int sec = nsec % 60;
+      std::cout << "Processing event: " << ientry << " at " << std::setfill('0') << std::setw(2)
+		<< hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
+		<< std::setw(3) << Event.Time()%1000 << std::endl;
     }
 
-
-    if (ientry == 300000) break;
+    if (ientry > 3000000) {
+      std::cout << "Reached maximum number of events; exiting" << std::endl;
+      break;
+    }
 
     // Loop over all planes with hits in event
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {

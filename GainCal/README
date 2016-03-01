@@ -1,0 +1,6 @@
+This directory contains the fits from the gain calibrations used as an input to further offline analysis.
+
+Currently there is just one file: GainCalFits_20150923.225334.dat, which was used for most of the analysis of
+the 2015 data.
+
+See the main documentation for more details on how to create these files.

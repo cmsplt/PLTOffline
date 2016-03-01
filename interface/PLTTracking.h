@@ -18,6 +18,7 @@ class PLTTracking
     enum TrackingAlgorithm {
       kTrackingAlgorithm_NoTracking = 0,
       kTrackingAlgorithm_01to2_All,
+      kTrackingAlgorithm_01to2_AllCombs,
       kTrackingAlgorithm_2PlaneTracks_All
     };
 
