@@ -1,0 +1,23 @@
+This directory contains the files containing the information on the slope and residual distributions of tracks
+that are used for determining good quality tracks in MeasureAccidentals. Right now there are two files which
+should meet all of your needs:
+
+TrackDistributions_MagnetOn.txt -- track distributions with magnet on (see note below)
+TrackDistributions_MagnetOff_4341.txt -- track distributions with magnet off, derived from fill 4341
+
+The format of the files should be self-explanatory: the first line is the number of active scopes, and then
+each parameter is followed by the mean and sigma values for that parameter.
+
+Note: I'm not quite sure what fill TrackDistributions_MagnetOn.txt comes from. I had thought it was 4444 or
+4449, but I can't reproduce it. However since this was the one used for the accidental studies it should be
+saved here!
+
+To create your own track distributions for an arbitrary fill, just invoke MeasureAccidentals as normal -- it
+doesn't matter what you use as the input track distribution file -- and then take the resulting
+TrackDistributions.txt file that is produced.
+
+For example,
+./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCal/GainCalFits_20150923.225334.dat ALIGNMENT/Trans_Alignment_4449.dat dummy.txt
+
+The magnet-off track distributions file here was produced with the following command:
+./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150909.215701.dat GainCal/GainCalFits_20150923.225334.dat ALIGNMENT/Trans_Alignment_4341.dat dummy.txt
