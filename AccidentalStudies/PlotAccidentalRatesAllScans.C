@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 #include <time.h>
-//
+
+// Magnet-on fills
 const int nFiles = 7;
 const char *fileNames[nFiles] = {
   "CombinedRates_4201_clean.txt",
@@ -41,34 +42,24 @@ const char *fillLabels[nFiles] = {
 };
 const bool doAllFit = false;   // show fit to all points
 
-
 // Use this to exclude a single fit from being drawn.
 const bool doFit[nFiles] = { false, false, true, true, true, true, true };
 
-
-//  Parameters for Magnet Off
-//const int nFiles = 3;
-//const char *fileNames[nFiles] = {
+// Magnet-off fills
+// const int nFiles = 3;
+// const char *fileNames[nFiles] = {
 //  "CombinedRates_4208_clean.txt",
-//  // "CombinedRates_4243_clean_clean.txt",
-//  // "CombinedRates_4246_clean_clean.txt",
 //  "CombinedRates_4341_clean.txt",
 //  "CombinedRates_4545_clean.txt",
-//};
-//const char *fillLabels[nFiles] = {
+// };
+// const char *fillLabels[nFiles] = {
 //  "Fill 4208 (Aug 14, 74b)",
-//  // "Fill 4243 (Aug 21, 303b)",
-//  // "Fill 4246 (Aug 21-22, #it{50ns}, 254b)",
 //  "Fill 4341 (Sep 09, 733b)",
 //  "Fill 4545 (Oct 29, 2232b)",
-//};
-//const bool doAllFit = true;   // show fit to all points
-//
-//
-//// Use this to exclude a single fit from being drawn.
-//const bool doFit[nFiles] = { true, true, true};
-
-
+// };
+// const bool doAllFit = true;   // show fit to all points
+// // Use this to exclude a single fit from being drawn.
+// const bool doFit[nFiles] = { true, true, true };
 
 std::vector<double> fastOrLumiAll;
 std::vector<double> fastOrLumiErrAll;
@@ -196,5 +187,6 @@ void PlotAccidentalRatesAllScans(void) {
       std::cout << "Value of fit " << i << " at x=2 is " << f[i]->Eval(2.0) << std::endl;
   }
 
-    c1->Print("AccidentalRate_AllScans_clean.png");
+  c1->Print("AccidentalRate_AllScans_Clean.png");
+  // c1->Print("AccidentalRate_MagnetOff.png");
 }
