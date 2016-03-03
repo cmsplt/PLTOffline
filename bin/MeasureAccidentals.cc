@@ -18,11 +18,13 @@
 
 int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string);
 
-int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName, const std::string TimestampFileName)
+int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
+		       const std::string TrackDistributionFileName, const std::string TimestampFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+  std::cout << "TrackDistributionFileName: " << TrackDistributionFileName << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
 
@@ -41,7 +43,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   std::map<int, float> SigmaResidualX;
 
   bool useTrackQuality = true;
-  FILE *qfile = fopen("TrackQuality-v2.txt", "r");
+  FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
     std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
     useTrackQuality = false;
@@ -173,6 +175,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 		<< std::setfill('0') << std::setw(2) << (hr%24) << ":" << std::setw(2) << min
 		<< ":" << std::setw(2) << sec << "." << std::setw(3) << Event.Time()%1000
 		<< ")" << std::endl;
+      //if (ientry > 0 && fabs(MapResidualX[202]->GetRMS() - 0.002881) < 0.000001 && fabs(MapResidualX[201]->GetRMS() - 0.004684) < 0.000001) break;
     }
     //if (ientry>=20000000){break;}
 
@@ -335,7 +338,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 
   TFile *f = new TFile("histo_slopes.root","RECREATE");
-  FILE *textf = fopen("TrackQuality.txt", "w");
+  FILE *textf = fopen("TrackDistributions.txt", "w");
 
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
@@ -457,8 +460,17 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   fclose(outf);
   std::cout << "Causes of failure for tracks that failed (note: categories are not mutually exclusive): " << std::endl;
   for (int i=0; i<14; ++i) {
-    std::cout << nFailSteps[i] << " tracks (" << (float)nFailSteps[i]*100.0/totCleanTracks << "% of total, "
-	      << (float)nFailSteps[i]*100.0/totCleanFails << "% of failures) fail ";
+    std::cout << nFailSteps[i] << " tracks (";
+    if (totCleanTracks > 0)
+      std::cout << (float)nFailSteps[i]*100.0/totCleanTracks;
+    else
+      std::cout << "n/a";
+    std::cout << "% of total, ";
+    if (totCleanFails > 0)
+      std::cout << (float)nFailSteps[i]*100.0/totCleanFails;
+    else
+      std::cout << "n/a";
+    std::cout << "% of failures) fail ";
     switch (i) {
     case 0: 
       std::cout << "slopeY cut"; break;
@@ -498,17 +510,18 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 int main (int argc, char* argv[])
 {
-  if (argc < 4 || argc > 5) {
-    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat [TimestampFile.dat]" << std::endl;
+  if (argc < 5 || argc > 6) {
+    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt [TimestampFile.dat]" << std::endl;
     return 1;
   }
 
   const std::string DataFileName = argv[1];
   const std::string GainCalFileName = argv[2];
   const std::string AlignmentFileName = argv[3];
-  const std::string TimestampFileName = (argc == 5) ? argv[4] : "";
+  const std::string TrackDistributionFileName = argv[4];
+  const std::string TimestampFileName = (argc == 6) ? argv[5] : "";
 
-  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TimestampFileName);
+  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, TimestampFileName);
 
   return 0;
 }
