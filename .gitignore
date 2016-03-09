@@ -48,6 +48,7 @@ MakeStraightAlignment
 MakeTracks
 MakeTrimCalFileFake
 MeasureAccidentals
+MeasureAccidentalsBX
 MeasureMissRate
 NaiveROCCharge
 NumberOfHitsPerEvent

@@ -17,7 +17,7 @@
 #include <time.h>
 
 // Magnet-on fills
-const int nFiles = 7;
+const int nFiles = 8;
 const char *fileNames[nFiles] = {
   "CombinedRates_4201_clean.txt",
   // "CombinedRates_4243_clean.txt",
@@ -28,6 +28,7 @@ const char *fileNames[nFiles] = {
   "CombinedRates_4444.txt",
   "CombinedRates_4467_clean.txt",
   "CombinedRates_4565_clean.txt",
+  "CombinedRates_4569_clean.txt"
 };
 const char *fillLabels[nFiles] = {
   "Fill 4201 (Aug 13, 26b)",
@@ -38,12 +39,13 @@ const char *fillLabels[nFiles] = {
   "Fill 4435 (mu scan, Sep 28, 881b)",
   "Fill 4444 (Sep 30, 1453b)",
   "Fill 4467 (Oct 6-7, 1596b)",
-  "Fill 4565 (Nov 2, 2232b)"
+  "Fill 4565 (Nov 2, 2232b)",
+  "Fill 4569 (Nov 2, 2232b, firmware fix)"
 };
 const bool doAllFit = false;   // show fit to all points
 
 // Use this to exclude a single fit from being drawn.
-const bool doFit[nFiles] = { false, false, true, true, true, true, true };
+const bool doFit[nFiles] = { false, false, true, true, true, true, true, true };
 
 // Magnet-off fills
 // const int nFiles = 3;
@@ -139,7 +141,7 @@ void PlotAccidentalRatesAllScans(void) {
   gall->GetYaxis()->SetTitle("Measured accidental rate (%)");
   //gall->GetYaxis()->SetTitleOffset(1.4);
   gall->GetYaxis()->SetRangeUser(4.5, 12.0);
-  if (nFiles > 7) gall->GetYaxis()->SetRangeUser(4.5, 22.0);
+  if (nFiles > 8) gall->GetYaxis()->SetRangeUser(4.5, 22.0);
 
   TF1 *fall;
   if (doAllFit) {
@@ -187,6 +189,6 @@ void PlotAccidentalRatesAllScans(void) {
       std::cout << "Value of fit " << i << " at x=2 is " << f[i]->Eval(2.0) << std::endl;
   }
 
-  c1->Print("AccidentalRate_AllScans_Clean.png");
+  // c1->Print("AccidentalRate_AllScans_Clean.png");
   // c1->Print("AccidentalRate_MagnetOff.png");
 }
