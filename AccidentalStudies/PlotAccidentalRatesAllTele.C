@@ -35,21 +35,21 @@ void PlotAccidentalRatesAllTele(void) {
   std::vector<double> fastOrLumi;
   std::vector<double> trackLumiErr;
 
+ int iColor[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 28, 30, 38, 40, 41, 46};
 
-
-  FILE *rfile = fopen("CombinedRatesTele4555_Align4444.txt", "r");
+  FILE *rfile = fopen("CombinedRatesTele4444_Align4444.txt", "r");
   if (rfile == NULL) {
     std::cerr << "Couldn't open combined rates file!" << std::endl;
     return(1);
   }
-const int nscopes = 14;  //switch to 16 for 2016 Run
+const int nscopes = 16;  //switch to 16 for 2016 Run
 const int nsteps;
 int nBunches, tBegin, tEnd, nTrig, tracksAllTele[nscopes], tracksGoodTele[nscopes], nMeas;  
 double totLumi;
-const int fedChannel[nscopes] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20}; // 22, 23;
+const int fedChannel[nscopes] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20, 22, 23};
 
  ///  All Channels
-const bool plotChannel[nscopes] = {true, true, true, true, true, true, true, true, true, true, false, false, false, false};// true, true;
+const bool plotChannel[nscopes] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false};
 
    /// -Z
 //const bool plotChannel[nscopes] = {true, true, true, true, true, true, true, true, false, false, false, false, false}; //, false, false, false};
@@ -71,7 +71,7 @@ TMatrixT<double> reltrackErr(nsteps,nscopes);
 
         fscanf(rfile, "%d %d %d %d %d %d %d %d %d %d", &tracksGoodTele[8], &tracksAllTele[9], &tracksGoodTele[9], &tracksAllTele[10], &tracksGoodTele[10], &tracksAllTele[11], &tracksGoodTele[11], &tracksAllTele[12], &tracksGoodTele[12], &tracksAllTele[13]);
 
-        fscanf(rfile, "%d %d %lf\n", &tracksGoodTele[13], &nMeas, &totLumi);
+        fscanf(rfile, "%d %d %d %d %d %d %lf\n", &tracksGoodTele[13], &tracksAllTele[14], &tracksGoodTele[14], &tracksAllTele[15], &tracksGoodTele[15], &nMeas, &totLumi);
 
     // Process the data.
 //choose which telescope by changing channel # on tracksAllTele and tracksGoodTele
@@ -141,18 +141,17 @@ for(int irow = 0; irow < nsteps; ++irow){
       
    for (int ic=1; ic < nscopes; ++ic) {
  if (plotChannel[ic]) {   
- 
         g[ic]->Draw("P same");
         g[ic]->SetMarkerStyle(kFullCircle);
-     int iColor = ic+2;
-    if(iColor>=5) iColor++;
-    if(iColor>=10) iColor++;
-        g[ic]->SetMarkerColor(iColor);
-        g[ic]->SetLineColor(iColor);
+//     int iColor = ic+2;
+//    if(iColor>=5) iColor++;
+//    if(iColor>=10) iColor++;
+        g[ic]->SetMarkerColor(iColor[ic]);
+        g[ic]->SetLineColor(iColor[ic]);
         g[ic]->SetMarkerSize(1);
     sprintf(buf,"f%i",fedChannel[ic]);
      f[ic] = new TF1(buf,"pol1");
-     f[ic]->SetLineColor(iColor);
+     f[ic]->SetLineColor(iColor[ic]);
      f[ic]->SetLineWidth(1);
      g[ic]->Fit(f[ic]);
    sprintf(lgbuf,"FED Channel %i", fedChannel[ic]);
@@ -185,15 +184,15 @@ TCanvas *c2 = new TCanvas("c2","c2", 700, 900);
  if (plotChannel[ic]) {   
         grel[ic]->Draw("P same");
         grel[ic]->SetMarkerStyle(kFullCircle);
-     int iColor = ic+2;
-    if(iColor>=5) iColor++;
-    if(iColor>=10) iColor++;
-        grel[ic]->SetMarkerColor(iColor);
-        grel[ic]->SetLineColor(iColor);
+//     int iColor = ic+2;
+//    if(iColor>=5) iColor++;
+//    if(iColor>=10) iColor++;
+        grel[ic]->SetMarkerColor(iColor[ic]);
+        grel[ic]->SetLineColor(iColor[ic]);
         grel[ic]->SetMarkerSize(1);
     sprintf(buf,"frel%i",fedChannel[ic]);
      frel[ic] = new TF1(buf,"pol1");
-     frel[ic]->SetLineColor(iColor);
+     frel[ic]->SetLineColor(iColor[ic]);
      frel[ic]->SetLineWidth(1);
      grel[ic]->Fit(frel[ic]);
    sprintf(lgbuf,"FED Channel %i", fedChannel[ic]);
@@ -202,5 +201,5 @@ TCanvas *c2 = new TCanvas("c2","c2", 700, 900);
      }
 
           // r8->SetMarkerSize(1); 
-          //c2->Print("AccidentalRate_MuScan1_Central_Final.png");
+          //c2->Print("AccidentalRate_Channels.png");
      }

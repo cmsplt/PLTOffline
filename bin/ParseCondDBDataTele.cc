@@ -34,8 +34,8 @@ struct stepInfo {
   int tracksAllTele17;
   int tracksAllTele19;
   int tracksAllTele20;
-//  int tracksAllTele22;
-//  int tracksAllTele23;
+  int tracksAllTele22;
+  int tracksAllTele23;
 
   int tracksGoodTele1;
   int tracksGoodTele2;
@@ -51,8 +51,8 @@ struct stepInfo {
   int tracksGoodTele17;
   int tracksGoodTele19;
   int tracksGoodTele20;
-//  int tracksGoodTele22;
-//  int tracksGoodTele23;
+  int tracksGoodTele22;
+  int tracksGoodTele23;
 };
 
 int ParseCondDBDataTele(const std::string accidentalFileName, const std::string csvFileName) {
@@ -75,8 +75,7 @@ int ParseCondDBDataTele(const std::string accidentalFileName, const std::string 
 //this does not read the the last two dead scopes. Need to add in the 4 more corresponding values for it to read all
 
   for (int i=0; i<nsteps; ++i) {
-    fscanf(afile, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ", &(thisStep.timeBegin), &(thisStep.timeEnd), &(thisStep.nEvents), &(thisStep.tracksAll), &(thisStep.tracksGood),
-	&(thisStep.tracksAllTele1), &(thisStep.tracksGoodTele1), &(thisStep.tracksAllTele2), &(thisStep.tracksGoodTele2), &(thisStep.tracksAllTele4), &(thisStep.tracksGoodTele4), &(thisStep.tracksAllTele5), &(thisStep.tracksGoodTele5), &(thisStep.tracksAllTele7), &(thisStep.tracksGoodTele7), &(thisStep.tracksAllTele8), &(thisStep.tracksGoodTele8), &(thisStep.tracksAllTele10), &(thisStep.tracksGoodTele10), &(thisStep.tracksAllTele11), &(thisStep.tracksGoodTele11), &(thisStep.tracksAllTele13), &(thisStep.tracksGoodTele13), &(thisStep.tracksAllTele14), &(thisStep.tracksGoodTele14), &(thisStep.tracksAllTele16), &(thisStep.tracksGoodTele16), &(thisStep.tracksAllTele17), &(thisStep.tracksGoodTele17), &(thisStep.tracksAllTele19), &(thisStep.tracksGoodTele19), &(thisStep.tracksAllTele20), &(thisStep.tracksGoodTele20));
+    fscanf(afile, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", &(thisStep.timeBegin), &(thisStep.timeEnd), &(thisStep.nEvents), &(thisStep.tracksAll), &(thisStep.tracksGood), &(thisStep.tracksAllTele1), &(thisStep.tracksGoodTele1), &(thisStep.tracksAllTele2), &(thisStep.tracksGoodTele2), &(thisStep.tracksAllTele4), &(thisStep.tracksGoodTele4), &(thisStep.tracksAllTele5), &(thisStep.tracksGoodTele5), &(thisStep.tracksAllTele7), &(thisStep.tracksGoodTele7), &(thisStep.tracksAllTele8), &(thisStep.tracksGoodTele8), &(thisStep.tracksAllTele10), &(thisStep.tracksGoodTele10), &(thisStep.tracksAllTele11), &(thisStep.tracksGoodTele11), &(thisStep.tracksAllTele13), &(thisStep.tracksGoodTele13), &(thisStep.tracksAllTele14), &(thisStep.tracksGoodTele14), &(thisStep.tracksAllTele16), &(thisStep.tracksGoodTele16), &(thisStep.tracksAllTele17), &(thisStep.tracksGoodTele17), &(thisStep.tracksAllTele19), &(thisStep.tracksGoodTele19), &(thisStep.tracksAllTele20), &(thisStep.tracksGoodTele20), &(thisStep.tracksAllTele22), &(thisStep.tracksGoodTele22), &(thisStep.tracksAllTele23), &(thisStep.tracksGoodTele23));
     stepRates.push_back(thisStep);
   }
   fclose(afile);
@@ -155,7 +154,7 @@ int ParseCondDBDataTele(const std::string accidentalFileName, const std::string 
 FILE *outt = fopen("CombinedRatesTele.txt", "w");
   fprintf(outt, "%d\n", nsteps);
   for (int i=0; i<nsteps; ++i) {
-    fprintf(outt, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %f\n", stepRates[i].timeBegin, stepRates[i].timeEnd, stepRates[i].nEvents, stepRates[i].tracksAllTele1, stepRates[i].tracksGoodTele1, stepRates[i].tracksAllTele2, stepRates[i].tracksGoodTele2, stepRates[i].tracksAllTele4, stepRates[i].tracksGoodTele4, stepRates[i].tracksAllTele5, stepRates[i].tracksGoodTele5, stepRates[i].tracksAllTele7, stepRates[i].tracksGoodTele7, stepRates[i].tracksAllTele8, stepRates[i].tracksGoodTele8, stepRates[i].tracksAllTele10, stepRates[i].tracksGoodTele10, stepRates[i].tracksAllTele11, stepRates[i].tracksGoodTele11, stepRates[i].tracksAllTele13, stepRates[i].tracksGoodTele13, stepRates[i].tracksAllTele14, stepRates[i].tracksGoodTele14, stepRates[i].tracksAllTele16, stepRates[i].tracksGoodTele16, stepRates[i].tracksAllTele17, stepRates[i].tracksGoodTele17, stepRates[i].tracksAllTele19, stepRates[i].tracksGoodTele19, stepRates[i].tracksAllTele20, stepRates[i].tracksGoodTele20, stepLumis[i].first, stepLumis[i].second);
+    fprintf(outt, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %f\n", stepRates[i].timeBegin, stepRates[i].timeEnd, stepRates[i].nEvents, stepRates[i].tracksAllTele1, stepRates[i].tracksGoodTele1, stepRates[i].tracksAllTele2, stepRates[i].tracksGoodTele2, stepRates[i].tracksAllTele4, stepRates[i].tracksGoodTele4, stepRates[i].tracksAllTele5, stepRates[i].tracksGoodTele5, stepRates[i].tracksAllTele7, stepRates[i].tracksGoodTele7, stepRates[i].tracksAllTele8, stepRates[i].tracksGoodTele8, stepRates[i].tracksAllTele10, stepRates[i].tracksGoodTele10, stepRates[i].tracksAllTele11, stepRates[i].tracksGoodTele11, stepRates[i].tracksAllTele13, stepRates[i].tracksGoodTele13, stepRates[i].tracksAllTele14, stepRates[i].tracksGoodTele14, stepRates[i].tracksAllTele16, stepRates[i].tracksGoodTele16, stepRates[i].tracksAllTele17, stepRates[i].tracksGoodTele17, stepRates[i].tracksAllTele19, stepRates[i].tracksGoodTele19, stepRates[i].tracksAllTele20, stepRates[i].tracksGoodTele20, stepRates[i].tracksAllTele22, stepRates[i].tracksGoodTele22, stepRates[i].tracksAllTele23, stepRates[i].tracksGoodTele23, stepLumis[i].first, stepLumis[i].second);
   }
   fclose(outt);
   std::cout << "Output saved to CombinedRatesTele.txt" << std::endl;

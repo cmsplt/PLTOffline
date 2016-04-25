@@ -91,7 +91,7 @@ TGraph *readCombinedFile(const char *fileName) {
     return(NULL);
   }
 //  int nscopes = 14;
-  int nsteps, nBunches, tBegin, tEnd, nTrig, tracksAll[14], tracksGood[14], nMeas;
+  int nsteps, nBunches, tBegin, tEnd, nTrig, tracksAll[16], tracksGood[16], nMeas;
   double totLumi;
 
 
@@ -103,11 +103,9 @@ TGraph *readCombinedFile(const char *fileName) {
 
         fscanf(rfile, "%d %d %d %d %d %d %d %d %d %d", &tracksGood[8], &tracksAll[9], &tracksGood[9], &tracksAll[10], &tracksGood[10], &tracksAll[11], &tracksGood[11], &tracksAll[12], &tracksGood[12], &tracksAll[13]);
 
-        fscanf(rfile, "%d %d %lf\n", &tracksGood[13], &nMeas, &totLumi);
+        fscanf(rfile, "%d %d %d %d %d %d %lf\n", &tracksGood[13], &tracksAll[14], &tracksGood[14], &tracksAll[15], &tracksGood[15], &nMeas, &totLumi);
 
-//    fscanf(rfile, "%d %d %d %d %d %d %lf", &tBegin, &tEnd, &nTrig, &tracksAll, &tracksGood, &nMeas, &totLumi);
-  
-  // Process the data.
+  // Process the data. Change index in tracks vectors to choose proper scope.
     fastOrLumi.push_back(totLumi/(nMeas*nBunches));
     fastOrLumiErr.push_back(0); // not implemented yet
     double accrate = (double)(tracksAll[0]-tracksGood[0])/tracksAll[0];
