@@ -19,11 +19,12 @@
 
 int MeasureAccidentalsTele(const std::string, const std::string, const std::string, const std::string);
 
-int MeasureAccidentalsTele(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName, const std::string TimestampFileName)
+int MeasureAccidentalsTele(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,                           const std::string TrackDistributionFileName, const std::string TimestampFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+  std::cout << "TrackQualityFileName: " << TrackDistributionFileName << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
 
@@ -42,7 +43,7 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
   std::map<int, float> SigmaResidualX;
 
   bool useTrackQuality = true;
-  FILE *qfile = fopen("TrackQuality-v2.txt", "r");
+  FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
     std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
     useTrackQuality = false;
@@ -159,8 +160,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
   std::vector<int> nAllTele17(nSteps);
   std::vector<int> nAllTele19(nSteps);
   std::vector<int> nAllTele20(nSteps);
-//  std::vector<int> nAllTele22(nSteps);
-//  std::vector<int> nAllTele23(nSteps);
+  std::vector<int> nAllTele22(nSteps);
+  std::vector<int> nAllTele23(nSteps);
 
 //Telescope vectors for good tracks
   std::vector<int> nGoodTele1(nSteps);
@@ -177,8 +178,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
   std::vector<int> nGoodTele17(nSteps);
   std::vector<int> nGoodTele19(nSteps);
   std::vector<int> nGoodTele20(nSteps);
-//  std::vector<int> nGoodTele22(nSteps);
-//  std::vector<int> nGoodTele23(nSteps);  
+  std::vector<int> nGoodTele22(nSteps);
+  std::vector<int> nGoodTele23(nSteps);  
   
 
 
@@ -245,8 +246,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
         nAllTele17.push_back(0); 
         nAllTele19.push_back(0); 
         nAllTele20.push_back(0); 
-//        nAllTele22.push_back(0); 
-//        nAllTele23.push_back(0);
+        nAllTele22.push_back(0); 
+        nAllTele23.push_back(0);
  
         nGoodTele1.push_back(0);  
         nGoodTele2.push_back(0);
@@ -262,8 +263,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
         nGoodTele17.push_back(0);
         nGoodTele19.push_back(0);
         nGoodTele20.push_back(0);
-//        nGoodTele22.push_back(0);
-//        nGoodTele23.push_back(0);
+        nGoodTele22.push_back(0);
+        nGoodTele23.push_back(0);
 
 	currentStepStart = Event.Time();
 	stepNumber++;
@@ -277,11 +278,7 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
       
       // THIS telescope is
       PLTTelescope* Telescope = Event.Telescope(it);
-//
-//
-//possibly where to identify what telescope the track is in
-//
-//
+
       if (!MapSlopeY[Telescope->Channel()]) {
         TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
         MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.02, 0.06);
@@ -331,8 +328,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
         if (chnum == 17) nAllTele17[stepNumber]++;
         if (chnum == 19) nAllTele19[stepNumber]++;
         if (chnum == 20) nAllTele20[stepNumber]++;
-//        if (chnum == 22) nAllTele22[stepNumber]++;
-//        if (chnum == 23) nAllTele23[stepNumber]++;
+        if (chnum == 22) nAllTele22[stepNumber]++;
+        if (chnum == 23) nAllTele23[stepNumber]++;
 
 	bool foundOneGoodTrack = false;
 	for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
@@ -369,8 +366,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
 	        if (ch == 17) nGoodTele17[stepNumber]++;
 	        if (ch == 19) nGoodTele19[stepNumber]++;
         	if (ch == 20) nGoodTele20[stepNumber]++;
-//	        if (ch == 22) nGoodTele22[stepNumber]++;
-//        	if (ch == 23) nGoodTele23[stepNumber]++;     
+	        if (ch == 22) nGoodTele22[stepNumber]++;
+        	if (ch == 23) nGoodTele23[stepNumber]++;     
       }
       
      }
@@ -544,9 +541,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
     std::cout << "Total: " << nAllTriple[i] << " events with potential tracks and " << nGoodTriple[i]
 	      << " were good (" << (float)nGoodTriple[i]*100.0/nAllTriple[i] << ")" << std::endl;
     std::cout << "Total of " << nEvents[i] << " triggers (" << (float)nEvents[i]*1000.0/(timestamps[i].second-timestamps[i].first) << " Hz)" << std::endl;
-    fprintf(outf, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i], nAllTele1[i], nGoodTele1[i], nAllTele2[i], nGoodTele2[i], nAllTele4[i], nGoodTele4[i], nAllTele5[i], nGoodTele5[i], nAllTele7[i], nGoodTele7[i], nAllTele8[i], nGoodTele8[i], nAllTele10[i], nGoodTele10[i], nAllTele11[i], nGoodTele11[i], nAllTele13[i], nGoodTele13[i], nAllTele14[i], nGoodTele14[i], nAllTele16[i], nGoodTele16[i], nAllTele17[i], nGoodTele17[i], nAllTele19[i], nGoodTele19[i], nAllTele20[i], nGoodTele20[i]);
-// nAllTele22[i], nGoodTele22[i], nAllTele23[i], nGoodTele23[i]);
-//printing of step info -> add columns telescope info here 
+    fprintf(outf, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i], nAllTele1[i], nGoodTele1[i], nAllTele2[i], nGoodTele2[i], nAllTele4[i], nGoodTele4[i], nAllTele5[i], nGoodTele5[i], nAllTele7[i], nGoodTele7[i], nAllTele8[i], nGoodTele8[i], nAllTele10[i], nGoodTele10[i], nAllTele11[i], nGoodTele11[i], nAllTele13[i], nGoodTele13[i], nAllTele14[i], nGoodTele14[i], nAllTele16[i], nGoodTele16[i], nAllTele17[i], nGoodTele17[i], nAllTele19[i], nGoodTele19[i], nAllTele20[i], nGoodTele20[i], nAllTele22[i], nGoodTele22[i], nAllTele23[i], nGoodTele23[i]);
+
  }
   fclose(outf);
   
@@ -556,17 +552,18 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
 
 int main (int argc, char* argv[])
 {
-  if (argc < 4 || argc > 5) {
-    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat [TimestampFile.dat]" << std::endl;
+  if (argc < 5 || argc > 6) {
+    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistribution.txt [TimestampFile.dat]" << std::endl;
     return 1;
   }
 
   const std::string DataFileName = argv[1];
   const std::string GainCalFileName = argv[2];
   const std::string AlignmentFileName = argv[3];
-  const std::string TimestampFileName = (argc == 5) ? argv[4] : "";
+  const std::string TrackDistributionFileName = argv[4];
+  const std::string TimestampFileName = (argc == 6) ? argv[5] : "";
 
-  MeasureAccidentalsTele(DataFileName, GainCalFileName, AlignmentFileName, TimestampFileName);
+  MeasureAccidentalsTele(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, TimestampFileName);
 
   return 0;
 }

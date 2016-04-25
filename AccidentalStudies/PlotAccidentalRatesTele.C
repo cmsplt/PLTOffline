@@ -45,7 +45,7 @@ void PlotAccidentalRatesTele(void) {
     std::cerr << "Couldn't open combined rates file!" << std::endl;
     return(1);
   }
-  int nsteps, nBunches, tBegin, tEnd, nTrig, tracksAllTele1, tracksGoodTele1, tracksAllTele2, tracksGoodTele2, tracksAllTele4, tracksGoodTele4, tracksAllTele5, tracksGoodTele5, tracksAllTele7, tracksGoodTele7, tracksAllTele8, tracksGoodTele8, tracksAllTele10, tracksGoodTele10, tracksAllTele11, tracksGoodTele11, tracksAllTele13, tracksGoodTele13, tracksAllTele14, tracksGoodTele14, tracksAllTele16, tracksGoodTele16, tracksAllTele17, tracksGoodTele17, tracksAllTele19, tracksGoodTele19, tracksAllTele20, tracksGoodTele20, nMeas;
+  int nsteps, nBunches, tBegin, tEnd, nTrig, tracksAllTele1, tracksGoodTele1, tracksAllTele2, tracksGoodTele2, tracksAllTele4, tracksGoodTele4, tracksAllTele5, tracksGoodTele5, tracksAllTele7, tracksGoodTele7, tracksAllTele8, tracksGoodTele8, tracksAllTele10, tracksGoodTele10, tracksAllTele11, tracksGoodTele11, tracksAllTele13, tracksGoodTele13, tracksAllTele14, tracksGoodTele14, tracksAllTele16, tracksGoodTele16, tracksAllTele17, tracksGoodTele17, tracksAllTele19, tracksGoodTele19, tracksAllTele20, tracksGoodTele20, &tracksAllTele22, &tracksGoodTele22, &tracksAllTele23, &tracksGoodTele23,nMeas;
   double totLumi;
 
   fscanf(rfile, "%d %d", &nsteps, &nBunches);
@@ -57,14 +57,14 @@ void PlotAccidentalRatesTele(void) {
 
         fscanf(rfile, "%d %d %d %d %d %d %d %d %d %d", &tracksGoodTele13, &tracksAllTele14, &tracksGoodTele14, &tracksAllTele16, &tracksGoodTele16, &tracksAllTele17, &tracksGoodTele17, &tracksAllTele19, &tracksGoodTele19, &tracksAllTele20);
 
-	fscanf(rfile, "%d %d %lf\n", &tracksGoodTele20, &nMeas, &totLumi);
+	fscanf(rfile, "%d %d %d %d %d %d %lf\n", &tracksGoodTele20, &tracksAllTele22, &tracksGoodTele22, &tracksAllTele23, &tracksGoodTele23, &nMeas, &totLumi);
 
     // Process the data.
-//
+
 //
 //CHOOSE WHICH TELESCOPE BY CHANGING CHANNEL # AT THE END OF   tracksAllTele   AND   tracksGoodTele
 //
-// 
+
    fastOrLumi.push_back(totLumi/(nMeas*nBunches));
     trackLumiAll.push_back(1000.0*(double)tracksAllTele11/(tEnd-tBegin));
     trackLumiGood.push_back(1000.0*(double)tracksGoodTele11/(tEnd-tBegin));
