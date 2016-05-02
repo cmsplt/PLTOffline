@@ -1,6 +1,9 @@
 This directory contains the fits from the gain calibrations used as an input to further offline analysis.
 
-Currently there is just one file: GainCalFits_20150923.225334.dat, which was used for most of the analysis of
-the 2015 data.
+Currently there are two files:
+* GainCalFits_20150923.225334.dat, which was used for most of the analysis of the 2015 data.
+* GainCalFits_20160501.155303.dat, the preliminary GainCal file for the 2016 data.
 
-See the main documentation for more details on how to create these files.
+See the main documentation for more details on how to create these files. In particular, the latter file
+was created with:
+./GainCalFastFits /data2/GainCal_2016/gaincalfast_20160501.155303.avg.txt
