@@ -37,6 +37,14 @@ const int NBX = 3564;
 // will be considered "filled"
 const float fillThresh = 0.05;
 
+const int nFEDChannels = 36;
+const int nChannels = 16;
+
+// Translation of pixel FED channel number to readout channel number.
+const int channelNumber[36] = {-1, 0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7,  // 0-11
+			       -1, 8, 9, -1, 10, 11, -1, 12, 13, -1, 14, 15, // 12-23
+			       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+
 // CODE BELOW
 
 int FindFilledBX(const std::string DataFileName) {
@@ -51,11 +59,11 @@ int FindFilledBX(const std::string DataFileName) {
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
-  int hitsNegativeSide[NBX];
-  int hitsPositiveSide[NBX];
-  for (int i=0; i<NBX; ++i) {
-    hitsNegativeSide[i] = 0;
-    hitsPositiveSide[i] = 0;
+  int hits[nChannels][NBX];
+  for (int i=0; i<nChannels; ++i) {
+    for (int j=0; j<NBX; ++j) {
+      hits[i][j] = 0;
+    }
   }
 
   // Loop over all events in file
@@ -72,34 +80,58 @@ int FindFilledBX(const std::string DataFileName) {
 
     for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
       PLTPlane* Plane = Event.Plane(ip);
-      if (Plane->Channel() < 12)
-	hitsNegativeSide[Event.BX()] += Plane->NHits();
-      else
-	hitsPositiveSide[Event.BX()] += Plane->NHits();
+      if (channelNumber[Plane->Channel()] == -1) {
+	std::cout << "Bad channel number found: " << Plane->Channel() << std::endl;
+      } else {
+	hits[channelNumber[Plane->Channel()]][Event.BX()] += Plane->NHits();
+      }
     }
-    //if (ientry > 500000) break;
+    if (ientry > 500000) break;
   }
+  
   // Process the results.
-  int maxVal = 0;
-  for (int i=0; i<NBX; ++i) {
-    if (hitsNegativeSide[i] > maxVal)
-      maxVal = hitsNegativeSide[i];
-    if (hitsPositiveSide[i] > maxVal)
-      maxVal = hitsPositiveSide[i];
+  int maxValTele = 0;
+  int maxValSide = 0; // these will have different ranges so we need to keep track separately
+  int hitsBySide[2][NBX];
+  const char *sideName[2] = {"-z", "+z"};
+  
+  // Find maximum and fill hits by side arrays.
+  for (int iBX=0; iBX<NBX; ++iBX) {
+    for (int iSide=0; iSide<2; ++iSide) {
+      hitsBySide[iSide][iBX] = 0;
+    }
+
+    for (int iCh=0; iCh<nChannels; ++iCh) {
+      hitsBySide[iCh/8][iBX] += hits[iCh][iBX];
+      if (hits[iCh][iBX] > maxValTele) maxValTele = hits[iCh][iBX];
+    }
+
+    for (int iSide=0; iSide<2; ++iSide) {
+      if (hitsBySide[iSide][iBX] > maxValSide) maxValSide = hitsBySide[iSide][iBX];
+    }
   }
   
-  std::cout << "-z: ";
-  for (int i=0; i<NBX; ++i) {
-    if (hitsNegativeSide[i] > fillThresh * (float)maxVal)
-      std::cout << i << " ";
+  std::cout << "*** All BX numbers use CMS/LHC convention (starting at 1) ***" << std::endl;
+  std::cout << "=== BY SIDE ===" << std::endl;
+  for (int i=0; i<2; ++i) {
+    std::cout << sideName[i] << ": ";
+    for (int j=0; j<NBX; ++j) {
+      if (hitsBySide[i][j] > fillThresh * (float)maxValSide)
+	std::cout << j+1 << " ";
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl << "+z: ";
-  for (int i=0; i<NBX; ++i) {
-    if (hitsPositiveSide[i] > fillThresh * (float)maxVal)
-      std::cout << i << " ";
+
+  std::cout << std::endl << "=== BY TELESCOPE (readout channel number) ===" << std::endl;
+  for (int i=0; i<nChannels; ++i) {
+    std::cout << "[" << i << "]: ";
+    for (int j=0; j<NBX; ++j) {
+      if (hits[i][j] > fillThresh * (float)maxValTele)
+	std::cout << j+1 << " ";
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
-  
+
   return 0;
 }
 

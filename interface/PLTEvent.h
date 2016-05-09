@@ -20,7 +20,6 @@ class PLTEvent : public PLTTracking
     PLTEvent (std::string const, std::string const, std::string const, bool const IsText = false);
     ~PLTEvent ();
 
-
     std::vector<PLTPlane*> fPlanes;
     std::vector<PLTTelescope*> fTelescopes;
     std::vector<PLTHit*> fHits;
@@ -92,6 +91,7 @@ class PLTEvent : public PLTTracking
       return fGainCal.GetHardwareID(ch);
     }
 
+    std::string ReadableTime();
 
   private:
     unsigned long fRun;
