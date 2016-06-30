@@ -10,17 +10,10 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <time.h>
-
-struct stepInfo {
-  uint32_t timeBegin;
-  uint32_t timeEnd;
-  int nEvents;
-  int tracksAll;
-  int tracksGood;
-};
 
 int ParseCondDBData(const std::string accidentalFileName, const std::string csvFileName) {
   std::cout << "accidental file name: " << accidentalFileName << std::endl;
@@ -28,27 +21,29 @@ int ParseCondDBData(const std::string accidentalFileName, const std::string csvF
 
   // First, read the accidental rates.
 
-  std::vector<struct stepInfo> stepRates;
-  FILE *afile;
-  afile = fopen(accidentalFileName.c_str(), "r");
-  if (afile == NULL) {
+  std::vector<uint32_t> timeBegin;
+  std::vector<uint32_t> timeEnd;
+  std::vector<std::string> otherData;
+
+  std::ifstream afile(accidentalFileName.c_str());
+  if (!afile.is_open()){ 
     std::cerr << "Couldn't open accidental file " << accidentalFileName << "!" << std::endl;
     return(1);
   }
   int nsteps;
-  struct stepInfo thisStep;
-  fscanf(afile, "%d", &nsteps);
+  afile >> nsteps;
+
   for (int i=0; i<nsteps; ++i) {
-    fscanf(afile, "%d %d %d %d %d", &(thisStep.timeBegin), &(thisStep.timeEnd), &(thisStep.nEvents),
-	   &(thisStep.tracksAll), &(thisStep.tracksGood));
-    stepRates.push_back(thisStep);
+    uint32_t thisTimeBegin, thisTimeEnd;
+    std::string thisOtherData;
+    afile >> thisTimeBegin >> thisTimeEnd;
+    std::getline(afile, thisOtherData);
+    timeBegin.push_back(thisTimeBegin);
+    timeEnd.push_back(thisTimeEnd);
+    otherData.push_back(thisOtherData);
   }
-  fclose(afile);
+  afile.close();
   std::cout << "Read " << nsteps << " rows in accidental rate file" << std::endl;
-  // for (unsigned int i=0; i<stepRates.size(); ++i) {
-  //   std::cout << "start: " << stepRates[i].timeBegin << " end: " << stepRates[i].timeEnd << " nevents: " << stepRates[i].nEvents
-  //       << " all: " << stepRates[i].tracksAll << " good: " << stepRates[i].tracksGood << std::endl;
-  // }
 
   // Next, read the ConditionsBrowser file.
   
@@ -88,10 +83,10 @@ int ParseCondDBData(const std::string accidentalFileName, const std::string csvF
     convertedTime += 86400000*dayCounter;
 
     // Now see if this is a lumi we actually want.
-    if (convertedTime > stepRates[nsteps-1].timeEnd) break;
+    if (convertedTime > timeEnd[nsteps-1]) break;
     int stepNumber = -1;
     for (int iStep = 0; iStep < nsteps; ++iStep) {
-      if (convertedTime >= stepRates[iStep].timeBegin && convertedTime <= stepRates[iStep].timeEnd) {
+      if (convertedTime >= timeBegin[iStep] && convertedTime <= timeEnd[iStep]) {
 	stepNumber = iStep;
 	break;
       }
@@ -107,8 +102,7 @@ int ParseCondDBData(const std::string accidentalFileName, const std::string csvF
   FILE *outf = fopen("CombinedRates.txt", "w");
   fprintf(outf, "%d\n", nsteps);
   for (int i=0; i<nsteps; ++i) {
-    fprintf(outf, "%d %d %d %d %d %d %f\n", stepRates[i].timeBegin, stepRates[i].timeEnd,
-	    stepRates[i].nEvents, stepRates[i].tracksAll, stepRates[i].tracksGood,
+    fprintf(outf, "%d %d%s %d %f\n", timeBegin[i], timeEnd[i], otherData[i].c_str(),
 	    stepLumis[i].first, stepLumis[i].second);
   }
   fclose(outf);
