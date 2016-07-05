@@ -2,7 +2,7 @@
 //
 // Krishna Thapa <kthapa@cern.ch>
 //
-// Created on: Wed June 30
+// Created on: Thu June 30
 //
 // Group track parameters per TrackID==TimeStamp
 //
@@ -40,7 +40,7 @@
 //
 
 
-void trackClass::Loop(std::string const DipFile)
+void trackClass::Loop(std::string const DipFile, int nColliding)
 {
 
 
@@ -48,7 +48,8 @@ void trackClass::Loop(std::string const DipFile)
 
 
   int timestamp;
-  int timeOffset = 1465603200;
+  int timeOffset = 1465603200;//0th hour, 0th minute, 0th second Epoch time
+                              // for fill 5013.http://www.epochconverter.com/
 
   std::map<int, std::pair<int,int> > timeStamp;
 
@@ -133,12 +134,12 @@ void trackClass::Loop(std::string const DipFile)
   std::cout << "DipFile is grouped into " << timeHZ.size() << " chunks"<< "\n";
 
 
-  // Now, assing SBIL value to Slink TrackParams
+  // Now, assign SBIL value to Slink TrackParams
 
 
   // Caution: Do not trust first and the last value from Slink.
   // This is because when grouping Track Parameters by minute intervals,
-  // the first and last timeStamps can't be guaranteed to be 1 minute long
+  // the first and the last timeStamps can't be guaranteed to be 1 minute long
 
   // So, while generating the SBIL values, skip the first and last index of
   // timeStamp as following
@@ -150,14 +151,17 @@ void trackClass::Loop(std::string const DipFile)
 
   ofstream SBIL;
   SBIL.open("trackSBIL.txt");
-  
+
   for (std::map<int,  std::vector<double> >::iterator it = timeHZ.begin(); it != timeHZ.end(); ++it) {
     double sum_of_elems = std::accumulate(timeHZ[it->first].begin(), timeHZ[it->first].end(), 0.0);
+
+    // Divide the sum by the number of Colliding Bunches to get SBIL
+
     // std::cout << it->first << " " << sum_of_elems*1.0/(2028*timeHZ[it->first].size())
     //           <<" "<< timeHZ[it->first].size() << " " << counter <<"\n";
 
     if (counter > 1 && counter < mpsz){
-      SBIL << it->first << " " << sum_of_elems*1.0/(2028*timeHZ[it->first].size())
+      SBIL << it->first << " " << sum_of_elems*1.0/(nColliding*timeHZ[it->first].size())
            << " " << counter<< "\n";
     }
     counter++;
