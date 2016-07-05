@@ -29,9 +29,9 @@ class PLTBinaryFileReader
 
 
     int  convPXL (int);
-    bool DecodeSpyDataFifo (uint32_t, std::vector<PLTHit*>&);
-    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
-    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
+    bool DecodeSpyDataFifo (uint32_t, std::vector<PLTHit*>&, std::vector<int>&);
+    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
+    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
     int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
 
     void ReadPixelMask (std::string const);

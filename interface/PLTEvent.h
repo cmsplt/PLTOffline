@@ -91,6 +91,8 @@ class PLTEvent : public PLTTracking
       return fGainCal.GetHardwareID(ch);
     }
 
+    std::vector<int>& getDesyncChannels(void) { return fDesyncChannels; }
+
     std::string ReadableTime();
 
   private:
@@ -99,6 +101,7 @@ class PLTEvent : public PLTTracking
     unsigned long fEvent;
     uint32_t fTime;
     uint32_t fBX;
+    std::vector<int> fDesyncChannels;
 
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;
