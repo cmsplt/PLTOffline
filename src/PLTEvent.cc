@@ -1,5 +1,5 @@
 #include "PLTEvent.h"
-
+#include <iomanip>
 
 PLTEvent::PLTEvent ()
 {
@@ -49,9 +49,19 @@ PLTEvent::~PLTEvent ()
   Clear();
 };
 
-
-
-
+std::string PLTEvent::ReadableTime() {
+  // A utility function which returns the time in readable format.
+  std::stringstream buf;
+  
+  int seconds = fTime/1000;
+  int hr = seconds/3600;
+  int min = (seconds-(hr*3600))/60;
+  int sec = seconds % 60;
+  buf << std::setfill('0') << std::setw(2)
+      << hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
+      << std::setw(3) << fTime%1000;
+  return buf.str();
+}
 
 void PLTEvent::SetDefaults ()
 {
@@ -128,6 +138,8 @@ void PLTEvent::Clear ()
   fHits.clear();
   fPlanes.clear();
   fTelescopes.clear();
+
+  fDesyncChannels.clear();
 }
 
 
@@ -256,7 +268,7 @@ int PLTEvent::GetNextEvent ()
   Clear();
 
   // The number we'll return.. number of hits, or -1 for end
-  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime, fBX);
+  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime, fBX, fDesyncChannels);
   if (ret < 0) {
     return ret;
   }

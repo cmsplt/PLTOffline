@@ -21,43 +21,37 @@
 #include "TAxis.h"
 #include "TGraphErrors.h"
 
+// Magnet-on fills
 const int nFiles = 5;
 const char *fileNames[nFiles] = {
   "CombinedRates_MuScan_Central.txt",
   "CombinedRates_4467_clean.txt",
-  //"CombinedRates_4337.txt",
   "CombinedRates_4381_clean.txt",
   "CombinedRates_4444_clean.txt",
-  //"CombinedRates_4545.txt",
   "CombinedRates_4565_clean.txt",
 };
 const char *fillLabels[nFiles] = {
   "Fill 4435 (mu scan, Sep 28, 881b)",
   "Fill 4467 (Oct 6-7, B=3.8, 1596b)",
-  //"Fill 4337 (Sep 9, B=0, 447b)",
   "Fill 4381 (Sep 17, B=3.8, 1021b)",
   "Fill 4444 (Sep 30, B=3.8, 1453b)",
-  //"Fill 4545 (Oct 29, B=0, 2232b)",
   "Fill 4565 (Nov 2, B=3.8, 2232b)"
 };
 
-
-//const int nFiles = 4;
-//const char *fileNames[nFiles] = {
+// Magnet-off fills
+// const int nFiles = 4;
+// const char *fileNames[nFiles] = {
 //  "CombinedRates_4208_TrigCorr.txt",
 //  "CombinedRates_4208.txt",
 //  "CombinedRates_4341.txt",
 //  "CombinedRates_4545.txt",
-//
-//};
-//const char *fillLabels[nFiles] = {
-//  "Fill 4208 (Trig Corr, Aug 14,74b)",
+// };
+// const char *fillLabels[nFiles] = {
+//  "Fill 4208 (Aug 14, 74b), trig corr.",
 //  "Fill 4208 (Aug 14, 74b)",
 //  "Fill 4341 (Sep 09, 733b)",
 //  "Fill 4545 (Oct 29, 2232b)",
-//};
-
-
+// };
 
 std::vector<double> fastOrLumiAll;
 std::vector<double> fastOrLumiErrAll;
@@ -181,4 +175,5 @@ void PlotTransparentAllScans(void) {
 
   //c1->Print("MissRate_AllScans.png");
   c1->Print("MissRate_MagnetOn_Final.png");
+  //c1->Print("MissRate_MagnetOff.png");
 }

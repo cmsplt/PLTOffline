@@ -18,11 +18,13 @@
 
 int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string);
 
-int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName, const std::string TimestampFileName)
+int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
+		       const std::string TrackDistributionFileName, const std::string TimestampFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
+  std::cout << "TrackDistributionFileName: " << TrackDistributionFileName << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
 
@@ -41,7 +43,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   std::map<int, float> SigmaResidualX;
 
   bool useTrackQuality = true;
-  FILE *qfile = fopen("TrackQuality-v2.txt", "r");
+  FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
     std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
     useTrackQuality = false;
@@ -143,6 +145,9 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   std::vector<int> nAllTriple(nSteps);
   std::vector<int> nGoodTriple(nSteps);
   std::vector<int> nEvents(nSteps);
+  int totCleanTracks = 0;
+  int totCleanFails = 0;
+  int nFailSteps[14] = {0};
 
   // Step-by-step slope plots
   TH1F *SlopeY_Step1 = new TH1F("SlopeY_Step1", "SlopeY_Step1", 40, -0.02, 0.06);
@@ -170,6 +175,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 		<< std::setfill('0') << std::setw(2) << (hr%24) << ":" << std::setw(2) << min
 		<< ":" << std::setw(2) << sec << "." << std::setw(3) << Event.Time()%1000
 		<< ")" << std::endl;
+      //if (ientry > 0 && fabs(MapResidualX[202]->GetRMS() - 0.002881) < 0.000001 && fabs(MapResidualX[201]->GetRMS() - 0.004684) < 0.000001) break;
     }
     //if (ientry>=20000000){break;}
 
@@ -286,6 +292,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
         MapResidualX[Telescope->Channel()*10+2]->Fill(Track->LResidualX(2));
 
 	nTotTracks[stepNumber]++;
+	totCleanTracks++;
 	float slopeY = Track->fTVY/Track->fTVZ;
 	float slopeX = Track->fTVX/Track->fTVZ;
 	if (stepNumber == 1) {
@@ -299,15 +306,30 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 	if (!useTrackQuality) continue;
 	int ch = Telescope->Channel();
-	if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) continue;
-	if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) continue;
-	if (fabs((Track->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) continue;
-	if (fabs((Track->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > 5.0) continue;
-	if (fabs((Track->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > 5.0) continue;
-	if (fabs((Track->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > 5.0) continue;
-	if (fabs((Track->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > 5.0) continue;
-	if (fabs((Track->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > 5.0) continue;
-	nGoodTracks[stepNumber]++;
+	bool trackIsGood = true;
+	bool slopeXGood = true;
+	bool slopeYGood = true;
+	bool residXGood = true;
+	bool residYGood = true;
+	if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) { trackIsGood = false; slopeYGood = false; nFailSteps[0]++; }
+	if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) { trackIsGood = false; slopeXGood = false; nFailSteps[1]++; }
+	if (fabs((Track->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) { trackIsGood = false; residYGood = false; nFailSteps[2]++; }
+	if (fabs((Track->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > 5.0) { trackIsGood = false; residYGood = false; nFailSteps[3]++; }
+	if (fabs((Track->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > 5.0) { trackIsGood = false; residYGood = false; nFailSteps[4]++; }
+	if (fabs((Track->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > 5.0) { trackIsGood = false; residXGood = false; nFailSteps[5]++; }
+	if (fabs((Track->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > 5.0) { trackIsGood = false; residXGood = false; nFailSteps[6]++; }
+	if (fabs((Track->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > 5.0) { trackIsGood = false; residXGood = false; nFailSteps[7]++; }
+	bool residsGood = (residXGood && residYGood);
+	if (residsGood && slopeXGood && !slopeYGood) nFailSteps[8]++;
+	if (residsGood && !slopeXGood && slopeYGood) nFailSteps[9]++;
+	if (residsGood && !slopeXGood && !slopeYGood) nFailSteps[10]++;
+	if (slopeXGood && slopeYGood && !residsGood) nFailSteps[11]++;
+	if (slopeXGood && slopeYGood && !residXGood && residYGood) nFailSteps[12]++;
+	if (!(slopeXGood && slopeYGood) && !residsGood) nFailSteps[13]++;
+	if (trackIsGood)
+	  nGoodTracks[stepNumber]++;
+	else
+	  totCleanFails++;
       }
     }
   }
@@ -316,7 +338,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 
   TFile *f = new TFile("histo_slopes.root","RECREATE");
-  FILE *textf = fopen("TrackQuality.txt", "w");
+  FILE *textf = fopen("TrackDistributions.txt", "w");
 
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
@@ -429,13 +451,58 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   fprintf(outf, "%d\n", nSteps);
   for (int i=0; i<nSteps; ++i) {
     std::cout << "==step " << i << "==" << std::endl;
-    std::cout << "Total: " << nTotTracks[i] << " and " << nGoodTracks[i] << " were good " << std::endl;
+    std::cout << "Total in clean events: " << nTotTracks[i] << " and " << nGoodTracks[i] << " were good " << std::endl;
     std::cout << "Total: " << nAllTriple[i] << " events with potential tracks and " << nGoodTriple[i]
 	      << " were good (" << (float)nGoodTriple[i]*100.0/nAllTriple[i] << ")" << std::endl;
     std::cout << "Total of " << nEvents[i] << " triggers (" << (float)nEvents[i]*1000.0/(timestamps[i].second-timestamps[i].first) << " Hz)" << std::endl;
     fprintf(outf, "%d %d %d %d %d\n", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i]);
   }
   fclose(outf);
+  std::cout << "Causes of failure for tracks that failed (note: categories are not mutually exclusive): " << std::endl;
+  for (int i=0; i<14; ++i) {
+    std::cout << nFailSteps[i] << " tracks (";
+    if (totCleanTracks > 0)
+      std::cout << (float)nFailSteps[i]*100.0/totCleanTracks;
+    else
+      std::cout << "n/a";
+    std::cout << "% of total, ";
+    if (totCleanFails > 0)
+      std::cout << (float)nFailSteps[i]*100.0/totCleanFails;
+    else
+      std::cout << "n/a";
+    std::cout << "% of failures) fail ";
+    switch (i) {
+    case 0: 
+      std::cout << "slopeY cut"; break;
+    case 1:
+      std::cout << "slopeX cut"; break;
+    case 2:
+      std::cout << "residY0 cut"; break;
+    case 3:
+      std::cout << "residY1 cut"; break;
+    case 4:
+      std::cout << "residY2 cut"; break;
+    case 5:
+      std::cout << "residX0 cut"; break;
+    case 6:
+      std::cout << "residX1 cut"; break;
+    case 7:
+      std::cout << "residX2 cut"; break;
+    case 8:
+      std::cout << "slopeY cut but pass slopeX and residuals"; break;
+    case 9:
+      std::cout << "slopeX cut but pass slopeY and residuals"; break;
+    case 10:
+      std::cout << "both slope cuts but pass residuals"; break;
+    case 11:
+      std::cout << "residual cuts but pass slope cuts"; break;
+    case 12:
+      std::cout << "residual X specifically, passing slope and residual Y"; break;
+    case 13:
+      std::cout << "at least one slope and at least one residual cut"; break;
+    }
+    std::cout << std::endl;
+  }
   
   return 0;
 }
@@ -443,17 +510,18 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 int main (int argc, char* argv[])
 {
-  if (argc < 4 || argc > 5) {
-    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat [TimestampFile.dat]" << std::endl;
+  if (argc < 5 || argc > 6) {
+    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt [TimestampFile.dat]" << std::endl;
     return 1;
   }
 
   const std::string DataFileName = argv[1];
   const std::string GainCalFileName = argv[2];
   const std::string AlignmentFileName = argv[3];
-  const std::string TimestampFileName = (argc == 5) ? argv[4] : "";
+  const std::string TrackDistributionFileName = argv[4];
+  const std::string TimestampFileName = (argc == 6) ? argv[5] : "";
 
-  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TimestampFileName);
+  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, TimestampFileName);
 
   return 0;
 }

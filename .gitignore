@@ -48,6 +48,8 @@ MakeStraightAlignment
 MakeTracks
 MakeTrimCalFileFake
 MeasureAccidentals
+MeasureAccidentalsBX
+MeasureAccidentalsTele
 MeasureMissRate
 NaiveROCCharge
 NumberOfHitsPerEvent
@@ -55,6 +57,7 @@ OccupancyPlots
 OccupancyPlots3x3
 OverlayPHLumi
 ParseCondDBData
+ParseCondDBDataTele
 Plot3ParamFit
 PlotADCForVCal
 PlotBXDistribution
@@ -78,6 +81,7 @@ ProcessHistograms
 PulseHeights
 PulseHeightsSignalTrack
 PulseHeightsTrack
+RawADCValues
 ReadClusterLumi
 ReadEvent
 RunBasicTeststandAnalysis

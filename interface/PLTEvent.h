@@ -20,7 +20,6 @@ class PLTEvent : public PLTTracking
     PLTEvent (std::string const, std::string const, std::string const, bool const IsText = false);
     ~PLTEvent ();
 
-
     std::vector<PLTPlane*> fPlanes;
     std::vector<PLTTelescope*> fTelescopes;
     std::vector<PLTHit*> fHits;
@@ -92,6 +91,9 @@ class PLTEvent : public PLTTracking
       return fGainCal.GetHardwareID(ch);
     }
 
+    std::vector<int>& getDesyncChannels(void) { return fDesyncChannels; }
+
+    std::string ReadableTime();
 
   private:
     unsigned long fRun;
@@ -99,6 +101,7 @@ class PLTEvent : public PLTTracking
     unsigned long fEvent;
     uint32_t fTime;
     uint32_t fBX;
+    std::vector<int> fDesyncChannels;
 
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;

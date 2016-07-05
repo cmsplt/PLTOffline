@@ -1,26 +1,27 @@
 This directory contains all the results from measuring the accidentals for the 2015 run and the scripts used
 to plot these results. Here's a quick rundown of the basic procedure.
 
-1) Run MeasureAccidentals. You need at least three arguments: the slink file, the gain cal fits file, and the
-alignment file. (You will also need the track quality file TrackQuality-v2.txt, whose name is hardcoded into
-MeasureAccidentals at the moment.)
+1) Run MeasureAccidentals. You need at least four arguments: the slink file, the gain cal fits file, the
+alignment file, and the track distributions file.
 
-For the 2015 accidental analysis, the gain cal file used was GainCal/GainCalFits_20150923.225334.dat and the
-alignment file used was ALIGNMENT/Trans_Alignment_4449.dat.
+For the 2015 accidental analysis, the gain cal file used was GainCal/GainCalFits_20150923.225334.dat, the
+alignment file used was ALIGNMENT/Trans_Alignment_4449.dat, and the track distributions file was
+TrackDistributions/TrackDistributions_MagnetOn.txt. (For magnet-off calibrations, those latter two files were
+ALIGNMENT/Trans_Alignment_4341.dat and TrackDistributions/TrackDistributions_MagnetOff_4341.txt respectively.)
 
-If this is a regular fill, you don't need a fourth argument; it will measure the accidental rate in
-five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the fourth argument, so
+If this is a regular fill, you don't need a fifth argument; it will measure the accidental rate in
+five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the fifth argument, so
 that it will measure the accidental rate for each step of the scan. You can make this timestamp file from a
 VdM csv file by using scripts/extractVDMTimestamps.py on the online machines (although you'll need to edit to
 remove the separation column, which is included for reference), or just make it by hand (fun).
 
 Sample invocation for a regular fill (4444 in this example):
 ./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCal/GainCalFits_20150923.225334.dat
-ALIGNMENT/Trans_Alignment_4449.dat
+ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt
 
 Sample invocation for a VdM scan (scan Y2 from fill 4266 in this example):
 ./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150825.003211.dat GainCal/GainCalFits_20150923.225334.dat
-ALIGNMENT/Trans_Alignment_4449.dat AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
+ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
 
 Running this produces AccidentalRates.txt. After producing AccidentalRates.txt, rename it to something more
 identifying (e.g., AccidentalRates_4444.txt).
