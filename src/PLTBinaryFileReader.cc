@@ -86,7 +86,7 @@ int PLTBinaryFileReader::convPXL (int IN)
 
 
 
-bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>& Hits)
+bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>& Hits, std::vector<int>& DesyncChannels)
 {
   if (word & 0xfffffff) {
 
@@ -103,6 +103,9 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
       if ((word & 0xffffffff) == 0xffffffff) {
       } else if (roc == 26) {
       } else if (roc == 27) {
+      } else if (roc == 31) {
+	// this channel has an event number error -- put it into the vector of channels with this error
+	DesyncChannels.push_back(chan);
       } else {
         //decodeErrorFifo(word);
       }
@@ -151,17 +154,17 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
+int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
   if (fIsText) {
     return ReadEventHitsText(fInfile, Hits, Event, Time, BX);
   } else {
-    return ReadEventHits(fInfile, Hits, Event, Time, BX);
+    return ReadEventHits(fInfile, Hits, Event, Time, BX, DesyncChannels);
   }
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
+int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
   uint32_t n1, n2, oldn1, oldn2;
 
@@ -260,13 +263,13 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
             Time = Time + 86400000 * fTimeMult;
 
             // but don't forget to decode the first word
-            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits);
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, DesyncChannels);
           }
           else {
             // OK, it wasn't a trailer. Undo the peek and decode both words
             InFile.seekg(-sizeof peekWord, std::ios_base::cur);
-            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits);
-            if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits);
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, DesyncChannels);
+            if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits, DesyncChannels);
 	  }
 	} // not a trailer
       } // after header
