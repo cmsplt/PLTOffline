@@ -42,7 +42,7 @@ int TrackParams (std::string const DataFileName, std::string const GainCalFileNa
 
 
   // save a ttree with track parameters
-  TFile *f = new TFile("./VdMStudies/trackParams.root","RECREATE");
+  TFile *f = new TFile("./TrackParams.root","RECREATE");
   TTree *ttree = new TTree("Tracks","Tracks");
 
 

@@ -101,7 +101,7 @@
   //  model.fitTo(*data);
   RooFitResult* r = model.fitTo(*data,Save());
 
-  RooPlot* xframe1 =  new RooPlot("p.d.f. with data:Sy","plot",sy,-0.03,0.07,20);
+  RooPlot* xframe1 =  new RooPlot("p.d.f. with data:Sy","plot",sy,-0.03,0.07,80);
 
 
   //  data->plotOn(xframe1);
