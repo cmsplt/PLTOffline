@@ -40,8 +40,10 @@ perSCP->Draw("sy","pt==20","same")
 SBIL for VdM is close to 0. As we increase SBIL, what "extra" things do we see? Does luminosity scale linearly? What about second-order terms?...
 
 Requirements: 
+```
 1. RooFit package
-2. Track parameters at VdM, and at different SBIL
+2. Track parameters at VdM and at different SBIL
+```
 
 #### Generate text file for VdM 0 mm separation
 
@@ -54,18 +56,20 @@ perSCP->Scan("sx:sy","pt==13"); >> xyVdM.txt
 remove the *'s and column names from the text file. We would like to eventually use xyVdM.txt to get parameters for the likelyhood fit.
 
 
-Similarly, for other fills::
+#### Fit a model
+Using VdMSlopeYModel.C, VdMSlopeXModel.C, and xyVdM.txt, get the VdM parameters.
+```
+SlopeY::
+Gaussian_core(m,sigma) + f_1 * Gaussian_outlier(m,sigma) + f_2 * BiGaussian(m,sigmaL, sigmaR)
+```
+![](./VdMSlopeYModel.png)
 
 ```
-root -l TrackParms.root
-Tracks->SetScanField(0)
-Tracks->Scan("SlopeX:SlopeY","TrackID==idnum"); >> xyFillNo_idnum.txt
+SlopeX::
+Gaussian_core(m,sigma) + f_1*Gaussian_outlier(m,sigma) + f_2* Gaussian(m,sigma)
 ```
+![](./VdMSlopeXModel.png)
 
-#### TODO
-Add Fit code
-Add Toy_MC code
-Add Plots
 
 ## Other fills
 For other fills, we are interested in seeing how track parameters vary as a function of SBIL. The goal is to assign SBIL value to these tracks--trackClass.C and trackClass.h are for that purpose. 
@@ -75,7 +79,7 @@ We would need few things---TrackParams.root, DipFillNo.txt, the day for the fill
 1. TrackParamsFillNo.root:::./TrackParams Slink_File Gaincal_File TransAlignment_File
 2. dipFillNo.txt::: Go to the page `ConditionBrowser/CMS_BEAM_COND/CMS_BRIL_LUMINOSITY/PLTZERO_INSTLUMI/` and make a plot. Click on text and save the resulting text file, remove the header lines and save as `dipFillNo.txt`.
 
- Before anything, you will need to change the pointer to the root file at ` TFile *f =... ` @ trackClass.h. You will also need to know the Epoch time from the start day of the Fill that you are inspecting. For example, Fill 5013 is from 2016-06-11. The 0th hour, 0th minute, 0th sec Epoch timestamp turns out to be 465603200 for that day. Change the timeOffset on trackClass.C to that value. We also know the number of colliding bunches in this fill is 2048.
+ Before anything, you will need to change the pointer to the root file at ` TFile *f =... ` @ trackClass.h. You will also need to know the Epoch time from the start day of the Fill that you are inspecting. For example, Fill 5013 is from 2016-06-11. The 0th hour, 0th minute, 0th sec Epoch timestamp turns out to be 465603200 for that day. Change the timeOffset on trackClass.C to that value. We also know that the number of colliding bunches in this fill 5013 is 2048.
 
 Example usage
 
@@ -85,8 +89,21 @@ root -l
 trackClass m
 m.Loop("dip5013.txt",2028) 
 ```
-
 This gives trackSBIL.txt file which tells us what the SBIL value was for each TrackID. Now, you're ready to make some likelyhood fits!
 
-1. We have xyVdM.txt
-2. xyFill_TrackID.txt
+## Finally
+Having known the parameters for SlopeX and SlopeY, we use these parameters in VdMFreezeXY.C and float extra PDF (Bifurcated Gaussian for SlopeY and regular gaussian for SlopeX). Fraction3 is a common floating parameter that we are interested in knowing. 
+
+For a given fill, SlopeX and SlopeY data at different SBIL can be obtained by the following procedure:
+```
+root -l TrackParms.root
+Tracks->SetScanField(0)
+Tracks->Scan("SlopeX:SlopeY","TrackID==idnum"); >> xyFillNo_idnum.txt
+```
+
+We now make plot the fraction of "extra stuff" as a function of SBIL.
+
+#####TODO
+Add Systematics
+Add Toy Monte Carlo
+Add frac3 % SBIL plot
