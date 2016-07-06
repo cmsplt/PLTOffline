@@ -8,9 +8,9 @@ This directory contains results from the 2016 VdM track Analysis (Fill 4954) and
 
 
 ## Track Parameters
-For a given fill, one may be interested in knowing how track parameters change during scans or if there's some weird thing happening to a partiular channel/quadrant at partiuclar time, etc. To that end, we first generate the `TrackParams.root` file by invoking the following:
+For a given fill, one may be interested in knowing how track parameters change during scans or if there's some weird thing happening to a partiular channel/quadrant at partiuclar time, etc. To that end, we first generate the `TrackParams.root` file by invoking the following (Fill 4954):
 
-`./TrackParams Slink_File Gaincal_File Trans_Alignment_FillNo.dat`
+`./TrackParams Slink_20160527.075047.dat GainCalFits_20160526.125155.dat Trans_Alignment4954.dat`
 
 Default track parameters are Beamspots, Slopes, Residuals, nBX, Channels, TrackID. Modify `bin/TrackParams.cc` if you are interested in other variables (intercepts to Z=0 plane,X-Y at local telescope coordinates per ROC,etc). Fun!
 
@@ -25,10 +25,10 @@ VdMClass m
 m.Loop("scanY1")
 ```
 
-Boom! You now have t4954scanY1.root file. TTree now has "pt" branch that tells you the separation between beams for each track.
+Boom! You now have t4954scanY1.root file. TTree now has "pt" branch that assigns the separation between beams for each track.
 
 #### Usage
-Let's say you would like to look at SlopeY when beams were not separated i.e. 0 mm separation (pt==13) vs when they were separated by 0.344454 mm (pt ==20). 
+Let's say you would like to look at SlopeY at VdM Fill when beams were not separated i.e. 0 mm separation (pt==13) vs when they were separated by 0.344454 mm (pt ==20). 
 
 ```
 root -l  t4954scanY1.root
@@ -72,6 +72,21 @@ Gaussian_core(m,sigma) + f_1*Gaussian_outlier(m,sigma) + f_2* Gaussian(m,sigma)
 ![](./VdMSlopeXModel.png)
 
 
+
+##### Extra
+1. Validate fit with Toys letting fractions freeze/float
+2. Cross check: fit VdM data with full model ==>fits f = 0
+3. Systematic uncertainty   
+    a. Shape variation:  Try two Gaussians with well separated mean (and sigma) instead  of single Gaussian 
+    when floated converge back to single Gaussian (BiGaussian)
+
+    b. Single Gaussian %  BiGaussian interchange
+    
+    c. Use parameters from only the colliding bunches at VdM.
+4. Fix widths to values of measurements at comparable luminosity
+5. Let  VdM core Gaussian parameters float
+
+
 ## Other fills
 For other fills, we are interested in seeing how track parameters vary as a function of SBIL. The goal is to assign SBIL value to tracks--trackClass.C and trackClass.h are for that purpose. 
 
@@ -80,7 +95,7 @@ We would need few things---TrackParams.root, DipFillNo.txt, fill date, the numbe
 1. TrackParamsFillNo.root:: ./TrackParams Slink_File Gaincal_File TransAlignment_File
 2. dipFillNo.txt:: Go to the page `ConditionBrowser/CMS_BEAM_COND/CMS_BRIL_LUMINOSITY/PLTZERO_INSTLUMI/` and make a plot. Click on text and save the resulting text file, remove the header lines and save as `dipFillNo.txt`.
 
- After getting TrackParams.root, you will need to change the pointer to the root file at ` TFile *f =... ` @ trackClass.h. You will also need to know the Epoch time from the start day of the Fill that you are inspecting. For example, Fill 5013 is from 2016-06-11. The 0th hour, 0th minute, 0th sec Epoch timestamp turns out to be 465603200 for that day. Change the timeOffset on trackClass.C to that value. We also need the number of colliding bunches--2048 for fill 5013.
+ After getting TrackParams.root, you will need to change the pointer to the root file at ` TFile *f =... ` @ trackClass.h. You will also need to know the Epoch time from the start day of the fill that you are inspecting. For example, Fill 5013 is from 2016-06-11. The 0th hour, 0th minute, 0th sec Epoch timestamp turns out to be 465603200 for that day. Change the timeOffset on trackClass.C to that value. We also need the number of colliding bunches--2048 for fill 5013.
 
 Example usage
 
@@ -92,8 +107,8 @@ m.Loop("dip5013.txt",2028)
 ```
 This gives trackSBIL.txt file which tells us what the SBIL value was for each TrackID. Now, you're ready to make some likelyhood fits!
 
-## Finally
-Having known the parameters for SlopeX and SlopeY, we use these parameters in VdMfreezeSxSy.C and float extra PDF (Bifurcated Gaussian for SlopeY and regular gaussian for SlopeX). Fraction3 is a common floating parameter that we are interested in knowing. 
+## Combined Fits
+Having known the parameters for SlopeX and SlopeY, we use these parameters in VdMfreezeSxSy.C and float extra PDF (Bifurcated Gaussian for SlopeY and regular gaussian for SlopeX). Frac3 is a common floating parameter that we are interested in knowing. 
 
 For a given fill, SlopeX and SlopeY data at different SBIL can be obtained by the following procedure:
 ```
@@ -102,11 +117,7 @@ Tracks->SetScanField(0)
 Tracks->Scan("SlopeX:SlopeY","TrackID==idnum"); >> xyFillNo_idnum.txt
 ```
 
-We now make plot the fratcion of "extra stuff" as a function of SBIL. For Fill 5013, at SBIL ~3.4, we get the following result where magenta is the frac3 on top of VdM model.
+For each `TrackID==idnum`, we have SBIL value from trackSBIL.txt. We now make plot the fratcion of "extra stuff" as a function of SBIL. For Fill 5013, at SBIL ~3.4, we get the following result where magenta is the frac3 on top of VdM model.
 
 ![](./CombinedFit.png)
 
-#####TODO
-1. Systematics
-2. Toy Monte Carlo
-3. frac3 % SBIL
