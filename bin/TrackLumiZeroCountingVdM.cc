@@ -1,3 +1,4 @@
+// USED FOR THE VDM SCAN, HAS EXCESSIVELY LONG NUMBERS TO ACCOUNT FOR THIS
 ////////////////////////////////////////////////////////////////////
 //
 //  TrackLumiZeroCounting -- a program to derive a luminosity
@@ -25,7 +26,7 @@ std::vector<Int_t> FindActiveBunches(const std::string);
 
 const Int_t NBX = 3564;
 const Int_t nChannels = 24;                    
-const Int_t consecutiveZeros = 150000; // Number of events with no hits before declaring channel dead
+const Int_t consecutiveZeros = 3000000; // Number of events with no hits before declaring channel dead
 const Int_t nValidChannels = 16; // Channels that could in theory have hits.
 const Int_t validChannels[nValidChannels] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 
 					     16, 17, 19, 20, 22, 23};
@@ -160,8 +161,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::map<int, TH1F*> MapResidualX;
 
   // Arrays to keep track of variables
-  //std::vector<int> nTotTracks(nSteps);
-  //std::vector<int> nGoodTracks(nSteps);
   std::vector<float> nAllTriple(nSteps);
   std::vector<float> nGoodTriple(nSteps);
   std::vector<int> nEvents(nSteps);
@@ -174,8 +173,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::vector<int> zeroVector(nChannels);
 
   // Double arrays to keep track channel-by-channel
-  //std::vector<std::vector<int> > nTotTracks(nSteps, nChannels);
-  //std::vector<std::vector<int> > nGoodTracks(nSteps, nChannels);
   std::vector<std::vector<int> > nAllTripleByChannel(nSteps, nChannels);
   std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, nChannels);
   std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, nChannels);
@@ -189,7 +186,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::map<Int_t, std::string> endTime;
   Int_t offset = 1;
   Int_t zerosInARow[nChannels] = {0};
-  Int_t blanks = 0;
 
   // Variables to keep track of channels with desync errors
   std::vector<int> b;
@@ -203,23 +199,13 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
     
   int stepNumber = 0;
   uint32_t currentStepStart = 0;
-  //const uint32_t stepLength = 3000; //30sec// 1 minute
+  // const uint32_t stepLength = 60000; // 1 minute
   const uint32_t stepLength = 300000; // 5 minutes
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    
-    // Break if we've reached the end of valid channel info
-    // (indicated by many events with no hits in any channels in a row
-    if (Event.NPlanes() == (size_t)0){
-      ++blanks;
-      if (blanks > 1000)
-        break;
-    }
-    else
-      blanks = 0;
-    
-    //    if (ientry > 5000) break;
+
+    //   if (ientry > 163000000) break;
 
     if (ientry % 100000 == 0) {
       int nsec = Event.Time()/1000;
@@ -253,8 +239,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       if ((Event.Time() - currentStepStart) > stepLength) {
 	//std::cout << "starting new step @" << Event.Time() << " from " << currentStepStart << std::endl;
 	timestamps.push_back(std::make_pair(currentStepStart, Event.Time()-1));
-	//nTotTracks.push_back(0);
-	//nGoodTracks.push_back(0);
 	nAllTriple.push_back(0);
 	nGoodTriple.push_back(0);
 	nEvents.push_back(0);
@@ -262,8 +246,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	nEmptyEventsFilledBX.push_back(0);
 	nNonEmptyFilledBX.push_back(0);
        
-	//nTotTracksByChannel.push_back(zeroVector);
-        //nGoodTracksByChannel.push_back(zeroVector);
         nAllTripleByChannel.push_back(zeroVector);
         nGoodTripleByChannel.push_back(zeroVector);
         nEmptyEventsFilledBXByChannel.push_back(zeroVector);
@@ -328,7 +310,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	  // apply track quality cuts
 	  float slopeY = tr->fTVY/tr->fTVZ;
 	  float slopeX = tr->fTVX/tr->fTVZ;
-	 	 
+	 
 	  if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) continue;
 	  if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) continue;
 	  if (fabs((tr->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) continue;
@@ -436,19 +418,19 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       if (!channelHasIssuesNow[errorCh]) { // if we haven't identified this as having consistent problems
 	if (problems[errorCh] == 0)
 	  std::cout<<"Channel "<<errorCh<<" temporarily desynced at "<<Event.ReadableTime()<<"   :"<<ientry<<std::endl;
-	if (problems[errorCh] >= 2000) { //now identify it as having consistent problems
+	if (problems[errorCh] >= 20000) { //now identify it as having consistent problems
 	  errorChannels.push_back(errorCh);
 	  errorTimes.push_back(Event.ReadableTime());
 	  std::cout<<"Channel "<<errorCh<<" very very very very very very desynced at "<<Event.ReadableTime()<<"    :"<<ientry<<std::endl;
 	  channelHasIssuesNow[errorCh] = 1;
 	}
       }
-      if (problems[errorCh] < 2000)
+      if (problems[errorCh] < 20000);
         problems[errorCh]++;
     }
     //decrement the count until its zero. This is to make sure that the channel really is done 
     // having problems, and that it doesn't just temporarily become good but then go bad again
-    for (int channel = 0; channel < nChannels; ++channel) {
+    /*    for (int channel = 0; channel < nChannels; ++channel) {
       if (channelHasIssuesNow[channel]) { 
 	if (!hasProblemThisEvent[channel]) {
 	  problems[channel]--;
@@ -461,6 +443,28 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	  hasProblemThisEvent[channel] = 0;
       }
     }
+    */
+
+    for (int channel = 0; channel < nChannels; ++channel) {
+      if (channelHasIssuesNow[channel]) {
+        if (!hasProblemThisEvent[channel]) {
+          // problems[channel]--;                                               
+          if (problems[channel] < 1) {
+	    std::cout<<"Channel "<<channel<<" resynced at "<<Event.ReadableTime\
+	      ()<<"     :"<<ientry<<std::endl;
+            channelHasIssuesNow[channel] = 0;
+          }
+        }
+        else
+          hasProblemThisEvent[channel] = 0;
+      }
+      if (!hasProblemThisEvent[channel]) {
+        if (problems[channel] > 0)
+          problems[channel]--;
+      }
+    }
+
+
 
     ////////////
     // End check for desync errors
@@ -469,6 +473,26 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   } // event loop
     // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
+
+  //Print out the desync errors
+  for (size_t i = 0; i < errorChannels.size(); ++i) 
+    std::cout<<"There was an desync error in channel "<<errorChannels[i]<<" at time "<<errorTimes[i]<<std::endl;
+
+  // Print out the channel failures
+  for (std::map<Int_t, Int_t>::iterator it = startEvent.begin(); it != startEvent.end(); it++) {
+    Int_t channel = (it->first) % 100;
+    if ((startEvent[channel] == 0) && (endEvent[channel] == -1))
+      std::cout << "Channel " << channel << " was dead for the full fill" << std::endl;
+    else {                                                               
+      std::cout << "Error in channel " << channel << " at event " << startEvent[channel] <<
+	" at approximately " << startTime[channel] << std::endl;
+      if (endEvent[channel] == -1)
+	std::cout << "\tFailure lasted through the end of the fill" << std::endl;
+      else
+	std::cout << "\tFailure ended at event " << endEvent[channel] << " at time " <<
+	  endTime[channel] << std::endl;
+    }
+  }
   
   // Make a vector of the good channels (that didn't die in the fill)
   // These we will use to calculate luminosities
@@ -625,27 +649,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
     if (filledBunches[index] == 1)
       std::cout << index+1 << " " << nEventsByBX[index] << " " << nEmptyEventsByBX[index] << std::endl;
   }
-
-  //Print out the desync errors
-  for (size_t i = 0; i < errorChannels.size(); ++i) 
-    std::cout<<"There was an desync error in channel "<<errorChannels[i]<<" at time "<<errorTimes[i]<<std::endl;
-  
-  // Print out the channel failures
-  for (std::map<Int_t, Int_t>::iterator it = startEvent.begin(); it != startEvent.end(); it++) {
-    Int_t channel = (it->first) % 100;
-    if ((startEvent[channel] == 0) && (endEvent[channel] == -1))
-      std::cout << "Channel " << channel << " was dead for the full fill" << std::endl;
-    else {                                                               
-      std::cout << "Error in channel " << channel << " at event " << startEvent[channel] <<
-	" at approximately " << startTime[channel] << std::endl;
-      if (endEvent[channel] == -1)
-	std::cout << "\tFailure lasted through the end of the fill" << std::endl;
-      else
-	std::cout << "\tFailure ended at event " << endEvent[channel] << " at time " <<
-	  endTime[channel] << std::endl;
-    }
-  }
-
   
 return 0;
 }
@@ -654,21 +657,20 @@ std::vector<int> FindActiveBunches(const std::string DataFileName) {
 
   // Set some basic style
   PLTU::SetStyle();
-
+  std::string DataFileName2 = "/raid/PLT/SlinkData_2016/Slink_20160527.124811.dat";
   // Grab the plt event reader
-  PLTEvent Event(DataFileName);
+  PLTEvent Event(DataFileName2);
   Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_All);
   Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
   TProfile *avg = new TProfile("avg", "Average Number of Hits;Bunch ID;Average Hits per Bin", NBX, 0.5, NBX + .5);
   // Loop over enough events in the file to determine which are filled 
-  //  for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 50000 == 0) {
       std::cout << "Processing event: " << ientry << " at " << Event.ReadableTime() << " to determine active bunches" << std::endl;
     }
-    if (ientry > 1000000)
+    if (ientry > 10000000)
       break;
     // +1 because BX starts counting at 0, but LHC convention is to start at 1  
     avg->Fill(Event.BX()+1, Event.NHits());  

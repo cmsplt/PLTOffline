@@ -13,7 +13,6 @@ PLTAlignment::~PLTAlignment ()
 {
 }
 
-
 void PLTAlignment::ReadAlignmentFile (std::string const InFileName)
 {
   // So far so good..
@@ -154,7 +153,7 @@ float PLTAlignment::PXtoLX (int const px)
 
 float PLTAlignment::PYtoLY (int const py)
 {
-  return PLTU::PIXELHEIGHT * (59.5 - (py + 0.0000001));
+  return PLTU::PIXELHEIGHT * (39.5 - (py + 0.0000001));//////////////////////////////////////////////
 }
 
 int PLTAlignment::PXfromLX (float const lx)
@@ -164,7 +163,7 @@ int PLTAlignment::PXfromLX (float const lx)
 
 int PLTAlignment::PYfromLY (float const ly)
 {
-  return (int) (59.5 - ly /  PLTU::PIXELHEIGHT);
+  return (int) (39.5 - ly /  PLTU::PIXELHEIGHT);/////////////////////////////////////////
 }
 
 std::pair<int, int> PLTAlignment::PXYfromLXY (std::pair<float, float> const& LXY)
@@ -186,10 +185,10 @@ void PLTAlignment::AlignHit (PLTHit& Hit)
     std::cerr << "ERROR: This is not in the aligment constants map: Channel:" << Hit.Channel() << "  ROC:" << Hit.ROC() << std::endl;
     return;
   }
-
+  
   int const PX = Hit.Column();
   int const PY = Hit.Row();
-
+  
   // set w.r.t. center of diamond
   float LX = PXtoLX(PX);
   float LY = PYtoLY(PY);
