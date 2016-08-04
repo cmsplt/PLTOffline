@@ -4,6 +4,7 @@
 //    in a given scope/ROC is changing over time
 //    Paul Lujan, June 16 2016
 //     time-handling code derived from MeasureAccidentals.cc
+//
 ////////////////////////////////////////////////////////////////////
 
 
@@ -22,11 +23,11 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
-  
+
   // Set some basic style for plots
-   PLTU::SetStyle();
+  PLTU::SetStyle();
   gStyle->SetOptStat(1111);
-  
+
   // Read timestamp file, if it exists.
   bool useTimestamps = false;
   int nSteps = 1;
@@ -46,34 +47,24 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
     }
     fclose(tfile);
     useTimestamps = true;
-    std::cout << nSteps << " timestamps" << std::endl;
-    for (unsigned int i=0; i<timestamps.size(); ++i) {
-      std::cout << "start: " << timestamps[i].first << " end: " << timestamps[i].second << std::endl;
-    }
+    // std::cout << nSteps << " timestamps" << std::endl;
+    // for (unsigned int i=0; i<timestamps.size(); ++i) {
+    //   std::cout << "start: " << timestamps[i].first << " end: " << timestamps[i].second << std::endl;
+    // }
   }
-  std::string GainCalFileName = "./GainCal/GainCalFits_20160501.155303.dat";
-  std::string AlignmentFileName = "ALIGNMENT/Trans_Alignment_4892.dat";
-  // Grab the plt event reader
-  //PLTEvent Event(DataFileName);
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;    
-  Event.SetPlaneFiducialRegion(FidRegionHits);
-  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
-  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_AllCombs);  
-//  Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_All);
-  // Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
-  // Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
 
-  PLTAlignment Alignment;
-  Alignment.ReadAlignmentFile(AlignmentFileName);
-  
+  // Grab the plt event reader
+  PLTEvent Event(DataFileName);
+  Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_All);
+  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
+  Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
+
   std::vector<int> nEvents(nSteps);
-  
   std::map<int, std::vector<int> > HitsByChannel;
   std::map<int, std::vector<int> > HitsByROC;
-  const int nChannels = 13; 
-  const int fedChannel[nChannels] = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
 
+  const int nChannels = 13;
+  const int fedChannel[nChannels] = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
   for (int i=0; i<nChannels; ++i) {
     int ch = fedChannel[i];
     HitsByChannel[ch].resize(nSteps);
@@ -81,7 +72,7 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
     HitsByROC[10*ch+1].resize(nSteps);
     HitsByROC[10*ch+2].resize(nSteps);
   }  
-    
+
   int stepNumber = 0;
   uint32_t currentStepStart = 0;
   // const uint32_t stepLength = 60000; // 1 minute
@@ -104,8 +95,8 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
 	break;
       }
     }
-    //    if (ientry>=30000000) break;
-    
+    //if (ientry>=5000000) break;
+
     if (useTimestamps) {
       stepNumber = -1;
       if (Event.Time() > timestamps[nSteps-1].second) break;
@@ -121,8 +112,6 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
       if ((Event.Time() - currentStepStart) > stepLength) {
 	//std::cout << "starting new step @" << Event.Time() << " from " << currentStepStart << std::endl;
 	timestamps.push_back(std::make_pair(currentStepStart, Event.Time()-1));
-	nEvents.push_back(0);
-
 	for (int i=0; i<nChannels; ++i) {
 	  int ch = fedChannel[i];
 	  HitsByChannel[ch].push_back(0);
@@ -130,39 +119,42 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
 	  HitsByROC[10*ch+1].push_back(0);
 	  HitsByROC[10*ch+2].push_back(0);
 	}  
-	
+
 	currentStepStart = Event.Time();
 	stepNumber++;
 	nSteps++;
       }
     }
-    
     nEvents[stepNumber]++;
+
+    // Loop over all planes
     
-    for (size_t ip = 0; ip < Event.NPlanes(); ++ip) {
+    for (size_t ip = 0; ip != Event.NPlanes(); ++ip) {
       PLTPlane* Plane = Event.Plane(ip);
       int ch = Plane->Channel();
-      
       if (ch < 2 || ch > 20) {
 	std::cout << "Bad channel number found: " << ch << std::endl;
       } else {
-      	int roc = Plane->ROC();
-      	HitsByChannel[ch][stepNumber]++;// Telescope->NTracks();
+	int roc = Plane->ROC();
+	HitsByChannel[ch][stepNumber]++;
 	HitsByROC[10*ch+roc][stepNumber]++;
       }
     } // plane loop
+
+
   } // event loop
-    // properly catch the last step
+  // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
-  
+
   TFile *f = new TFile("occupancy_vs_time.root","RECREATE");
-  
-  float xvals[nSteps];
-  float yvalsc[nSteps];
-  float yvalsr0[nSteps];
-  float yvalsr1[nSteps];
-  float yvalsr2[nSteps];
-  char buf[64]; 
+
+  float xvals[1024];
+  float yvalsc[1024];
+  float yvalsr0[1024];
+  float yvalsr1[1024];
+  float yvalsr2[1024];
+  char buf[64];
+
   for (int ich=0; ich<nChannels; ++ich) {
     int ch = fedChannel[ich];
     for (int istep=0; istep<nSteps; ++istep) {
@@ -172,46 +164,42 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
       yvalsr1[istep] = HitsByROC[10*ch+1][istep];
       yvalsr2[istep] = HitsByROC[10*ch+2][istep];
     }
-    
-    TGraph *gc = new TGraph(nSteps, xvals, yvalsc);
+    TGraph *gch = new TGraph(nSteps, xvals, yvalsc);
     sprintf(buf, "OccVsTimeCh%d", ch);
-    gc->SetName(buf);
-    gc->SetTitle(buf);
-    gc->GetXaxis()->SetTitle("Step Number");
-    gc->GetYaxis()->SetTitle("Number of Hits");
+    gch->SetName(buf);
     TGraph *gr0 = new TGraph(nSteps, xvals, yvalsr0);
     sprintf(buf, "OccVsTimeCh%dROC0", ch);
     gr0->SetName(buf);
-    gr0->SetTitle(buf);
-    gr0->GetXaxis()->SetTitle("Step Number");
-    gr0->GetYaxis()->SetTitle("Number of Hits");
     TGraph *gr1 = new TGraph(nSteps, xvals, yvalsr1);
     sprintf(buf, "OccVsTimeCh%dROC1", ch);
     gr1->SetName(buf);
     TGraph *gr2 = new TGraph(nSteps, xvals, yvalsr2);
     sprintf(buf, "OccVsTimeCh%dROC2", ch);
     gr2->SetName(buf);
-    gc->Write();
+    
+    gch->Write();
     gr0->Write();
     gr1->Write();
     gr2->Write();
   }
+ 
   f->Close();
-  
+
   return 0;
 }
 
-  
+
 int main (int argc, char* argv[])
 {
   if (argc < 2 || argc > 3) {
     std::cerr << "Usage: " << argv[0] << " DataFile.dat [TimestampFile.dat]" << std::endl;
     return 1;
   }
-  
+
   const std::string DataFileName = argv[1];
   const std::string TimestampFileName = (argc == 3) ? argv[2] : "";
-  
+
   OccupancyVsTime(DataFileName, TimestampFileName);
+
   return 0;
 }

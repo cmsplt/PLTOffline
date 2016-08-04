@@ -1,12 +1,10 @@
 ////////////////////////////////////////////////////////////////////
 //
 //  ParseCondDBData -- takes a text file produced from
-//   TrackLumiZeroCounting and a CSV file obtained from the
+//   MeasureAccidentals and a CSV file obtained from the
 //   conditions browser and produces an output file
-//   with the PLTzero luminosity per timestamp. Works regardless of 
-//   whether the channel info is in the output file or not.
-//   output as well.
-//    Paul Lujan, NOvember 2015, adapted by Daniel Gift, July 14 2016
+//   with the PLTzero luminosity per timestamp
+//    Paul Lujan, November 10 2015
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -25,38 +23,24 @@ int ParseCondDBData(const std::string accidentalFileName, const std::string csvF
 
   std::vector<uint32_t> timeBegin;
   std::vector<uint32_t> timeEnd;
-  std::vector<int> otherData1;
-  std::vector<double> otherData2;
-  std::vector<double> otherData3;
-  std::vector<int> otherData4;
-  std::vector<double> otherData5;
-  std::vector<double> otherData6;
+  std::vector<std::string> otherData;
 
   std::ifstream afile(accidentalFileName.c_str());
   if (!afile.is_open()){ 
     std::cerr << "Couldn't open accidental file " << accidentalFileName << "!" << std::endl;
     return(1);
   }
-  int nsteps, nFilledBunches;
+  int nsteps;
   afile >> nsteps;
-  afile >> nFilledBunches;
 
   for (int i=0; i<nsteps; ++i) {
     uint32_t thisTimeBegin, thisTimeEnd;
     std::string thisOtherData;
     afile >> thisTimeBegin >> thisTimeEnd;
-    int t1, t4;
-    double t2, t3, t5, t6;
-    afile >> t1 >> t2 >> t3 >> t4 >>t5 >> t6; 
     std::getline(afile, thisOtherData);
     timeBegin.push_back(thisTimeBegin);
     timeEnd.push_back(thisTimeEnd);
-    otherData1.push_back(t1);
-    otherData2.push_back(t2);
-    otherData3.push_back(t3);
-    otherData4.push_back(t4);
-    otherData5.push_back(t5);
-    otherData6.push_back(t6);
+    otherData.push_back(thisOtherData);
   }
   afile.close();
   std::cout << "Read " << nsteps << " rows in accidental rate file" << std::endl;
@@ -116,11 +100,10 @@ int ParseCondDBData(const std::string accidentalFileName, const std::string csvF
   fclose(cfile);
 
   FILE *outf = fopen("CombinedRates.txt", "w");
-  fprintf(outf, "%d %d\n", nsteps, nFilledBunches);
+  fprintf(outf, "%d\n", nsteps);
   for (int i=0; i<nsteps; ++i) {
-    fprintf(outf, "%d %d %d %f %f %d %f %f %d %f\n", timeBegin[i], timeEnd[i], 
-	    otherData1[i], otherData2[i], otherData3[i], otherData4[i], 
-	    otherData5[i], otherData6[i], stepLumis[i].first, stepLumis[i].second);
+    fprintf(outf, "%d %d%s %d %f\n", timeBegin[i], timeEnd[i], otherData[i].c_str(),
+	    stepLumis[i].first, stepLumis[i].second);
   }
   fclose(outf);
   std::cout << "Output saved to CombinedRates.txt" << std::endl;
