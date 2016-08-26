@@ -117,7 +117,10 @@ Tracks->SetScanField(0)
 Tracks->Scan("SlopeX:SlopeY","TrackID==idnum"); >> xyFillNo_idnum.txt
 ```
 
-For each `TrackID==idnum`, we have SBIL value from trackSBIL.txt. We now make plot the fratcion of "extra stuff" as a function of SBIL. For Fill 5013, at SBIL ~3.4, we get the following result where magenta is the frac3 on top of VdM model.
+For each `TrackID==idnum`, we have SBIL value from trackSBIL.txt. We now make a fit to the combined model to get the fratcion of "extra stuff" as a function of SBIL via VdMfreezeSxSy.C (xyFillNo_idnum.txt as input). For Fill 5013, at SBIL ~3.4, we get the following result where magenta is the frac3 on top of VdM model.
 
 ![](./CombinedFit.png)
 
+
+Rinse and repeat for different SBIL from different fills to get the fraction. We have SBIL corresponding to idnum, and frac3 for each SBIL. Result:
+![](./Correction.png)
