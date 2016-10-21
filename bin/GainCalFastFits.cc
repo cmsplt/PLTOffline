@@ -126,7 +126,7 @@ int GainCalFastFits (TString const InFileName)
       >> adc
       >> vcal;
 
-    if (channel==1&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<"VCAL " <<vcal<<std::endl;}
+    if (channel==2&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<"VCAL " <<vcal<<std::endl;}
     // Get a simple string for the pixel and pair adc and vcal for this hit
     // which gets added to the map
     int Id = Pack(channel, roc, col, row);

@@ -32,7 +32,7 @@ some exe's output root files and all exe's output plots to the ./plots/ director
 |  |   |   |   |
 | GainCalFastFits | gaincal_*.avg.txt | GainCalFits.dat plots/GainCal/*.gif | Uses a gaincal_DATETIME.avg.txt file to fit the saturation curves for each pixel. for a good gain cal, as of oct2015 will take 15-20 mins. The output, GainCalFits.dat is used as input for other executables in the package |
 | CalculateAlignment | Data, GainCal, Alignment  | TransAlignment.dat, ROTAlignment.dat, plots/Alignment/*.gif, calculatealignment.root  | lines up pixel hits from tracks behind each other by moving the planes. fixes rotational offsets first, outputs ROTAlignment.dat. Then fixes translational misalignment and ouptus TRANSAlignment.dat. I would suggest using ALIGNMENT/Alignment_IdealInstall.dat as the input alignment file at first, until you have a better starting point guess.  Make sure the alignment file has the same channel numbers as the gain cal was made with. |
-|  |   |   |   |
+| TrackParams | Data, Gaincal, Alignment  | TrackParams.root  | Selects events with hits on all three planes of a given telescope to make tracks, saves track parameters to a ttree for further analysis  |
 |  |   |   |   |
 |  |   |   |   |
 
