@@ -43,9 +43,13 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
        
-  std::map<int, TH1F*> hNTrackMap;  
-  std::map<int, TH1F*> hNClusterMap;
-  std::map<int, TH1F*> hexNClusterMap; //NCluster > 3
+
+
+  std::map<int, int> hNTrackMap;  
+  std::map<int, int> hNClusterMap;  
+  std::map<int, int> hexNClusterMap;  
+
+
   std::map<int, double> emptyEventsMap;  
   std::map<int,std::pair<int,int> > timeStampWindow;
   std::set<int> snapshotCounter;
@@ -56,9 +60,9 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
   int NEvents = 0; int snapshotC = 0;
     
   //  int to = 50000000;
-  int div = 300000; //5 minute snapshot, 60 * 5*10^3 milliseconds
-  //  int to = 100000;
-  //  int div = 3000;
+        int div = 300000; //5 minute snapshot, 60 * 5*10^3 milliseconds
+	//  	int to = 100000;
+	//  	int div = 10000;
 
   bool aggregateFlag = false;  
   int t0 = 0; int ientry = 0;
@@ -66,22 +70,25 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
 
   std::ofstream outFile ("OutFile.txt");
   if(outFile.is_open()){
-
+    
+    std::ofstream eTFile ("emptyEvents.txt");
+    if(eTFile.is_open()){
+    
     outFile << "#"<< "Time(5mins)" << " " << "chNo" << " " << "extraCl" <<" "<< "Ncluster" << " " << "Ntracks" <<" " << "AvgNClusters" << " " << "AvgNTracks" <<" " << "tFrom" << " " << "tTo"<<"\n";
     // Loop over all events in file
     for ( ; Event.GetNextEvent() >= 0; ++ientry) {
 
-      //    if (ientry >= to){break;} 
+      //      if (ientry >= to){break;} 
 
       totalEvents +=1;        
-    
+      
       if(ientry == 0 ) {
         t0 = Event.Time();
       }
       int ID = Event.Time();
       int timeDiff = ID - t0;
       int tmp = timeDiff / div;
-    
+      
       if (snapshotCounter.count(tmp) == 0){
         snapshotC = tmp;
         snapshotCounter.insert(tmp);
@@ -94,8 +101,8 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
         NEvents = totalEvents;      // can also subtract emptyevents 
         aggregateFlag = true;
       }
-
-
+      
+      
       // to take care of the rollover of time, assuming t0 = 0
       // size of snapshotCounter gives the latest time chunk
       // eg. if tmp = 1 when snapshotCounter.size() == 100, snapshotC = tmp + snapshotCounter.size() = 101 which is what we want
@@ -103,20 +110,20 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
         std::cout << " Caught time rollover: " << Event.Time()<< " " << ientry << std::endl;
         snapshotC = tmp + snapshotCounter.size();
         snapshotCounter.insert(tmp);
-      
+	
         int tNow = Event.Time();
         timeStampWindow[snapshotC] = std::make_pair(tLast, tNow);
         tLast = tNow;      
         NEvents = totalEvents;      
         aggregateFlag = true;
-      
+	
       }
-
+      
     
       if (ientry % div == 0) {            
         std::cout << "Current time index:: "  << snapshotC << " ientry: " << ientry << " timeDiff(ms): " << timeDiff<< std::endl;
       } 
-
+      
     
       if(Event.NHits() == 0){
         emptyEvents += 1;
@@ -130,72 +137,86 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
         int chNo = Telescope->Channel();
        
         if (!hNTrackMap.count(chNo)) {
-          TString Name = TString::Format("NTracks_Ch%02i",  chNo);
-          hNTrackMap[chNo] = new TH1F(Name, Name, 100, 0, 5);
-
-          Name = TString::Format("NClusters_Ch%02i",  chNo);
-          hNClusterMap[chNo] = new TH1F(Name, Name, 100, 0, 40);
-
-          Name = TString::Format("exNCluster_Ch%02i",  chNo);
-          hexNClusterMap[chNo] = new TH1F(Name, Name, 100, 0, 40);            
-        }
+	  hNTrackMap[chNo] = 0;
+	  hNClusterMap[chNo] = 0;
+	  hexNClusterMap[chNo] = 0;
+	}
 
 
         int nclusters = Telescope->NClusters();
-        int ntracks = Telescope->NTracks();
+	//        int ntracks = Telescope->NTracks();
+	int nhitplanes = Telescope->NHitPlanes();
+	
+	
+	if (nhitplanes == 3) {
 
-        if(nclusters !=0) {
-          hNClusterMap[chNo]->Fill(nclusters);
-        }
+	for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack){
+	    PLTTrack* Track = Telescope->Track(itrack);
 
-        if(nclusters > 3) {
-          hexNClusterMap[chNo]->Fill(ntracks);
-        }
-          
-        if(ntracks !=0) {
-          hNTrackMap[chNo]->Fill(ntracks); 
-        }
+	    if (Track->NClusters() >= 3){
+	      hNTrackMap[chNo] += 1;
+	    }
+	  }
+
+
+	  if(nclusters !=0) {
+	    hNClusterMap[chNo] += nclusters;
+	  }
+
+	  if(nclusters > 3) {
+	    hexNClusterMap[chNo] += nclusters;
+	  }
+
+	  //	  if(ntracks !=0) {
+	  //	    hNTrackMap[chNo] += ntracks;
+	  //	  }
+	}
       }
-
-    
+      
       if (aggregateFlag) {
       
         std::cout << "Aggregating histograms... " << " ientry: " << ientry << std::endl;
         std::cout << "Number of events in this timeWindow: " << NEvents << std::endl;
         std::cout << "snapshotC: " << snapshotC << " timeWindow: (" << timeStampWindow[snapshotC].first << " , " << timeStampWindow[snapshotC].second << ")" << std::endl;      
 
-        emptyEventsMap[snapshotC] = (100.0 * emptyEvents) / (totalEvents  -1 ) ;
 
+	eTFile << snapshotC<< " " <<  1.0* emptyEvents/ (totalEvents -1)<<"\n";
 
-        printf("Collecting counts from histograms for all Channels\n" );          
+        printf("Collecting counts for all Channels\n" );          
           
         // aggregate cluster count and track count for every telescope
-        for (std::map<int, TH1F*>::iterator it = hNClusterMap.begin(); it != hNClusterMap.end(); ++it) {
-          int clCount = hNClusterMap[it->first]->GetEntries();
-          int trCount = hNTrackMap[it->first]->GetEntries();
-          int exClcount = hexNClusterMap[it->first]->GetEntries();
-          double AvgNCluster = 1.0 * hNClusterMap[it->first]->GetEntries() / NEvents;
-          double AvgNTrack = 1.0 * hNTrackMap[it->first]->GetEntries() / NEvents;
+	//        for (std::map<int, TH1F*>::iterator it = hNClusterMap.begin(); it != hNClusterMap.end(); ++it) {
+
+        for (std::map<int, int>::iterator it = hNClusterMap.begin(); it != hNClusterMap.end(); ++it) {
+
+          int clCount = hNClusterMap[it->first];
+          int trCount = hNTrackMap[it->first];
+          int exClcount = hexNClusterMap[it->first];
+
+          double AvgNCluster = 1.0 * hNClusterMap[it->first] / NEvents;
+          double AvgNTrack = 1.0 * hNTrackMap[it->first]/ NEvents;
 
           outFile << snapshotC << " " << it->first << " " << exClcount <<" "<< clCount << " " << trCount <<" " << AvgNCluster << " " << AvgNTrack<<" " << timeStampWindow[snapshotC].first<< " " << timeStampWindow[snapshotC].second<<"\n";
+          // reset counts           
 
+	  hNTrackMap[it->first] = 0;
+	  hNClusterMap[it->first] = 0;
+	  hexNClusterMap[it->first] = 0;
 
-          // reset histograms            
-          hNClusterMap[it->first]->Reset();
-          hexNClusterMap[it->first]->Reset();                
-          hNTrackMap[it->first]->Reset();            
         }       
           
             
       totalEvents = 1;
       emptyEvents = 0;
       aggregateFlag = false;
-    }
+      }
  
     }
+
+    }
+    eTFile.close();
+  }
   outFile.close();
-    
-}
 
 return 0;
 }
