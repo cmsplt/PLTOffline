@@ -16,15 +16,16 @@
 #include "PLTU.h"
 #include "TFile.h"
 
-int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string);
+int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string, const std::string);
 
 int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
-		       const std::string TrackDistributionFileName, const std::string TimestampFileName)
+		       const std::string TrackDistributionFileName, const std::string FillNo, const std::string TimestampFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
   std::cout << "TrackDistributionFileName: " << TrackDistributionFileName << std::endl;
+  std::cout << "Fill Number: " << FillNo << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
 
@@ -171,14 +172,18 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
       int hr = nsec/3600;
       int min = (nsec-(hr*3600))/60;
       int sec = nsec % 60;
+//   if (hr >= 25 && min >= 10){
+//	std::cout << "Reached time of dropout" << std::endl;
+// 	break;  
+//     }
       std::cout << "Processing event: " << ientry << " at " << Event.Time() << " ("
 		<< std::setfill('0') << std::setw(2) << (hr%24) << ":" << std::setw(2) << min
 		<< ":" << std::setw(2) << sec << "." << std::setw(3) << Event.Time()%1000
 		<< ")" << std::endl;
       //if (ientry > 0 && fabs(MapResidualX[202]->GetRMS() - 0.002881) < 0.000001 && fabs(MapResidualX[201]->GetRMS() - 0.004684) < 0.000001) break;
     }
-    //if (ientry>=20000000){break;}
-
+    //if (ientry>=200000){break;}
+    
     if (useTimestamps) {
       stepNumber = -1;
       if (Event.Time() > timestamps[nSteps-1].second) break;
@@ -336,9 +341,10 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
 
-
-  TFile *f = new TFile("histo_slopes.root","RECREATE");
-  FILE *textf = fopen("TrackDistributions.txt", "w");
+//  const char *distbuff[50];
+//  printf(distbuff, "TrackDistributions_%s.txt", FillNo);
+  TFile *f = new TFile("histo_slopes_" + TString(FillNo.c_str())+ ".root","RECREATE");
+  FILE *textf = fopen("TrackDistributions_" + TString(FillNo.c_str()) + ".txt", "w");
 
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
@@ -372,7 +378,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   HistBeamSpot[1]->ProjectionY()->Draw("ep");
   Can.cd(3+6);
   HistBeamSpot[2]->ProjectionY()->Draw("ep");
-  Can.SaveAs("plots/BeamSpot.gif");
+  Can.SaveAs("plots/" + TString(FillNo) + "/BeamSpot.gif");
   
   HistBeamSpot[0]->Write();
   HistBeamSpot[1]->Write();
@@ -387,7 +393,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + FillNo + "/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
 
@@ -397,7 +403,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + FillNo + "/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
 
@@ -406,7 +412,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + FillNo + "/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
   for (std::map<int, TH1F*>::iterator it = MapResidualY.begin(); it != MapResidualY.end(); ++it) {
@@ -415,7 +421,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + FillNo + "/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
   for (std::map<int, TH1F*>::iterator it = MapResidualX.begin(); it != MapResidualX.end(); ++it) {
@@ -424,7 +430,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
     TCanvas Can;
     Can.cd();
     it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
+    Can.SaveAs("plots/" + FillNo + "/" + TString(it->second->GetName()) + ".gif");
     delete it->second;
   }
   SlopeX_Step1->Write();
@@ -447,7 +453,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
   f->Close();
   fclose(textf);
-  FILE *outf = fopen("AccidentalRates.txt", "w");
+  FILE *outf = fopen("AccidentalRates_" + TString(FillNo.c_str()) + ".txt", "w");
   fprintf(outf, "%d\n", nSteps);
   for (int i=0; i<nSteps; ++i) {
     std::cout << "==step " << i << "==" << std::endl;
@@ -510,8 +516,8 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 int main (int argc, char* argv[])
 {
-  if (argc < 5 || argc > 6) {
-    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt [TimestampFile.dat]" << std::endl;
+  if (argc < 6 || argc > 7) {
+    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt FillNumber [TimestampFile.dat]" << std::endl;
     return 1;
   }
 
@@ -519,9 +525,10 @@ int main (int argc, char* argv[])
   const std::string GainCalFileName = argv[2];
   const std::string AlignmentFileName = argv[3];
   const std::string TrackDistributionFileName = argv[4];
-  const std::string TimestampFileName = (argc == 6) ? argv[5] : "";
+  const std::string fNo = argv[5];
+  const std::string TimestampFileName = (argc == 7) ? argv[6] : "";
 
-  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, TimestampFileName);
+  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, fNo, TimestampFileName);
 
   return 0;
 }
