@@ -20,7 +20,7 @@ Apollo
 BasicResiduals
 BinaryHitCounter
 CalculateAlignment
-CalculateAlignment
+CalculateEventSize
 CheckAlignment
 CheckGainCalCoefs
 ClusterLumi

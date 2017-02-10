@@ -19,21 +19,22 @@
 // #include "TBox.h"
 // #include "TCanvas.h"
 
-const int centerPlaneSize[2] = {28, 41}; // cols and rows
-const int outerPlaneSize[2] = {34, 50};  // cols and rows
+const int centerPlaneSize[2] = {24, 36}; // cols and rows
+const int outerPlaneSize[2] = {26, 38};  // cols and rows
 
-const int defaultCenterPlaneActiveArea[2][2] = {{12, 39}, {19, 59}};
+const int defaultCenterPlaneActiveArea[2][2] = {{14, 37}, {22, 57}};
 // This contains the offsets for center planes where the active area
-// has been shifted from the default above.
+// has been shifted from the default above. Necessary for working with
+// the 2015 masks but since the 2016 masks are all now recentered, this
+// can stay all zeroes.
 int centerPlaneXShift[25] = {0};
 int centerPlaneYShift[25] = {0};
-centerPlaneXShift[11] = -2;
-centerPlaneXShift[19] = 2;
 
-const char *infileName = "histo_track_occupancy.root";
-const char *outfileName = "Mask_Recentered.txt";
+const char *infileName = "histo_track_occupancy_4892_24x36.root";
+const char *outfileName = "Mask_Recentered_Test.txt";
 
-// Conversion of FED channel numbers to mFEC channel and hub.
+// Conversion of FED channel numbers to mFEC channel and hub. Crude
+// but effective.
 const char *chanName[25] = {"", "8 1 5", "8 1 13", "",  //0-3
 			    "8 1 21", "8 1 29", "",     //4-6
 			    "8 2 5", "8 2 13", "",      //7-9
@@ -84,7 +85,7 @@ void RecenterMask(void) {
 	continue;
       }
 
-      std::cout << "Channel " << iCh << " ROC " << iRoc << std::endl;
+      std::cout << "Channel " << iCh << " (" << chanName[iCh] << ") ROC " << iRoc << std::endl;
 
       // Find the maximum bin.
       // WARNING: All of this work is in bin numbers which start with 1,
