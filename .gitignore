@@ -79,6 +79,7 @@ PrintEventNumbers
 PrintTextEvents
 ProcessHistograms
 PulseHeights
+PulseHeightsBorder
 PulseHeightsSignalTrack
 PulseHeightsTrack
 RawADCValues
