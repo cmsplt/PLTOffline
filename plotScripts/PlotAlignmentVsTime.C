@@ -28,8 +28,8 @@
 #include "TAxis.h"
 #include "TLegend.h"
 
-const int nScopes = 16;
-const int nFiles = 9;
+const int nScopes = 16; // but not really
+const int nFiles = 12;
 const char *fileNames[nFiles] = {
   "../ALIGNMENT/Trans_Alignment_4201.dat",
   "../ALIGNMENT/Trans_Alignment_4208.dat",
@@ -40,10 +40,13 @@ const char *fileNames[nFiles] = {
   "../ALIGNMENT/Trans_Alignment_4545.dat",
   "../ALIGNMENT/Trans_Alignment_4555.dat",
   "../ALIGNMENT/Trans_Alignment_4565.dat",
+  "../ALIGNMENT/Trans_Alignment_4879.dat",
+  "../ALIGNMENT/Trans_Alignment_4892.dat",
+  "../ALIGNMENT/Trans_Alignment_4895.dat"
 };
-const char *fillNames[nFiles] = {"4201", "[4208]", "4256", "[4341]", "4381",
-				 "4449", "[4545]", "4555", "4565"};
-const bool magnetOn[nFiles] = {true, false, true, false, true, true, false, true, true};
+const char *fillNames[nFiles] = {"4201", "[4208]", "4256", "[4341]", "4381", "4449",
+				 "[4545]", "4555", "4565", "4879", "4892", "4895"};
+const bool magnetOn[nFiles] = {true, false, true, false, true, true, false, true, true, true, true, true};
 
 std::map<int, std::vector<double> > rot1;
 std::map<int, std::vector<double> > rot2;
