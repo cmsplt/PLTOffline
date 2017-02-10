@@ -18,7 +18,7 @@
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TGraphErrors.h"
-
+#include "TLatex.h"
 
 
 
@@ -54,7 +54,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, true);
-  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_m2_m2);
+  Event.SetPlaneClustering(PLTPlane::kClustering_Seed_5x5, PLTPlane::kFiducialRegion_All);
   Event.SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_NoTracking);
   //  Event.SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_m2_m2);
 
@@ -79,17 +79,16 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
   // Time width in events for energy time dep plots
   // This is the time width in ms
-  //int const TimeWidth = 1000 * (60 * 1);
-  int const TimeWidth = 1000;
+  // const unsigned int TimeWidth = 1000 * (60 * 1);
+  const unsigned int TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
-
 
   // Loop over all events in file
   int NGraphPoints = 0;
   int ientry = 0;
   for ( ; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
-      std::cout << "Processing event: " << ientry << std::endl;
+      std::cout << "Processing event: " << ientry << " at " << Event.ReadableTime() << std::endl;
     }
 
 
@@ -101,10 +100,10 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     uint32_t static ThisTime = 0;
     ++ThisTime;
 
-    //if (ientry == 300000) break;
-
-    //std::cout << StartTime << std::endl; exit(0);
-
+    if (ientry == 300000) {
+      std::cout << "Reached target of 300000 events; stopping..." << std::endl;
+      break;
+    }
 
     while (ThisTime - (StartTime + NGraphPoints * TimeWidth) > TimeWidth) {
       // make point(s)
@@ -167,7 +166,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
         if (!Avg2D.count(id)) {
           Avg2D[id].resize(PLTU::NCOL);
           N2D[id].resize(PLTU::NCOL);
-          for (size_t icol = 0; icol != PLTU::NCOL; ++icol) {
+          for (int icol = 0; icol != PLTU::NCOL; ++icol) {
             Avg2D[id][icol].resize(PLTU::NROW);
             N2D[id][icol].resize(PLTU::NROW);
           }
@@ -193,8 +192,8 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 
         if (!gClEnTimeMap.count(id)) {
           gClEnTimeMap[id].resize(4);
-          for (size_t ig = 0; ig != 4; ++ig) {
-            TString const Name = TString::Format("TimeAvgGraph_id%i_Cl%i", id, ig);
+          for (int ig = 0; ig != 4; ++ig) {
+            TString const Name = TString::Format("TimeAvgGraph_id%d_Cl%d", id, ig);
             gClEnTimeMap[id][ig] = new TGraphErrors();
             gClEnTimeMap[id][ig]->SetName(Name);
           }
@@ -297,7 +296,7 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     Leg->SetFillColor(0);
     Leg->SetBorderSize(0);
 
-    for (size_t ih = 0; ih != 4; ++ih) {
+    for (int ih = 0; ih != 4; ++ih) {
       TH1F* Hist = it->second[ih];
       Hist->SetStats(false);
 
@@ -319,10 +318,23 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
       }
     }
     Leg->Draw("same");
+    char buf[512];
+    sprintf(buf, "#splitline{Mean:}{%.0f}", it->second[0]->GetMean());
+    TLatex *t1 = new TLatex(0, 0, buf);
+    t1->SetNDC();
+    t1->SetX(0.68);
+    t1->SetY(0.6);
+    t1->Draw();
+    sprintf(buf, "#splitline{Peak:}{%.0f}", it->second[0]->GetXaxis()->GetBinCenter(it->second[0]->GetMaximumBin()));
+    TLatex *t2 = new TLatex(0, 0, buf);
+    t2->SetNDC();
+    t2->SetX(0.68);
+    t2->SetY(0.5);
+    t2->Draw();
+    
     // change to correct pad on canvas and draw the hist
     cMap[Channel]->cd(ROC+3+1);
-    for (size_t ig = 3; ig!= -1; --ig) {
-
+    for (int ig = 3; ig!= -1; --ig) {
       // Grab hist
       TGraphErrors* g = gClEnTimeMap[id][ig];
 
@@ -342,19 +354,19 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
     for (int ja = 0; ja != PLTU::NROW; ++ja) {
       for (int ia = 0; ia != PLTU::NCOL; ++ia) {
         if (Avg2D[id][ia][ja] < 25000) {
-          int const hwdAddy = Event.GetGainCal()->GetHardwareID(Channel);
-          int const mf  = hwdAddy / 1000;
-          int const mfc = (hwdAddy % 1000) / 100;
-          int const hub = hwdAddy % 100;
+          //int const hdwAddy = Event.GetGainCal()->GetHardwareID(Channel);
+          //int const mf  = hdwAddy / 1000;
+          //int const mfc = (hdwAddy % 1000) / 100;
+          //int const hub = hdwAddy % 100;
           //fprintf(OutPix, "%1i %1i %2i %1i %2i %2i\n", mf, mfc, hub, ROC, PLTU::FIRSTCOL + ia, PLTU::FIRSTROW + ja);
         } else {
         }
         if (Avg2D[id][ia][ja] > 0) {
           hMap2D[id]->SetBinContent(ia+1, ja+1, Avg2D[id][ia][ja]);
         }
-        printf("%6.0f ", Avg2D[id][ia][ja]);
+        //printf("%6.0f ", Avg2D[id][ia][ja]);
       }
-//      std::cout << std::endl;
+      //      std::cout << std::endl;
     }
     hMap2D[id]->SetMaximum(60000);
     hMap2D[id]->SetStats(false);
