@@ -97,6 +97,7 @@ StandardAnalysis
 TelescopeRotation
 TestAlignment
 TestBinaryFileReader
+TestBXPattern
 TestDACs
 TestGainCal
 TestTextFileReader
