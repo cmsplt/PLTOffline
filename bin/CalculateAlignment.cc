@@ -100,10 +100,17 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   std::map<int,float> r_position;
   std::map<int,float> angle;
   for (int ientry1 = 0; Event1.GetNextEvent() >= 0; ++ientry1) {
-    if (ientry1 % 10000 == 0) {
+    if (ientry1 % 100000 == 0) {
       std::cout << "Processing entry: " << ientry1 << std::endl;
     }
     if (ientry1>=3000000){break;}
+
+    // skip miniscans (fill 4892)
+    // if (Event1.Time()>61320000 && Event1.Time()<61920000) continue;
+    // if (Event1.Time()>13200000+24*3600*1000 && Event1.Time()<13620000+24*3600*1000) continue;
+    // skip miniscans (fill 4895)
+    // if (Event1.Time()>47400000 && Event1.Time()<47820000) continue;
+    // if (Event1.Time()>72840000 && Event1.Time()<73260000) continue;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event1.NTelescopes(); ++it) {
@@ -287,11 +294,18 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
     }
   } 
   for (int ientry = 0; Event2.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
+    if (ientry % 100000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
     if (ientry>=3000000){break;}
+
+    // skip miniscans (fill 4892)
+    // if (Event2.Time()>61320000 && Event2.Time()<61920000) continue;
+    // if (Event2.Time()>13200000+24*3600*1000 && Event2.Time()<13620000+24*3600*1000) continue;
+    // skip miniscans (fill 4895)
+    // if (Event2.Time()>47400000 && Event2.Time()<47820000) continue;
+    // if (Event2.Time()>72840000 && Event2.Time()<73260000) continue;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event2.NTelescopes(); ++it) {
@@ -478,11 +492,19 @@ int GenerateAlignment (std::string const DataFileName, std::string const GainCal
   } 
   // Loop over all events in file
   for (int ientry = 0; Event3.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
+    if (ientry % 100000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
     if (ientry>=3000000){break;}
+
+    // skip miniscans (fill 4892)
+    // if (Event3.Time()>61320000 && Event3.Time()<61920000) continue;
+    // if (Event3.Time()>13200000+24*3600*1000 && Event3.Time()<13620000+24*3600*1000) continue;
+    // skip miniscans (fill 4895)
+    // if (Event3.Time()>47400000 && Event3.Time()<47820000) continue;
+    // if (Event3.Time()>72840000 && Event3.Time()<73260000) continue;
+
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event3.NTelescopes(); ++it) {
 
@@ -664,7 +686,7 @@ int main (int argc, char* argv[]){
   } 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    if (ientry % 10000 == 0) {
+    if (ientry % 100000 == 0) {
       std::cout << "Processing entry: " << ientry << std::endl;
     }
 
