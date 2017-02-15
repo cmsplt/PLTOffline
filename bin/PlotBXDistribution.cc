@@ -42,6 +42,7 @@ int PlotBXDistribution (std::string const DataFileName) {
 
   // The plot.
   TH1F *bx = new TH1F("bx", "bx", 3564, 0.5, 3564.5);
+  int n[3564] = {0};
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -54,13 +55,15 @@ int PlotBXDistribution (std::string const DataFileName) {
 		<< hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
 		<< std::setw(3) << Event.Time()%1000 << std::endl;
     }
-    if (ientry < 100000) continue;
-    if (ientry > 1000000) break;
-
+    //if (ientry < 100000) continue;
+    //if (ientry > 1000000) break;
+    n[Event.BX()]++;
     bx->Fill(Event.BX());
   }
   std::cout << "Saving plot" << std::endl;
-
+  for (int i=0; i<15; ++i) {
+    std::cout << i << ": " << n[i] << std::endl;
+  }
   TCanvas c("bx", "bx", 900, 900);
   c.cd();
   bx->Draw();
