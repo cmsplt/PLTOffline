@@ -96,6 +96,7 @@ splitintoev
 StandardAnalysis
 TelescopeRotation
 TestAlignment
+TestBinaryFileReader
 TestDACs
 TestGainCal
 TestTextFileReader
