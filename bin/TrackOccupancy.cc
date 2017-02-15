@@ -38,11 +38,10 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
   // Loop over all events
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
     if (ientry % 10000 == 0) {
-      std::cout << "Processing entry: " << ientry << std::endl;
+      std::cout << "Processing entry: " << ientry << " at " << Event.ReadableTime() << std::endl;
     }
 
-
-    if (ientry >= 200000) break;
+    if (ientry >= 50000000) break;
 
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
@@ -72,8 +71,15 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
         PLTHit* HitTest = ClustTest->Hit(0);
         float slopex = (Track->fTVX/Track->fTVZ);
         float slopey = (Track->fTVY/Track->fTVZ);
+	int mincol = 14;
+	int maxcol = 37;
+	int minrow = 22;
+	int maxrow = 57;
+	// if (Channel == 11) { mincol -= 2; maxcol -= 2; }
+	// if (Channel == 19) { mincol += 2; maxcol += 2; }
+
 //        if (slopex>-0.02&&slopex<0.02&&slopey>-0.01&&slopey<0.03&&HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
-        if (HitTest->Column()>11&&HitTest->Column()<40&&HitTest->Row()>18&&HitTest->Row()<60){
+        if (HitTest->Column()>=mincol&&HitTest->Column()<=maxcol&&HitTest->Row()>=minrow&&HitTest->Row()<=maxrow){
           for (size_t icluster = 0; icluster != Track->NClusters(); ++icluster) {
             PLTCluster* Cluster = Track->Cluster(icluster);
             for (size_t ihit = 0; ihit != Cluster->NHits(); ++ihit) {
