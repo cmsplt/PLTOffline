@@ -55,6 +55,7 @@ NaiveROCCharge
 NumberOfHitsPerEvent
 OccupancyPlots
 OccupancyPlots3x3
+OccupancyVsTime
 OverlayPHLumi
 ParseCondDBData
 ParseCondDBDataTele

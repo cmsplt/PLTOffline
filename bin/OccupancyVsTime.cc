@@ -3,7 +3,11 @@
 //  OccupancyVsTime -- a simple script to see if the occupancy
 //    in a given scope/ROC is changing over time
 //    Paul Lujan, June 16 2016
-//     time-handling code derived from MeasureAccidentals.cc
+//     time-handling code derived from MeasureAccidentals.cc, so
+//     like MeasureAccidentals you can either feed it a timestamp
+//     file to go step-by-step like for a scan, or leave that argument
+//     blank to do 5-minute chunks
+//   produces plots/occupancy_vs_time.root
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -146,7 +150,7 @@ int OccupancyVsTime(const std::string DataFileName, const std::string TimestampF
   // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
 
-  TFile *f = new TFile("occupancy_vs_time.root","RECREATE");
+  TFile *f = new TFile("plots/occupancy_vs_time.root","RECREATE");
 
   float xvals[1024];
   float yvalsc[1024];
