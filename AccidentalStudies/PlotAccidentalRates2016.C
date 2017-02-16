@@ -15,25 +15,38 @@
 #include <vector>
 #include <time.h>
 
-// Magnet-on fills
-const int nFiles = 4;
+const int nFiles = 7;
 const char *fileNames[nFiles] = {
-  "CombinedRates_4569_clean.txt",
-  "CombinedRates_4879_1hr_clean.txt",
-  "CombinedRates_4892.txt",
-  "CombinedRates_4895_clean.txt"
+  //"CombinedRates_4569_clean.txt",
+  //"CombinedRates_4879_1hr_clean.txt",
+  //"CombinedRates_4892.txt",
+  //"CombinedRates_4895_clean.txt",
+  "CombinedRates_4925_clean.txt",
+  "CombinedRates_4930.txt",
+  "CombinedRates_4945_VdMCombined_Central.txt",
+  "CombinedRates_4958.txt",
+  "CombinedRates_4985.txt",
+  "CombinedRates_5005_MuScan.txt",
+  "CombinedRates_5013.txt"
 };
 const char *fillLabels[nFiles] = {
-  "Fill 4569 (Nov 2 2015, 2232b)",
-  "Fill 4879 (Apr 28, 49b)",
-  "Fill 4892 (May 7, 74b)",
-  "Fill 4895 (May 8, 301b)"
+  //"Fill 4569 (Nov 2 2015, 2232b)",
+  //"Fill 4879 (Apr 28, 49b)",
+  //"Fill 4892 (May 7, 74b)",
+  //"Fill 4895 (May 8, 301b)",
+  "Fill 4925 (May 14, 589b, new mask)",
+  "Fill 4930 (May 16, 770b)",
+  "Fill 4945 (May 18, 32b, first VdM scan)",
+  "Fill 4958 (May 28, 1453b)",
+  "Fill 4985 (June 3, 2028b)",
+  "Fill 5005 (June 11, 590b, mu scan)",
+  "Fill 5013 (June 12, 2028b)",
 };
 const bool doAllFit = false;   // show fit to all points
 
 // Use this to exclude a single fit from being drawn.
-const bool doFit[nFiles] = { true, true, true, true };
-const float xmax[nFiles] = { 2.7, 4.0, 4.0, 4.0 };
+bool doFit[nFiles];
+float xmax[nFiles];
 
 std::vector<double> fastOrLumiAll;
 std::vector<double> fastOrLumiErrAll;
@@ -79,6 +92,13 @@ TGraph *readCombinedFile(const char *fileName) {
 }
 
 void PlotAccidentalRates2016(void) {
+  for (int i=0; i<nFiles; ++i) {
+    doFit[i] = true;
+    xmax[i] = 4.0;
+  }
+  doFit[2] = false;
+  xmax[2] = 0.5;
+
   // style from PLTU
   gROOT->SetStyle("Plain");                  
   gStyle->SetPalette(1);
@@ -117,7 +137,7 @@ void PlotAccidentalRates2016(void) {
   gall->GetXaxis()->SetTitle("Online per-bunch inst lumi (Hz/#mub)");
   gall->GetYaxis()->SetTitle("Measured accidental rate (%)");
   //gall->GetYaxis()->SetTitleOffset(1.4);
-  gall->GetYaxis()->SetRangeUser(4.5, 15.0);
+  gall->GetYaxis()->SetRangeUser(1.0, 8.0);
 
   TF1 *fall;
   if (doAllFit) {
@@ -127,15 +147,16 @@ void PlotAccidentalRates2016(void) {
     gall->Fit(fall);
   }
 
-  f2015 = new TF1("f2015", "4.76 + 2.74*x", 0, 4.0);
-  f2015->SetLineColor(kBlack);
-  f2015->Draw("same L");
+//   f2015 = new TF1("f2015", "4.76 + 2.74*x", 0, 4.0);
+//   f2015->SetLineColor(kBlack);
+//   f2015->Draw("same L");
   
   for (int i=0; i<nFiles; ++i) {
     g[i]->Draw("P same");
     g[i]->SetMarkerStyle(kFullCircle);
     int icolor = i+2;
     if (icolor >= 5) icolor++;
+    if (icolor >= 6) icolor++;
     if (icolor >= 10) icolor++;
     g[i]->SetMarkerColor(icolor);
     g[i]->SetLineColor(icolor);
@@ -158,7 +179,7 @@ void PlotAccidentalRates2016(void) {
   }
   if (doAllFit)
     l->AddEntry(fall, "Fit to all points", "L");
-  l->AddEntry(f2015, "2015 accidental rate", "L");
+  // l->AddEntry(f2015, "2015 accidental rate", "L");
   l->SetFillColor(0);
   l->SetBorderSize(0);
   l->Draw();
@@ -170,7 +191,5 @@ void PlotAccidentalRates2016(void) {
       std::cout << "Value of fit " << i << " at x=3 is " << f[i]->Eval(3.0) << std::endl;
   }
 
-  // c1->Print("AccidentalRate_AllScans_Clean.png");
-  // c1->Print("AccidentalRate_MagnetOff.png");
-  c1->Print("AccidentalRate_2016.png");
+  c1->Print("AccidentalRate_2016_New.png");
 }
