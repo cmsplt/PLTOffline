@@ -15,8 +15,6 @@ plotScripts/*.so
 
 AccidentalAnalysis
 Alignment.xml
-AnalysisPSI
-Apollo
 BasicResiduals
 BinaryHitCounter
 CalculateAlignment
@@ -26,6 +24,8 @@ CheckGainCalCoefs
 ClusterLumi
 ConvertGainCoefs
 DeanTextToBinary
+DetectFailure
+DoubleColumnMC
 dumpPixffil
 dumpPixffil_orig
 EfficiencyVsBX
@@ -36,7 +36,6 @@ FindTrims
 FitAddressLevels
 GainCalFastFits
 GenerateAlignment
-GeoTest
 GetEventsFromBinary
 GetParamsFromFile
 HistNTP
@@ -60,6 +59,7 @@ OverlayPHLumi
 ParseCondDBData
 ParseCondDBDataTele
 Plot3ParamFit
+PlotActiveBunches
 PlotADCForVCal
 PlotBXDistribution
 PlotBuckets
@@ -93,7 +93,6 @@ ShowEvent
 ShowGainCalPoints
 SkimEvents
 splitintoev
-StandardAnalysis
 TelescopeRotation
 TestAlignment
 TestBinaryFileReader
@@ -103,10 +102,10 @@ TestGainCal
 TestTextFileReader
 TrackDiagnostics
 TrackingEfficiency
-TrackingEfficiencyCastor
+TrackMC
 TrackOccupancy
+TrackParams
 TrackStudies
 TrackTest
-tree1
 UltraBlackFinder
 Verbose
