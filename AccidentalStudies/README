@@ -1,8 +1,8 @@
 This directory contains all the results from measuring the accidentals for the 2015 and 2016 runs and the
 scripts used to plot these results. Here's a quick rundown of the basic procedure.
 
-1) Run MeasureAccidentals. You need at least four arguments: the slink file, the gain cal fits file, the
-alignment file, and the track distributions file.
+1) Run MeasureAccidentals. You need at least five arguments: the slink file, the gain cal fits file, the
+alignment file, the track distributions file, and the fill number.
 
 For the 2015 accidental analysis, the gain cal file used was GainCal/GainCalFits_20150923.225334.dat, the
 alignment file used was ALIGNMENT/Trans_Alignment_4449.dat, and the track distributions file was
@@ -12,8 +12,8 @@ ALIGNMENT/Trans_Alignment_4341.dat and TrackDistributions/TrackDistributions_Mag
 For the 2016 accidental analysis, the files used are GainCal/GainCalFits_20160501.155303.dat,
 ALIGNMENT/Trans_Alignment_4892.dat, and TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt.
 
-If this is a regular fill, you don't need a fifth argument; it will measure the accidental rate in
-five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the fifth argument, so
+If this is a regular fill, you don't need a sixth argument; it will measure the accidental rate in
+five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the sixth argument, so
 that it will measure the accidental rate for each step of the scan. You can make this timestamp file from a
 VdM csv file by using scripts/extractVDMTimestamps.py on the online machines (although you'll need to edit to
 remove the separation column, which is included for reference), or just make it by hand (fun).
@@ -21,18 +21,19 @@ remove the separation column, which is included for reference), or just make it 
 Sample invocation for a regular 2016 fill (4990 in this example):
 
 ./MeasureAccidentals /raid/PLT/SlinkData_2016/Slink_20160514.200310.dat GainCal/GainCalFits_20160501.155303.dat
-ALIGNMENT/Trans_Alignment_4892.dat TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt
+ALIGNMENT/Trans_Alignment_4892.dat TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt 4990
 
 Sample invocation for a regular 2015 fill (4444 in this example):
 ./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150930.234122.dat GainCal/GainCalFits_20150923.225334.dat
-ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt
+ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt 4444
 
 Sample invocation for a VdM scan (scan Y2 from fill 4266 in this example):
 ./MeasureAccidentals /raid/PLT/SlinkData_2015/Slink_20150825.003211.dat GainCal/GainCalFits_20150923.225334.dat
-ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
+ALIGNMENT/Trans_Alignment_4449.dat TrackDistributions/TrackDistributions_MagnetOn.txt 4266
+AccidentalStudies/Timestamp_Fill4266_VdMScanY2.txt
 
-Running this produces AccidentalRates.txt. After producing AccidentalRates.txt, rename it to something more
-identifying (e.g., AccidentalRates_4444.txt).
+Running this produces AccidentalRates_NNNN.txt, where NNNN is the fill number you specified, as well as a
+bunch of plots in the plots/NNNN directory.
 
 The format of this file is as follows. First, the total number of data points in the file. Then, for each
 point, a line of the form
@@ -63,4 +64,6 @@ and mu scan files, there's also a _Central version which only includes the centr
 the accidental rate measurement becomes unreliable for large beam separation).
 
 4) Finally, plot. To plot a single fill, use PlotAccidentalRates.C. To plot a bunch of fills on the same plot,
-use PlotAccidentalRatesAllScans.C. See those files for specific documentation.
+use PlotAccidentalRatesAllScans.C. These have been updated to PlotAccidentalRates2016Single.C and
+PlotAccidentalRates2016.C, respectively, for the 2016 versions. See those files for specific documentation
+(there are also a few other plot scripts for miscellaneous purposes).
