@@ -181,6 +181,11 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 		<< ":" << std::setw(2) << sec << "." << std::setw(3) << Event.Time()%1000
 		<< ")" << std::endl;
       //if (ientry > 0 && fabs(MapResidualX[202]->GetRMS() - 0.002881) < 0.000001 && fabs(MapResidualX[201]->GetRMS() - 0.004684) < 0.000001) break;
+      FILE *f = fopen("abort.txt", "r");
+      if (f != NULL) {
+	fclose(f);
+	break;
+      }
     }
     //if (ientry>=200000){break;}
     
@@ -343,8 +348,8 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 //  const char *distbuff[50];
 //  printf(distbuff, "TrackDistributions_%s.txt", FillNo);
-  TFile *f = new TFile("histo_slopes_" + TString(FillNo.c_str())+ ".root","RECREATE");
-  FILE *textf = fopen("TrackDistributions_" + TString(FillNo.c_str()) + ".txt", "w");
+  TFile *f = new TFile("histo_slopes_" + TString(FillNo)+ ".root","RECREATE");
+  FILE *textf = fopen("TrackDistributions_" + TString(FillNo) + ".txt", "w");
 
   TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
   Can.Divide(3, 3);
@@ -453,7 +458,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
   f->Close();
   fclose(textf);
-  FILE *outf = fopen("AccidentalRates_" + TString(FillNo.c_str()) + ".txt", "w");
+  FILE *outf = fopen("AccidentalRates_" + TString(FillNo) + ".txt", "w");
   fprintf(outf, "%d\n", nSteps);
   for (int i=0; i<nSteps; ++i) {
     std::cout << "==step " << i << "==" << std::endl;
