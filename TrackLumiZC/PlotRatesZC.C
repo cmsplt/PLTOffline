@@ -14,11 +14,14 @@
 #include <vector>
 #include <time.h>
 
-static const float calibration = 11246./310.9144407;
+// The fast-or sigmavis isn't going to be very sensible for the Slink
+// data. Instead just use 3 which seems to be pretty good for the moment.
+//static const float calibration = 11246./310.9144407;
+static const float calibration = 3.0;
 
 void PlotRatesZC(const std::string fileName, const int fill) {
   // Set this true of you want the program to ignore very small luminosities
-  // In general, you porbably eitehr want this, or it won't matter
+  // In general, you probably either want this, or it won't matter
   bool eliminateSmall = true;
   // Minimum luminosity (value in last row of input) to be considered valid 
   // Only relvant if eliminateSmall is true
@@ -38,7 +41,7 @@ void PlotRatesZC(const std::string fileName, const int fill) {
   gStyle->SetCanvasBorderMode(0);
   gStyle->SetLegendBorderSize(0);
   gStyle->SetOptFit(111);
-  gStyle->SetStatY(0.2);
+  gStyle->SetStatY(0.35);
 
   //Vectors into which we read the data
   std::vector<double> fastOrLumi;
@@ -77,7 +80,7 @@ void PlotRatesZC(const std::string fileName, const int fill) {
     if ((nMeas == 0) || (nFilledTrig == (int)0) || (nBunches == 0) || (tracksAll == 0) || (tBegin == tEnd) (nFull == nFilledTrig) || (tracksAll == nTrig) || (nFull == 0.0))
       continue;
 
-    // IOf turned on, ignore small luminosities that might throw off the data
+    // If turned on, ignore small luminosities that might throw off the data
     if (eliminateSmall) {
       if (totLumi < minLum)
 	continue;
@@ -87,8 +90,9 @@ void PlotRatesZC(const std::string fileName, const int fill) {
     fastOrLumi.push_back(totLumi/(nMeas*nBunches));
     trackLumiAll.push_back(-log(1.0-(double)tracksAll/nTrig));
     double f0 = 1.0-(double)nFull/nFilledTrig;
-    
-    double f0err = sqrt(f0*(1-f0)/nFilledTrig)/sqrt(13.);
+    // It's unclear whether the error should include 1/sqrt(n_channels) or not. If I do include it
+    // the errors look too small, so I'm leaving it out for the moment.
+    double f0err = sqrt(f0*(1-f0)/nFilledTrig);///sqrt(13.);
     double goodTrackZC = -log(f0)*calibration;
     double goodTrackZCPlus = -log(f0-f0err)*calibration;
     trackLumiGood.push_back(goodTrackZC);
@@ -128,11 +132,12 @@ void PlotRatesZC(const std::string fileName, const int fill) {
   g1->SetMarkerStyle(kFullCircle);
   g1->SetMarkerColor(kBlue);
   g1->SetMarkerSize(1);
-  TF1 *f1 = new TF1("f1", "pol2");
+  TF1 *f1 = new TF1("f1", "pol1"); // or pol2 if you're paranoid
   f1->FixParameter(0, 0);
   f1->SetLineColor(kBlue);
   f1->SetLineWidth(1);
   g1->Fit(f1);
+  c1->Update();
 
   plotTitle.str("");
   TCanvas *c2 = new TCanvas("c2", "c2", 600, 600);
@@ -164,8 +169,15 @@ void PlotRatesZC(const std::string fileName, const int fill) {
   g3->SetMarkerColor(kBlue);
   g3->SetLineColor(kBlue);
   g3->SetMarkerSize(1);
-  TF1 *f3 = new TF1("f3", "pol0"); //Maybe pol1 for fills around #5100, since there seems to be an upward trend here
+  // You can use either pol0 or pol1 here depending on what you're looking for.
+  TF1 *f3 = new TF1("f3", "pol1");
   f3->SetLineColor(kBlue);
   f3->SetLineWidth(1);
   g3->Fit(f3);
+
+  char buf[64];
+  sprintf(buf, "TrackZCVsFastOr%d.png", fill);
+  c1->Print(buf);
+  sprintf(buf, "TrackZCRatio%d.png", fill);
+  c3->Print(buf);
 }

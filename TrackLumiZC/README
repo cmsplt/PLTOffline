@@ -1,0 +1,30 @@
+This directory contains the scripts and results for running the luminosity calculation using zero counting on
+the Slink data. This analysis was originally started by me (Paul) and extended by Daniel Gift in summer 2016.
+
+The basic workflow is pretty similar to that for the accidental measurement, so consult the documentation for
+that for more information. To summarize:
+
+1) Run TrackLumiZeroCounting (it works pretty much the same way as MeasureAccidentals). You'll get an output
+file called TrackLumiZC.txt.
+
+This file is like the accidental rates file, ecept it contains a couple of extra columns. Specifically, the
+columns are:
+- time stamp start
+- time stamp end
+- number of triggers
+- total number of tracks
+- number of good tracks
+- number of triggered bunches with collisions
+- number of triggered bunches with collisions not containing any tracks
+- number of triggered bunches with collisions containing tracks
+
+The zero fraction is just the second-to-last field divided by the third-to-last field.
+
+2) Use ParseCondDBData to combine that with the online fast-or data in the same way that you do for the
+accidental data to get a combined rate file. Rename the files to some sensible pattern (like they are in this
+directory).
+
+3) Use the script PlotRatesZC.C (give it two arguments: the combined rate file and the fill number) to plot
+the results. PlotRatesZCTime.C plots the results as a function of time instead.
+
+See TrackLumiZeroCounting.cc and the plotting scripts for more details.

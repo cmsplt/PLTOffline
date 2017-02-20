@@ -101,6 +101,9 @@ TestGainCal
 TestTextFileReader
 TrackDiagnostics
 TrackingEfficiency
+TrackLumiZeroCounting
+TrackLumiZeroCountingBXVdM
+TrackLumiZeroCountingVdM
 TrackMC
 TrackOccupancy
 TrackParams
