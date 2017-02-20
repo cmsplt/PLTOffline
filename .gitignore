@@ -57,7 +57,6 @@ OccupancyPlots3x3
 OccupancyVsTime
 OverlayPHLumi
 ParseCondDBData
-ParseCondDBDataTele
 Plot3ParamFit
 PlotActiveBunches
 PlotADCForVCal
