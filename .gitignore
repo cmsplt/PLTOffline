@@ -1,4 +1,6 @@
 *.dat
+!Alignment_*.dat
+!Trans_Alignment_*.dat
 *.gif
 *.root
 *.txt
