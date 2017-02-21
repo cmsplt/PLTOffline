@@ -39,6 +39,9 @@ The format of this file is as follows. First, the total number of data points in
 point, a line of the form
 begin timestamp,end timestamp,number of triggers,number of total tracks,number of good tracks
 
+The program will also provide at the end some information about what caused failing tracks to fail. I've
+saved this information for a few fills in the AccidentalFails_NNNN.txt files for reference.
+
 2) Get the CSV file containing the online luminosity from the Conditions DB: go to the FillReport page for the
 fill, click the ConditionBrowser link at the top, change the start time to the beginning of stable beams, and
 then plot CMS_BEAM_COND/CMS_BRIL_LUMIPLTZ/LUMI_TOTINST. Save the result as a csv file. If the fill is long, you

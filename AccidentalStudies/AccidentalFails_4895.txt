@@ -1,0 +1,15 @@
+Causes of failure for tracks that failed (note: categories are not mutually exclusive): 
+147961 tracks (2.62536% of total, 23.4714% of failures) fail slopeY cut
+61530 tracks (1.09176% of total, 9.76064% of failures) fail slopeX cut
+323831 tracks (5.74593% of total, 51.37% of failures) fail residY0 cut
+483570 tracks (8.58027% of total, 76.7098% of failures) fail residY1 cut
+323897 tracks (5.7471% of total, 51.3805% of failures) fail residY2 cut
+296400 tracks (5.2592% of total, 47.0186% of failures) fail residX0 cut
+385331 tracks (6.83716% of total, 61.1259% of failures) fail residX1 cut
+296567 tracks (5.26216% of total, 47.0451% of failures) fail residX2 cut
+39909 tracks (0.708129% of total, 6.33085% of failures) fail slopeY cut but pass slopeX and residuals
+11463 tracks (0.203395% of total, 1.8184% of failures) fail slopeX cut but pass slopeY and residuals
+5424 tracks (0.0962413% of total, 0.860421% of failures) fail both slope cuts but pass residuals
+438077 tracks (7.77306% of total, 69.4931% of failures) fail residual cuts but pass slope cuts
+69119 tracks (1.22642% of total, 10.9645% of failures) fail residual X specifically, passing slope and residual Y
+135516 tracks (2.40454% of total, 21.4972% of failures) fail at least one slope and at least one residual cut
