@@ -3,9 +3,13 @@
 // PulseHeightsBorder -- a simple variant of PulseHeights which looks
 // at the pulse heights for only the border pixels or the non-border
 // pixels. Currently set up to do border pixels; to do non-border
-// pixels, just invert the check on isBorderPixel in l. 269 (also change
-// the output filenames in l. 417 and l. 434). In an ideal world this
+// pixels, just invert the check on isBorderPixel in l. 342 (also change
+// the output filenames in l. 490 and l. 507). In an ideal world this
 // could all be done with switches in PulseHeights.
+//
+// In addition to the input data file and gain cal, you'll also need to
+// specify the mask file used (online format) so the script can figure
+// out the border pixels.
 //
 // Paul Lujan, October 12 2016
 //

@@ -234,10 +234,6 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
   TH1I hCLROCLevels("CL_ROCLevels", "CL ROC Levels", 310, 1400, 3500);
   TH1I hCLTBMLevels("CL_TBMLevels", "CL TBM Levels", 210, 1400, 3500);
 
-
-  std::map<int, float> GainAvg[120][120];
-  std::map<int, int>   GainN[120][120];
-
   TH1I hUBPosition[5];
   for (int i = 0; i != 5; ++i) {
     TString const Name = TString::Format("UBPositionl%i", i);
@@ -359,7 +355,7 @@ int PLTTesterReader::CalculateLevels (std::string const& InFileName, int const N
     printf(" Threshold %d value %f\n", i, xp);
 
     if (i <= 6) {
-      LevelsROC[i] = xp;
+      LevelsROC[i] = (int)xp;
     }
 
     lLine[i]->SetLineColor(2);

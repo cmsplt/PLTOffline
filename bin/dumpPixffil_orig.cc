@@ -307,12 +307,10 @@ int main(int argc, char *argv[])
     return 1; 
   } 
   unsigned long long totevent=0;
-  unsigned long pickit=0;
   unsigned long header=0;
   unsigned long n1,n2;
-  unsigned long bxold=0;
-  unsigned long long n;
-  int wrdcount = 0;int event=0;int stopit=0;
+  //unsigned long bxold=0;
+  unsigned int wrdcount = 0;int event=0;int stopit=0;
   in.read((char *) &n2, sizeof n2);in.read((char *) &n1, sizeof n1); //begin of file word
   int hitcount=0;
 

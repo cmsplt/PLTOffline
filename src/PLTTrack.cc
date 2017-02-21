@@ -41,7 +41,7 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
   }
 
 
-  float VX, VY, VZ;
+  float VX = 0, VY = 0, VZ = 0;
 
   int const Channel = fClusters[0]->Channel();
 
@@ -87,23 +87,23 @@ int PLTTrack::MakeTrack (PLTAlignment& Alignment)
     std::cerr << "WARNING: Cannot make track with < 2 clusters" << std::endl;
     return -1;
   } else if (NClusters() == 3) {
-    float const SumX = fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX();
-    float const SumY = fClusters[0]->TY() + fClusters[1]->TY() + fClusters[2]->TY();
-    float const SumZ = fClusters[0]->TZ() + fClusters[1]->TZ() + fClusters[2]->TZ();
-    float const SumZ2 = fClusters[0]->TZ() * fClusters[0]->TZ()
-                      + fClusters[1]->TZ() * fClusters[1]->TZ()
-                      + fClusters[2]->TZ() * fClusters[2]->TZ();
+    //float const SumX = fClusters[0]->TX() + fClusters[1]->TX() + fClusters[2]->TX();
+    //float const SumY = fClusters[0]->TY() + fClusters[1]->TY() + fClusters[2]->TY();
+    //float const SumZ = fClusters[0]->TZ() + fClusters[1]->TZ() + fClusters[2]->TZ();
+    //float const SumZ2 = fClusters[0]->TZ() * fClusters[0]->TZ()
+    //                  + fClusters[1]->TZ() * fClusters[1]->TZ()
+    //                  + fClusters[2]->TZ() * fClusters[2]->TZ();
 
-    float const SumXZ = fClusters[0]->TX() * fClusters[0]->TZ()
-                      + fClusters[1]->TX() * fClusters[1]->TZ()
-                      + fClusters[2]->TX() * fClusters[2]->TZ();
+    //float const SumXZ = fClusters[0]->TX() * fClusters[0]->TZ()
+    //                  + fClusters[1]->TX() * fClusters[1]->TZ()
+    //                  + fClusters[2]->TX() * fClusters[2]->TZ();
 
-    float const SumYZ = fClusters[0]->TY() * fClusters[0]->TZ()
-                      + fClusters[1]->TY() * fClusters[1]->TZ()
-                      + fClusters[2]->TY() * fClusters[2]->TZ();
+    //float const SumYZ = fClusters[0]->TY() * fClusters[0]->TZ()
+    //                  + fClusters[1]->TY() * fClusters[1]->TZ()
+    //                  + fClusters[2]->TY() * fClusters[2]->TZ();
 
-    float const MySlopeX = (3 * SumXZ - SumX * SumZ) / (3 * SumZ2 - SumZ * SumZ);
-    float const MySlopeY = (3 * SumYZ - SumY * SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    //float const MySlopeX = (3 * SumXZ - SumX * SumZ) / (3 * SumZ2 - SumZ * SumZ);
+    //float const MySlopeY = (3 * SumYZ - SumY * SumZ) / (3 * SumZ2 - SumZ * SumZ);
 
     float const SlopeX = (fClusters[2]->TX() - fClusters[0]->TX()) / (fClusters[2]->TZ() - fClusters[0]->TZ());
     float const SlopeY = (fClusters[2]->TY() - fClusters[0]->TY()) / (fClusters[2]->TZ() - fClusters[0]->TZ());

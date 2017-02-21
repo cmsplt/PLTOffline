@@ -69,8 +69,8 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 
   for (int ix = 1; ix <= NBinsX; ++ix) {
     for (int iy = 1; iy <= NBinsY; ++iy) {
-      int const px = hIN->GetXaxis()->GetBinLowEdge(ix);
-      int const py = hIN->GetYaxis()->GetBinLowEdge(iy);
+      int const px = (int)hIN->GetXaxis()->GetBinLowEdge(ix);
+      int const py = (int)hIN->GetYaxis()->GetBinLowEdge(iy);
       if (PLTPlane::IsFiducial(FidRegion, px, py)) {
         if (hIN->GetBinContent(ix, iy) > ZMax) {
           h->Fill(ZMax - hIN->GetMaximum() / (float) NBins);
@@ -97,7 +97,7 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
   PLTEvent Event2(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;
+  //PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
   Event2.SetPlaneFiducialRegion(FidRegionHits);
@@ -124,8 +124,6 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
   gStyle->SetPadLeftMargin(0.10);
   gStyle->SetPadRightMargin(0.10);
 
-  float const PixelDist = 5;
-
   float bsGX=0.0, bsGY=0.0, bsGZ=0.0; //global coords of the beamspot
 
   int NEvents=0, NEventsTot=0;
@@ -146,7 +144,7 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
       ++NEventsTot;
 
       // make them clean events
-      if (Telescope->NHitPlanes() < 3 || Telescope->NHitPlanes() != Telescope->NClusters()) {
+      if (Telescope->NHitPlanes() < 3 || Telescope->NHitPlanes() != (int)Telescope->NClusters()) {
         continue;
       }
 
@@ -324,7 +322,7 @@ int CheckAlignment (std::string const DataFileName, std::string const GainCalFil
       size_t const NPlanes = Telescope->NPlanes();
 
       // make them clean events
-      if (Telescope->NHitPlanes() < 3 || Telescope->NHitPlanes() != Telescope->NClusters()) {
+      if (Telescope->NHitPlanes() < 3 || Telescope->NHitPlanes() != (int)Telescope->NClusters()) {
         continue;
       }
 

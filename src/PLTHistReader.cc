@@ -66,7 +66,7 @@ int PLTHistReader::GetNextBuffer ()
     fOrbit[fTempChannel] = fTempOrbit;
     fChannels.push_back(fTempChannel);
 
-    for (uint32_t ib = 0; ib < NBUCKETS; ++ib) {
+    for (int ib = 0; ib < NBUCKETS; ++ib) {
       if ((fBigBuff[fTempChannel][ib] & 0xfff) != 0) {
         fBuckets.push_back(ib);
       }

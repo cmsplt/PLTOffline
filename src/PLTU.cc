@@ -152,7 +152,7 @@ namespace PLTU
     if (NBins > 0) {
       h = new TH1F(hNAME, hNAME, NBins, ZMin, ZMax);
     } else {
-      h = new TH1F(hNAME, hNAME, (int) ZMax - ZMin + 1, ZMin, ZMax);
+      h = new TH1F(hNAME, hNAME, (int)(ZMax - ZMin + 1), ZMin, ZMax);
     }
     h->SetXTitle("Number of Hits");
     h->SetYTitle("Number of Pixels");
