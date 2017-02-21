@@ -107,6 +107,10 @@ int PulseHeights(const std::string DataFileName, const std::string GainCalFileNa
   std::string line;
   int mFec, mFecCh, hubId, roc;
   std::string colString, rowString;
+  std::stringstream colBounds;
+  std::stringstream rowBounds;
+  colBounds << PLTU::FIRSTCOL << "-" << PLTU::LASTCOL;
+  rowBounds << PLTU::FIRSTROW << "-" << PLTU::LASTROW;
   while (1) {
     std::getline(maskFile, line);
     if (maskFile.eof()) break;
@@ -123,38 +127,41 @@ int PulseHeights(const std::string DataFileName, const std::string GainCalFileNa
     int id = ch*10+roc;
 
     // OK, now finally figure out what to do with this line. This code is kinda clunky but it should work.
-    if (rowString == "0-79") {
+    if (rowString == rowBounds.str()) {
       size_t cdash = colString.find('-');
       if (cdash == std::string::npos) {
-	std::cout << "Unexpected line in mask file (no column range but row range is 0-79)" << std::endl;
+	std::cout << "Unexpected line in mask file (no column range but row range is " << rowBounds.str() << ")" << std::endl;
 	continue;
       }
       int firstCol = atoi(colString.c_str());
       int lastCol = atoi(colString.substr(cdash+1).c_str());
-      if (firstCol == 0) { // Column range is 0-X, so this is the left border
+      if (firstCol == PLTU::FIRSTCOL) { // Column range is 0-X, so this is the left border
 	borderColMin[id] = lastCol;
-      } else if (lastCol == 51) { // Column range is X-51, so this is the right border
+      } else if (lastCol == PLTU::LASTCOL) { // Column range is X-51, so this is the right border
 	borderColMax[id] = firstCol;
       } else {
-	std::cout << "Unexpected line in mask file (column range neither starts at 0 nor ends at 51)" << std::endl;
+	std::cout << "Unexpected line in mask file (column range neither starts at " << PLTU::FIRSTCOL 
+		  << " nor ends at " << PLTU::LASTCOL << ")" << std::endl;
       }
-    } else if (colString == "0-51") {
+    } else if (colString == colBounds.str()) {
       size_t rdash = rowString.find('-');
       if (rdash == std::string::npos) {
-	std::cout << "Unexpected line in mask file (no row range but column range is 0-51)" << std::endl;
+	std::cout << "Unexpected line in mask file (no row range but column range is " << colBounds.str() << ")" << std::endl;
 	continue;
       }
       int firstRow = atoi(rowString.c_str());
       int lastRow = atoi(rowString.substr(rdash+1).c_str());
-      if (firstRow == 0) { // Row range is 0-X, so this is the bottom border
+      if (firstRow == PLTU::FIRSTROW) { // Row range is 0-X, so this is the bottom border
 	borderRowMin[id] = lastRow;
-      } else if (lastRow == 79) { // Row range is X-79, top border
+      } else if (lastRow == PLTU::LASTROW) { // Row range is X-79, top border
 	borderRowMax[id] = firstRow;
       } else {
-	std::cout << "Unexpected line in mask file (row range neither starts at 0 nor ends at 79)" << std::endl;
+	std::cout << "Unexpected line in mask file (row range neither starts at " << PLTU::FIRSTROW
+		  << " nor ends at " << PLTU::LASTROW << ")" << std::endl;
       }
     } else {
-      std::cout << "Unexpected line in mask file (col range is not 0-51 and row range is not 0-79)" << std::endl;
+      std::cout << "Unexpected line in mask file (col range is not " << colBounds.str() << " and row range is not "
+		<< rowBounds.str() << ")" << std::endl;
     }
   } // loop over mask file
 
@@ -170,7 +177,7 @@ int PulseHeights(const std::string DataFileName, const std::string GainCalFileNa
   //   for (std::map<int, int>::const_iterator it = borderColMin.begin(); it != borderColMin.end(); ++it) {
   //     int id = it->first;
   //     std::cout << "Ch-ROC " << id/10 << "-" << id%10 << " borders: cols " << borderColMin[id] << "/" << borderColMax[id]
-  // 	      << " rows " << borderRowMin[id] << "/" << borderRowMax[id] << std::endl;
+  //    	      << " rows " << borderRowMin[id] << "/" << borderRowMax[id] << std::endl;
   //   }
   std::cout << "Read border pixels from " << MaskFileName << std::endl;
 
