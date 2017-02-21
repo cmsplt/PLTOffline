@@ -197,6 +197,18 @@ int PLTGainCal::GetHardwareID (int const Channel)
   return fHardwareMap[Channel];
 }
 
+int PLTGainCal::GetFEDChannel(int mFec, int mFecCh, int hubId) {
+  int hardwareAddr = 1000*mFec + 100*mFecCh + hubId;
+  for (std::map<int, int>::const_iterator it = fHardwareMap.begin(); it != fHardwareMap.end(); ++it) {
+    if (it->second == hardwareAddr) { return it->first; }
+  }
+  // Because this function is currently used for mask files, which may contain ROCs that are not actually
+  // in use, I've suppressed the warning here so you don't get a whole bunch of them. This means it's your
+  // responsibility to actually check the return value! I mean it!
+  // std::cout << "Warning: requested hardware address mFec=" << mFec << " mFecCh=" << mFecCh << " hubId=" << hubId << " not found in channel map" << std::endl;
+  return -1;
+}
+
 void PLTGainCal::ReadGainCalFile5 (std::string const GainCalFileName)
 {
   int ch, row, col, roc;

@@ -53,8 +53,7 @@ class PLTGainCal
     bool IsGood () { return fIsGood; }
 
     int GetHardwareID (int const);
-
-
+    int GetFEDChannel(int mFec, int mFecCh, int hubId);
 
   private:
     bool fIsGood;

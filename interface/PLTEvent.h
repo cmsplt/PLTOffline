@@ -91,6 +91,8 @@ class PLTEvent : public PLTTracking
       return fGainCal.GetHardwareID(ch);
     }
 
+    int GetFEDChannel(int mFec, int mFecCh, int hubId) { return fGainCal.GetFEDChannel(mFec, mFecCh, hubId); }
+
     std::vector<int>& getDesyncChannels(void) { return fDesyncChannels; }
 
     std::string ReadableTime();

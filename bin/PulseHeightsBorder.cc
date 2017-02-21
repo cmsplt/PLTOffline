@@ -49,7 +49,7 @@ float Average (std::vector<float>& V)
 
 
 
-int PulseHeights (std::string const DataFileName, std::string const GainCalFileName)
+int PulseHeights(const std::string DataFileName, const std::string GainCalFileName, const std::string MaskFileName)
 {
   PLTU::SetStyle();
   gStyle->SetOptStat(111111);
@@ -88,29 +88,91 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
   const unsigned int TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
 
-  // This is very hackish. But it works (I hope).
+  // Read the mask file and figure out the border pixels from the given masks.
+  // These four maps store the left border column, the right border column,
+  // the bottom border row, and the top border row, respectively. Note that in
+  // all cases "border" means the innermost MASKED column/row, so for instance the
+  // first active column is borderColMin+1, the last is borderColMax-1, etc.
   std::map<int, int> borderColMin;
   std::map<int, int> borderColMax;
   std::map<int, int> borderRowMin;
   std::map<int, int> borderRowMax;
 
-  std::ifstream borderFile("BorderPixels_Mask2016.txt");
-  if (!borderFile.is_open()) {
-    std::cerr << "ERROR: cannot open border file" << std::endl;
+  std::ifstream maskFile(MaskFileName.c_str());
+  if (!maskFile.is_open()) {
+    std::cerr << "ERROR: cannot open mask file" << std::endl;
     return false;
   }
-  
-  int ch, roc, colL, colH, rowL, rowH;
+
+  std::string line;
+  int mFec, mFecCh, hubId, roc;
+  std::string colString, rowString;
   while (1) {
-    borderFile >> ch >> roc >> colL >> colH >> rowL >> rowH;
-    if (borderFile.eof()) break;
+    std::getline(maskFile, line);
+    if (maskFile.eof()) break;
+    if (line.empty()) continue; // skip blank lines
+    if (line.at(0) == '#') continue; // skip comment lines
+    if (line.find('-') == std::string::npos) continue; // skip lines without a range specified (i.e. just a single pixel).
+    // These are presumably to mask out noisy pixels and so are not relevant to the finding of border pixels.
+
+    std::stringstream ss(line);
+    ss >> mFec >> mFecCh >> hubId >> roc >> colString >> rowString;
+    // convert hardware ID to fed channel
+    int ch = Event.GetFEDChannel(mFec, mFecCh, hubId);
+    if (ch == -1) continue; // conversion failed -- this is probably a scope in the mask file not actually functional
     int id = ch*10+roc;
-    std::cout << "Read " << id << ": " << colL << "-" << colH << " rows: " << rowL << "-" << rowH << std::endl;
-    borderColMin[id] = colL;
-    borderColMax[id] = colH;
-    borderRowMin[id] = rowL;
-    borderRowMax[id] = rowH;
+
+    // OK, now finally figure out what to do with this line. This code is kinda clunky but it should work.
+    if (rowString == "0-79") {
+      size_t cdash = colString.find('-');
+      if (cdash == std::string::npos) {
+	std::cout << "Unexpected line in mask file (no column range but row range is 0-79)" << std::endl;
+	continue;
+      }
+      int firstCol = atoi(colString.c_str());
+      int lastCol = atoi(colString.substr(cdash+1).c_str());
+      if (firstCol == 0) { // Column range is 0-X, so this is the left border
+	borderColMin[id] = lastCol;
+      } else if (lastCol == 51) { // Column range is X-51, so this is the right border
+	borderColMax[id] = firstCol;
+      } else {
+	std::cout << "Unexpected line in mask file (column range neither starts at 0 nor ends at 51)" << std::endl;
+      }
+    } else if (colString == "0-51") {
+      size_t rdash = rowString.find('-');
+      if (rdash == std::string::npos) {
+	std::cout << "Unexpected line in mask file (no row range but column range is 0-51)" << std::endl;
+	continue;
+      }
+      int firstRow = atoi(rowString.c_str());
+      int lastRow = atoi(rowString.substr(rdash+1).c_str());
+      if (firstRow == 0) { // Row range is 0-X, so this is the bottom border
+	borderRowMin[id] = lastRow;
+      } else if (lastRow == 79) { // Row range is X-79, top border
+	borderRowMax[id] = firstRow;
+      } else {
+	std::cout << "Unexpected line in mask file (row range neither starts at 0 nor ends at 79)" << std::endl;
+      }
+    } else {
+      std::cout << "Unexpected line in mask file (col range is not 0-51 and row range is not 0-79)" << std::endl;
+    }
+  } // loop over mask file
+
+  // Consistency check
+  if (borderColMin.size() != borderColMax.size() || borderColMin.size() != borderRowMin.size() ||
+      borderColMin.size() != borderRowMax.size()) {
+    std::cout << "Warning: not all borders were found for all ROCs specified!" << std::endl;
+    std::cout << "Left: " << borderColMin.size() << " Right: " << borderColMax.size()
+	      << " Bottom: " << borderRowMin.size() << " Top: " << borderRowMax.size() << std::endl;
   }
+
+  // Print out what we got for debugging purposes.
+  //   for (std::map<int, int>::const_iterator it = borderColMin.begin(); it != borderColMin.end(); ++it) {
+  //     int id = it->first;
+  //     std::cout << "Ch-ROC " << id/10 << "-" << id%10 << " borders: cols " << borderColMin[id] << "/" << borderColMax[id]
+  // 	      << " rows " << borderRowMin[id] << "/" << borderRowMax[id] << std::endl;
+  //   }
+  std::cout << "Read border pixels from " << MaskFileName << std::endl;
 
   // Loop over all events in file
   int NGraphPoints = 0;
@@ -439,19 +501,21 @@ int PulseHeights (std::string const DataFileName, std::string const GainCalFileN
 }
 
 
-int main (int argc, char* argv[])
+int main(const int argc, const char* argv[])
 {
-  if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName]" << std::endl;
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " [DataFileName] [GainCalFileName] [MaskFileName]" << std::endl;
     return 1;
   }
 
-  std::string const DataFileName = argv[1];
-  std::string const GainCalFileName = argv[2];
+  const std::string DataFileName = argv[1];
+  const std::string GainCalFileName = argv[2];
+  const std::string MaskFileName = argv[3]; 
   std::cout << "DataFileName:    " << DataFileName << std::endl;
   std::cout << "GainCalFileName: " << GainCalFileName << std::endl;
+  std::cout << "MaskFileName:    " << MaskFileName << std::endl;
 
-  PulseHeights(DataFileName, GainCalFileName);
+  PulseHeights(DataFileName, GainCalFileName, MaskFileName);
 
   return 0;
 }
