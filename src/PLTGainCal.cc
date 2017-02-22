@@ -23,7 +23,8 @@ PLTGainCal::PLTGainCal (std::string const GainCalFileName, int const NParams)
   if (NParams == 5) {
     ReadGainCalFile5(GainCalFileName);
   } else if (NParams == 3) {
-    ReadGainCalFile3(GainCalFileName);
+    std::cerr << "ERROR: 3-parameter gain cal files are no longer supported" << std::endl;
+    //ReadGainCalFile3(GainCalFileName);
   } else {
     std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
     throw;
@@ -182,7 +183,8 @@ void PLTGainCal::ReadGainCalFile (std::string const GainCalFileName)
     if (fNParams == 5) {
       ReadGainCalFile5(GainCalFileName);
     } else if (fNParams == 3) {
-      ReadGainCalFile3(GainCalFileName);
+      std::cerr << "ERROR: 3-parameter gain cal files are no longer supported" << std::endl;
+      //ReadGainCalFile3(GainCalFileName);
     } else {
       std::cerr << "ERROR: I have no idea how many params you have" << std::endl;
       throw;
@@ -472,86 +474,91 @@ void PLTGainCal::PrintGainCal5 ()
   return;
 }
 
-void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
-{
-  int mFec, mFecChannel, hubAddress;
-  int ch, row, col, roc;
-  int irow;
-  int icol;
-  int ich;
-  int iroc;
+// This function can't possibly work since it has no apparent way to convert the
+// hardware address read in from the file to the FED channel. Since as far as I
+// know the 3-parameter files are not used any more, I've just taken out the
+// function entirely. If you ever need to use it again, you'll have to fix it.
 
-  std::ifstream f(GainCalFileName.c_str());
-  if (!f) {
-    std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
-    throw;
-  }
+// void PLTGainCal::ReadGainCalFile3 (std::string const GainCalFileName)
+// {
+//   int mFec, mFecChannel, hubAddress;
+//   int ch, row, col, roc;
+//   int irow;
+//   int icol;
+//   int ich;
+//   int iroc;
 
-  for (int i = 0; i != NCHNS; ++i) {
-    for (int j = 0; j != NROCS; ++j) {
-      for (int k = 0; k != PLTU::NCOL; ++k) {
-        for (int m = 0; m != PLTU::NROW; ++m) {
-          for (int n = 0; n != 5; ++n) {
-            GC[i][j][k][m][n] = 0;
-          }
-        }
-      }
-    }
-  }
+//   std::ifstream f(GainCalFileName.c_str());
+//   if (!f) {
+//     std::cerr << "ERROR: cannot open file: " << GainCalFileName << std::endl;
+//     throw;
+//   }
+
+//   for (int i = 0; i != NCHNS; ++i) {
+//     for (int j = 0; j != NROCS; ++j) {
+//       for (int k = 0; k != PLTU::NCOL; ++k) {
+//         for (int m = 0; m != PLTU::NROW; ++m) {
+//           for (int n = 0; n != 5; ++n) {
+//             GC[i][j][k][m][n] = 0;
+//           }
+//         }
+//       }
+//     }
+//   }
 
 
-  // Loop over header lines in the input data file
-  for (std::string line; std::getline(f, line); ) {
-    if (line == "") {
-      break;
-    }
-  }
+//   // Loop over header lines in the input data file
+//   for (std::string line; std::getline(f, line); ) {
+//     if (line == "") {
+//       break;
+//     }
+//   }
 
-  std::istringstream ss;
-  for (std::string line ; std::getline(f, line); ) {
-    ss.clear();
-    ss.str(line.c_str());
-    ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
+//   std::istringstream ss;
+//   for (std::string line ; std::getline(f, line); ) {
+//     ss.clear();
+//     ss.str(line.c_str());
+//     ss >> mFec >> mFecChannel >> hubAddress >> roc >> col >> row;
 
-    if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
-    if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };
-    if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS\n"); };
-    if (PLTGainCal::DEBUGLEVEL) {
-      printf("%i %i %i\n", ch, row, col);
-    }
+//     if (ch  >  MAXCHNS) { printf("ERROR: over MAXCHNS\n"); };
+//     if (row >= MAXROWS) { printf("ERROR: over MAXROWS\n"); };
+//     if (col >= MAXCOLS) { printf("ERROR: over MAXCOLS\n"); };
+//     if (PLTGainCal::DEBUGLEVEL) {
+//       printf("%i %i %i\n", ch, row, col);
+//     }
 
-    irow = RowIndex(row);
-    icol = ColIndex(col);
-    ich  = ChIndex(ch);
-    iroc = RocIndex(roc);
+//     irow = RowIndex(row);
+//     icol = ColIndex(col);
+//     ich  = ChIndex(ch);
+//     iroc = RocIndex(roc);
 
-    if (irow < 0 || icol < 0 || ich < 0) {
-      continue;
-    }
+//     if (irow < 0 || icol < 0 || ich < 0) {
+//       continue;
+//     }
 
-    ss >> GC[ich][iroc][icol][irow][0]
-       >> GC[ich][iroc][icol][irow][1]
-       >> GC[ich][iroc][icol][irow][2];
+//     ss >> GC[ich][iroc][icol][irow][0]
+//        >> GC[ich][iroc][icol][irow][1]
+//        >> GC[ich][iroc][icol][irow][2];
 
-    // dude, you really don't want to do this..
-    if (PLTGainCal::DEBUGLEVEL) {
-      for (int i = 0; i != 3; ++i) {
-        printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
-        for (int j = 0; j != 3; ++j) {
-          printf(" %9.1E", GC[ich][i][icol][irow][j]);
-        }
-        printf("\n");
-      }
-    }
-  }
+//     // dude, you really don't want to do this..
+//     if (PLTGainCal::DEBUGLEVEL) {
+//       for (int i = 0; i != 3; ++i) {
+//         printf("%1i %1i %2i %1i %2i %2i", mFec, mFecChannel, hubAddress, roc, col, row);
+//         for (int j = 0; j != 3; ++j) {
+//           printf(" %9.1E", GC[ich][i][icol][irow][j]);
+//         }
+//         printf("\n");
+//       }
+//     }
+//   }
 
-  f.close();
+//   f.close();
 
-  // Apparently this file was read no problem...
-  fIsGood = true;
+//   // Apparently this file was read no problem...
+//   fIsGood = true;
 
-  return;
-}
+//   return;
+// }
 
 
 

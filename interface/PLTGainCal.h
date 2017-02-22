@@ -34,7 +34,7 @@ class PLTGainCal
     void  SetCharge (PLTHit&);
     float GetCharge(int const ch, int const roc, int const col, int const row, int adc);
     void  ReadGainCalFile (std::string const GainCalFileName);
-    void  ReadGainCalFile3 (std::string const GainCalFileName);
+  //void  ReadGainCalFile3 (std::string const GainCalFileName);
     void  ReadGainCalFile5 (std::string const GainCalFileName);
     void  ReadGainCalFileExt (std::string const GainCalFileName);
     void  ReadTesterGainCalFile (std::string const GainCalFileName);

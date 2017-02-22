@@ -31,7 +31,7 @@ int MakeStraightAlignment (std::string const FileName)
     fprintf(f, "\n");
     for (int iroc = 0; iroc != 3; ++iroc) {
       fprintf(f, "%2i  %2i ", ich, iroc);
-      fprintf(f, "                ", 0.);
+      fprintf(f, "                ");
       fprintf(f, "    %12E", 0.);
       fprintf(f, "    %12E", 0.);
       fprintf(f, "    %12E", 0.);
