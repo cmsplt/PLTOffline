@@ -29,7 +29,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
   PLTHistReader HistReader(InFileName);
 
 
-  uint32_t FirstTime;
+  uint32_t FirstTime = 0;
 
   TFile OutFile(OutFileName.c_str(), "recreate");
   if (!OutFile.IsOpen()) {
@@ -62,7 +62,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
 
       Total = HistReader.GetTotal();
       std::vector<uint32_t>* Ch = HistReader.Channels();
-      for (int ich = 0; ich != Ch->size(); ++ich) {
+      for (unsigned int ich = 0; ich != Ch->size(); ++ich) {
         int const Chan = (*Ch)[ich];
         for (int ibin = 0; ibin != NBUCKETS; ++ibin) {
           Hist[Chan][ibin] = HistReader.GetChBucket(Chan, ibin);

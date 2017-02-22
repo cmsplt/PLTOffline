@@ -84,7 +84,7 @@ int main (int argc, char* argv[])
 
 
   std::string tempStr;
-  double from, to;
+  int from, to;
 
   std::cout << "Enter event number beginning and end (in millions)"<<std::endl;
   std::cout << " Event From (in millions):: "<<std::endl;

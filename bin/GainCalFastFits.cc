@@ -104,7 +104,7 @@ int GainCalFastFits (TString const InFileName)
 
   // Keep track of which ROCs and what VCals we use
   std::set<int> ROCNames;
-  std::set<int>     VCals;
+  std::set<float> VCals;
 
 
   // Loop over header linesin the input data file
@@ -188,6 +188,9 @@ int GainCalFastFits (TString const InFileName)
       fOutRoot.cd();
       dGoodFits = fOutRoot.mkdir(gooddirname);
       dBadFits = fOutRoot.mkdir(baddirname);
+    } else {
+      dGoodFits = (TDirectory*)fOutRoot.GetKey(gooddirname);
+      dBadFits = (TDirectory*)fOutRoot.GetKey(baddirname);
     }
 
     // Hist for good bad and all fits

@@ -160,7 +160,7 @@ int FindTrims (std::string const InFileName)
 	//	int trim = It->second.Done[icol][irow] ? It->second.Trim[icol][irow] : 15;
 	//	float eff = It->second.Done[icol][irow] ? It->second.Eff[icol][irow] : 0;
 	int trim = 15;
-	int eff = 0;
+	float eff = 0;
 	//if either the efficiency hit 100% at some point, OR the best trim had an eff within a reasonable range
 	if (It->second.Done[icol][irow] || (It->second.Eff[icol][irow] > 1 && It->second.Eff[icol][irow] < 99)){
 	  trim = It->second.Trim[icol][irow];

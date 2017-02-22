@@ -37,7 +37,6 @@ int MakeTracks (std::string const DataFileName, std::string const GainCalFileNam
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, FidRegionHits);
 

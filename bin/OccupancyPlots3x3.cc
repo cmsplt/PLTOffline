@@ -51,8 +51,8 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 
   for (int ix = 1; ix <= NBinsX; ++ix) {
     for (int iy = 1; iy <= NBinsY; ++iy) {
-      int const px = hIN->GetXaxis()->GetBinLowEdge(ix);
-      int const py = hIN->GetYaxis()->GetBinLowEdge(iy);
+      int const px = (int)hIN->GetXaxis()->GetBinLowEdge(ix);
+      int const py = (int)hIN->GetYaxis()->GetBinLowEdge(iy);
       if (PLTPlane::IsFiducial(FidRegion, px, py)) {
         if (hIN->GetBinContent(ix, iy) > ZMax) {
           h->Fill(ZMax - hIN->GetMaximum() / (float) NBins);
@@ -75,7 +75,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
   for (int icol = 1; icol <= HistIn.GetNbinsX(); ++icol) {
 
     // What pixel column is this?  If it's outside the range skip it
-    int const PixCol = HistEff->GetXaxis()->GetBinLowEdge(icol);
+    int const PixCol = (int)HistEff->GetXaxis()->GetBinLowEdge(icol);
     if (PixCol < FirstCol || PixCol > LastCol) {
       continue;
     }
@@ -83,7 +83,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
     for (int irow = 1; irow <= HistIn.GetNbinsY(); ++irow) {
 
       // What row is this?  If it's outside the range skip it
-      int const PixRow = HistEff->GetYaxis()->GetBinLowEdge(irow);
+      int const PixRow = (int)HistEff->GetYaxis()->GetBinLowEdge(irow);
       if (PixRow < FirstRow || PixRow > LastRow) {
         continue;
       }
@@ -98,7 +98,7 @@ TH2F* Get3x3EfficiencyHist (TH2F& HistIn, int const FirstCol, int const LastCol,
               //std::cout << "here " << HistIn.GetBinContent(icol + i, irow + j) << std::endl;
             }
             if ( (i != 0 || j != 0) && HistIn.GetBinContent(icol + i, irow + j) > 0) {
-              HitsNearThisPixel.push_back( HistIn.GetBinContent(icol + i, irow + j));
+              HitsNearThisPixel.push_back((int)HistIn.GetBinContent(icol + i, irow + j));
             }
           }
         }
