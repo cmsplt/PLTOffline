@@ -12,14 +12,14 @@ int convertPixel(int pix) {
 
 bool decodeDataWord (uint32_t unsigned word, int counts[]) {
   if (word & 0xfffffff) {
-    const uint32_t unsigned plsmsk = 0xff;
+    //const uint32_t unsigned plsmsk = 0xff;
     const uint32_t unsigned pxlmsk = 0xff00;
     const uint32_t unsigned dclmsk = 0x1f0000;
     const uint32_t unsigned rocmsk = 0x3e00000;
     const uint32_t unsigned chnlmsk = 0xfc000000;
     uint32_t unsigned chan = ((word & chnlmsk) >> 26);
     uint32_t unsigned roc  = ((word & rocmsk)  >> 21);
-    uint32_t rawPixel = ((word & pxlmsk) >> 8);
+    //uint32_t rawPixel = ((word & pxlmsk) >> 8);
 
     // Check for embeded special words: roc > 25 is special, not a hit
     if (roc > 25) {
@@ -144,7 +144,7 @@ int readEvent(std::ifstream& infile) {
           } else {
             time = n1;
           }
-          if (time < fLastTime) {
+          if ((int)time < fLastTime) {
             ++fTimeMult;
           }
 
@@ -165,7 +165,7 @@ int readEvent(std::ifstream& infile) {
 	  if ((peekWord & 0xff000000) == 0xa0000000) {
 	    bheader = false;
 	    time = n1;
-	    if (time < fLastTime) {
+	    if ((int)time < fLastTime) {
 	      ++fTimeMult;
 	    }
 	    fLastTime = time;

@@ -69,8 +69,8 @@ int TrackOccupancy (std::string const DataFileName, std::string const GainCalFil
         PLTTrack* Track = Telescope->Track(itrack);
         PLTCluster* ClustTest = Track->Cluster(1);
         PLTHit* HitTest = ClustTest->Hit(0);
-        float slopex = (Track->fTVX/Track->fTVZ);
-        float slopey = (Track->fTVY/Track->fTVZ);
+        //float slopex = (Track->fTVX/Track->fTVZ);
+        //float slopey = (Track->fTVY/Track->fTVZ);
 	int mincol = 14;
 	int maxcol = 37;
 	int minrow = 22;

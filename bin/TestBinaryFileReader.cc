@@ -11,7 +11,7 @@ int convertPixel(int pix) {
 bool decodeDataWord (uint32_t unsigned word, int counts[]) {
   if (fullDebug) std::cout << std::hex << "0x" << word << std::dec << ": ";
   if (word & 0xfffffff) {
-    const uint32_t unsigned plsmsk = 0xff;
+    //const uint32_t unsigned plsmsk = 0xff;
     const uint32_t unsigned pxlmsk = 0xff00;
     const uint32_t unsigned dclmsk = 0x1f0000;
     const uint32_t unsigned rocmsk = 0x3e00000;
@@ -196,7 +196,7 @@ int readEvent(std::ifstream& infile) {
           } else {
             time = n1;
           }
-          if (time < fLastTime) {
+          if ((int)time < fLastTime) {
             ++fTimeMult;
           }
 
@@ -217,7 +217,7 @@ int readEvent(std::ifstream& infile) {
 	  if ((peekWord & 0xff000000) == 0xa0000000) {
 	    bheader = false;
 	    time = n1;
-	    if (time < fLastTime) {
+	    if ((int)time < fLastTime) {
 	      ++fTimeMult;
 	    }
 	    fLastTime = time;

@@ -22,7 +22,7 @@ int ShowEvent (std::string const FileName, int const EventNumber)
   PLTEvent Event(FileName);
 
   while (Event.GetNextEvent() >= 0) {
-    if (Event.EventNumber() != EventNumber) {
+    if ((int)Event.EventNumber() != EventNumber) {
       continue;
     }
 
@@ -40,7 +40,7 @@ int ShowEvent (std::string const FileName, int const EventNumber)
 
       for (size_t ip = 0; ip != Telescope->NPlanes(); ++ip) {
         PLTPlane* Plane = Telescope->Plane(ip);
-        printf("Channel: %2i  ROC: %1i  Hits: %4i  Clusters: %4i\n", Telescope->Channel(), Plane->ROC(), Plane->NHits(), Plane->NClusters());
+        printf("Channel: %2i  ROC: %1i  Hits: %4zd  Clusters: %4zd\n", Telescope->Channel(), Plane->ROC(), Plane->NHits(), Plane->NClusters());
 
         C.cd(Plane->ROC() + 1);
         TString const ROCName = TString::Format("Ch%02i_ROC%1i", Telescope->Channel(), Plane->ROC());

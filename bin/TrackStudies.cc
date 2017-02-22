@@ -52,11 +52,11 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
 
   std::map<int, double> emptyEventsMap;  
   std::map<int,std::pair<int,int> > timeStampWindow;
-  std::set<int> snapshotCounter;
+  std::set<unsigned int> snapshotCounter;
 
   
   int emptyEvents = 0; int totalEvents = 1;      
-  int tLast = 0; int tNow = 0;
+  int tLast = 0;
   int NEvents = 0; int snapshotC = 0;
     
   //  int to = 50000000;
@@ -87,7 +87,7 @@ int TrackStudies(std::string const DataFileName, std::string const GainCalFileNa
       }
       int ID = Event.Time();
       int timeDiff = ID - t0;
-      int tmp = timeDiff / div;
+      unsigned int tmp = timeDiff / div;
       
       if (snapshotCounter.count(tmp) == 0){
         snapshotC = tmp;

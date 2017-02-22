@@ -69,8 +69,8 @@ TH1F* FidHistFrom2D (TH2F* hIN, TString const NewName, int const NBins, PLTPlane
 
   for (int ix = 1; ix <= NBinsX; ++ix) {
     for (int iy = 1; iy <= NBinsY; ++iy) {
-      int const px = hIN->GetXaxis()->GetBinLowEdge(ix);
-      int const py = hIN->GetYaxis()->GetBinLowEdge(iy);
+      int const px = (int)hIN->GetXaxis()->GetBinLowEdge(ix);
+      int const py = (int)hIN->GetYaxis()->GetBinLowEdge(iy);
       if (PLTPlane::IsFiducial(FidRegion, px, py)) {
         if (hIN->GetBinContent(ix, iy) > ZMax) {
           h->Fill(ZMax - hIN->GetMaximum() / (float) NBins);
@@ -131,7 +131,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       size_t const NPlanes = Telescope->NPlanes();
 
       // make them clean events
-      if (Telescope->NHitPlanes() < 2 || Telescope->NHitPlanes() != Telescope->NClusters()) {
+      if (Telescope->NHitPlanes() < 2 || Telescope->NHitPlanes() != (int)Telescope->NClusters()) {
         continue;
       }
 
@@ -212,7 +212,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             //printf("ResXY: %15.9f   RPXY: %15.9f\n", ResXY.first, RPXY.first);
-            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
+            if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               //hEffMapN[Channel * 10 + 2]->Fill(Plane[2]->Cluster(0)->SeedHit()->Column(), Plane[2]->Cluster(0)->SeedHit()->Row());
               hEffMapN[Channel * 10 + 2]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 2]->Fill(Tracks[1].fTVX/Tracks[1].fTVZ);
@@ -247,7 +247,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           if (Plane[1]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
-            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
+            if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               hEffMapN[Channel * 10 + 1]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 1]->Fill(Tracks[2].fTVX/Tracks[2].fTVZ);
 	      hEffMapSlopeYN[Channel * 10 + 1]->Fill(Tracks[2].fTVY/Tracks[2].fTVZ);
@@ -275,7 +275,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           if (Plane[0]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
-            if (abs(RPXY.first) <= PixelDist && abs(RPXY.second) <= PixelDist) {
+            if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               hEffMapN[Channel * 10 + 0]->Fill(PXY.first, PXY.second);
 	      hEffMapSlopeXN[Channel * 10 + 0]->Fill(Tracks[3].fTVX/Tracks[3].fTVZ);
 	      hEffMapSlopeYN[Channel * 10 + 0]->Fill(Tracks[3].fTVY/Tracks[3].fTVZ);

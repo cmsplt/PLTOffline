@@ -86,8 +86,8 @@ int TrackParams (std::string const DataFileName, std::string const GainCalFileNa
   // to identify colliding and non-colliding BX
   TH1F *nTracks = new TH1F ("nTracks","nTracks",3564,-0.5,3563.5);
 
-  unsigned int begin = 1000000; //start slink event from
-  unsigned int end = 5000000;  //end slink event at
+  int begin = 1000000; //start slink event from
+  int end = 5000000;  //end slink event at
 
   std::set<int> snapshotCounter; // Tm, unique set
   int t0 = 0;

@@ -232,7 +232,7 @@ int RunTeststandGainCal (std::string const InFileName)
     printf(" Threshold %d value %f\n", i, xp);
 
     if (i <= 6) {
-      LevelsROC[i] = xp;
+      LevelsROC[i] = (int)xp;
     }
 
     lLine[i]->SetLineColor(2);
