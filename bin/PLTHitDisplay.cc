@@ -106,7 +106,6 @@ void SetupGeometry (TGeoManager* GeoManager, PLTAlignment& Alignment, PLTEvent& 
   prop->SetMaxZ(185);
 
   TEveRecTrackD *rc = new TEveRecTrackD();
-  TEveTrack *track = 0;
   std::map<int, int> NTrackMap;
 
   // variables hits
@@ -237,7 +236,6 @@ int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFile
     //  PLTEvent Event(DataFileName);  
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 

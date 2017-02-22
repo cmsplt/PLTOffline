@@ -149,7 +149,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int NEventsInTime = 0;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000 * 1;
+  const uint32_t TimeWidth = 1000 * 1;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, float> NHitsSum;
   std::map<int, float> NTracksSum;
@@ -285,7 +285,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
       int SuperCleanTracks=1;//1 requires each plane to have one cluster with only 1 pixel, 0 requires planes 0 and 2 to have 1 cluster
 
       // make them clean events
-      if (Telescope->NHitPlanes() < 2+SuperCleanTracks || Telescope->NHitPlanes() != Telescope->NClusters()) {
+      if (Telescope->NHitPlanes() < 2+SuperCleanTracks || Telescope->NHitPlanes() != (int)Telescope->NClusters()) {
         continue;
       }
       // require hits on plane 0 and plane 2

@@ -50,7 +50,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   uint32_t Channel;
   uint32_t BigBuff[NBUCKETS];
 
-  uint32_t FirstOrbitTime;
+  uint32_t FirstOrbitTime = 0;
   uint32_t LastOrbitTime;
 
   bool GotIt;
@@ -59,7 +59,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   uint32_t OTime[NMAXCHANNELS][NOrbitsToAvg];
   uint32_t O[NMAXCHANNELS][NOrbitsToAvg];
   uint32_t Counts[NMAXCHANNELS][NOrbitsToAvg][NBUCKETS];
-  std::vector<int> Ch;
+  std::vector<unsigned int> Ch;
 
   bool IsChInOrbit[NMAXCHANNELS][NOrbitsToAvg];
   for (int i = 0; i != NMAXCHANNELS; ++i) {
@@ -182,7 +182,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
 
       for (int ib = 0; ib < NBUCKETS; ++ib) {
         Counts[Channel][iOrbit][ib] = (BigBuff[ib] & 0xfff);
-        TotalSum += (BigBuff[ib] & 0xfff) / 4.0;
+        TotalSum += (BigBuff[ib] & 0xfff) / 4;
       }
 
       OTime[Channel][iOrbit] = OrbitTime;
@@ -200,7 +200,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
     GraphTotal.GetXaxis()->SetLimits(FirstOrbitTime - 14400000, FirstOrbitTime);
     //GraphTotal.GetYaxis()->SetRangeUser(0, GraphTotal.GetMaximum() * (1.2));
 
-    for (std::vector<int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
+    for (std::vector<unsigned int>::iterator ich = Ch.begin(); ich != Ch.end(); ++ich) {
       HistByChannel[*ich]->Clear();
       HistByChannel[*ich]->Reset();
       uint64_t TotalInChannel = 0;

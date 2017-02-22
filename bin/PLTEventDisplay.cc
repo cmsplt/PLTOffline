@@ -150,7 +150,6 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m1_m1;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
 
@@ -175,7 +174,6 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
   //  TEveRecTrackD *rc = new TEveRecTrackD();
   
   TEveRecTrackD *rc = new TEveRecTrackD();
-  TEveTrack *track = 0;
   std::map<int, int> NTrackMap;
 
   // Loop over all events in file
@@ -194,7 +192,7 @@ int PLTEventDisplay (std::string const DataFileName, std::string const GainCalFi
       if (NTrackMap[Telescope->Channel()] > 10) continue;
 
 
-      printf("Number of tracks: %i\n", Telescope->NTracks());
+      printf("Number of tracks: %zd\n", Telescope->NTracks());
       for (size_t itrack = 0; itrack != Telescope->NTracks(); ++itrack) {
         PLTTrack* T = Telescope->Track(itrack);
 

@@ -122,7 +122,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
   int NEventsInTime = 0;
 
   // Time width in events for energy time dep plots
-  int const TimeWidth = 1000;
+  const uint32_t TimeWidth = 1000;
   std::map<int, std::vector< std::vector<float> > > ChargeHits;
   std::map<int, float> NHitsSum;
   std::map<int, float> NTracksSum;
@@ -336,7 +336,7 @@ int PulseHeightsTrack (std::string const DataFileName, std::string const GainCal
           if (!Avg2D.count(id)) {
             Avg2D[id].resize(PLTU::NCOL);
             N2D[id].resize(PLTU::NCOL);
-            for (size_t icol = 0; icol != PLTU::NCOL; ++icol) {
+            for (int icol = 0; icol != PLTU::NCOL; ++icol) {
               Avg2D[id][icol].resize(PLTU::NROW);
               N2D[id][icol].resize(PLTU::NROW);
             }

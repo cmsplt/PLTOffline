@@ -302,8 +302,8 @@ void GetTracksRandomSlope (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
         // Use L coord system:
         // THINK ABOUT THIS FOR ROTATIONS...
         float const LZ = Alignment.LZ(i, r);
-        float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
-        float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+        float const LX = Alignment.PXtoLX((int)(StartCol + SlopeX * LZ));
+        float const LY = Alignment.PYtoLY((int)(StartRow + SlopeY * LZ));
 
         std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
 
@@ -355,8 +355,8 @@ void GetTracksHeadOnFirstROCMultiTracks (std::vector<PLTHit*>& Hits, PLTAlignmen
         // Use L coord system:
         // THINK ABOUT THIS FOR ROTATIONS...
         float const LZ = Alignment.LZ(i, r);
-        float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
-        float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+        float const LX = Alignment.PXtoLX((int)(StartCol + SlopeX * LZ));
+	float const LY = Alignment.PYtoLY((int)(StartRow + SlopeY * LZ));
 
         std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
 
@@ -411,8 +411,8 @@ void GetRandTracksROCEfficiencies (std::vector<PLTHit*>& Hits, PLTAlignment& Ali
       // Use L coord system:
       // THINK ABOUT THIS FOR ROTATIONS...
       float const LZ = Alignment.LZ(i, r);
-      float const LX = Alignment.PXtoLX(StartCol + SlopeX * LZ);
-      float const LY = Alignment.PYtoLY(StartRow + SlopeY * LZ);
+      float const LX = Alignment.PXtoLX((int)(StartCol + SlopeX * LZ));
+      float const LY = Alignment.PYtoLY((int)(StartRow + SlopeY * LZ));
 
       std::pair<float, float> LXY = Alignment.TtoLXY(LX, LY, i, r);
 
@@ -548,8 +548,8 @@ void GetTracksParallelGaus (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
   for (int i = 1; i <= NTelescopes; ++i) {
 
     // pick a starting point with width and offset
-    int const StartCol = gRandom->Gaus( (PLTU::FIRSTCOL + PLTU::LASTCOL + 1.0) / 2.0 + ColOffset, ColWidth);
-    int const StartRow = gRandom->Gaus( (PLTU::FIRSTROW + PLTU::LASTROW + 1.0) / 2.0 + RowOffset, RowWidth);
+    int const StartCol = (int)gRandom->Gaus( (PLTU::FIRSTCOL + PLTU::LASTCOL + 1.0) / 2.0 + ColOffset, ColWidth);
+    int const StartRow = (int)gRandom->Gaus( (PLTU::FIRSTROW + PLTU::LASTROW + 1.0) / 2.0 + RowOffset, RowWidth);
 
 
 
@@ -692,8 +692,8 @@ void GetGausHitsOneROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
   float const RowWidth = 30;
 
   // pick a starting point on the first ROC
-  int const PX = gRandom->Gaus( ((float) (PLTU::FIRSTCOL + PLTU::LASTCOL) + 1.0) / 2.0 + ColOffset, ColWidth);
-  int const PY = gRandom->Gaus( ((float) (PLTU::FIRSTROW + PLTU::LASTROW) + 1.0) / 2.0 + RowOffset, RowWidth);
+  int const PX = (int)gRandom->Gaus( ((float) (PLTU::FIRSTCOL + PLTU::LASTCOL) + 1.0) / 2.0 + ColOffset, ColWidth);
+  int const PY = (int)gRandom->Gaus( ((float) (PLTU::FIRSTROW + PLTU::LASTROW) + 1.0) / 2.0 + RowOffset, RowWidth);
 
 
   int const ROC = 0;

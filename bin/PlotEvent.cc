@@ -41,7 +41,7 @@ int PlotEvent (std::string const DataFileName, int const Channel, int const ROC,
         // Loop over all hits on this plane
         if (ientry == 198) {
           for (size_t ihit = 0; ihit != Plane->NHits(); ++ihit) {
-            printf("%3i: %2i  %2i\n", ihit, Plane->Hit(ihit)->Column(), Plane->Hit(ihit)->Row());
+            printf("%3zd: %2i  %2i\n", ihit, Plane->Hit(ihit)->Column(), Plane->Hit(ihit)->Row());
           }
           exit(0);
         }
