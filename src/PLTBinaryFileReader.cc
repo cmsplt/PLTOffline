@@ -1,7 +1,5 @@
 #include "PLTBinaryFileReader.h"
 
-
-
 PLTBinaryFileReader::PLTBinaryFileReader ()
 {
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_All;
@@ -365,6 +363,85 @@ void PLTBinaryFileReader::ReadPixelMask (std::string const InFileName)
   return;
 }
 
+// This is like ReadPixelMask, but reads mask files in the "online" format (i.e. with the hardware
+// address instead of FED channel number and with ranges of pixels specified). It needs the gain
+// calibration to translate the hardware address into the FED channel number, so you'll have to pass
+// it that as well.
+
+void PLTBinaryFileReader::ReadOnlinePixelMask(const std::string maskFileName, const PLTGainCal& gainCal) {
+  std::cout << "PLTBinaryFileReader::ReadOnlinePixelMask reading file: " << maskFileName << std::endl;
+
+  std::ifstream maskFile(maskFileName.c_str());
+  if (!maskFile.is_open()) {
+    std::cerr << "ERROR: cannot open mask file: " << maskFileName << std::endl;
+    throw;
+  }
+
+  std::string line;
+  int mFec, mFecCh, hubId, roc, maskVal;
+  std::string colString, rowString;
+  while (1) {
+    std::getline(maskFile, line);
+    if (maskFile.eof()) break;
+    if (line.empty()) continue; // skip blank lines
+    if (line.at(0) == '#') continue; // skip comment lines
+    
+    std::istringstream ss(line);
+    ss >> mFec >> mFecCh >> hubId >> roc >> colString >> rowString >> maskVal;
+    if (ss.fail()) {
+      std::cout << "Malformed line in mask file: " << line << std::endl;
+      continue;
+    }
+
+    // convert hardware ID to fed channel
+    int ch = gainCal.GetFEDChannel(mFec, mFecCh, hubId);
+    if (ch == -1) continue; // conversion failed -- this is probably a scope in the mask file not actually functional
+
+    // Now do the actual parsing. This code is taken from BaseCalibration::ReadPixelMaskFile in the online software
+    int firstCol, lastCol, firstRow, lastRow;
+
+    // check to see if we want a range of columns or just one column
+    size_t cdash = colString.find('-');
+    std::stringstream logmessage;
+    if (cdash == std::string::npos) {
+      firstCol = atoi(colString.c_str());
+      lastCol = firstCol;
+    } else {
+      firstCol = atoi(colString.c_str());
+      lastCol = atoi(colString.substr(cdash+1).c_str());
+    }
+
+    // same, for rows
+    size_t rdash = rowString.find('-');
+    if (rdash == std::string::npos) {
+      firstRow = atoi(rowString.c_str());
+      lastRow = firstRow;
+    } else {
+      firstRow = atoi(rowString.c_str());
+      lastRow = atoi(rowString.substr(rdash+1).c_str());
+    }
+
+    // Check for validity
+    if (firstRow < PLTU::FIRSTROW || firstCol < PLTU::FIRSTCOL || lastRow > PLTU::LASTROW || lastCol > PLTU::LASTCOL) {
+      std::cout << "Row or column numbers are out of range; this line will be skipped" << std::endl;
+      continue;
+    }
+
+    for (int col = firstCol; col <= lastCol; ++col) {
+      for (int row = firstRow; row <= lastRow; ++row) {
+	if (maskVal == 0) {
+	  // fPixelMask contains the masked pixels. So if maskVal == 0 (means "turn this pixel off").
+	  // put this pixel into fPixelMask, and if it's 1, take this pixel out of fPixelMask.
+	  fPixelMask.insert(ch*100000 + roc*10000 + col*100 + row);
+	} else {
+	  fPixelMask.erase(ch*100000 + roc*10000 + col*100 + row);
+	}	  
+      }
+    } // column & row loops
+  } // line loop
+
+  return;
+}
 
 bool PLTBinaryFileReader::IsPixelMasked (int const ChannelPixel)
 {

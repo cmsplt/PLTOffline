@@ -125,7 +125,7 @@ int PulseHeights(const std::string DataFileName, const std::string GainCalFileNa
 
     std::stringstream ss(line);
     ss >> mFec >> mFecCh >> hubId >> roc >> colString >> rowString;
-    if (ss.fail() || ss.eof()) {
+    if (ss.fail()) {
       // either too short, or one field was bad
       std::cout << "Malformed line in mask file: " << line << std::endl;
       continue;

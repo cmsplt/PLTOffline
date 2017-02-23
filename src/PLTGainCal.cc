@@ -199,7 +199,7 @@ int PLTGainCal::GetHardwareID (int const Channel)
   return fHardwareMap[Channel];
 }
 
-int PLTGainCal::GetFEDChannel(int mFec, int mFecCh, int hubId) {
+int PLTGainCal::GetFEDChannel(int mFec, int mFecCh, int hubId) const {
   int hardwareAddr = 1000*mFec + 100*mFecCh + hubId;
   for (std::map<int, int>::const_iterator it = fHardwareMap.begin(); it != fHardwareMap.end(); ++it) {
     if (it->second == hardwareAddr) { return it->first; }

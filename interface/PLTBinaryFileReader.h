@@ -11,7 +11,7 @@
 
 #include "PLTHit.h"
 #include "PLTPlane.h"
-
+#include "PLTGainCal.h"
 
 
 class PLTBinaryFileReader
@@ -35,6 +35,7 @@ class PLTBinaryFileReader
     int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
 
     void ReadPixelMask (std::string const);
+    void ReadOnlinePixelMask(const std::string maskFileName, const PLTGainCal& gainCal);
     bool IsPixelMasked (int const);
 
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
