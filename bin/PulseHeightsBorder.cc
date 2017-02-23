@@ -125,6 +125,12 @@ int PulseHeights(const std::string DataFileName, const std::string GainCalFileNa
 
     std::stringstream ss(line);
     ss >> mFec >> mFecCh >> hubId >> roc >> colString >> rowString;
+    if (ss.fail() || ss.eof()) {
+      // either too short, or one field was bad
+      std::cout << "Malformed line in mask file: " << line << std::endl;
+      continue;
+    }
+
     // convert hardware ID to fed channel
     int ch = Event.GetFEDChannel(mFec, mFecCh, hubId);
     if (ch == -1) continue; // conversion failed -- this is probably a scope in the mask file not actually functional
