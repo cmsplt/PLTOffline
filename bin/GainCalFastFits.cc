@@ -28,7 +28,6 @@
 #include "TAxis.h"
 #include "TMath.h"
 
-#include "PLTU_karen.h"
 #include "PLTU.h"
 
 // What image type do you want?
@@ -64,12 +63,12 @@ int GainCalFastFits (TString const InFileName)
   std::cout<<"InFileName: " << InFileName <<std::endl;
 
   // Set some basic style
-  PLTU_karen::SetStyle();
+  PLTU::SetStyle();
 
   // Assumes InFileName is in dir1/dir2/...Slink_day.time.dat format
   
   TObjArray *fname = InFileName.Tokenize("_");
-  TString str = ((TObjString *)fname->At(1))->GetString();
+  TString str = ((TObjString *)fname->At(fname->GetLast()))->GetString();
   TObjArray *sstr = str.Tokenize(".");
   TString yymmdd = ((TObjString *)sstr->At(0))->GetString();
   TString hhmmss = ((TObjString *)sstr->At(1))->GetString();
@@ -126,7 +125,7 @@ int GainCalFastFits (TString const InFileName)
       >> adc
       >> vcal;
 
-    if (channel==2&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<"VCAL " <<vcal<<std::endl;}
+    //if (channel==2&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<" VCAL " <<vcal<<std::endl;}
     // Get a simple string for the pixel and pair adc and vcal for this hit
     // which gets added to the map
     int Id = Pack(channel, roc, col, row);
@@ -178,6 +177,10 @@ int GainCalFastFits (TString const InFileName)
 
     // This is ROC
     int const ROCId = 10 * channel + roc;
+
+    // Print out progress
+    if (col == 0 && row == 0)
+      std::cout << "Beginning fits for channel " << channel << " roc " << roc << std::endl;
 
     //    Make a directory for good and bad fits
     TString gooddirname, baddirname;

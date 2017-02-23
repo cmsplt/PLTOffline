@@ -24,7 +24,7 @@
 #include "TFitResult.h"
 #include "TCanvas.h"
 
-#include "PLTU_karen.h"
+#include "PLTU.h"
 
 
 int const MINCOL = 13;
@@ -60,7 +60,7 @@ int FindTrims (std::string const InFileName)
 
 
   // Set some basic style
-  PLTU_karen::SetStyle();
+  PLTU::SetStyle();
 
 
   std::map<int, B> STrim;
