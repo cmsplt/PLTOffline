@@ -20,7 +20,7 @@ This repository is organized somewhat unconventionally:
 + plots (and sometimes ROOT files) produced by the executables are generally placed into plots/
 + plotScripts/ contains some scripts for making more plots
 + ALIGNMENT/, GainCal/, and TrackDistributions/ contain input files for analysis (further described below)
-+ there are a few subdirectories (e.g. AccidentalStudies) devoted to particular analyses; these have further documentation inside
++ there are a few subdirectories (e.g., AccidentalStudies) devoted to particular analyses; these have further documentation inside
 
 If you run an executable with no arguments, it should tell you what it needs as input. Example:
 
@@ -34,7 +34,7 @@ If you run an executable with no arguments, it should tell you what it needs as 
 
 **AlignmentFileName** is an alignment file from the ALIGNMENT/ directory. See the README file there for recommendations about which to use (for example, the standard 2016 alignment file is ALIGNMENT/Trans_Alignment_4892.dat). There are also a few special files, such as Alignment_IdealInstall.dat, which assumes a "perfect" installation with the nominal PLT alignment. See the description of CalculateAlignment below for more information on how to create a new alignment file.
 
-Some executables (e.g. MeasureAccidentals) may require other inputs, which are described below.
+Some executables (e.g., MeasureAccidentals) may require other inputs, which are described below.
 
 **VERY IMPORTANT:** Since running over an entire Slink file takes a very long time, many executables will only run on the first N events before stopping. Make sure to have a look and make sure that this limit (if any) is useful for your purposes!
 
@@ -80,6 +80,8 @@ This section lists the various executables in the bin/ directory that can be use
 
 ## Core Utilities
 
+These are the most frequently used analysis programs.
+
 * **OccupancyPlots** (D) is the simplest way of looking at the data. It just plots the occupancy for each pixel using the hit data from the Slink file. It makes a larger number of plots in plots/Occupancy_* of the raw occupancy histograms, the occupancy by quantiles (to reduce the effect of hot pixels), the 3x3 occupancy, 1D projections, and so forth. The ROOT data file with the information for the plots is saved as histo_occupancy.root.
 
 * **GainCalFastFits** is used to generate the GainCalFits.dat files used in nearly all analyses. You need as input a gaincalfast_YYYYMMDD.hhmmss.avg.txt file that was created by running the GainCal calibration online. Copy this to april (there are some 2015 and 2016 files in /data2/GainCal_2015 and /data2/GainCal_2016) and then run this utility. It will take about 30 minutes and then produce a GainCalFits_YYYYMMDD.hhmmss.dat file, a GainCalFits_YYYYMMDD.hhmmss.root file, and a large number of summary plots in the plots/GainCal directory. The .dat file is then used as input for the other executables that use the gain calibration; if you plan on using it further, it's recommended that you store it in GainCal/. The .root file contains all of the data about the calibration, including the specific fits per pixel and the overall summary plots.
@@ -90,22 +92,55 @@ This section lists the various executables in the bin/ directory that can be use
 
 * **TrackOccupancy** (DGA) makes occupancy plots similar to those in OccupancyPlots, but only considers hits which are part of reconstructed tracks using the tracking. This can be used to study the alignment and the mask alignment. **IMPORTANT:** The mask for the central plane is hard-coded: if the position of the hit on the central plane falls outside the mask the track will be discarded. Please be aware of this if the mask position changes! Produces plots in plots/TrackOccupancy*.gif (the actual occupancy plots), Tracks_ChXX_EvYY.gif (the raw hit data for the first few individual tracks in the file), and histo_track_occupancy.root, which contains the plot data.
 
-* **MeasureAccidentals** (DGAT)
+* **MeasureAccidentals** (DGAT) is the main utility for measuring the accidental rate. It performs the tracking using all possible combinations of hits with no quality cuts, and then looks to see if it can find at least one "good" track among the combinations. If so, the telescope is marked as good for that event; otherwise, the telescope is flagged as accidental. A good track is defined as one for which all of the track parameters (slope X/Y, and residual X/Y in planes 0/1/2) are within 5 sigma of the mean values. These parameters are defined in a track distributions file, which is an additional input to the script. You can find some in the TrackDistributions/ directory (TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt is the standard for 2016 analysis). You can also run MeasureAccidentals without an input track distributions file, in which case it won't compute the accidental rates but will produce an output TrackDistributions_[FillNumber].txt file which can be used for further running. The main output of the script is AccidentalRates_[FillNumber].txt, which contains the accidental data by time period. It also creates a histo_slopes.root file and plots like **MakeTracks**. **Note:** While the accidental rate is computed using all tracks, the track distribution file is derived only from the "pure" track sample; i.e., events where there is exactly one cluster in each plane in the telescope.
+
+By default **MeasureAccidentals** will split the input file into five-minute chunks and compute the accidental rate for each. You can also specify a timestamp file as input (e.g., if you have a scan and want to measure the accidental rate step by step). See the AccidentalStudies/ directory for much more documentation, as well as scripts which process and plot the output text files.
+
+**MeasureAccidentalsTele** and **MeasureAccidentalsBX** are variants of **MeasureAccidentals** which measure the accidental rate on a per-telescope and per-BX basis, respectively. **MeasureAccidentalsTele** works pretty much the same, except that the output file contains two columns for each telescope instead of an overall rate. **MeasureAccidentalsBX** is also similar except that the Slink data does not have enough statistics to do a per-BX measurement at 5-minute granularity, so it instead averages over the entire fill.
+
+* **TrackLumiZeroCounting** (DGAT) is a utility to calculate luminosity from the track counting. Like **MeasureAccidentals**, it starts out by performing the tracking and looking to see if one good combination is found. The number of events where at least one good track is found and the number of events where no good tracks are found is then written out, and these can be used to calculate the luminosity. Since we can't do a per-BX measurement using the pixel data, the script only considers BXes which are filled, and so first must determine the fill pattern from the data. Also the script needs to deal with cases where a telescope drops out, so it keeps track of the data from each telescope and if it doesn't receive any, that telescope is excluded from the luminosity calculations. It also accounts for cases where a telescope becomes desynchronized and so the BX data from that telescope is no longer reliable. It produces the same output files as **MeasureAccidentals**.
+
+The directory TrackLumiZC/ contains further documentation and utilities for processing and plotting the results produced by this script. **TrackLumiZeroCountingVdM** is a variant with somewhat different thresholds for determining a channel dropout suitable to the lower luminosity of the VdM scan. **TrackLumiZeroCountingBXVdM** is a variant which calculates a per-BX luminosity (also using the VdM setup); like **MeasureAccidentalsBX**, it requires a full fill's worth of data.
 
 ## Other Utilities
 
+These are more special-purpose utilities, but they have been written or updated recently and should still work without additional changes.
+
+* **CalculateEventSize** (D) is a simple script to calculate the average event size (total number of hits per event) both overall and per-channel.
+* **ClusterLumi** (D) is an attempt to measure the luminosity using cluster counting (like the PCC technique). This makes a ntuple in the output file clusterLumi.root which can then be used as input to **ReadClusterLumi**, which reads the ntuple and does the actual luminosity calculation. It then produces the final plots in the output file readClusterLumi.root. This technique ended up being not very successful and was largely superseded by **TrackLuminosityZeroCounting**.
+* **DetectFailure** (D) looks for times in a data file when a telescope has dropped out of the Slink readout by looking for periods where no data is received from a scope. The logic from this script was later merged into **TrackLumiZeroCounting**.
+* **DoubleColumnMC** generates a Monte Carlo simulation to try to measure the effect of double-column readout inefficiencies. Specifically, on average it takes 6 clock cycles to drain a single double column (DC). If the same DC is hit during the drain, the hit can be queued, but only 3 hits can be queued, so any further beyond that will be lost. This Monte Carlo attempts to simulate that effect. Based on **PLTMC**.
+* **FindFilledBX** (D) looks at the BX data in the Slink to determine which bunches are filled in the data (by looking for the BX with the highest hit rate and then taking any BX with a hit rate > 0.05*max as "filled") and then shows the results, so we can see if the data is misaligned with our expectation.
+* **HitsVsEvent** (D) reads a given segment of a data file and prints out the number of hits in each event over that time period.
+* **MeasureMissRate** (D) is an attempt to simulate the "missing triplet" problem that we experienced in 2015 where planes with three or more hits would not be correctly recognized by the fast-or FED when looking for triple coincidences. This is difficult to simulate in the pixel data because the fast-or algorithm in the ROCs counts hits in adjacent columns as a single hit sometimes, but not always, so the script tries several different algorithms in the pixel data to try to match what the fast-or data produces. Produces MissingHitsPixel.txt, a set of rates for each of the different algorithms in five-minute intervals.
 * **TrackParams** (DGA) runs the tracking on a given data file and saves the track parameters to a TTree for further analysis. Creates TrackParams.root, which contains this tree.
 
 ## Old Utilities
 
-These utilities are from the pilot run and may not have been updated since then (many of them still use the diamond fiducial region, for example). There's no documentation so I've put my best guess here. Use at your own risk!
+These utilities are from the pilot run and may not have been updated since then (many of them still use the diamond fiducial region, for example), but they may still contain useful code. There's no previously existing documentation so I've put my best guess here. Use at your own risk!
 
+* **BasicResiduals** (DG) looks for events with one cluster per telescope and plots the difference in position between the clusters.
+* **BinaryHitCounter** (D) dumps the number of hits found in each event in the input data file (at least it does if you uncomment the std::cout statement).
+* **CheckAlignment** (DGA) applies the alignment to an input file and makes a bunch of plots showing the results.
+* **CheckGainCalCoefs** (G) checks a gain calibration file to see if there are any pixels for the given channel which are missing a fitted calibration curve.
+* **ConvertGainCalCoefs** (G) converts a gain calibration file with hardware addresses into one with pixel FED channel number. Note that the conversion is hard-coded in the script and not at all correct for production running.
+* **DeanTextToBinary** converts a text event file (used for debugging) into a binary file with the same format as the regular Slink data.
 * **dumpPixffil** (D) and **dumpPixffile_orig** (D) dump the contents of a raw data file. These are from the Pixel software.
+* **FindNoisyPixels** (D) looks for noisy pixels by looking at the occupancy plots and identifying any pixel with an occupancy more than 5 sigma above the median as noisy.
+* **FindTrims** takes an input file of efficiency vs. trim values per pixel and tries to find the ideal trim values. The online software probably does a better job of this nowadays.
+* **GetParamsFromFile** (G) reads in a gain calibration file and prints out the coefficients of the fitted calibration curve for a given channel, ROC, and pixel.
+* **HistNTP** reads an unknown histogram file and makes a graph of the entries by channel and BX.
 * **MakeIdealAlignment** makes a dummy ideal alignment file for the actual PLT installation (identical to ALIGNMENT/Alignment_IdealInstall.dat).
+* **MakeIdealGainCal** makes a dummy gain calibration file with the same calibration curve used for all pixels on all ROCs.
+* **MakeLumiGraphs** makes plots of luminosity versus time from an unknown histogram file.
 * **MakeStraightAlignment** makes a dummy alignment file with all telescopes aligned in the same place (identical to ALIGNMENT/Old/Alignment_Straight.dat).
+* **MakeTrimCalFileFake** makes a dummy trim calibration results file with randomly generated efficiencies, which presumably can be used as input to **FindTrims**.
+* **NumberOfHitsPerEvent** makes histograms of the number of hits per event, number of clusters per event, and number of hits per cluster for each plane.
+* **RunBasicTeststandAnalysis** takes the teststand data and makes some basic occupancy, levels, and pulse height plots from it. Makes plots and a HTML file suitable for posting.
+* **RunTeststandGainCal** creates a (3-parameter) gain calibration from teststand data.
 * **UltraBlackFinder** takes a pixel FED transparent buffer and finds the ultrablacks in it. Much the same as similar routines in the online software (and I'm not sure why one would need it in the offline software).
 * **Verbose** (DGA) simply runs the clustering and tracking in PLTEvent and then prints out the resulting hit, cluster, and track information.
 
 ## Even Older Utilities
 
-The Archive/ directory contains retired code which is no longer used. There's no documentation, so you're on your own here.
+The Archive/ directory contains retired code which is no longer used. A lot of the code here also looks like it was never finished or used. There's no documentation, so you're on your own here.
