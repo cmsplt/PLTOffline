@@ -30,8 +30,6 @@ DetectFailure
 DoubleColumnMC
 dumpPixffil
 dumpPixffil_orig
-EfficiencyVsBX
-EfficiencyVsTime
 FindFilledBX
 FindNoisyPixels
 FindTrims
