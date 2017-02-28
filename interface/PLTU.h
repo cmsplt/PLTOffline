@@ -30,6 +30,7 @@ namespace PLTU
 
   Double_t PoissonFit(Double_t* x, Double_t* par);
   void SetStyle ();
+  void SetKarenStyle ();
 
   float GetMeanBinContentSkipEmptyBins (TH2F&);
   TH2F* Get3x3EfficiencyHist (TH2F&, int const, int const, int const, int const);

@@ -63,7 +63,7 @@ int GainCalFastFits (TString const InFileName)
   std::cout<<"InFileName: " << InFileName <<std::endl;
 
   // Set some basic style
-  PLTU::SetStyle();
+  PLTU::SetKarenStyle();
 
   // Assumes InFileName is in dir1/dir2/...Slink_day.time.dat format
   

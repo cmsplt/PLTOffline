@@ -43,6 +43,29 @@ namespace PLTU
     return;
   }
 
+  void SetKarenStyle ()
+  {
+    
+    gROOT->SetStyle("Plain");
+    gStyle->SetPalette(1);
+    gStyle->SetOptStat(0);
+    gStyle->SetLabelFont(42,"XYZ");
+    gStyle->SetLabelSize(0.03,"XYZ");
+    gStyle->SetTextFont(42);
+    gStyle->SetTextSize(0.07);
+    //gStyle->SetTitleFont(42,"t");
+    gStyle->SetTitleFontSize(0.06);
+    gStyle->SetTitleX(0.15f);
+    gStyle->SetTitleY(0.97f);
+    //gStyle->SetTitleFont(42,"XYZ");
+    gStyle->SetTitleBorderSize(0);
+    gStyle->SetCanvasDefW(500);
+    gStyle->SetCanvasDefW(500);
+    gStyle->SetPadGridX(1);
+    gStyle->SetPadGridY(1);
+    
+    return;
+  }
 
 
   float GetMeanBinContentSkipEmptyBins (TH2F& h)
