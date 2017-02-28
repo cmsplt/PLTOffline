@@ -1,8 +1,12 @@
 ////////////////////////////////////////////////////////////////////
 //
-// Dean Andrew Hidas <Dean.Andrew.Hidas@cern.ch>
+// RawADCCounts
 //
-// Created on: Tue May 24 09:54:58 CEST 2011
+//  A very crude utility to plot the raw ADC counts for the pulse
+//  height values given an input file. Inelegantly adapted from
+//  OccupancyPlots.
+//
+//  Paul Lujan, May 2016
 //
 ////////////////////////////////////////////////////////////////////
 

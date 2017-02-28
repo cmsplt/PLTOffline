@@ -11,16 +11,17 @@ include the translational and rotational corrections (CalculateAlignment also pr
 files, but since these aren't really useful as a final product, I haven't included them here).
 
 Of the data alignment files here, Trans_Alignment_4449.dat is the "standard" alignment used for the
-calculation of accidentals and other similar tracking studies for 2015. The preliminary 2016 alignment file
-is Trans_Alignment_4879.dat.
+calculation of accidentals and other similar tracking studies for 2015. The standard 2016 alignment file is
+Trans_Alignment_4892.dat. (Note that the 2016 alignment files were taken before the mask change, which in
+theory should at least give us a more accurate measurement because we have a wider area available.)
 
 Please note: Although these files include alignment for scopes +z far hubs 21 and 29 (FED channels 22 and 23),
 since these channels were not actually operational during the 25ns run period, the data for these scopes is
 simply the nominal alignment. For 2016 this is also true for -z near hub 5 (FED channel 0).
 
 Here's the full list of fills represented here. This covers the full 25ns 13 TeV pp run period (August
-13-November 2), but not the 50ns run period. Note that for all of the alignment calculations, the GainCal file
-GainCal/GainCalFits_20150923.225334.dat was used except for 4879, which uses the 2016 GainCal file
+13-November 2), but not the 50ns run period. Note that for the 2015 alignment calculations, the GainCal file
+GainCal/GainCalFits_20150923.225334.dat was used, and the 2016 alignment calculations used
 GainCal/GainCalFits_20160501.155303.dat.
 
 == 2015 ==
@@ -35,6 +36,8 @@ GainCal/GainCalFits_20160501.155303.dat.
 4565 (Nov. 02, Slink_20151102.084117.dat) magnet ON*
 == 2016 ==
 4879 (Apr. 28, Slink_20160428.202744.dat) magnet ON
+4892 (May 7, Slink_20160507.165735.dat)   magnet ON
+4895 (May 8, Slink_20160508.125432.dat)   magnet ON
 
 * In these two cases there was an intervening magnet ramp (during fills 4402 and 4457 respectively), but no
 physics fills were actually taken with the magnet off.
