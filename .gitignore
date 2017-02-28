@@ -33,10 +33,8 @@ dumpPixffil_orig
 FindFilledBX
 FindNoisyPixels
 FindTrims
-FitAddressLevels
 GainCalFastFits
 GenerateAlignment
-GetEventsFromBinary
 GetParamsFromFile
 HistNTP
 HitsVsEvent
@@ -50,7 +48,6 @@ MeasureAccidentals
 MeasureAccidentalsBX
 MeasureAccidentalsTele
 MeasureMissRate
-NaiveROCCharge
 NumberOfHitsPerEvent
 OccupancyPlots
 OccupancyPlots3x3
