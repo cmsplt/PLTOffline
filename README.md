@@ -102,6 +102,8 @@ By default **MeasureAccidentals** will split the input file into five-minute chu
 
 The directory TrackLumiZC/ contains further documentation and utilities for processing and plotting the results produced by this script. **TrackLumiZeroCountingVdM** is a variant with somewhat different thresholds for determining a channel dropout suitable to the lower luminosity of the VdM scan. **TrackLumiZeroCountingBXVdM** is a variant which calculates a per-BX luminosity (also using the VdM setup); like **MeasureAccidentalsBX**, it requires a full fill's worth of data.
 
+* **ParseCondDBData* is a utility for use with **MeasureAccidentals** and **TrackLumiZeroCounting**. It takes a CSV file of the online luminosity from the conditions browser and a text file output by one of the previous scripts, and combines the two so that you can look at the accidental rate or track lumi as a function of the online fast-or luminosity. See the documentation in MeasureAccidentals/README for more details on how to use this script. (Note that the script only cares about the timestamp in the text file -- all other data will simply be copied over to the output file.)
+
 ## Other Utilities
 
 These are more special-purpose utilities, but they have been written or updated recently and should still work without additional changes.
@@ -113,11 +115,16 @@ These are more special-purpose utilities, but they have been written or updated 
 * **FindFilledBX** (D) looks at the BX data in the Slink to determine which bunches are filled in the data (by looking for the BX with the highest hit rate and then taking any BX with a hit rate > 0.05*max as "filled") and then shows the results, so we can see if the data is misaligned with our expectation.
 * **HitsVsEvent** (D) reads a given segment of a data file and prints out the number of hits in each event over that time period.
 * **MeasureMissRate** (D) is an attempt to simulate the "missing triplet" problem that we experienced in 2015 where planes with three or more hits would not be correctly recognized by the fast-or FED when looking for triple coincidences. This is difficult to simulate in the pixel data because the fast-or algorithm in the ROCs counts hits in adjacent columns as a single hit sometimes, but not always, so the script tries several different algorithms in the pixel data to try to match what the fast-or data produces. Produces MissingHitsPixel.txt, a set of rates for each of the different algorithms in five-minute intervals.
+* **OccupancyVsTime** (D) makes a plot of the occupancy in each telescope and plane as a function of time. Like **MeasureAccidentals**, it defaults to 5-minute increments but you can also give it a timestamp file to run in specified intervals. Produces plots/occupancy_vs_time.root, which contains the target plots.
+* **PlotActiveBunches** (D) makes a plot of the average number of hits vs. BX and uses this plot to determine the number of filled BXes in the fill.
+* **PlotBXDistribution** (D) simply looks at the BX value for each event and makes a plot of the resulting distribution. This can be used to determine if the random/cycling trigger actually is uniform, or conversely to see if the fast-or coincidence trigger is correctly triggering on filled bunches.
+* **PLTGeometryExport** (A) sets up the PLT geometry using the given alignment file and exports it as a ROOT and XML file, for use in generating Monte Carlo.
+* **PLTHitDisplay** (DGA) produces a 3-D event display which shows the hits for a given event.
 * **TrackParams** (DGA) runs the tracking on a given data file and saves the track parameters to a TTree for further analysis. Creates TrackParams.root, which contains this tree.
 
 ## Old Utilities
 
-These utilities are from the pilot run and may not have been updated since then (many of them still use the diamond fiducial region, for example), but they may still contain useful code. There's no previously existing documentation so I've put my best guess here. Use at your own risk!
+These utilities are from the pilot run and may not have been updated since then (many of them still use the diamond fiducial region, or still have some hard-coded set of channels, for example), but they may still contain useful code. There's no previously existing documentation so I've put my best guess here. Use at your own risk!
 
 * **BasicResiduals** (DG) looks for events with one cluster per telescope and plots the difference in position between the clusters.
 * **BinaryHitCounter** (D) dumps the number of hits found in each event in the input data file (at least it does if you uncomment the std::cout statement).
@@ -136,6 +143,24 @@ These utilities are from the pilot run and may not have been updated since then 
 * **MakeStraightAlignment** makes a dummy alignment file with all telescopes aligned in the same place (identical to ALIGNMENT/Old/Alignment_Straight.dat).
 * **MakeTrimCalFileFake** makes a dummy trim calibration results file with randomly generated efficiencies, which presumably can be used as input to **FindTrims**.
 * **NumberOfHitsPerEvent** makes histograms of the number of hits per event, number of clusters per event, and number of hits per cluster for each plane.
+* **OccupancyPlots3x3** (D) makes occupancy plots and the plots of 3x3 efficiency. Since **OccupancyPlots** also makes 3x3 efficiency plots I'm not quite sure what this script does that **OccupancyPlots** doesn't, though.
+* **OverlayPHLumi** takes a pulse height histogram file and a lumi histogram file and plots them together. I don't know how you would make either of the two input files however.
+* **Plot3ParamFit** will simply make a plot of a gain calibration curve using the provided constants. Despite the name it can plot either a 3-parameter or a 5-parameter fit curve.
+* **PlotADCForVCal** plots the response in ADC counts for a given VCal given a text input file.
+* **PlotBuckets** plots the luminosity as a function of BX given an input histogram file of unknown format (of the kind read by **PLTHistReader**).
+* **PlotEvent** (DG) takes a single event from a Slink data file and makes a plot of the hit pixels for that event.
+* **PlotFedTime** takes the output of the online FED time calibration and makes a plot of the results. Probably better to use the utilities in the online software for this.
+* **PlotPixelVsTimeMagTest** takes an input file of unknown format and an input file of magnet data and plots the results as a function of time.
+* **PlotTemperature** takes an input file of temperature against time and plots the results.
+* **PlotThresholds** takes a file from the output of a threshold calibration and plots the results.
+* **PlotTrims** takes a trim file and plots the trim values as a function of pixel.
+* **PLTDatToWave** takes a pixel FED transparent buffer (from an ultrablack calibration, for example) and plots the resulting waveform. This is a little redundant with what the online software does.
+* **PLTEventDisplay** (DGA) makes a 3-D event display of events in the PLT with their tracks.
+* **PLTMC** creates simulated hits and/or tracks and generates a binary file (in the same format as the Slink data) with these simulated hits. It supports a wide variety of different kinds of tracks that can be generated (from the IP, parallel to the beamline, random slopes, etc.) but has not been updated since the pilot run, so it would probably need some cleaning up to make useable again.
+* **PrintBXTracks** (DGA) prints out the number of tracks per BX for the whole PLT and for each individual channel.
+* **PrintEventNumbers** (D) does what it says: it takes an input data file and, for every million events, prints out the event number and timestamp.
+* **PrintTextEvents** (D) takes an input binary data file and makes an output file containing the hit information in the events converted to text.
+* **ProcessHistograms** takes an input histogram file (of unknown format) and plots the resulting total and by-channel luminosity.
 * **RunBasicTeststandAnalysis** takes the teststand data and makes some basic occupancy, levels, and pulse height plots from it. Makes plots and a HTML file suitable for posting.
 * **RunTeststandGainCal** creates a (3-parameter) gain calibration from teststand data.
 * **UltraBlackFinder** takes a pixel FED transparent buffer and finds the ultrablacks in it. Much the same as similar routines in the online software (and I'm not sure why one would need it in the offline software).
