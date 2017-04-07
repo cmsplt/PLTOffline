@@ -76,6 +76,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   float slope_y_high = 0.027 + 0.01;
 
   uint32_t date = 0;
+  uint32_t five_min = 5 * 60 * 1000; 
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -135,8 +136,9 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
         Tracks[3].MakeTrack(Alignment);
       }
 
+      // 5 minute interval selection 
+      if (Event.Time() > date + five_min ) date = Event.Time();  
       // Test of plane 2
-      if (HC[date][Channel].NFiducial[1] > 1*pow(10, 4)) date = Event.Time();
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         if (Tracks[1].IsFiducial(Channel, 2, Alignment, FidRegionTrack) && Tracks[1].NHits() == 2 && Tracks[1].fTVY/Tracks[1].fTVZ < slope_y_high && Tracks[1].fTVY/Tracks[1].fTVZ > slope_y_low && Tracks[1].fTVX/Tracks[1].fTVZ < slope_x_high && Tracks[1].fTVX/Tracks[1].fTVZ > slope_x_low ) {
           ++HC[date][Channel].NFiducial[2];
@@ -145,11 +147,9 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[2]->NClusters()) cluster_charge=Plane[2]->Cluster(0)->Charge();
-          //hEffMapPulseHeightD[Channel * 10 + 2]->Fill(cluster_charge);
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
-            //printf("ResXY: %15.9f   RPXY: %15.9f\n", ResXY.first, RPXY.first);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[2];
             } 
@@ -166,13 +166,12 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[1]->NClusters()) cluster_charge=Plane[1]->Cluster(0)->Charge();
-          //hEffMapPulseHeightD[Channel * 10 + 1]->Fill(cluster_charge);
           if (Plane[1]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[1];
-            } //else hMapPulseHeights[Channel * 10 + 1]->Fill(0);
+            } 
           }
         }
       }
@@ -186,19 +185,15 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[0]->NClusters()) cluster_charge=Plane[0]->Cluster(0)->Charge();
-          //hEffMapPulseHeightD[Channel * 10 + 0]->Fill(cluster_charge);
           if (Plane[0]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[0];
-            } //else hMapPulseHeights[Channel * 10 + 0]->Fill(0);
+            } 
           }
         }
       }
-
-      //printf("%9i %9i %9i\n", HC[Channel].NFiducialAndHit[0], HC[Channel].NFiducialAndHit[1], HC[Channel].NFiducialAndHit[2]);
-
     }
   }
 
@@ -207,14 +202,12 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   file.open("plots/roc_eff.csv");//needs additional formatting
   file << "Time,Channel,ROC,NFiducial,NFiducialAndHit,Efficiency\n";
 
+
+  //Write CSV file
   for (std::map<uint32_t, std::map<int, HitCounter> >::iterator timestamp_iter = HC.begin(); timestamp_iter != HC.end(); ++timestamp_iter) {
     for (std::map<int, HitCounter>::iterator channel_iter = timestamp_iter->second.begin(); channel_iter != timestamp_iter->second.end(); ++channel_iter) {
-      printf("Efficiencies for Channel %2i:\n", timestamp_iter->first);
+      //printf("Efficiencies for Channel %2i:\n", timestamp_iter->first);
       for (int roc_number = 0; roc_number != 3; ++roc_number) {
-        /*printf("ROC %1i  NFiducial: %10i  NFiducialAndHit: %10i  Efficiency: %12.9f\n",
-               i, it->second.NFiducial[i],
-               it->second.NFiducialAndHit[i],
-               float(it->second.NFiducialAndHit[i]) / float(it->second.NFiducial[i]) );*/
         file << timestamp_iter->first << "," << channel_iter->first << "," << roc_number << "," << channel_iter->second.NFiducial[roc_number] << "," << channel_iter->second.NFiducialAndHit[roc_number] << "," << float(channel_iter->second.NFiducialAndHit[roc_number]) / float(channel_iter->second.NFiducial[roc_number]) << "\n";
       } 
     }
