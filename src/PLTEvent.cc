@@ -138,7 +138,7 @@ void PLTEvent::Clear ()
   fHits.clear();
   fPlanes.clear();
   fTelescopes.clear();
-
+  fErrors.clear();
   fDesyncChannels.clear();
 }
 
@@ -268,7 +268,7 @@ int PLTEvent::GetNextEvent ()
   Clear();
 
   // The number we'll return.. number of hits, or -1 for end
-  int ret = fBinFile.ReadEventHits(fHits, fEvent, fTime, fBX, fDesyncChannels);
+  int ret = fBinFile.ReadEventHits(fHits, fErrors, fEvent, fTime, fBX, fDesyncChannels);
   if (ret < 0) {
     return ret;
   }

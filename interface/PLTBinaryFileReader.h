@@ -12,7 +12,7 @@
 #include "PLTHit.h"
 #include "PLTPlane.h"
 #include "PLTGainCal.h"
-
+#include "PLTError.h"
 
 class PLTBinaryFileReader
 {
@@ -29,9 +29,9 @@ class PLTBinaryFileReader
 
 
     int  convPXL (int);
-    bool DecodeSpyDataFifo (uint32_t, std::vector<PLTHit*>&, std::vector<int>&);
-    int  ReadEventHits (std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
-    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
+    bool DecodeSpyDataFifo (uint32_t, std::vector<PLTHit*>&, std::vector<PLTError>&, std::vector<int>&);
+    int  ReadEventHits (std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
+    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
     int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
 
     void ReadPixelMask (std::string const);
