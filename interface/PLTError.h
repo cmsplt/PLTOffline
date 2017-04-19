@@ -31,12 +31,12 @@ public:
   ~PLTError();
 
   // Getters
-  uint32_t GetChannel() { return fChannel; }
-  ErrorType GetErrorType() { return fErrorType; }
-  uint32_t GetErrorDetails() { return fErrorDetails; }
+  uint32_t GetChannel() const { return fChannel; }
+  ErrorType GetErrorType() const { return fErrorType; }
+  uint32_t GetErrorDetails() const { return fErrorDetails; }
 
   // Print out detailed error information
-  void Print(void);
+  void Print(void) const;
 
 private:
   uint32_t fChannel;

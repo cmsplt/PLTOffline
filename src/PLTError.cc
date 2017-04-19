@@ -9,7 +9,7 @@ PLTError::~PLTError() {}
 
 // Print out error details for a given error.
 
-void PLTError::Print(void) {
+void PLTError::Print(void) const {
   switch (fErrorType) {
 
   case kTimeOut:
@@ -36,7 +36,7 @@ void PLTError::Print(void) {
   case kFEDTrailerError:
     std::cout << "Channel " << fChannel << " FED trailer error:";
     if (fErrorDetails & 1) std::cout << " data overflow";
-    if (fErrorDetails & (3 << 1)) std::cout << " FSM error " << (fErrorDetails & (3 << 1));
+    if (fErrorDetails & (3 << 1)) std::cout << " FSM error " << ((fErrorDetails >> 1) & 3);
     if (fErrorDetails & (1 << 3)) std::cout << " invalid # of ROCs";
     std::cout << std::endl;
     break;
@@ -62,12 +62,3 @@ void PLTError::Print(void) {
     std::cout << "Unknown error type" << std::endl;
   }
 }
-
-
-
-
-
-
-
-
-

@@ -28,6 +28,7 @@ ConvertGainCoefs
 DeanTextToBinary
 DetectFailure
 DoubleColumnMC
+DumpErrors
 dumpPixffil
 dumpPixffil_orig
 FindFilledBX

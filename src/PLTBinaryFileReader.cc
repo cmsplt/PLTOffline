@@ -128,7 +128,7 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
 	  const int offsets[8] = {0,4,9,13,18,22,27,31}; // the beginning of each of the eight groups
 	  const int offset = offsets[group];
 	  for (int i=0; i<5; i++) {
-	    if (channelMask & (1 >> i)) {
+	    if (channelMask & (1 << i)) {
 	      int thisChan = offset + i + 1;
 	      Errors.push_back(PLTError(thisChan, kTimeOut, timeoutCounter));
 	    }
