@@ -3,7 +3,8 @@
 
 // A very simple container class to hold information about a single
 // error reported in the data stream. There are three fields:
-// 1) channel: FED channel number that the error is in
+// 1) channel: FED channel number that the error is in (only meaningful for
+//   time out, event number error, FED trailer error, or TBM error)
 // 2) errorType: what kind of error it is
 // 3) errorDetails: more information on the error:
 //   -- for time out, the time out counter

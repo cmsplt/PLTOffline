@@ -6,7 +6,7 @@
 #include "PLTGainCal.h"
 #include "PLTAlignment.h"
 #include "PLTTracking.h"
-
+#include "PLTError.h"
 
 #include <map>
 
@@ -99,6 +99,8 @@ class PLTEvent : public PLTTracking
 
     int GetFEDChannel(int mFec, int mFecCh, int hubId) { return fGainCal.GetFEDChannel(mFec, mFecCh, hubId); }
 
+    const std::vector<PLTError>& GetErrors(void) { return fErrors; }
+
     std::vector<int>& getDesyncChannels(void) { return fDesyncChannels; }
 
     std::string ReadableTime();
@@ -109,6 +111,7 @@ class PLTEvent : public PLTTracking
     unsigned long fEvent;
     uint32_t fTime;
     uint32_t fBX;
+    std::vector<PLTError> fErrors;
     std::vector<int> fDesyncChannels;
 
     PLTGainCal fGainCal;

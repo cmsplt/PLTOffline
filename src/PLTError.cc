@@ -21,7 +21,7 @@ void PLTError::Print(void) {
     break;
 
   case kNearFull:
-    std::cout << "Channel " << fChannel << " FIFO near full:";
+    std::cout << "FIFO near full:";
     if (fErrorDetails & 1) std::cout << " Ia";
     if (fErrorDetails & (1 << 1)) std::cout << " Ib";
     if (fErrorDetails & (1 << 2)) std::cout << " Ic";
@@ -55,7 +55,7 @@ void PLTError::Print(void) {
     break;
 
   case kUnknownError:
-    std::cout << "Channel " << fChannel << " unknown error" << std::endl;
+    std::cout << "Unknown error" << std::endl;
     break;
 
   default:

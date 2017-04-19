@@ -84,7 +84,7 @@ int PLTBinaryFileReader::convPXL (int IN)
 
 
 
-bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>& Hits, std::vector<int>& DesyncChannels)
+bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, std::vector<int>& DesyncChannels)
 {
   if (word & 0xfffffff) {
 
@@ -97,15 +97,60 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
     uint32_t roc  = ((word & rocmsk)  >> 21);
 
     // Check for embeded special words: roc > 25 is special, not a hit
+    // Most of these are errors and so we will create a PLTError to add to the Errors vector.
+    // Some of these can just be ignored.
     if (roc > 25) {
       if ((word & 0xffffffff) == 0xffffffff) {
+	// unknown error
+	Errors.push_back(PLTError(0, kUnknownError, 0));
       } else if (roc == 26) {
+	// gap word -- this can be ignored
       } else if (roc == 27) {
+	// dummy word -- this can be ignored
+      } else if (roc == 28) {
+	// near full error
+	Errors.push_back(PLTError(0, kNearFull, (word & 0xff)));
+      } else if (roc == 29) {
+	// time out error. these are a little complicated because there are two words.
+	// Fortunately, the first word is just the pedestal value and can be ignored.
+	// Unfortunately, the second word is a little complicated -- rather than storing
+	// the channel number normally, there is instead a bit mask showing which channels
+	// have the time out error in a group, so we go through this bit mask and create
+	// one error per 1 in the mask. Got all that?
+
+	if ((word & 0xff00000) == 0x3b00000) {
+	  // first word -- nothing to do here
+	} else if ((word & 0xff00000) == 0x3a00000) {
+	  // second word -- contains the channels which have timed out
+	  uint32_t group = (word >> 8) & 0x7; // group of input channels
+	  uint32_t channelMask = word & 0x1f; // bitmask for the five channels in the group
+	  uint32_t timeoutCounter = (word >> 11) & 0xff;
+	  const int offsets[8] = {0,4,9,13,18,22,27,31}; // the beginning of each of the eight groups
+	  const int offset = offsets[group];
+	  for (int i=0; i<5; i++) {
+	    if (channelMask & (1 >> i)) {
+	      int thisChan = offset + i + 1;
+	      Errors.push_back(PLTError(thisChan, kTimeOut, timeoutCounter));
+	    }
+	  }
+	} else {
+	  // what the heck, there's an error in our error?
+	  // for the time being let's just ignore this
+	}
+      } else if (roc == 30) {
+	// trailer error. for ease of decoding split this into FED trailer error and TBM error.
+	// it's possible we could actually have BOTH errors, so do this check independently.
+	if (word & (0xf00)) {
+	  Errors.push_back(PLTError(chan, kFEDTrailerError, (word >> 8) & 0xf));
+	}
+	if (word & (0xff)) {
+	  Errors.push_back(PLTError(chan, kTBMError, (word & 0xff)));
+	}
       } else if (roc == 31) {
-	// this channel has an event number error -- put it into the vector of channels with this error
+	// event number error. for the time of being this goes into both DesyncChannels and
+	// the general error vector. perhaps later we could consolidate this.
 	DesyncChannels.push_back(chan);
-      } else {
-        //decodeErrorFifo(word);
+	Errors.push_back(PLTError(chan, kEventNumberError, (word & 0xff)));
       }
       return false;
     } else if (chan > 0 && chan < 37) {
@@ -152,17 +197,18 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
+int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
   if (fIsText) {
+    // we assume no errors in a text file, so fErrors will just stay empty
     return ReadEventHitsText(fInfile, Hits, Event, Time, BX);
   } else {
-    return ReadEventHits(fInfile, Hits, Event, Time, BX, DesyncChannels);
+    return ReadEventHits(fInfile, Hits, Errors, Event, Time, BX, DesyncChannels);
   }
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
+int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
   uint32_t n1, n2, oldn1, oldn2;
 
@@ -261,13 +307,13 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
             Time = Time + 86400000 * fTimeMult;
 
             // but don't forget to decode the first word
-            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, DesyncChannels);
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, Errors, DesyncChannels);
           }
           else {
             // OK, it wasn't a trailer. Undo the peek and decode both words
             InFile.seekg(-sizeof peekWord, std::ios_base::cur);
-            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, DesyncChannels);
-            if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits, DesyncChannels);
+            if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, Errors, DesyncChannels);
+            if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits, Errors, DesyncChannels);
 	  }
 	} // not a trailer
       } // after header
