@@ -14,25 +14,30 @@
 #include "PLTGainCal.h"
 #include "PLTError.h"
 
+typedef enum InputTypeEnum {
+  kBinaryFile,
+  kTextFile,
+  kBuffer
+} InputType;
+
 class PLTBinaryFileReader
 {
   public:
     PLTBinaryFileReader ();
-    PLTBinaryFileReader (std::string const, bool const IsText = false);
+    PLTBinaryFileReader (std::string const, InputType inputType = kBinaryFile);
     ~PLTBinaryFileReader ();
 
     bool Open (std::string const);
     bool OpenBinary (std::string const);
     bool OpenTextFile (std::string const);
-    void SetIsText (bool const);
-
-
+    void SetInputType (InputType inputType);
 
     int  convPXL (int);
     bool DecodeSpyDataFifo (uint32_t, std::vector<PLTHit*>&, std::vector<PLTError>&, std::vector<int>&);
-    int  ReadEventHits (std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
-    int  ReadEventHits (std::ifstream&, std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
-    int  ReadEventHitsText (std::ifstream&, std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
+    int  ReadEventHits (uint32_t*, uint32_t, std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
+    int  ReadEventHitsBinary (std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
+    int  ReadEventHitsText (std::vector<PLTHit*>&, unsigned long&, uint32_t&, uint32_t&);
+    int  ReadEventHitsBuffer (uint32_t*, uint32_t, std::vector<PLTHit*>&, std::vector<PLTError>&, unsigned long&, uint32_t&, uint32_t&, std::vector<int>&);
 
     void ReadPixelMask (std::string const);
     void ReadOnlinePixelMask(const std::string maskFileName, const PLTGainCal& gainCal);
@@ -45,7 +50,7 @@ class PLTBinaryFileReader
   private:
     std::string fFileName;
     std::ifstream fInfile;
-    bool fIsText;
+    InputType fInputType;
     uint32_t fLastTime;
     int fTimeMult;
     int fFEDID;
