@@ -60,8 +60,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   Event.ReadOnlinePixelMask("Mask_2016_VdM_v1.txt");
 
 
-  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;
+  PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_FullSensor;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
 
@@ -99,7 +98,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       size_t const NPlanes = Telescope->NPlanes();
 
       // make them clean events
-      if (Telescope->NHitPlanes() < 2 || Telescope->NHitPlanes() != Telescope->NClusters()) {
+      if (Telescope->NHitPlanes() < 2 || (unsigned)(Telescope->NHitPlanes()) != Telescope->NClusters()) {
         continue;
       }
 

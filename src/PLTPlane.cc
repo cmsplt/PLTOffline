@@ -348,6 +348,15 @@ bool PLTPlane::IsFiducial (FiducialRegion const FidR, int const Col, int const R
       }
       return false;
       break;
+    case kFiducialRegion_FullSensor:
+      if (Row >= PLTU::FIRSTROW &&
+          Row <= PLTU::LASTROW &&
+          Col >= PLTU::FIRSTCOL &&
+          Col <= PLTU::LASTCOL){
+        return true;
+      }
+      return false;
+      break;
     default:
       std::cerr << "ERROR in PLTPlane::IsFiducial" << std::endl;
       return false;
