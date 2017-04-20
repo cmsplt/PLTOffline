@@ -14,7 +14,7 @@
 
 #include "PLTEvent.h"
 #include "PLTU.h"
-
+#include "PLTBinaryFileReader.h"
 
 
 class HitCounter
@@ -41,7 +41,7 @@ int TrackingEfficiency (std::string const, std::string const, std::string const)
 
 
 
-
+//"Mask_2016_VdM_v1.txt"
 
 
 
@@ -57,9 +57,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  Event.ReadOnlinePixelMask("Mask_2016_VdM_v1.txt");
+
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;
-  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;//<-Original
+  PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_m5_m5;
   Event.SetPlaneFiducialRegion(FidRegionHits);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching,PLTPlane::kFiducialRegion_All);
 
@@ -80,7 +82,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-//    if (ientry > 50000) break;
+    if (ientry > 10000 * 50) break;
     if (ientry == 0){
       date = Event.Time();
     }
@@ -108,47 +110,40 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
         Plane[ Telescope->Plane(ip)->ROC() ] = Telescope->Plane(ip);
       }
 
-      // To construct 4 tracks.. one testing each plane.. and one using all planes if it be.
-      PLTTrack Tracks[4];
-
-      // If it has all 3 planes that'll be number 0
-      if (Plane[0]->NClusters() && Plane[1]->NClusters() && Plane[2]->NClusters()) {
-        Tracks[0].AddCluster(Plane[0]->Cluster(0));
-        Tracks[0].AddCluster(Plane[1]->Cluster(0));
-        Tracks[0].AddCluster(Plane[2]->Cluster(0));
-        Tracks[0].MakeTrack(Alignment);
-      }
+      // To construct 3 tracks.. one testing each plane
+      PLTTrack Tracks[3];
 
       // 2-plane tracks
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
-        Tracks[1].AddCluster(Plane[0]->Cluster(0));
-        Tracks[1].AddCluster(Plane[1]->Cluster(0));
-        Tracks[1].MakeTrack(Alignment);
+        Tracks[0].AddCluster(Plane[0]->Cluster(0));
+        Tracks[0].AddCluster(Plane[1]->Cluster(0));
+        Tracks[0].MakeTrack(Alignment);
       }
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
-        Tracks[2].AddCluster(Plane[0]->Cluster(0));
+        Tracks[1].AddCluster(Plane[0]->Cluster(0));
+        Tracks[1].AddCluster(Plane[2]->Cluster(0));
+        Tracks[1].MakeTrack(Alignment);
+      }
+      if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
+        Tracks[2].AddCluster(Plane[1]->Cluster(0));
         Tracks[2].AddCluster(Plane[2]->Cluster(0));
         Tracks[2].MakeTrack(Alignment);
       }
-      if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
-        Tracks[3].AddCluster(Plane[1]->Cluster(0));
-        Tracks[3].AddCluster(Plane[2]->Cluster(0));
-        Tracks[3].MakeTrack(Alignment);
-      }
+
 
       // 5 minute interval selection 
-      if (Event.Time() > date + five_min ) date = Event.Time();  
+      if (Event.Time() > date + five_min*2 ) date = Event.Time();  
       // Test of plane 2
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
-        if (Tracks[1].IsFiducial(Channel, 2, Alignment, FidRegionTrack) && Tracks[1].NHits() == 2 && Tracks[1].fTVY/Tracks[1].fTVZ < slope_y_high && Tracks[1].fTVY/Tracks[1].fTVZ > slope_y_low && Tracks[1].fTVX/Tracks[1].fTVZ < slope_x_high && Tracks[1].fTVX/Tracks[1].fTVZ > slope_x_low ) {
+        if (Tracks[0].IsFiducial(Channel, 2, Alignment, Event.PixelMask()) && Tracks[0].NHits() == 2 && Tracks[0].fTVY/Tracks[0].fTVZ < slope_y_high && Tracks[0].fTVY/Tracks[0].fTVZ > slope_y_low && Tracks[0].fTVX/Tracks[0].fTVZ < slope_x_high && Tracks[0].fTVX/Tracks[0].fTVZ > slope_x_low ) {
           ++HC[date][Channel].NFiducial[2];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 2);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 2);
+          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[0].TX( CP->LZ ), Tracks[0].TY( CP->LZ ), Channel, 2);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[2]->NClusters()) cluster_charge=Plane[2]->Cluster(0)->Charge();
           if (Plane[2]->NClusters() > 0) {
-            std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
+            std::pair<float, float> ResXY = Tracks[0].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[2];
@@ -159,15 +154,15 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
       // Test of plane 1
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
-        if (Tracks[2].IsFiducial(Channel, 1, Alignment, FidRegionTrack) && Tracks[2].NHits() == 2 && Tracks[2].fTVY/Tracks[2].fTVZ < slope_y_high && Tracks[2].fTVY/Tracks[2].fTVZ > slope_y_low && Tracks[2].fTVX/Tracks[2].fTVZ < slope_x_high && Tracks[2].fTVX/Tracks[2].fTVZ > slope_x_low) {
+        if (Tracks[1].IsFiducial(Channel, 1, Alignment, Event.PixelMask()) && Tracks[1].NHits() == 2 && Tracks[1].fTVY/Tracks[1].fTVZ < slope_y_high && Tracks[1].fTVY/Tracks[1].fTVZ > slope_y_low && Tracks[1].fTVX/Tracks[1].fTVZ < slope_x_high && Tracks[1].fTVX/Tracks[1].fTVZ > slope_x_low) {
           ++HC[date][Channel].NFiducial[1];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 1);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 1);
+          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 1);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[1]->NClusters()) cluster_charge=Plane[1]->Cluster(0)->Charge();
           if (Plane[1]->NClusters() > 0) {
-            std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
+            std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[1];
@@ -178,15 +173,15 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
 
       // Test of plane 0
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
-        if (Tracks[3].IsFiducial(Channel, 0, Alignment, FidRegionTrack) && Tracks[3].NHits() == 2 && Tracks[3].fTVY/Tracks[3].fTVZ < slope_y_high && Tracks[3].fTVY/Tracks[3].fTVZ > slope_y_low && Tracks[3].fTVX/Tracks[3].fTVZ < slope_x_high && Tracks[3].fTVX/Tracks[3].fTVZ > slope_x_low) {
+        if (Tracks[2].IsFiducial(Channel, 0, Alignment, Event.PixelMask()) && Tracks[2].NHits() == 2 && Tracks[2].fTVY/Tracks[2].fTVZ < slope_y_high && Tracks[2].fTVY/Tracks[2].fTVZ > slope_y_low && Tracks[2].fTVX/Tracks[2].fTVZ < slope_x_high && Tracks[2].fTVX/Tracks[2].fTVZ > slope_x_low) {
           ++HC[date][Channel].NFiducial[0];
           PLTAlignment::CP* CP = Alignment.GetCP(Channel, 0);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[3].TX( CP->LZ ), Tracks[3].TY( CP->LZ ), Channel, 0);
+          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 0);
           std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
 	  float cluster_charge = 0;
 	  if(Plane[0]->NClusters()) cluster_charge=Plane[0]->Cluster(0)->Charge();
           if (Plane[0]->NClusters() > 0) {
-            std::pair<float, float> ResXY = Tracks[3].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
+            std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
             if (fabs(RPXY.first) <= PixelDist && fabs(RPXY.second) <= PixelDist) {
               ++HC[date][Channel].NFiducialAndHit[0];

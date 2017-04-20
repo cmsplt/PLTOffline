@@ -275,6 +275,33 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
   return true;
 }
 
+bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Alignment, std::set<int> const &mask)
+{
+  // Check if a track passes through the diamond on a en plane
+
+  float const TZ = Alignment.GetTZ(Channel, ROC);
+  // Get telescope coords at the location of the plane
+  //float const TX = fTOX + fTVX * Plane->TZ();
+  //float const TY = fTOY + fTVY * Plane->TZ();
+  float const TX = fTOX + fTVX * TZ;
+  float const TY = fTOY + fTVY * TZ;
+
+
+  // Convert telescope coords to local coords
+  std::pair<float, float> LXY = Alignment.TtoLXY(TX, TY, Channel, ROC);
+
+  // Convert local coords to Pixel numbers
+  int const PX = Alignment.PXfromLX(LXY.first);
+  int const PY = Alignment.PYfromLY(LXY.second);
+
+  int ChannelPixel = Channel * 100000 + ROC * 10000 + PX * 100 + PY;
+
+  if (PX < 0 || PY < 0) return false;
+  //if (mask.count(ChannelPixel) != 0) printf("Masked Channel %i, Channel %i, ROC %i, PX %i, PY %i\n", ChannelPixel, Channel, ROC, PX, PY);
+  return mask.count(ChannelPixel) == 0;
+  //return false;
+}
+
 
 size_t PLTTrack::NClusters ()
 {
