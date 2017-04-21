@@ -8,19 +8,19 @@ PLTEvent::PLTEvent ()
 }
 
 
-PLTEvent::PLTEvent (std::string const DataFileName, bool const IsText)
+PLTEvent::PLTEvent (std::string const DataFileName, InputType inputType)
 {
   // Constructor, but you won't have the gaincal data..
-  fBinFile.SetIsText(false);
+  fBinFile.SetInputType(inputType);
   fBinFile.Open(DataFileName);
   SetDefaults();
 }
 
 
-PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, bool const IsText)
+PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, InputType inputType)
 {
   // Constructor, which will also give you access to the gaincal values
-  fBinFile.SetIsText(false);
+  fBinFile.SetInputType(inputType);
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   
@@ -28,10 +28,10 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
 }
 
 
-PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, bool const IsText)
+PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, InputType inputType)
 {
   // Constructor, which will also give you access to the gaincal values
-  fBinFile.SetIsText(false);
+  fBinFile.SetInputType(inputType);
   fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   fAlignment.ReadAlignmentFile(AlignmentFileName);
@@ -261,14 +261,20 @@ void PLTEvent::SetPlaneClustering (PLTPlane::Clustering in, PLTPlane::FiducialRe
   fFiducial = fid;
 }
 
+// This now exists in two versions in order to support reading from a buffer (which has to be
+// passed to PLTBinaryFileReader via PLTEvent). It's a little clunky but should hopefully work.
 
-int PLTEvent::GetNextEvent ()
+int PLTEvent::GetNextEvent(void) {
+  return GetNextEvent(nullptr, 0);
+}
+
+int PLTEvent::GetNextEvent(uint32_t* buf, uint32_t bufSize)
 {
   // First clear the event
   Clear();
 
   // The number we'll return.. number of hits, or -1 for end
-  int ret = fBinFile.ReadEventHits(fHits, fErrors, fEvent, fTime, fBX, fDesyncChannels);
+  int ret = fBinFile.ReadEventHits(buf, bufSize, fHits, fErrors, fEvent, fTime, fBX, fDesyncChannels);
   if (ret < 0) {
     return ret;
   }

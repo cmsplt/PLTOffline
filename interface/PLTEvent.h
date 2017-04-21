@@ -10,14 +10,13 @@
 
 #include <map>
 
-
 class PLTEvent : public PLTTracking
 {
   public:
     PLTEvent ();
-    PLTEvent (std::string const, bool const IsText = false);
-    PLTEvent (std::string const, std::string const, bool const IsText = false);
-    PLTEvent (std::string const, std::string const, std::string const, bool const IsText = false);
+    PLTEvent (std::string const, InputType inputType = kBinaryFile);
+    PLTEvent (std::string const, std::string const, InputType inputType = kBinaryFile);
+    PLTEvent (std::string const, std::string const, std::string const, InputType inputType = kBinaryFile);
     ~PLTEvent ();
 
     std::vector<PLTPlane*> fPlanes;
@@ -51,7 +50,8 @@ class PLTEvent : public PLTTracking
       return fHits.size();
     }
 
-    int GetNextEvent ();
+    int GetNextEvent(void);
+    int GetNextEvent(uint32_t* buf, uint32_t bufSize);
 
     PLTGainCal* GetGainCal ()
     {
@@ -114,6 +114,7 @@ class PLTEvent : public PLTTracking
     std::vector<PLTError> fErrors;
     std::vector<int> fDesyncChannels;
 
+    InputType fInputType;
     PLTGainCal fGainCal;
     PLTBinaryFileReader fBinFile;
     PLTAlignment fAlignment;

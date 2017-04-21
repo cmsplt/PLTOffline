@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         lheader = false;
       }
       lastheader = n1;
-      n = (n1 & 0xf0000000 + oldevent);
+      n = (n1 & 0xf0000000) + oldevent;
       n = (n << 32);
       TDCbuff[TDCbuflength] = n;
       TDCbuff[TDCbuflength] += n2;

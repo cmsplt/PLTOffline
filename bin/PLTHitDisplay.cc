@@ -232,7 +232,7 @@ int PLTHitDisplay (std::string const DataFileName, std::string const GainCalFile
   PLTU::SetStyle();
 
   // Grab the plt event reader
-  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName,false);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
     //  PLTEvent Event(DataFileName);  
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_Diamond;

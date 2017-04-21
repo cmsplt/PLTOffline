@@ -5,18 +5,15 @@ PLTBinaryFileReader::PLTBinaryFileReader ()
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_All;
   fLastTime = 0;
   fTimeMult = 0;
+  fInputType = kBinaryFile;
 }
 
 
-PLTBinaryFileReader::PLTBinaryFileReader (std::string const in, bool IsText)
+PLTBinaryFileReader::PLTBinaryFileReader (std::string const in, InputType inputType)
 {
-  SetIsText(IsText);
+  fInputType = inputType;
 
-  if (fIsText) {
-    OpenTextFile(in);
-  } else {
-    Open(in);
-  }
+  Open(in);
   fPlaneFiducialRegion = PLTPlane::kFiducialRegion_All;
   fLastTime = 0;
   fTimeMult = 0;
@@ -31,11 +28,18 @@ PLTBinaryFileReader::~PLTBinaryFileReader ()
 
 bool PLTBinaryFileReader::Open (std::string const DataFileName)
 {
-  if (fIsText) {
-    return OpenTextFile(DataFileName);
-  } else {
+  if (fInputType == kBinaryFile) {
     return OpenBinary(DataFileName);
+  } else if (fInputType == kTextFile) {
+    return OpenTextFile(DataFileName);
+  } else if (fInputType == kBuffer) {
+    // nothing to do here
+    return true;
+  } else {
+    std::cerr << "Unknown input type " << fInputType << std::endl;
+    exit(1);
   }
+  return false;
 }
 
 
@@ -68,9 +72,9 @@ bool PLTBinaryFileReader::OpenTextFile (std::string const DataFileName)
 
 
 
-void PLTBinaryFileReader::SetIsText (bool const in)
+void PLTBinaryFileReader::SetInputType(InputType inputType)
 {
-  fIsText = in;
+  fInputType = inputType;
   return;
 }
 
@@ -197,18 +201,23 @@ bool PLTBinaryFileReader::DecodeSpyDataFifo (uint32_t word, std::vector<PLTHit*>
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
+int PLTBinaryFileReader::ReadEventHits(uint32_t* buf, uint32_t bufSize, std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
-  if (fIsText) {
+  if (fInputType == kBinaryFile) {
+    return ReadEventHitsBinary(Hits, Errors, Event, Time, BX, DesyncChannels);
+  } else if (fInputType == kTextFile) {
     // we assume no errors in a text file, so fErrors will just stay empty
-    return ReadEventHitsText(fInfile, Hits, Event, Time, BX);
+    return ReadEventHitsText(Hits, Event, Time, BX);
+  } else if (fInputType == kBuffer) {
+    return ReadEventHitsBuffer(buf, bufSize, Hits, Errors, Event, Time, BX, DesyncChannels);
   } else {
-    return ReadEventHits(fInfile, Hits, Errors, Event, Time, BX, DesyncChannels);
+    // uh...this should have already been caught in Open()
+    return -1;
   }
 }
 
 
-int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
+int PLTBinaryFileReader::ReadEventHitsBinary(std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
 {
   uint32_t n1, n2, oldn1, oldn2;
 
@@ -217,10 +226,10 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
   while (bheader) {
 
     // Read 64-bit word
-    InFile.read((char *) &n2, sizeof n2);
-    InFile.read((char *) &n1, sizeof n1);
+    fInfile.read((char *) &n2, sizeof n2);
+    fInfile.read((char *) &n1, sizeof n1);
 
-    if (InFile.eof()) {
+    if (fInfile.eof()) {
       return -1;
     }
 
@@ -229,18 +238,18 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 
       for (int ih = 0; ih < 100; ih++) {
 
-        InFile.read((char *) &n1, sizeof n1);
+        fInfile.read((char *) &n1, sizeof n1);
 
         if ((n1 & 0xf0000000) == 0xa0000000) {
-          InFile.read((char *) &n2, sizeof n2);
+          fInfile.read((char *) &n2, sizeof n2);
           break;
         }
-        if (InFile.eof()) {
+        if (fInfile.eof()) {
           return -1;
         }
       }
 
-    } else if ( ((n1 & 0xff000000) == 0x50000000 && (n2 & 0xff) == 0 ) || ( ((n2 & 0xff000000) == 0x50000000) ) && (n1 & 0xff) == 0 ){
+    } else if ( ((n1 & 0xff000000) == 0x50000000 && (n2 & 0xff) == 0 ) || ((n2 & 0xff000000) == 0x50000000 && (n1 & 0xff) == 0) ){
       // Found the header and it has correct FEDID
       wordcount = 1;
       bheader = true;
@@ -261,9 +270,9 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
         // the previous words and only process the new ones if they're different.
         oldn1=n1;
         oldn2=n2;
-        InFile.read((char *) &n2, sizeof n2);
-        InFile.read((char *) &n1, sizeof n1);
-        if (InFile.eof()) {
+        fInfile.read((char *) &n2, sizeof n2);
+        fInfile.read((char *) &n1, sizeof n1);
+        if (fInfile.eof()) {
           return -1;
         }
 
@@ -290,8 +299,8 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 	  // peek at the next word and see if it is the other trailer word.
 
           uint32_t peekWord;
-          InFile.read((char *) &peekWord, sizeof peekWord);
-          if (InFile.eof()) {
+          fInfile.read((char *) &peekWord, sizeof peekWord);
+          if (fInfile.eof()) {
             // shouldn't happen unless the event is truncated in some way
             return -1;
           }
@@ -311,7 +320,7 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
           }
           else {
             // OK, it wasn't a trailer. Undo the peek and decode both words
-            InFile.seekg(-sizeof peekWord, std::ios_base::cur);
+            fInfile.seekg(-sizeof peekWord, std::ios_base::cur);
             if (n2 != oldn2) DecodeSpyDataFifo(n2, Hits, Errors, DesyncChannels);
             if (n1 != oldn1) DecodeSpyDataFifo(n1, Hits, Errors, DesyncChannels);
 	  }
@@ -324,14 +333,12 @@ int PLTBinaryFileReader::ReadEventHits (std::ifstream& InFile, std::vector<PLTHi
 }
 
 
-
-
-int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
+int PLTBinaryFileReader::ReadEventHitsText (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
 {
   int LastEventNumber = -1;
   int EventNumber = -1;
 
-  if (InFile.eof()) {
+  if (fInfile.eof()) {
     return -1;
   }
 
@@ -339,7 +346,7 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
   std::string Line;
   std::istringstream LineStr;
   while (true) {
-    std::getline(InFile, Line);
+    std::getline(fInfile, Line);
     LineStr.clear();
     LineStr.str(Line);
 
@@ -351,9 +358,9 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
 
 
     if (EventNumber != LastEventNumber && LastEventNumber != -1) {
-      InFile.putback('\n');
+      fInfile.putback('\n');
       for (std::string::reverse_iterator It = Line.rbegin(); It != Line.rend(); ++It) {
-        InFile.putback(*It);
+        fInfile.putback(*It);
       }
       break;
     }
@@ -378,7 +385,58 @@ int PLTBinaryFileReader::ReadEventHitsText (std::ifstream& InFile, std::vector<P
   return Hits.size();
 }
 
+// This is basically the same as ReadEventHitsBinary but without the code to fix the breakage from
+// old versions of FEDStreamReader, since this shouldn't have to deal with that. It might be possible
+// to merge these two together but since the hard work is done in DecodeSpyDataFifo() anyway, that's
+// really what I'm (successfully) trying to avoid to duplicate.
 
+int PLTBinaryFileReader::ReadEventHitsBuffer(uint32_t* buf, uint32_t bufSize, std::vector<PLTHit*>& Hits, std::vector<PLTError>& Errors, unsigned long& Event, uint32_t& Time, uint32_t& BX, std::vector<int>& DesyncChannels)
+{
+  if (bufSize % 2 != 0) {
+    std::cerr << "Event buffer is not of even size (" << bufSize << " words)" << std::endl;
+  }
+
+  bool inEvent = false;
+  for (uint32_t i=0; i<bufSize; i+=2) {
+    if ((buf[i] == 0x53333333) && (buf[i+1] == 0x53333333)) {
+      //tdc buffer, special handling
+      i+=2;
+      while ((buf[i] & 0xf0000000) != 0xa0000000 && i<bufSize) {
+	i++;
+      }
+      if (i>=bufSize) return -1;
+      i++;
+    } else if (inEvent == false && (buf[i] & 0xff) == 0 && (buf[i+1] & 0xff000000) == 0x50000000) {
+      // header
+      if (i!=0)
+	std::cerr << "Found header at unexpected location in buffer (" << i << "/" << bufSize << ")" << std::endl;
+      inEvent = true;
+      Event = buf[i+1] & 0xffffff;
+      //std::cout << "Found Event Header: " << Event << std::endl;
+      BX = ((buf[i] & 0xfff00000) >> 20);
+      fFEDID = ((buf[i] & 0xfff00) >> 8);
+    } else if ((buf[i+1] & 0xf0000000) == 0xa0000000) {
+      if (i!=bufSize-2)
+	std::cerr << "Found trailer at unexpected location in buffer (" << i << "/" << bufSize << ")" << std::endl;
+      if (inEvent == false)
+	std::cerr << "Found trailer before header" << std::endl;
+      inEvent = false;
+      Time = buf[i];
+    } else {
+      if (inEvent == false)
+	std::cerr << "Found hit data before header" << std::endl;
+      // neither header nor trailer; decode appropriately
+      DecodeSpyDataFifo(buf[i], Hits, Errors, DesyncChannels);
+      DecodeSpyDataFifo(buf[i+1], Hits, Errors, DesyncChannels);
+    }
+    if (i == 0 && inEvent == false) {
+      std::cerr << "Start of buffer wasn't the header (got " << std::hex << buf[i] << " " << buf[i+1]
+		<< " instead)" << std::dec << std::endl;
+    }
+  } // loop over buffer
+
+  return Hits.size();
+}
 
 void PLTBinaryFileReader::ReadPixelMask (std::string const InFileName)
 {

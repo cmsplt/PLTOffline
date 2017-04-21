@@ -93,6 +93,7 @@ splitintoev
 TelescopeRotation
 TestAlignment
 TestBinaryFileReader
+TestBufferReader
 TestBXPattern
 TestDACs
 TestGainCal
