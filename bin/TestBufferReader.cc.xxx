@@ -13,6 +13,12 @@
 // unless you're doing something with the output other than dumping
 // it to screen!
 //
+// Compilation note: because this won't compile on april (zmq is not
+// installed there), I've changed the suffix so the makefile won't try
+// to compile this by default. To get this to compile, just remove
+// the suffix and add -lzmq to the Makefile (and obviously, do it on
+// a machine with zmq installed).
+//
 ////////////////////////////////////////////////////////////////////
 
 #include <iostream>
