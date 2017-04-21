@@ -39,10 +39,12 @@ int TestBufferReader(const char* zmqHost) {
   zmq::context_t zmq_context(1);
   zmq::socket_t zmq_socket(zmq_context, ZMQ_SUB);
   char zmq_address[100];
-  snprintf(100, zmq_address, "tcp://%s:%d", zmqHost, 7776);
+  snprintf(zmq_address, 100, "tcp://%s:%d", zmqHost, 7776);
 
   zmq_socket.connect(zmq_address);
   zmq_socket.setsockopt(ZMQ_SUBSCRIBE, 0, 0);
+
+  uint32_t buf[1024];
 
   // Listen to events
   while (1) {
@@ -51,7 +53,7 @@ int TestBufferReader(const char* zmqHost) {
 
     // feed it to Event.GetNextEvent()
 
-    Event.GetNextEvent(buf, eventSize);
+    Event.GetNextEvent(buf, eventSize/sizeof(uint32_t));
 
     std::cout << "Event " << Event.EventNumber() << " BX " << Event.BX() << " Time " << Event.Time() << std::endl;
     int nhits = 0;
@@ -59,7 +61,8 @@ int TestBufferReader(const char* zmqHost) {
       PLTPlane* Plane = Event.Plane(ip);
       for (size_t ih = 0; ih != Plane->NHits(); ++ih) {
 	PLTHit* Hit = Plane->Hit(ih);
-	std::cout << "Hit  " << nhits << " chan " << Hit->Channel() << " ROC " << Hit->ROC() << " row " << Hit->Row() << " col " << Hit->Col() << std::endl;
+	std::cout << "Hit  " << nhits << " chan " << Hit->Channel() << " ROC " << Hit->ROC() << " row " << Hit->Row() << " col " << Hit->Column() << std::endl;
+	nhits++;
       }
     }
 
