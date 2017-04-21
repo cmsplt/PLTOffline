@@ -3,6 +3,8 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <stdint.h>
+
 int ReadEventHits (std::string const DataFileName)
 {
   uint32_t n1;

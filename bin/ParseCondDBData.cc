@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <stdint.h>
 
 int ParseCondDBData(const std::string accidentalFileName, const std::string csvFileName) {
   std::cout << "accidental file name: " << accidentalFileName << std::endl;

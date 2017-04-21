@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <stdint.h>
 
 #include "PLTHit.h"
 

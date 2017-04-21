@@ -265,7 +265,7 @@ void PLTEvent::SetPlaneClustering (PLTPlane::Clustering in, PLTPlane::FiducialRe
 // passed to PLTBinaryFileReader via PLTEvent). It's a little clunky but should hopefully work.
 
 int PLTEvent::GetNextEvent(void) {
-  GetNextEvent(nullptr, 0);
+  return GetNextEvent(nullptr, 0);
 }
 
 int PLTEvent::GetNextEvent(uint32_t* buf, uint32_t bufSize)
