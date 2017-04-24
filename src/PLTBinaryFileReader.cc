@@ -486,7 +486,7 @@ void PLTBinaryFileReader::ReadOnlinePixelMask(const std::string maskFileName, co
   std::string colString, rowString;
   while (1) {
     std::getline(maskFile, line);
-    if (maskFile.eof()) break;
+    if (maskFile.eof())break;
     if (line.empty()) continue; // skip blank lines
     if (line.at(0) == '#') continue; // skip comment lines
     
@@ -515,6 +515,7 @@ void PLTBinaryFileReader::ReadOnlinePixelMask(const std::string maskFileName, co
       lastCol = atoi(colString.substr(cdash+1).c_str());
     }
 
+
     // same, for rows
     size_t rdash = rowString.find('-');
     if (rdash == std::string::npos) {
@@ -533,13 +534,13 @@ void PLTBinaryFileReader::ReadOnlinePixelMask(const std::string maskFileName, co
 
     for (int col = firstCol; col <= lastCol; ++col) {
       for (int row = firstRow; row <= lastRow; ++row) {
-	if (maskVal == 0) {
-	  // fPixelMask contains the masked pixels. So if maskVal == 0 (means "turn this pixel off").
-	  // put this pixel into fPixelMask, and if it's 1, take this pixel out of fPixelMask.
-	  fPixelMask.insert(ch*100000 + roc*10000 + col*100 + row);
-	} else {
-	  fPixelMask.erase(ch*100000 + roc*10000 + col*100 + row);
-	}	  
+        // fPixelMask contains the masked pixels. So if maskVal == 0 (means "turn this pixel off").
+        // put this pixel into fPixelMask, and if it's 1, take this pixel out of fPixelMask.
+        if (maskVal == 0) {
+          fPixelMask.insert(ch*100000 + roc*10000 + col*100 + row);
+        } else {
+          fPixelMask.erase(ch*100000 + roc*10000 + col*100 + row);
+        }	  
       }
     } // column & row loops
   } // line loop

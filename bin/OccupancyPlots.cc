@@ -120,8 +120,8 @@ int OccupancyPlots (std::string const DataFileName)
       int min = (nsec-(hr*3600))/60;
       int sec = nsec % 60;
       std::cout << "Processing event: " << ientry << " at " << std::setfill('0') << std::setw(2)
-		<< hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
-		<< std::setw(3) << Event.Time()%1000 << std::endl;
+    << hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
+    << std::setw(3) << Event.Time()%1000 << std::endl;
     }
 
     if (ientry > 3000000) {

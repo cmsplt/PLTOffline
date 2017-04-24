@@ -46,6 +46,7 @@ class PLTBinaryFileReader
     void SetPlaneFiducialRegion (PLTPlane::FiducialRegion);
 
     PLTPlane::FiducialRegion fPlaneFiducialRegion;
+    const std::set<int>& PixelMask(){return fPixelMask;}
 
   private:
     std::string fFileName;

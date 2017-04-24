@@ -91,6 +91,11 @@ class PLTEvent : public PLTTracking
       fBinFile.ReadOnlinePixelMask(in, fGainCal);
       return;
     }
+    
+    const std::set<int>& PixelMask ()
+    {
+      return fBinFile.PixelMask();
+    } 
 
     int GetHardwareID (int const ch)
     {

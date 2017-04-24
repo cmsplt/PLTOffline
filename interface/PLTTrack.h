@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <set>
 
 
 #include "PLTCluster.h"
@@ -32,6 +33,7 @@ class PLTTrack
 
     bool IsFiducial (PLTPlane*, PLTAlignment&, PLTPlane::FiducialRegion);
     bool IsFiducial (int const, int const, PLTAlignment&, PLTPlane::FiducialRegion);
+    bool IsFiducial (int const, int const , PLTAlignment&, std::set<int> const &);
 
     float TX (float const);
     float TY (float const);
