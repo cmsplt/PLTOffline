@@ -11,6 +11,7 @@
 #include <fstream>
 #include <stdint.h>
 #include <set>
+#include <limits>
 
 #include "PLTHit.h"
 #include "PLTAlignment.h"

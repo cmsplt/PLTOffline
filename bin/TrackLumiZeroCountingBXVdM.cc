@@ -180,20 +180,20 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   // Arrays to keep track of variables
   std::vector<int> nTotTracks(nSteps);
   std::vector<int> nGoodTracks(nSteps);
-  std::vector<std::vector<float> > nAllTriple(nSteps, NBX);
-  std::vector<std::vector<float> > nGoodTriple(nSteps, NBX);
-  std::vector<std::vector<float> > nEmptyEventsFilledBX(nSteps, NBX);
-  std::vector<std::vector<float> > nNonEmptyFilledBX(nSteps, NBX);
-  std::vector<std::vector<int> > nEvents(nSteps, NBX);
-  std::vector<std::vector<int> > nEventsFilledBX(nSteps, NBX);
+  std::vector<std::vector<float> > nAllTriple(nSteps, std::vector<float>(NBX));
+  std::vector<std::vector<float> > nGoodTriple(nSteps, std::vector<float>(NBX));
+  std::vector<std::vector<float> > nEmptyEventsFilledBX(nSteps, std::vector<float>(NBX));
+  std::vector<std::vector<float> > nNonEmptyFilledBX(nSteps, std::vector<float>(NBX));
+  std::vector<std::vector<int> > nEvents(nSteps, std::vector<int>(NBX));
+  std::vector<std::vector<int> > nEventsFilledBX(nSteps, std::vector<int>(NBX));
 
   typedef std::vector<std::vector<int> > vv;
 
   // Arrays to keep track of anaysis by channel and per bunch
-  std::vector<vv> nAllTripleBX(nSteps, vv(nChannels, NBX));
-  std::vector<vv> nGoodTripleBX(nSteps, vv(nChannels, NBX));
-  std::vector<vv> nEmptyEventsFilledBXBX(nSteps, vv(nChannels, NBX));
-  std::vector<vv> nNonEmptyFilledBXBX(nSteps, vv(nChannels, NBX));
+  std::vector<vv> nAllTripleBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nGoodTripleBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nEmptyEventsFilledBXBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nNonEmptyFilledBXBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
 
   int nEventsByBX[NBX] = {0};
   float nEmptyEventsByBX[NBX] = {0.};
@@ -201,11 +201,11 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::vector<int> zeroVector(nChannels);
 
   // Double arrays to keep track channel-by-channel
-  std::vector<std::vector<int> > nAllTripleByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nNonEmptyFilledBXByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nEmptyEventsByBXByChannel(3564, nChannels);
+  std::vector<std::vector<int> > nAllTripleByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nNonEmptyFilledBXByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nEmptyEventsByBXByChannel(3564, zeroVector);
 
   // Variables to keep track of dead channels
   std::map<Int_t, Int_t> startEvent;

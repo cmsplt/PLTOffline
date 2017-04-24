@@ -173,11 +173,11 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::vector<int> zeroVector(nChannels);
 
   // Double arrays to keep track channel-by-channel
-  std::vector<std::vector<int> > nAllTripleByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nNonEmptyFilledBXByChannel(nSteps, nChannels);
-  std::vector<std::vector<int> > nEmptyEventsByBXByChannel(3564, nChannels);
+  std::vector<std::vector<int> > nAllTripleByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nNonEmptyFilledBXByChannel(nSteps, zeroVector);
+  std::vector<std::vector<int> > nEmptyEventsByBXByChannel(3564, zeroVector);
 
   // Variables to keep track of dead channels
   std::map<Int_t, Int_t> startEvent;

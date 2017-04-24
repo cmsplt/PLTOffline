@@ -34,7 +34,7 @@ std::string outputFileName = "DCOL.dat"; //Output file name
 //Define the types necessary to construct a 4-d vector to track the DCOL drain queues
 typedef std::vector<std::vector<int> > vv;
 typedef std::vector<vv> vvv;
-std::vector<vvv> DCOLhistory(24, vvv(3, vv(26, bufferSize)));
+std::vector<vvv> DCOLhistory(24, vvv(3, vv(26, std::vector<int>(bufferSize))));
 
 // Function declaration
 // Reads pixel mask. Takes as input the name of the mask file.
