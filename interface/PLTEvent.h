@@ -92,7 +92,7 @@ class PLTEvent : public PLTTracking
       return;
     }
     
-    std::set<int>& PixelMask ()
+    const std::set<int>& PixelMask ()
     {
       return fBinFile.PixelMask();
     } 

@@ -84,7 +84,7 @@ int OccupancyPlots (std::string const DataFileName)
   // Grab the plt event reader
   PLTEvent Event(DataFileName);
   //Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering);
-  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_m5_m5;
+  PLTPlane::FiducialRegion MyFiducialRegion = PLTPlane::kFiducialRegion_All;
   //  Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching);
   Event.SetPlaneClustering(PLTPlane::kClustering_AllTouching, PLTPlane::kFiducialRegion_All);
   Event.SetPlaneFiducialRegion(MyFiducialRegion);
@@ -120,8 +120,8 @@ int OccupancyPlots (std::string const DataFileName)
       int min = (nsec-(hr*3600))/60;
       int sec = nsec % 60;
       std::cout << "Processing event: " << ientry << " at " << std::setfill('0') << std::setw(2)
-		<< hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
-		<< std::setw(3) << Event.Time()%1000 << std::endl;
+    << hr << ":" << std::setw(2) << min << ":" << std::setw(2) << sec << "."
+    << std::setw(3) << Event.Time()%1000 << std::endl;
     }
 
     if (ientry > 3000000) {
@@ -442,30 +442,30 @@ f->Write();
 
   // Loop over all canvas, save them, and delete them
   for (std::map<int, TCanvas*>::iterator it = cOccupancyMap.begin(); it != cOccupancyMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Ch%02i.gif", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cOccupancyClMap.begin(); it != cOccupancyClMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Clusters_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Clusters_Ch%02i.gif", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cQuantileMap.begin(); it != cQuantileMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Quantile_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Quantile_Ch%02i.gif", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cProjectionMap.begin(); it != cProjectionMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Projection_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Projection_Ch%02i.gif", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cEfficiencyMap.begin(); it != cEfficiencyMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Efficiency_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Efficiency_Ch%02i.gif", it->first));
     delete it->second;
   }
   for (std::map<int, TCanvas*>::iterator it = cCoincidenceMap.begin(); it != cCoincidenceMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_Coincidence_Ch%02i.gif", it->first));
   }
   for (std::map<int, TCanvas*>::iterator it = cAllMap.begin(); it != cAllMap.end(); ++it) {
-    it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i_m5.gif", it->first));
+    it->second->SaveAs(TString::Format("plots/Occupancy_All_Ch%02i.gif", it->first));
     delete it->second;
   }
 

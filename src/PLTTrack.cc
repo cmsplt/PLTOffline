@@ -296,7 +296,7 @@ bool PLTTrack::IsFiducial (int const Channel, int const ROC, PLTAlignment& Align
 
   int ChannelPixel = Channel * 100000 + ROC * 10000 + PX * 100 + PY;
 
-  if (PX < 0 || PY < 0) return false;
+  if (PX < PLTU::FIRSTROW || PY < PLTU::FIRSTCOL || PX > PLTU::LASTROW || PY > PLTU::LASTCOL) return false;
   //if (mask.count(ChannelPixel) != 0) printf("Masked Channel %i, Channel %i, ROC %i, PX %i, PY %i\n", ChannelPixel, Channel, ROC, PX, PY);
   return mask.count(ChannelPixel) == 0;
   //return false;

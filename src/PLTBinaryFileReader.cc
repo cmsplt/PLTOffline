@@ -430,11 +430,11 @@ void PLTBinaryFileReader::ReadOnlinePixelMask(const std::string maskFileName, co
 
     for (int col = firstCol; col <= lastCol; ++col) {
       for (int row = firstRow; row <= lastRow; ++row) {
-
+        // fPixelMask contains the masked pixels. So if maskVal == 0 (means "turn this pixel off").
+        // put this pixel into fPixelMask, and if it's 1, take this pixel out of fPixelMask.
         if (maskVal == 0) {
           fPixelMask.insert(ch*100000 + roc*10000 + col*100 + row);
         } else {
-          printf("Erase\n");
           fPixelMask.erase(ch*100000 + roc*10000 + col*100 + row);
         }	  
       }
