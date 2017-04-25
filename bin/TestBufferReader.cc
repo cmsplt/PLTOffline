@@ -14,10 +14,10 @@
 // it to screen!
 //
 // Compilation note: because this won't compile on april (zmq is not
-// installed there), I've changed the suffix so the makefile won't try
-// to compile this by default. To get this to compile, just remove
-// the suffix and add -lzmq to the Makefile (and obviously, do it on
-// a machine with zmq installed).
+// installed there), this is removed from the Makefile so it won't try
+// to compile it by default. To get it to compile, just remove the
+// filter-out commands from the Makefile and add -lzmq to LIBS (and
+// obviously, do it on a machine with zmq installed).
 //
 ////////////////////////////////////////////////////////////////////
 

@@ -2,18 +2,21 @@ CC = g++
 LD = g++
 CFLAGS = -O3 -Wall `root-config --cflags`
 LIBS = `root-config --libs` -Llib -lMinuit -lSpectrum -lEve -lGeom
-INCLUDE = -Iinterface -Idict
+INCLUDE = -Iinterface
 OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
 EXECS = $(patsubst bin/%.cc,%,$(wildcard bin/*.cc))
 SCRIPTS = $(patsubst scripts/%.cc,%,$(wildcard scripts/*.cc))
 EXEOBJS  = $(patsubst bin/%.cc,lib/%.o,$(wildcard bin/*.cc))
-LINKDEFCC  = $(patsubst dict/%_linkdef.h,dict/%_dict.cc,$(wildcard dict/*_linkdef.h))
-LINKDEFOBJ  = $(patsubst dict/%_linkdef.h,lib/%_dict.o,$(wildcard dict/*_linkdef.h))
+
+# Exclude TestBufferReader from compilation since most systems that
+# you'll compile this on don't have zmq installed.
+EXEOBJS := $(filter-out lib/TestBufferReader.o,$(EXEOBJS))
+EXECS := $(filter-out TestBufferReader,$(EXECS))
 
 print-%:
 	@echo $*=$($*)
 
-all: $(LINKDEFCC) $(LINKDEFOBJ) $(OBJS) $(EXEOBJS) $(SCRIPTS) $(EXECS)
+all: $(OBJS) $(EXEOBJS) $(SCRIPTS) $(EXECS)
 
 lib/%.o : src/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
@@ -24,12 +27,6 @@ lib/%.o : bin/%.cc
 lib/%.o : scripts/%.cc
 	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-lib/%.o : dict/%.cc
-	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
-
-dict/%_dict.cc : include/%.h dict/%_linkdef.h
-	rootcint -f $@ -c $<
-
 % : $(OBJS) lib/%.o
 	$(LD) $(LIBS) $(OBJS) $(LINKDEFOBJ) lib/$@.o -o $@
 
@@ -38,6 +35,6 @@ dict/%_dict.cc : include/%.h dict/%_linkdef.h
 
 
 clean:
-	rm -f $(EXECS) $(SCRIPTS) lib/*.o dict/*_dict.cc dict/*_dict.h
+	rm -f $(EXECS) $(SCRIPTS) lib/*.o
 cleanimg:
 	rm -f *.eps *.gif *.jpg plots/*.*
