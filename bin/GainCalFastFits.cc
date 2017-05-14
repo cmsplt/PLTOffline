@@ -119,12 +119,13 @@ int GainCalFastFits (TString const InFileName)
     s.clear();
     s.str(line);
     s >> channel
+      >> roc
       >> col
       >> row
-      >> roc
       >> adc
       >> vcal;
-
+//      std::cout << s.str() << std::endl;
+   // std::cout << channel << " " << roc << " " << col << " " << row << std::endl;
     //if (channel==2&&roc==0&&col==3&&row==12){std::cout<<"ADC: "<<adc<<" VCAL " <<vcal<<std::endl;}
     // Get a simple string for the pixel and pair adc and vcal for this hit
     // which gets added to the map
@@ -134,6 +135,7 @@ int GainCalFastFits (TString const InFileName)
     // Add ROC and VCal if not there already
     ROCNames.insert(10 * channel + roc);
     VCals.insert(vcal);
+    
   }
 
   // Define the function we will fit for each pixel
