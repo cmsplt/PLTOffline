@@ -119,9 +119,9 @@ int GainCalFastFits (TString const InFileName)
     s.clear();
     s.str(line);
     s >> channel
-      >> roc
       >> col
       >> row
+      >> roc
       >> adc
       >> vcal;
 //      std::cout << s.str() << std::endl;
