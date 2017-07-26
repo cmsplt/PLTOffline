@@ -279,9 +279,9 @@ int PLTEvent::GetNextEvent(uint32_t* buf, uint32_t bufSize)
     return ret;
   }
 
-  static bool const DoLoop = fGainCal.IsGood() || fAlignment.IsGood();
-  static bool const DoAlignment = fAlignment.IsGood();
-  static bool const DoGainCal = fGainCal.IsGood();
+  const bool DoLoop = fGainCal.IsGood() || fAlignment.IsGood();
+  const bool DoAlignment = fAlignment.IsGood();
+  const bool DoGainCal = fGainCal.IsGood();
 
   // If the GC is good let's compute the charge
   if (DoLoop) {
