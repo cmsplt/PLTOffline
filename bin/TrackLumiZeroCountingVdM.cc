@@ -136,7 +136,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   }
 
   // Grab the plt event reader
-  PLTEvent::PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+  PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
   Event.SetPlaneFiducialRegion(FidRegionHits);

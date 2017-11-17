@@ -192,7 +192,7 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
   }
 
 
-  ofstream file;
+  std::ofstream file;
   file.open("plots/roc_eff.csv");//needs additional formatting
   file << "Time,Channel,ROC,NFiducial,NFiducialAndHit,Efficiency\n";
 

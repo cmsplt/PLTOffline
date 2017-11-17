@@ -41,7 +41,7 @@ int HitsvsEvent (std::string const DataFileName, int from, int to)
 
 
 
-  ofstream myfile ("HitsVsEvents.txt");
+  std::ofstream myfile ("HitsVsEvents.txt");
   
   if (myfile.is_open()) {
 
