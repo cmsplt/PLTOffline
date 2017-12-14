@@ -1,0 +1,15 @@
+This set of scripts was put together to get luminosity values on a per-fill basis from .hd5 files.
+
+Before getting into the details of each script, let us clarify the notation:
+(a) lumi1 is the instantaneous luminosity per NB4 calculated by averaging over the 14 PLT working channels (chs 0 and 4 excluded) and then summing up the bunches applying an OVERALL calibration constant;
+(b) lumi2 is the instantaneous luminosity per NB4 obtained by doing the opposite: first sum over bunches, then PER CHANNEL calibrations and then average of the 14 working channels.
+
+The scripts take as input .hd5 files that have to be put in a subfolder named as the fill number (please see NOTE below). There are three of them:
+(i) lumi_comparison_6104.py makes a plot of lumi1, lumi2 and their ratio for the whole fill considered;
+(ii) channel_rating_lumi1.py checks how much the values of lumi1 changes in a fill (on a per NB4 basis) when each of the 14 working channels is excluded from its calculation one at a time. The script outputs plots of ratios between lumi1 and the lumi with the excluded channel (labeled as ch_N if the Nth channel is the one missing) for each channel;
+(iii) channel_rating_lumi2.py does the exact same as above but with lumi2 instead.
+
+NOTE: as they are right now, all these scripts are specific for fill 6104 because the sigvis (both overall and per channel) change on a per-fill basis. One could just change these values by hand with ones from a different fill (values for sigvis can be found in the BRIL Webmonitor tool) or some automated way to do this just using the fill number may be implemented. 
+
+
+--Gianmarco Pompeo

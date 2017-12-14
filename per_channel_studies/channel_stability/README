@@ -1,0 +1,14 @@
+These scripts were written to get histograms for the normalized rates and the standard pulls for each PLT telescope on a per fill basis, in order to have an idea of the stability and performance of each channel.
+
+The normalization happens per NB4 in two different ways:
+(1) with the average values of the 14 working channels (chs 0 and 4 always excluded) for that NB4 -> rates/pulls_single_fill.py
+(2) with an average of the values of the 25 immediately previous NB4s for that specific channel -> rates/pulls_new_avg.py
+
+The script reads .hd5 files that have to be saved in a subfolder named as the number of the fill being analyzed. This number has to be input when calling the script as it will be used to title plots.
+
+The script will show histograms for each PLT telescope without automatically saving them (the scale may need further adjusting). Values of average and rms for each telescope are also included.
+
+NOTE: the script mean_ch_err_plot.py was created to plot averages with their error bars for every telescope over a wide range of fills, but this was firstly done manually and some automation would indeed be necessary at some point.
+
+
+--Gianmarco Pompeo

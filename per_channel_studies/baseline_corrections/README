@@ -1,0 +1,12 @@
+These 3 scripts were produced to plot values for the baseline corrections coming from the PLT automated workloop.
+
+There are three of them because of the different formats the .txt workloop files were organized into over time:
+(a) baseline_plots_old.py is for the first part of 2016 data, where FED0 and FED1 were not separated;
+(b) baseline_plots_old2.py is for the second part of 2016 data, where FED0 and FED1 are separatedly noted in the files;
+(c) baseline_plots.py is for 2017 data.
+
+The script will loop over the workloop files, which have to be put in a subfolder named as the number of the fill(s) being considered; the script will require to input such number on the command line when calling it. 
+It will eventually save plots for the corrections for each PLT telescope (Pixel and FEDs).
+
+
+--Gianmarco Pompeo
