@@ -32,6 +32,7 @@ DumpErrors
 dumpPixffil
 dumpPixffil_orig
 FindFilledBX
+FindLeadingBX
 FindNoisyPixels
 FindTrims
 GainCalFastFits
