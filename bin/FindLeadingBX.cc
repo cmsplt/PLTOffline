@@ -29,14 +29,6 @@ const int NBX = 3564;
 // will be considered "filled"
 const float fillThresh = 0.05;
 
-const int nFEDChannels = 36;
-const int nChannels = 16;
-
-// Translation of pixel FED channel number to readout channel number.
-const int channelNumber[36] = {-1, 0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7,  // 0-11
-			       -1, 8, 9, -1, 10, 11, -1, 12, 13, -1, 14, 15, // 12-23
-			       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-
 // CODE BELOW
 
 int FindFilledBX(const std::string DataFileName) {
