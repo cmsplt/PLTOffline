@@ -13,16 +13,9 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <map>
-#include <numeric>
-#include <algorithm>
 
 #include "PLTEvent.h"
 #include "PLTU.h"
-
-#include "TH1F.h"
-#include "TFile.h"
-#include "TCanvas.h"
 
 // FUNCTION DEFINITIONS HERE
 
@@ -115,11 +108,6 @@ int FindFilledBX(const std::string DataFileName) {
   }
   std::cout << std::endl;
 
-  std::vector<int> t1 = {5, 13, 15};
-  std::cout << "Test 1: " << (std::find(t1.begin(), t1.end(), 12) != t1.end()) << std::endl;
-  std::cout << "Test 2: " << (std::find(t1.begin(), t1.end(), 13) != t1.end()) << std::endl;
-  std::cout << "Test 3: " << (std::find(t1.begin(), t1.end(), 15) != t1.end()) << std::endl;
-  std::cout << "Test 4: " << (std::find(t1.begin(), t1.end(), 17) != t1.end()) << std::endl;
   return 0;
 }
 
