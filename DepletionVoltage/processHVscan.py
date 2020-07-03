@@ -21,7 +21,8 @@ def timerDecorator( func ):
 def parseLogFile( logFile ):
     # Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")
     import pandas
-    perChList = lambda prefix: [ f'{prefix}{i}' for i in range(16) ]
+    perChList = lambda prefix: [ f'{prefix}{i}' for i in [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3] ]
+    # HpFT0,HpFT1,HpFT2,HpFT3,HpNT0,HpNT1,HpNT2,HpNT3,HmFT0,HmFT1,HmFT2,HmFT3,HmNT0,HmNT1,HmNT2,HmNT3
     cols = [ 'timestamp', 'ignore' ] + perChList('vMon') + perChList('iMon') + perChList('rate') + [ 'avgRate' ]
     # [ timestamp, #M, vMon[0:15], iMon[0:15], rate[0:15], avgRate ]
     with open( f'/scratch/DepletionVoltage/AutoScanLogs/{logFile}', "r" ) as log:
@@ -93,12 +94,15 @@ def processChannel( logData, ch ):
     return scanDataCh
 
 @timerDecorator
-def calculateDeplVolt( scanDataCh, ch ):
+def calculateDeplVolt( scanDataCh, ch, thr1, thr2 ):
     # calculate depletion voltage based on percent change:
-    # pick first value which is within 2% of the previous value and within %5 of next-to-previous value
-    pctP1       = scanDataCh[f'medianRateN{ch}'].pct_change( periods = 1 ).abs()
-    pctP2       = scanDataCh[f'medianRateN{ch}'].pct_change( periods = 2 ).abs()
-    deplVoltCh  = scanDataCh[ ( pctP1 < 0.02 ) & ( pctP2 < 0.05 ) ].index[0]
+    # pick first value (highest to lowest HV values) which is within 'thr1' of the previous value and within 'thr2' of next-to-previous value
+    scanDataCh  = scanDataCh[::-1]
+    pctCh       = lambda per: scanDataCh[f'medianRateN{ch}'].pct_change( periods = per ).abs()
+    pctP1       = pctCh(1)
+    pctP2       = pctCh(2)
+    deplVoltCh  = scanDataCh[ (pctP1>thr1) & (pctP2>thr2) ].index[0]
+    dvStDev     = scanDataCh[f'medianRateN{ch}'][:deplVoltCh].std()
     return deplVoltCh
 
 @timerDecorator
@@ -118,8 +122,7 @@ def plotChannel( date, ch, scanDataCh, deplVoltCh ):
     matplotlib.pyplot.close('all')
 
 def main():
-    scanLogs = [ 'Scan_2018_10_4_11_39_57.txt', 'Scan_2018_8_15_14_49_55.txt', 'Scan_2018_8_1_8_27_17.txt', 'Scan_2018_8_23_16_45_30.txt', 'Scan_2018_8_8_15_13_58.txt', 'Scan_2018_9_5_14_58_55.txt' ]
-    # logFile     = 'Scan_2018_10_4_11_39_57.txt'
+    scanLogs = [ 'Scan_2018_8_1_8_27_17.txt','Scan_2018_8_8_15_13_58.txt','Scan_2018_8_15_14_49_55.txt','Scan_2018_8_23_16_45_30.txt','Scan_2018_9_5_14_58_55.txt','Scan_2018_10_4_11_39_57.txt' ]
     deplVolt = {}
     for logFile in scanLogs:
         print( f'processing {logFile}...' )
@@ -129,7 +132,7 @@ def main():
         for ch in range(16):
             print( f'processing ch{ch}' )
             scanDataCh          = processChannel( logData, ch )
-            deplVoltCh          = calculateDeplVolt( scanDataCh, ch )
+            deplVoltCh          = calculateDeplVolt( scanDataCh, ch, 0.01, 0.02 )
             deplVolt[logFile].append( deplVoltCh )
             plotChannel( date, ch, scanDataCh, deplVoltCh )
     print(deplVolt)
