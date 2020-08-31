@@ -4,6 +4,7 @@
 *.gif
 *.root
 *.txt
+__pycache__/
 
 test/*
 lib/*
