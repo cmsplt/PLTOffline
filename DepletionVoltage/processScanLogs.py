@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# read auto scan logs into a pandas dataframe, merge with HF data from brilcalc, group together and cleanup scan data
-# (i.e. drop non-uniform values of per-channel-iMon and per-channel-rates),
-# calculate depletion voltage (plateau of rate vs HV curve) and plot
+# read HV bias scan logs into a pandas dataframe, merge with HF or BCM1f data from brilcalc,
+# group together and cleanup scan data (i.e. drop non-uniform values of per-channel-iMon and per-channel-rates),
+# and calculate depletion voltage (plateau of rate vs HV curve) and plot as a function of time/intLumi
 
 import pandas
 from typing import Dict, List, Tuple # [https://towardsdatascience.com/static-typing-in-python-55aa6dfe61b4]
@@ -78,7 +78,7 @@ def MergeDF( logData:pandas.DataFrame ) -> pandas.DataFrame:
 def ProcessChannel( logData:pandas.DataFrame, ch:int ) -> pandas.DataFrame:
     # determine scanpoints for ch, filter logData for each ch and scanpoint based on uniformity of vMon and rateN values, and return median/std for rateCh & rateNCh
     vMonGroup = logData[ f'vMon{ch}' ].groupby( logData[ f'vMon{ch}' ].round( decimals = 0 ) ).count() > 4
-        # group all integer-rounded vMon values and mark 'true' if vMon group size > 2
+        # group all integer-rounded vMon values and mark 'true' if vMon group size > 4
     scanSteps   = vMonGroup[ vMonGroup.values ].index.to_list()
     logDataCh   = logData[ [ 'timestamp', f'vMon{ch}', f'rate{ch}', f'rateN{ch}' ] ]
     medianRate, medianRateN, stdevRate, stdevRateN = [],[],[],[]
@@ -98,7 +98,7 @@ def ProcessChannel( logData:pandas.DataFrame, ch:int ) -> pandas.DataFrame:
 
 def CalculateDeplVolt( scanDataCh:pandas.DataFrame, ch:int, thr1:float, thr2:float ) -> int:
     # calculate depletion voltage based on percent change:
-    # pick first value (highest to lowest HV values) which is within 'thr1' of the previous value and within 'thr2' of next-to-previous value
+    # pick first value (highest to lowest HV setpoints) which is within 'thr1' of the previous value and within 'thr2' of next-to-previous value
     scanDataCh  = scanDataCh[::-1] # reverse order of scan points (from highest to lowest)
     def PctCh(per): return scanDataCh[f'medianRateN{ch}'].pct_change( periods = per ).abs()
     pctP1       = PctCh(1)
@@ -112,9 +112,9 @@ def CalculateDeplVolt( scanDataCh:pandas.DataFrame, ch:int, thr1:float, thr2:flo
         deplVoltCh = 0
     return deplVoltCh
 
-def PlotChannel( dateTime, ch, scanDataCh, deplVoltCh, dataDir ):
+def PlotChannel( dateTime:str, ch:int, scanDataCh:pandas.DataFrame, deplVoltCh:float, dataDir:str ):
     # plot rate (raw and normalized) vs HV
-    import os, pandas, matplotlib.pyplot
+    import os, matplotlib.pyplot
     scale   = scanDataCh[f'medianRateN{ch}'].iloc[-1] / scanDataCh[f'medianRate{ch}'].iloc[-1]
     fig, ax = matplotlib.pyplot.subplots()
     matplotlib.pyplot.style.use('seaborn-white')
@@ -128,24 +128,62 @@ def PlotChannel( dateTime, ch, scanDataCh, deplVoltCh, dataDir ):
     fig.savefig( f'{dataDir}/{dateTime[:4]}/{dateTime}/{dateTime}.ch{ch}.png', dpi = 300 )
     matplotlib.pyplot.close('all')
 
-def PlotDeplVolt( ch, dataDir ):
-    import glob, json, pandas, matplotlib.pyplot
-    deplVolt = {}
-    # for deplVoltFile in sorted( glob.glob( 'depletionVoltage.{dataDir}.json' ) ):
-    #     with open( deplVoltFile, 'r' ) as deplVoltFile:
-    #         deplVolt.update( json.load( deplVoltFile ) )
+def loadDepletionVoltageJSON( dataDir:str ) -> pandas.DataFrame:
+    import json
     with open( f'depletionVoltage.{dataDir}.json', 'r' ) as deplVoltFile:
         deplVolt = json.load( deplVoltFile )
     deplVolt = pandas.DataFrame.from_dict( deplVolt ).T
     deplVolt.index = [ fname.split('/')[1].lstrip('Scan_').rstrip('.txt') for fname in deplVolt.index.to_list() ]
     deplVolt.index = pandas.to_datetime( deplVolt.index, format = '%Y_%m_%d_%H_%M_%S' )
-    plot = deplVolt[ch][ deplVolt[ch] != 0 ].plot( marker = "o", ls = '' )
-    plot.xaxis.set_major_formatter( matplotlib.dates.DateFormatter( '%Y.%m.%d' ) )
-    plot.axes.set_xlim( pandas.to_datetime('2016-04-01'), pandas.to_datetime('2018-11-01') )
-    plot.axes.set_ylim( 0.0, 800.0 )
-    matplotlib.pyplot.axvline( pandas.to_datetime('2018-08-18'), color='grey', linestyle='--', label='VcThr') # [http://cmsonline.cern.ch/cms-elog/1058918]
-    plot.set_title( f'Ch{ch} Depletion Voltage vs Time', fontsize=14)
+    return deplVolt
+
+def PlotAxVline( intLumi:str, label:str, position:str ):
+    # add vertical line at the specified intLumi (given by lumiByDay)
+    import matplotlib.pyplot
+    matplotlib.pyplot.axvline( x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label )
+    matplotlib.pyplot.text( x=intLumi+1, y=10, s=label, rotation=90, verticalalignment=position )
+
+def LumiByDay() -> pandas.DataFrame:
+    # return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index
+    import os
+    file='lumiByDay.csv' if os.path.exists('lumiByDay.csv') else 'https://cern.ch/cmslumi/publicplots/lumiByDay.csv'
+    lumiByDay = pandas.read_csv(file)
+    lumiByDayRun2 = lumiByDay[ lumiByDay.Date >= '2015' ] # LHC Run2
+    date = pandas.to_datetime( lumiByDayRun2.Date, format = '%Y-%m-%d' )
+    cumulativeIntLumi = lumiByDayRun2['Delivered(/ub)'].cumsum().divide(10**9).rename( 'Delivered(/fb)' )
+    return pandas.concat( [ date, cumulativeIntLumi ], axis=1 ).set_index('Date')['Delivered(/fb)']
+
+def PlotDeplVolt( ch:int, dataDir:str ):
+    # plot depletion voltage vs time for channel 'ch'
+    # to do: plot deplVolt vs intLumi
+    import matplotlib.pyplot, numpy
+    deplVolt = loadDepletionVoltageJSON( dataDir )
+    dataCh = deplVolt[ch][ deplVolt[ch] != 0 ] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
+    dataChDate = dataCh.index.to_series().dt.strftime("%Y-%m-%d").to_list() # to_series() required to do things to a DatetimeIndex [https://stackoverflow.com/a/49277956/13019084]
+    lumiByDay = LumiByDay()
+    lumiPerScanDate = [ lumiByDay[ pandas.to_datetime( scan.date() ) ] for scan in dataCh.index.to_list() ] # Run2 cumulativeIntLumi for each scan date
+    fig, intLumiAx = matplotlib.pyplot.subplots( figsize = (10, 6) )
+    intLumiAx.scatter( x=lumiPerScanDate, y=dataCh.to_list() )
+    intLumiAx.set_title( f'Ch{ch} Depletion Voltage vs Integrated Luminosity', fontsize=14)
+    matplotlib.pyplot.xlabel('Integrated Luminosity (1/fb)')
+    matplotlib.pyplot.ylabel('Depletion Voltage (V)')
+    intLumiAx.axes.set_ylim( 0.0, 800.0 )
+    intLumiAx.axes.set_xlim( 0.0, 165.0 )
+    # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
+    dateAx = intLumiAx.twiny()
+    dateAx.set_xlim( intLumiAx.get_xlim() ) # set same range as intLumi axis
+    dateAx.set_xticks( lumiPerScanDate ) # copy location of intLumi x-ticks
+    dateAx.set_xticklabels( dataChDate ) # draw them as the date!
+    dateAx.tick_params( axis='x', labelrotation=45, labelsize=8 )
+    [ label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2] ]
+        # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
+    hvSetPoints = { '2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':'VcThr' }
+        # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
+        # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
+        # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]
+    _ = [ PlotAxVline( lumiByDay[pandas.to_datetime(date).date()], hv,  'bottom' ) for date,hv in hvSetPoints.items() ]
     matplotlib.pyplot.tight_layout()
+    # matplotlib.pyplot.show()
     matplotlib.pyplot.savefig( f'{dataDir}/ch{ch}DepletionVoltage.png', dpi = 300 )
     matplotlib.pyplot.close('all')
 
@@ -153,7 +191,6 @@ def main():
     import glob, json
     dataDir = 'ManualScanLogs' # 'AutoScanLogs'
     deplVolt = {}
-    # for year in [2016,2017,2018]:
     for logFile in sorted( glob.glob( f'{dataDir}/Scan_*.txt' ) ):
         print( f'\nprocessing {logFile}...' )
         deplVolt[logFile]   = []
@@ -174,6 +211,27 @@ if __name__ == "__main__":
     main()
 
 ###########################################################################
+
+# def IntLumiVsTime( year:str ) -> pandas.DataFrame:
+#     # return a dictionary with the total delivered integrted lumi as a function of time
+#     # [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]
+#     # [https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable]
+#     import subprocess, shlex
+#     command              = f'brilcalc lumi -b "STABLE BEAMS" --amodetag PROTPHYS --beamenergy 6500 -u /fb --tssec --output-style csv --begin "01/01/{year[2:]} 00:00:00" --end "12/31/{year[2:]} 23:59:59"'
+#     brilcalcData         = subprocess.check_output( shlex.split( command ), encoding = 'utf-8' ).splitlines()
+#         # [https://janakiev.com/blog/python-shell-commands/]
+#         # shlex.split() splits string by spaces into list of strings, but preserves quoted strings [https://stackoverflow.com/a/79985/13019084]
+#         # 'utf-8' returns string instead of binary output
+#         # splitlines() splits strings by line break [https://note.nkmk.me/en/python-split-rsplit-splitlines-re/]
+#     cols                 = brilcalcData[1].split(',')
+#     brilcalcData         = [ line.split(',') for line in brilcalcData[2:-4] ]
+#         # skip line 0 (norm tag version), line 1 (column headers), and the last 4 lines (summary)
+#     brilcalcDF           = pandas.DataFrame( brilcalcData, columns = cols )
+#     floatCol             = [ 'delivered(/fb)', 'recorded(/fb)' ]
+#     brilcalcDF[floatCol] = brilcalcDF[ floatCol ].apply( lambda x: x.astype( float ) )
+#     brilcalcDF['dt']     = pandas.to_datetime( brilcalcDF.time, unit = 's', utc = True)
+#     brilcalcDF['deliveredCumulative'] = brilcalcDF['delivered(/fb)'].cumsum()
+#     return brilcalcDF[['dt','deliveredCumulative']].set_index('dt')
 
 # Fitting function
 def sigmoid( x, L ,x0, k, b ):
