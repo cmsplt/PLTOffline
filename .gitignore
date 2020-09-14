@@ -41,6 +41,7 @@ GenerateAlignment
 GetParamsFromFile
 HistNTP
 HitsVsEvent
+MakeClusterSizeDistribution
 MakeIdealAlignment
 MakeIdealGainCal
 MakeLumiGraphs

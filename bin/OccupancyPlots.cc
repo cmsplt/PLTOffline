@@ -427,7 +427,8 @@ f->Write();
         , (char*)"All ROC Hit"
     };
 
-    it->second->SetBit(TH1::kCanRebin);
+    //it->second->SetBit(TH1::kCanRebin);
+    it->second->SetCanExtend(TH1::kAllAxes);
     for (int r = 0; r <= 6; r++) {
       it->second->Fill(bin[r], 0);
     }

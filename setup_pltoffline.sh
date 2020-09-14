@@ -219,4 +219,3 @@ else
     ( defineFunctions; main )
     source "${wDir}/bin/activate" # run activateVenv to load the venv after exiting the script
     unset wDir
-fi
