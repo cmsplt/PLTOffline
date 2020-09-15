@@ -124,7 +124,7 @@ defineFunctions(){
         [[ -f "setup.py" ]] && python3 setup.py install
         [[ "${gitRepo}" = "cmsplt" ]] && cd "interface/" && scons
         #local root="/cvmfs/cms.cern.ch/slc5_amd64_gcc481/cms/cmssw/CMSSW_7_1_1/external/slc5_amd64_gcc481/bin/thisroot.sh"
-	local root="/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-centos7-gcc48-opt/root/bin/thisroot.sh"
+        local root="/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-centos7-gcc48-opt/root/bin/thisroot.sh"
         [[ "${gitRepo}" = "PLTOffline" ]] && source "${root}" && make # try to restore "$PATH" from "PATHbkp=$PATH"?
         cd "${wDir}"
     }
