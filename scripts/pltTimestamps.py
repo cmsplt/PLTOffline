@@ -4,7 +4,7 @@
 # It fetches LHC fill info from CMSOMS and requires the CMSOMS Aggregation API python client [https://gitlab.cern.ch/cmsoms/oms-api-client]
 # It will find any workloop and slink files with filename timestamps corresponding to each fill (within fill-start and fill-end timestamps)
 
-import os
+import os, pandas
 venvDir      = f'{os.path.expanduser("~")}/.local/venv/plt'
 certFilePath = f'{os.path.expanduser("~")}/private/myCertificate'
 
@@ -79,7 +79,7 @@ def fileTimestamps( year, fileType ):
         # str.join( '.', splitFilename )            merge the date (YYYYMMDD) and time (HHmmss) strings with a dot
         # [ timestamps for filename in filenames ]  list comprehension: loop over all filenames to extract timestamps as a sorted list
     if not tsList: sys.exit( printColor( 'red', f'No {fileType} files found for {year}. Please make sure to run script from pltoffline machine' ) )
-    return pandas.Series( tsList ).apply( pandas.to_datetime, format = '%Y%m%d.%H%M%S' ).sort_values()
+    return pandas.to_datetime( pandas.Series( tsList ), format = '%Y%m%d.%H%M%S' ).sort_values()
 
 def lhcTimestamps( omsapi, year ):
     # Return a pandas dataframe with start and end timestamps for all stable beam fills, given a year as an argument
@@ -97,9 +97,9 @@ def lhcTimestamps( omsapi, year ):
         # convert filtered dictionary into a pandas dataframe
     return lhcTS.apply( pandas.to_datetime, format = '%Y-%m-%dT%H:%M:%SZ' ) # convert all timestamps in dataframe from string to pandas datetime objects
 
-def sortTS( fill, seriesTS, startTS, endTS ):
+def sortTS( seriesTS, startTS, endTS ):
     # find all timestamps within fill-declared and fill-end timestamps and store them into a list
-    tsList = seriesTS[ ( seriesTS >= fill[startTS] ) & ( seriesTS <= fill[endTS] ) ].to_list()
+    tsList = seriesTS[ ( seriesTS >= startTS ) & ( seriesTS <= endTS ) ].to_list()
     return str.join( ' ', [ ts.strftime("%Y%m%d.%H%M%S") for ts in tsList ] ) # return a string with timestamps in the list separated by spaces
 
 def main():
@@ -111,14 +111,14 @@ def main():
         slinkTS = fileTimestamps( year, 'slink' )
         lhcTS   = lhcTimestamps( omsapi, year )
         print( f'processing timestamps. beep boop...' )
-        lhcTS['wloopTS'] = lhcTS.apply( sortTS, seriesTS=wloopTS, startTS='start_time',        endTS='end_time',        axis=1 )
+        lhcTS['wloopTS'] = [ sortTS( wloopTS, startTS, endTS ) for startTS,endTS in zip(lhcTS['start_time'], lhcTS['end_time']) ]
             # note that workloop timestamps are included from fill-declared to fill-end
-        lhcTS['slinkTS'] = lhcTS.apply( sortTS, seriesTS=slinkTS, startTS='start_stable_beam', endTS='end_stable_beam', axis=1 )
+        lhcTS['slinkTS'] = [ sortTS( slinkTS, startTS, endTS ) for startTS,endTS in zip(lhcTS['start_stable_beam'], lhcTS['end_stable_beam']) ]
             # whereas, slink timestamps are included from stableBeam-declared to stableBeam-end
         lhcTS[ lhcTS.columns.to_list()[0:-2] ] = lhcTS[ lhcTS.columns.to_list()[0:-2] ].apply( lambda col: col.dt.strftime("%Y%m%d.%H%M%S") )
         pltTimestamps = pltTimestamps.append( lhcTS )
-    with open( f'PLT-timestamps.txt', 'w' ) as outFile:
-        pltTimestamps.to_csv( outFile, sep = '|' ) #, float_format = '%.6f' )
+    with open( f'pltTimestamps.csv', 'w' ) as outFile:
+        pltTimestamps.to_csv( outFile, sep = '|' )
 
 if __name__ == "__main__":
     main()
