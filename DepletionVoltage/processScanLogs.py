@@ -173,7 +173,7 @@ def PlotDeplVolt( ch:int, dataDir:str ):
     dateAx = intLumiAx.twiny()
     dateAx.set_xlim( intLumiAx.get_xlim() ) # set same range as intLumi axis
     dateAx.set_xticks( lumiPerScanDate ) # copy location of intLumi x-ticks
-    dateAx.set_xticklabels( dataChDate ) # draw them as the date!
+    dateAx.set_xticklabels( dataChDate, horizontalalignment='left' ) # draw them as the date!
     dateAx.tick_params( axis='x', labelrotation=45, labelsize=8 )
     [ label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2] ]
         # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
