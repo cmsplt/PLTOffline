@@ -5,10 +5,12 @@
 # It will find any workloop and slink files with filename timestamps corresponding to each fill (within fill-start and fill-end timestamps)
 
 import os, pandas
+from typing import Dict, List, Tuple # [https://towardsdatascience.com/static-typing-in-python-55aa6dfe61b4]
+
 venvDir      = f'{os.path.expanduser("~")}/.local/venv/plt'
 certFilePath = f'{os.path.expanduser("~")}/private/myCertificate'
 
-def printColor( color, message ):
+def printColor( color:str, message:str ):
     # Print 'message' in foreground 'color' [http://ascii-table.com/ansi-escape-sequences.php]
     colors = { 'reset':'0', 'bold':'1', 'uline':'4', 'black':'30', 'red':'31', 'green':'32', 'yellow':'33', 'blue':'34', 'magenta':'35', 'cyan':'36', 'white':'37' }
     colors = { key: f'\033[{val}m' for key, val in colors.items() }
@@ -64,8 +66,8 @@ def configCert():
         info += f'transfer it to {certFilePath}.p12, and re-run the script'
         sys.exit( printColor( 'red', info ) )
 
-def fileTimestamps( year, fileType ):
-    # Return all file timestamps a pandas series of sorted floats, given a year as an argument
+def fileTimestamps( year:int, fileType:str ) -> pandas.Series:
+    # Return all file timestamps a pandas series of sorted timestamps, given a year as an argument
     import sys, re, glob, pandas
     if fileType == 'wloop':
         globString  = f'/localdata/{year}/WORKLOOP/Data_Scaler*'
@@ -73,15 +75,16 @@ def fileTimestamps( year, fileType ):
     elif fileType == 'slink':
         globString  = f'/localdata/{year}/SLINK/Slink*'
         sliceFrom   = 1
-    tsList = [ str.join( '.', re.split( '_|\.', filename )[sliceFrom:sliceFrom+2] ) for filename in glob.glob( globString ) ]
+    tsList = list( set( [ str.join( '.', re.split( '_|\.', filename )[sliceFrom:sliceFrom+2] ) for filename in glob.glob( globString ) ] ) )
         # glob.glob( f'path' )                      create iterator for all workloop/slink filenames for {year}
         # re.split( '_|\.', filename )[from:to] )   split the filename using '_' and '.' as delimiters into a list of strings and slice it  to filter the date (YYYYMMDD) and time (HHmmss)
         # str.join( '.', splitFilename )            merge the date (YYYYMMDD) and time (HHmmss) strings with a dot
         # [ timestamps for filename in filenames ]  list comprehension: loop over all filenames to extract timestamps as a sorted list
+        # list(set())                               remove duplicate entries (usually from both .gz and uncompressed versions of files)
     if not tsList: sys.exit( printColor( 'red', f'No {fileType} files found for {year}. Please make sure to run script from pltoffline machine' ) )
     return pandas.to_datetime( pandas.Series( tsList ), format = '%Y%m%d.%H%M%S' ).sort_values()
 
-def lhcTimestamps( omsapi, year ):
+def lhcTimestamps( omsapi, year:str ) -> pandas.DataFrame:
     # Return a pandas dataframe with start and end timestamps for all stable beam fills, given a year as an argument
     # CMSOMS Aggregation API python client [https://gitlab.cern.ch/cmsoms/oms-api-client]
     import pandas
@@ -97,9 +100,9 @@ def lhcTimestamps( omsapi, year ):
         # convert filtered dictionary into a pandas dataframe
     return lhcTS.apply( pandas.to_datetime, format = '%Y-%m-%dT%H:%M:%SZ' ) # convert all timestamps in dataframe from string to pandas datetime objects
 
-def sortTS( seriesTS, startTS, endTS ):
-    # find all timestamps within fill-declared and fill-end timestamps and store them into a list
-    tsList = seriesTS[ ( seriesTS >= startTS ) & ( seriesTS <= endTS ) ].to_list()
+def sortTS( seriesTS:pandas.Series, startTS:pandas.Timestamp, endTS:pandas.Timestamp ) -> str:
+    # find all timestamps within fill-start (with 10-second tolerance) and fill-end timestamps and return as a atring
+    tsList = seriesTS[ ( seriesTS >= startTS-pandas.Timedelta(seconds=10) ) & ( seriesTS <= endTS ) ].to_list()
     return str.join( ' ', [ ts.strftime("%Y%m%d.%H%M%S") for ts in tsList ] ) # return a string with timestamps in the list separated by spaces
 
 def main():
