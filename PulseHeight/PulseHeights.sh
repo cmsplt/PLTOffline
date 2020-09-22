@@ -9,7 +9,7 @@ gaincalfile2015=(GainCalFits_20150811.120552.dat GainCalFits_20150811.120552.dat
 
 for index in ${!slink2015[*]}; 
 do
-  ./PH /localdata/2015/SLINK/${slink2015[$index]} FitResultErrorVCal80800_2/${gaincalfile2015[$index]}  ${fill2015[$index]}
+  ./PulseHeights_new /localdata/2015/SLINK/${slink2015[$index]} FitResultErrorVCal80800_2/${gaincalfile2015[$index]}  ${fill2015[$index]}
 
 done
 
@@ -25,7 +25,7 @@ gaincalfile2016=(GainCalFits_20160819.113115.dat GainCalFits_20160819.113115.dat
 
 for index in ${!slink2016[*]};
 do
-  ./PH /localdata/2016/SLINK/${slink2016[$index]} FitResultErrorVCal80800_2/${gaincalfile2016[$index]}  ${fill2016[$index]}               
+  ./PulseHeights_new /localdata/2016/SLINK/${slink2016[$index]} FitResultErrorVCal80800_2/${gaincalfile2016[$index]}  ${fill2016[$index]}               
 
 done
 
@@ -39,7 +39,7 @@ gaincalfile2017=(GainCalFits_20170518.143905.dat GainCalFits_20170613.184357.dat
 
 for index in ${!slink2017[*]};
 do
-  ./PH /localdata/2017/SLINK/${slink2017[$index]} FitResultErrorVCal80800_2/${gaincalfile2017[$index]}  ${fill2017[$index]} 
+  ./PulseHeights_new /localdata/2017/SLINK/${slink2017[$index]} FitResultErrorVCal80800_2/${gaincalfile2017[$index]}  ${fill2017[$index]} 
 
 done
 
@@ -52,7 +52,7 @@ gaincalfile2018=(GainCalFits_20180419.131317.dat GainCalFits_20180419.131317.dat
 
 for index in ${!slink2018[*]};
 do
-   ./PH /localdata/2018/SLINK/${slink2018[$index]} FitResultErrorVCal80800_2/${gaincalfile2018[$index]}  ${fill2018[$index]}  
+   ./PulseHeights_new /localdata/2018/SLINK/${slink2018[$index]} FitResultErrorVCal80800_2/${gaincalfile2018[$index]}  ${fill2018[$index]}  
 
 done
 
