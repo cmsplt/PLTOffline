@@ -205,6 +205,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   uint32_t currentStepStart = 0;
   //const uint32_t stepLength = 3000; //30sec// 1 minute
   const uint32_t stepLength = 300000; // 5 minutes
+  // const uint32_t stepLength = 365; // approx. 1 LS (0.36495 sec)
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
@@ -329,14 +330,15 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	  float slopeY = tr->fTVY/tr->fTVZ;
 	  float slopeX = tr->fTVX/tr->fTVZ;
 	 	 
-	  if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > 5.0) continue;
-	  if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > 5.0) continue;
-	  if (fabs((tr->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > 5.0) continue;
-	  if (fabs((tr->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > 5.0) continue;
+	  const float trackQualitySigma = 2.0;
+	  if (fabs((slopeY-MeanSlopeY[ch])/SigmaSlopeY[ch]) > trackQualitySigma) continue;
+	  if (fabs((slopeX-MeanSlopeX[ch])/SigmaSlopeX[ch]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualY(0)-MeanResidualY[10*ch])/SigmaResidualY[10*ch]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualY(1)-MeanResidualY[10*ch+1])/SigmaResidualY[10*ch+1]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualY(2)-MeanResidualY[10*ch+2])/SigmaResidualY[10*ch+2]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualX(0)-MeanResidualX[10*ch])/SigmaResidualX[10*ch]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualX(1)-MeanResidualX[10*ch+1])/SigmaResidualX[10*ch+1]) > trackQualitySigma) continue;
+	  if (fabs((tr->LResidualX(2)-MeanResidualX[10*ch+2])/SigmaResidualX[10*ch+2]) > trackQualitySigma) continue;
 	  foundOneGoodTrack = true;
 	  break; // We found a valid track!
 	}

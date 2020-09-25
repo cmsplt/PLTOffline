@@ -7,7 +7,7 @@ that for more information. To summarize:
 1) Run TrackLumiZeroCounting (it works pretty much the same way as MeasureAccidentals). You'll get an output
 file called TrackLumiZC.txt.
 
-This file is like the accidental rates file, ecept it contains a couple of extra columns. Specifically, the
+This file is like the accidental rates file, except it contains a couple of extra columns. Specifically, the
 columns are:
 - time stamp start
 - time stamp end

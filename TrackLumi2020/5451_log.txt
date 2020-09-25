@@ -1,0 +1,5802 @@
+DataFileName:      /localdata/2016/SLINK/Slink_20161026.085537.dat
+GainCalFileName:   ../GainCal/GainCalFits_20160501.155303.dat
+AlignmentFileName: ../ALIGNMENT/Trans_Alignment_4892.dat
+TrackDistributionFileName: ../TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt
+WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTEvent::SetPlaneClustering setting clustering to 6
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 6
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+Processing event: 0 at 08:55:44.299 to determine active bunches
+Processing event: 50000 at 08:55:59.640 to determine active bunches
+Processing event: 100000 at 08:56:14.973 to determine active bunches
+Processing event: 150000 at 08:56:30.314 to determine active bunches
+Processing event: 200000 at 08:56:45.647 to determine active bunches
+Processing event: 250000 at 08:57:00.988 to determine active bunches
+Processing event: 300000 at 08:57:16.321 to determine active bunches
+Processing event: 350000 at 08:57:31.662 to determine active bunches
+Processing event: 400000 at 08:57:46.995 to determine active bunches
+Processing event: 450000 at 08:58:02.336 to determine active bunches
+Processing event: 500000 at 08:58:17.669 to determine active bunches
+Processing event: 550000 at 08:58:33.010 to determine active bunches
+Processing event: 600000 at 08:58:48.343 to determine active bunches
+Processing event: 650000 at 08:59:03.685 to determine active bunches
+Processing event: 700000 at 08:59:19.018 to determine active bunches
+Processing event: 750000 at 08:59:34.358 to determine active bunches
+Processing event: 800000 at 08:59:49.691 to determine active bunches
+Processing event: 850000 at 09:00:05.032 to determine active bunches
+Processing event: 900000 at 09:00:20.366 to determine active bunches
+Processing event: 950000 at 09:00:35.707 to determine active bunches
+Processing event: 1000000 at 09:00:51.040 to determine active bunches
+Did not find large gap in data; break between active and inactive may be unclear
+Total of 3563 bunches filled
+PLTGainCal sees a parameter file with 5 params
+Adding ch 2 -> 8 1 13
+Adding ch 4 -> 8 1 21
+Adding ch 5 -> 8 1 29
+Adding ch 7 -> 8 2 5
+Adding ch 8 -> 8 2 13
+Adding ch 10 -> 8 2 21
+Adding ch 11 -> 8 2 29
+Adding ch 13 -> 7 1 5
+Adding ch 14 -> 7 1 13
+Adding ch 16 -> 7 1 21
+Adding ch 17 -> 7 1 29
+Adding ch 19 -> 7 2 5
+Adding ch 20 -> 7 2 13
+ERROR: over MAXCOLS 62
+ERROR: over MAXCOLS 62
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+Processing event: 0 at 32144299 (08:55:44.299)
+Processing event: 100000 at 32174973 (08:56:14.973)
+Failure in Channel 1 at event 0 at approximately  08:56
+Failure in Channel 7 at event 0 at approximately  08:56
+Failure in Channel 22 at event 0 at approximately  08:56
+Failure in Channel 23 at event 0 at approximately  08:56
+Processing event: 200000 at 32205647 (08:56:45.647)
+Processing event: 300000 at 32236321 (08:57:16.321)
+Processing event: 400000 at 32266995 (08:57:46.995)
+Processing event: 500000 at 32297669 (08:58:17.669)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 600000 at 32328343 (08:58:48.343)
+Processing event: 700000 at 32359018 (08:59:19.018)
+ERROR: over MAXROWS: 80
+Processing event: 800000 at 32389691 (08:59:49.691)
+Processing event: 900000 at 32420366 (09:00:20.366)
+Processing event: 1000000 at 32451040 (09:00:51.040)
+ERROR: over MAXROWS: 80
+Processing event: 1100000 at 32481714 (09:01:21.714)
+ERROR: over MAXROWS: 80
+Processing event: 1200000 at 32512388 (09:01:52.388)
+Processing event: 1300000 at 32543062 (09:02:23.062)
+ERROR: over MAXROWS: 80
+Processing event: 1400000 at 32573736 (09:02:53.736)
+Processing event: 1500000 at 32604410 (09:03:24.410)
+ERROR: over MAXROWS: 80
+Processing event: 1600000 at 32635084 (09:03:55.084)
+Processing event: 1700000 at 32665758 (09:04:25.758)
+Processing event: 1800000 at 32696432 (09:04:56.432)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1900000 at 32727106 (09:05:27.106)
+Processing event: 2000000 at 32757779 (09:05:57.779)
+Processing event: 2100000 at 32788453 (09:06:28.453)
+ERROR: over MAXROWS: 80
+Processing event: 2200000 at 32819127 (09:06:59.127)
+ERROR: over MAXROWS: 80
+Processing event: 2300000 at 32849801 (09:07:29.801)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2400000 at 32880475 (09:08:00.475)
+Processing event: 2500000 at 32911157 (09:08:31.157)
+ERROR: over MAXROWS: 80
+Processing event: 2600000 at 32941832 (09:09:01.832)
+Processing event: 2700000 at 32972506 (09:09:32.506)
+Processing event: 2800000 at 33003180 (09:10:03.180)
+ERROR: over MAXROWS: 80
+Processing event: 2900000 at 33033854 (09:10:33.854)
+ERROR: over MAXROWS: 80
+Processing event: 3000000 at 33064528 (09:11:04.528)
+Processing event: 3100000 at 33095202 (09:11:35.202)
+Processing event: 3200000 at 33125876 (09:12:05.876)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 3300000 at 33156551 (09:12:36.551)
+ERROR: over MAXROWS: 80
+Processing event: 3400000 at 33187225 (09:13:07.225)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 3500000 at 33217899 (09:13:37.899)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 3600000 at 33248573 (09:14:08.573)
+ERROR: over MAXROWS: 80
+Processing event: 3700000 at 33279247 (09:14:39.247)
+Processing event: 3800000 at 33309921 (09:15:09.921)
+Processing event: 3900000 at 33340595 (09:15:40.595)
+ERROR: over MAXROWS: 80
+Processing event: 4000000 at 33371269 (09:16:11.269)
+Processing event: 4100000 at 33401943 (09:16:41.943)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4200000 at 33432617 (09:17:12.617)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4300000 at 33463291 (09:17:43.291)
+Processing event: 4400000 at 33493965 (09:18:13.965)
+ERROR: over MAXROWS: 80
+Processing event: 4500000 at 33524639 (09:18:44.639)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4600000 at 33555313 (09:19:15.313)
+Processing event: 4700000 at 33585987 (09:19:45.987)
+Processing event: 4800000 at 33616661 (09:20:16.661)
+ERROR: over MAXROWS: 80
+Processing event: 4900000 at 33647335 (09:20:47.335)
+Processing event: 5000000 at 33678009 (09:21:18.009)
+Processing event: 5100000 at 33708682 (09:21:48.682)
+ERROR: over MAXROWS: 80
+Processing event: 5200000 at 33739356 (09:22:19.356)
+Processing event: 5300000 at 33770030 (09:22:50.030)
+ERROR: over MAXROWS: 80
+Processing event: 5400000 at 33800704 (09:23:20.704)
+ERROR: over MAXROWS: 80
+Processing event: 5500000 at 33831379 (09:23:51.379)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5600000 at 33862053 (09:24:22.053)
+ERROR: over MAXROWS: 80
+Processing event: 5700000 at 33892727 (09:24:52.727)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5800000 at 33923402 (09:25:23.402)
+ERROR: over MAXROWS: 80
+Processing event: 5900000 at 33954076 (09:25:54.076)
+Processing event: 6000000 at 33984750 (09:26:24.750)
+ERROR: over MAXROWS: 80
+Processing event: 6100000 at 34015424 (09:26:55.424)
+ERROR: over MAXROWS: 80
+Processing event: 6200000 at 34046098 (09:27:26.098)
+Processing event: 6300000 at 34076772 (09:27:56.772)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6400000 at 34107446 (09:28:27.446)
+ERROR: over MAXROWS: 80
+Processing event: 6500000 at 34138120 (09:28:58.120)
+Processing event: 6600000 at 34168794 (09:29:28.794)
+ERROR: over MAXROWS: 80
+Processing event: 6700000 at 34199468 (09:29:59.468)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6800000 at 34230142 (09:30:30.142)
+ERROR: over MAXROWS: 80
+Processing event: 6900000 at 34260816 (09:31:00.816)
+ERROR: over MAXROWS: 80
+Processing event: 7000000 at 34291490 (09:31:31.490)
+ERROR: over MAXROWS: 80
+Processing event: 7100000 at 34322164 (09:32:02.164)
+Processing event: 7200000 at 34352838 (09:32:32.838)
+Processing event: 7300000 at 34383512 (09:33:03.512)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 7400000 at 34414186 (09:33:34.186)
+Processing event: 7500000 at 34444860 (09:34:04.860)
+ERROR: over MAXROWS: 80
+Processing event: 7600000 at 34475535 (09:34:35.535)
+Processing event: 7700000 at 34506208 (09:35:06.208)
+ERROR: over MAXROWS: 80
+Processing event: 7800000 at 34536883 (09:35:36.883)
+ERROR: over MAXROWS: 80
+Processing event: 7900000 at 34567557 (09:36:07.557)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 8000000 at 34598239 (09:36:38.239)
+Processing event: 8100000 at 34628913 (09:37:08.913)
+Processing event: 8200000 at 34659587 (09:37:39.587)
+ERROR: over MAXROWS: 80
+Processing event: 8300000 at 34690262 (09:38:10.262)
+Processing event: 8400000 at 34720936 (09:38:40.936)
+Processing event: 8500000 at 34751610 (09:39:11.610)
+Processing event: 8600000 at 34782285 (09:39:42.285)
+Processing event: 8700000 at 34812959 (09:40:12.959)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 8800000 at 34843633 (09:40:43.633)
+Processing event: 8900000 at 34874307 (09:41:14.307)
+ERROR: over MAXROWS: 80
+Processing event: 9000000 at 34904981 (09:41:44.981)
+ERROR: over MAXROWS: 80
+Processing event: 9100000 at 34935655 (09:42:15.655)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9200000 at 34966329 (09:42:46.329)
+Processing event: 9300000 at 34997003 (09:43:17.003)
+ERROR: over MAXROWS: 80
+Processing event: 9400000 at 35027678 (09:43:47.678)
+Processing event: 9500000 at 35058352 (09:44:18.352)
+Processing event: 9600000 at 35089025 (09:44:49.025)
+ERROR: over MAXROWS: 80
+Processing event: 9700000 at 35119700 (09:45:19.700)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9800000 at 35150373 (09:45:50.373)
+ERROR: over MAXROWS: 80
+Processing event: 9900000 at 35181048 (09:46:21.048)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10000000 at 35211722 (09:46:51.722)
+ERROR: over MAXROWS: 80
+Processing event: 10100000 at 35242396 (09:47:22.396)
+ERROR: over MAXROWS: 80
+Processing event: 10200000 at 35273070 (09:47:53.070)
+ERROR: over MAXROWS: 80
+Processing event: 10300000 at 35303744 (09:48:23.744)
+Processing event: 10400000 at 35334419 (09:48:54.419)
+Processing event: 10500000 at 35365092 (09:49:25.092)
+Processing event: 10600000 at 35395766 (09:49:55.766)
+ERROR: over MAXROWS: 80
+Processing event: 10700000 at 35426441 (09:50:26.441)
+ERROR: over MAXROWS: 80
+Processing event: 10800000 at 35457114 (09:50:57.114)
+ERROR: over MAXROWS: 80
+Processing event: 10900000 at 35487789 (09:51:27.789)
+Processing event: 11000000 at 35518463 (09:51:58.463)
+ERROR: over MAXROWS: 80
+Processing event: 11100000 at 35549137 (09:52:29.137)
+ERROR: over MAXROWS: 80
+Processing event: 11200000 at 35579811 (09:52:59.811)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11300000 at 35610485 (09:53:30.485)
+Processing event: 11400000 at 35641160 (09:54:01.160)
+Processing event: 11500000 at 35671834 (09:54:31.834)
+ERROR: over MAXROWS: 80
+Processing event: 11600000 at 35702508 (09:55:02.508)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11700000 at 35733181 (09:55:33.181)
+Processing event: 11800000 at 35763855 (09:56:03.855)
+Processing event: 11900000 at 35794530 (09:56:34.530)
+ERROR: over MAXROWS: 80
+Processing event: 12000000 at 35825204 (09:57:05.204)
+Processing event: 12100000 at 35855877 (09:57:35.877)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12200000 at 35886552 (09:58:06.552)
+Processing event: 12300000 at 35917226 (09:58:37.226)
+Processing event: 12400000 at 35947900 (09:59:07.900)
+ERROR: over MAXROWS: 80
+Processing event: 12500000 at 35978573 (09:59:38.573)
+Processing event: 12600000 at 36009247 (10:00:09.247)
+Processing event: 12700000 at 36039921 (10:00:39.921)
+Processing event: 12800000 at 36070595 (10:01:10.595)
+Processing event: 12900000 at 36101269 (10:01:41.269)
+Processing event: 13000000 at 36131943 (10:02:11.943)
+ERROR: over MAXROWS: 80
+Processing event: 13100000 at 36162617 (10:02:42.617)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13200000 at 36193291 (10:03:13.291)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13300000 at 36223966 (10:03:43.966)
+ERROR: over MAXROWS: 80
+Processing event: 13400000 at 36254640 (10:04:14.640)
+Processing event: 13500000 at 36285314 (10:04:45.314)
+Processing event: 13600000 at 36315997 (10:05:15.997)
+Processing event: 13700000 at 36346670 (10:05:46.670)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13800000 at 36377344 (10:06:17.344)
+Processing event: 13900000 at 36408018 (10:06:48.018)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14000000 at 36438693 (10:07:18.693)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14100000 at 36469367 (10:07:49.367)
+ERROR: over MAXROWS: 80
+Processing event: 14200000 at 36500041 (10:08:20.041)
+Processing event: 14300000 at 36530716 (10:08:50.716)
+ERROR: over MAXROWS: 80
+Processing event: 14400000 at 36561390 (10:09:21.390)
+ERROR: over MAXROWS: 80
+Processing event: 14500000 at 36592064 (10:09:52.064)
+ERROR: over MAXROWS: 80
+Processing event: 14600000 at 36622738 (10:10:22.738)
+Processing event: 14700000 at 36653411 (10:10:53.411)
+Processing event: 14800000 at 36684085 (10:11:24.085)
+Processing event: 14900000 at 36714760 (10:11:54.760)
+ERROR: over MAXROWS: 80
+Processing event: 15000000 at 36745434 (10:12:25.434)
+Processing event: 15100000 at 36776108 (10:12:56.108)
+ERROR: over MAXROWS: 80
+Processing event: 15200000 at 36806782 (10:13:26.782)
+ERROR: over MAXROWS: 80
+Processing event: 15300000 at 36837457 (10:13:57.457)
+Processing event: 15400000 at 36868131 (10:14:28.131)
+ERROR: over MAXROWS: 80
+Processing event: 15500000 at 36898805 (10:14:58.805)
+Processing event: 15600000 at 36929479 (10:15:29.479)
+Processing event: 15700000 at 36960153 (10:16:00.153)
+Processing event: 15800000 at 36990828 (10:16:30.828)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15900000 at 37021502 (10:17:01.502)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16000000 at 37052176 (10:17:32.176)
+Processing event: 16100000 at 37082850 (10:18:02.850)
+ERROR: over MAXROWS: 80
+Processing event: 16200000 at 37113525 (10:18:33.525)
+Processing event: 16300000 at 37144199 (10:19:04.199)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16400000 at 37174873 (10:19:34.873)
+Processing event: 16500000 at 37205547 (10:20:05.547)
+Processing event: 16600000 at 37236221 (10:20:36.221)
+Processing event: 16700000 at 37266895 (10:21:06.895)
+ERROR: over MAXROWS: 80
+Processing event: 16800000 at 37297569 (10:21:37.569)
+ERROR: over MAXROWS: 80
+Processing event: 16900000 at 37328243 (10:22:08.243)
+Processing event: 17000000 at 37358917 (10:22:38.917)
+Processing event: 17100000 at 37389590 (10:23:09.590)
+ERROR: over MAXROWS: 80
+Processing event: 17200000 at 37420264 (10:23:40.264)
+ERROR: over MAXROWS: 80
+Processing event: 17300000 at 37450939 (10:24:10.939)
+Processing event: 17400000 at 37481613 (10:24:41.613)
+ERROR: over MAXROWS: 80
+Processing event: 17500000 at 37512287 (10:25:12.287)
+Processing event: 17600000 at 37542961 (10:25:42.961)
+ERROR: over MAXROWS: 80
+Processing event: 17700000 at 37573636 (10:26:13.636)
+Processing event: 17800000 at 37604310 (10:26:44.310)
+Processing event: 17900000 at 37634984 (10:27:14.984)
+Processing event: 18000000 at 37665658 (10:27:45.658)
+ERROR: over MAXROWS: 80
+Processing event: 18100000 at 37696333 (10:28:16.333)
+ERROR: over MAXROWS: 80
+Processing event: 18200000 at 37727008 (10:28:47.008)
+ERROR: over MAXROWS: 80
+Processing event: 18300000 at 37757681 (10:29:17.681)
+ERROR: over MAXROWS: 80
+Processing event: 18400000 at 37788355 (10:29:48.355)
+Processing event: 18500000 at 37819029 (10:30:19.029)
+Processing event: 18600000 at 37849703 (10:30:49.703)
+Processing event: 18700000 at 37880377 (10:31:20.377)
+ERROR: over MAXROWS: 80
+Processing event: 18800000 at 37911051 (10:31:51.051)
+Processing event: 18900000 at 37941725 (10:32:21.725)
+ERROR: over MAXROWS: 80
+Processing event: 19000000 at 37972399 (10:32:52.399)
+Processing event: 19100000 at 38003073 (10:33:23.073)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19200000 at 38033755 (10:33:53.755)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19300000 at 38064430 (10:34:24.430)
+ERROR: over MAXROWS: 80
+Processing event: 19400000 at 38095104 (10:34:55.104)
+Processing event: 19500000 at 38125778 (10:35:25.778)
+Processing event: 19600000 at 38156452 (10:35:56.452)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19700000 at 38187126 (10:36:27.126)
+Processing event: 19800000 at 38217800 (10:36:57.800)
+Processing event: 19900000 at 38248474 (10:37:28.474)
+Processing event: 20000000 at 38279148 (10:37:59.148)
+Processing event: 20100000 at 38309822 (10:38:29.822)
+Processing event: 20200000 at 38340497 (10:39:00.497)
+Processing event: 20300000 at 38371171 (10:39:31.171)
+Processing event: 20400000 at 38401845 (10:40:01.845)
+ERROR: over MAXROWS: 80
+Processing event: 20500000 at 38432519 (10:40:32.519)
+Processing event: 20600000 at 38463193 (10:41:03.193)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20700000 at 38493867 (10:41:33.867)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20800000 at 38524541 (10:42:04.541)
+Processing event: 20900000 at 38555215 (10:42:35.215)
+Processing event: 21000000 at 38585889 (10:43:05.889)
+ERROR: over MAXROWS: 80
+Processing event: 21100000 at 38616574 (10:43:36.574)
+Processing event: 21200000 at 38647248 (10:44:07.248)
+ERROR: over MAXROWS: 80
+Processing event: 21300000 at 38677922 (10:44:37.922)
+Processing event: 21400000 at 38708596 (10:45:08.596)
+ERROR: over MAXROWS: 80
+Processing event: 21500000 at 38739270 (10:45:39.270)
+Processing event: 21600000 at 38769944 (10:46:09.944)
+Processing event: 21700000 at 38800618 (10:46:40.618)
+Processing event: 21800000 at 38831292 (10:47:11.292)
+Processing event: 21900000 at 38861967 (10:47:41.967)
+ERROR: over MAXROWS: 80
+Processing event: 22000000 at 38892651 (10:48:12.651)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22100000 at 38923326 (10:48:43.326)
+Processing event: 22200000 at 38954000 (10:49:14.000)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22300000 at 38984674 (10:49:44.674)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22400000 at 39015347 (10:50:15.347)
+ERROR: over MAXROWS: 80
+Processing event: 22500000 at 39046022 (10:50:46.022)
+Processing event: 22600000 at 39076697 (10:51:16.697)
+ERROR: over MAXROWS: 80
+Processing event: 22700000 at 39107371 (10:51:47.371)
+Processing event: 22800000 at 39138045 (10:52:18.045)
+ERROR: over MAXROWS: 80
+Processing event: 22900000 at 39168719 (10:52:48.719)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23000000 at 39199393 (10:53:19.393)
+ERROR: over MAXROWS: 80
+Processing event: 23100000 at 39230068 (10:53:50.068)
+Processing event: 23200000 at 39260742 (10:54:20.742)
+Processing event: 23300000 at 39291416 (10:54:51.416)
+Processing event: 23400000 at 39322090 (10:55:22.090)
+ERROR: over MAXROWS: 80
+Processing event: 23500000 at 39352764 (10:55:52.764)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23600000 at 39383438 (10:56:23.438)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23700000 at 39414112 (10:56:54.112)
+Processing event: 23800000 at 39444786 (10:57:24.786)
+Processing event: 23900000 at 39475461 (10:57:55.461)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24000000 at 39506135 (10:58:26.135)
+ERROR: over MAXROWS: 80
+Processing event: 24100000 at 39536808 (10:58:56.808)
+ERROR: over MAXROWS: 80
+Processing event: 24200000 at 39567483 (10:59:27.483)
+Processing event: 24300000 at 39598157 (10:59:58.157)
+Processing event: 24400000 at 39628842 (11:00:28.842)
+Processing event: 24500000 at 39659516 (11:00:59.516)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24600000 at 39690190 (11:01:30.190)
+Processing event: 24700000 at 39720872 (11:02:00.872)
+Processing event: 24800000 at 39751546 (11:02:31.546)
+ERROR: over MAXROWS: 80
+Processing event: 24900000 at 39782220 (11:03:02.220)
+Processing event: 25000000 at 39812894 (11:03:32.894)
+ERROR: over MAXROWS: 80
+Processing event: 25100000 at 39843568 (11:04:03.568)
+Processing event: 25200000 at 39874242 (11:04:34.242)
+ERROR: over MAXROWS: 80
+Processing event: 25300000 at 39904916 (11:05:04.916)
+ERROR: over MAXROWS: 80
+Processing event: 25400000 at 39935590 (11:05:35.590)
+ERROR: over MAXROWS: 80
+Processing event: 25500000 at 39966265 (11:06:06.265)
+ERROR: over MAXROWS: 80
+Processing event: 25600000 at 39996939 (11:06:36.939)
+Processing event: 25700000 at 40027613 (11:07:07.613)
+Processing event: 25800000 at 40058287 (11:07:38.287)
+Processing event: 25900000 at 40088961 (11:08:08.961)
+Processing event: 26000000 at 40119635 (11:08:39.635)
+Processing event: 26100000 at 40150309 (11:09:10.309)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26200000 at 40180983 (11:09:40.983)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26300000 at 40211657 (11:10:11.657)
+Processing event: 26400000 at 40242331 (11:10:42.331)
+ERROR: over MAXROWS: 80
+Processing event: 26500000 at 40273006 (11:11:13.006)
+Processing event: 26600000 at 40303680 (11:11:43.680)
+Processing event: 26700000 at 40334354 (11:12:14.354)
+Processing event: 26800000 at 40365028 (11:12:45.028)
+Processing event: 26900000 at 40395702 (11:13:15.702)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27000000 at 40426376 (11:13:46.376)
+ERROR: over MAXROWS: 80
+Processing event: 27100000 at 40457050 (11:14:17.050)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27200000 at 40487724 (11:14:47.724)
+ERROR: over MAXROWS: 80
+Processing event: 27300000 at 40518398 (11:15:18.398)
+Processing event: 27400000 at 40549072 (11:15:49.072)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27500000 at 40579746 (11:16:19.746)
+ERROR: over MAXROWS: 80
+Processing event: 27600000 at 40610420 (11:16:50.420)
+Processing event: 27700000 at 40641094 (11:17:21.094)
+Processing event: 27800000 at 40671768 (11:17:51.768)
+ERROR: over MAXROWS: 80
+Processing event: 27900000 at 40702442 (11:18:22.442)
+Processing event: 28000000 at 40733116 (11:18:53.116)
+Processing event: 28100000 at 40763790 (11:19:23.790)
+Processing event: 28200000 at 40794464 (11:19:54.464)
+Processing event: 28300000 at 40825138 (11:20:25.138)
+ERROR: over MAXROWS: 80
+Processing event: 28400000 at 40855812 (11:20:55.812)
+ERROR: over MAXROWS: 80
+Processing event: 28500000 at 40886486 (11:21:26.486)
+ERROR: over MAXROWS: 80
+Processing event: 28600000 at 40917161 (11:21:57.161)
+Processing event: 28700000 at 40947835 (11:22:27.835)
+ERROR: over MAXROWS: 80
+Processing event: 28800000 at 40978509 (11:22:58.509)
+Processing event: 28900000 at 41009183 (11:23:29.183)
+Processing event: 29000000 at 41039857 (11:23:59.857)
+Processing event: 29100000 at 41070531 (11:24:30.531)
+ERROR: over MAXROWS: 80
+Processing event: 29200000 at 41101204 (11:25:01.204)
+ERROR: over MAXROWS: 80
+Processing event: 29300000 at 41131879 (11:25:31.879)
+Processing event: 29400000 at 41162563 (11:26:02.563)
+ERROR: over MAXROWS: 80
+Processing event: 29500000 at 41193237 (11:26:33.237)
+ERROR: over MAXROWS: 80
+Processing event: 29600000 at 41223911 (11:27:03.911)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29700000 at 41254585 (11:27:34.585)
+Processing event: 29800000 at 41285260 (11:28:05.260)
+ERROR: over MAXROWS: 80
+Processing event: 29900000 at 41315934 (11:28:35.934)
+ERROR: over MAXROWS: 80
+Processing event: 30000000 at 41346608 (11:29:06.608)
+Processing event: 30100000 at 41377283 (11:29:37.283)
+Processing event: 30200000 at 41407965 (11:30:07.965)
+Processing event: 30300000 at 41438639 (11:30:38.639)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30400000 at 41469312 (11:31:09.312)
+Processing event: 30500000 at 41499987 (11:31:39.987)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30600000 at 41530660 (11:32:10.660)
+Processing event: 30700000 at 41561334 (11:32:41.334)
+Processing event: 30800000 at 41592008 (11:33:12.008)
+Processing event: 30900000 at 41622682 (11:33:42.682)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 31000000 at 41653356 (11:34:13.356)
+ERROR: over MAXROWS: 80
+Processing event: 31100000 at 41684030 (11:34:44.030)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 31200000 at 41714704 (11:35:14.704)
+Processing event: 31300000 at 41745379 (11:35:45.379)
+Processing event: 31400000 at 41776053 (11:36:16.053)
+ERROR: over MAXROWS: 80
+Processing event: 31500000 at 41806726 (11:36:46.726)
+ERROR: over MAXROWS: 80
+Processing event: 31600000 at 41837401 (11:37:17.401)
+ERROR: over MAXROWS: 80
+Processing event: 31700000 at 41868075 (11:37:48.075)
+Processing event: 31800000 at 41898749 (11:38:18.749)
+Processing event: 31900000 at 41929424 (11:38:49.424)
+ERROR: over MAXROWS: 80
+Processing event: 32000000 at 41960098 (11:39:20.098)
+ERROR: over MAXROWS: 80
+Processing event: 32100000 at 41990772 (11:39:50.772)
+ERROR: over MAXROWS: 80
+Processing event: 32200000 at 42021445 (11:40:21.445)
+Processing event: 32300000 at 42052119 (11:40:52.119)
+ERROR: over MAXROWS: 80
+Processing event: 32400000 at 42082793 (11:41:22.793)
+Processing event: 32500000 at 42113467 (11:41:53.467)
+Processing event: 32600000 at 42144141 (11:42:24.141)
+Processing event: 32700000 at 42174815 (11:42:54.815)
+ERROR: over MAXROWS: 80
+Processing event: 32800000 at 42205489 (11:43:25.489)
+ERROR: over MAXROWS: 80
+Processing event: 32900000 at 42236164 (11:43:56.164)
+ERROR: over MAXROWS: 80
+Processing event: 33000000 at 42266838 (11:44:26.838)
+Processing event: 33100000 at 42297513 (11:44:57.513)
+Processing event: 33200000 at 42328187 (11:45:28.187)
+Processing event: 33300000 at 42358861 (11:45:58.861)
+Processing event: 33400000 at 42389535 (11:46:29.535)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33500000 at 42420209 (11:47:00.209)
+Processing event: 33600000 at 42450883 (11:47:30.883)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33700000 at 42481557 (11:48:01.557)
+Processing event: 33800000 at 42512232 (11:48:32.232)
+Processing event: 33900000 at 42542906 (11:49:02.906)
+ERROR: over MAXROWS: 80
+Processing event: 34000000 at 42573580 (11:49:33.580)
+Processing event: 34100000 at 42604254 (11:50:04.254)
+Processing event: 34200000 at 42634928 (11:50:34.928)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34300000 at 42665602 (11:51:05.602)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34400000 at 42696276 (11:51:36.276)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34500000 at 42726950 (11:52:06.950)
+Processing event: 34600000 at 42757624 (11:52:37.624)
+ERROR: over MAXROWS: 80
+Processing event: 34700000 at 42788298 (11:53:08.298)
+Processing event: 34800000 at 42818972 (11:53:38.972)
+Processing event: 34900000 at 42849656 (11:54:09.656)
+Processing event: 35000000 at 42880330 (11:54:40.330)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 35100000 at 42911004 (11:55:11.004)
+Processing event: 35200000 at 42941678 (11:55:41.678)
+ERROR: over MAXROWS: 80
+Processing event: 35300000 at 42972352 (11:56:12.352)
+Processing event: 35400000 at 43003027 (11:56:43.027)
+Processing event: 35500000 at 43033701 (11:57:13.701)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 35600000 at 43064375 (11:57:44.375)
+ERROR: over MAXROWS: 80
+Processing event: 35700000 at 43095050 (11:58:15.050)
+Processing event: 35800000 at 43125731 (11:58:45.731)
+Processing event: 35900000 at 43156406 (11:59:16.406)
+Processing event: 36000000 at 43187080 (11:59:47.080)
+ERROR: over MAXROWS: 80
+Processing event: 36100000 at 43217754 (12:00:17.754)
+Processing event: 36200000 at 43248428 (12:00:48.428)
+Processing event: 36300000 at 43279102 (12:01:19.102)
+Processing event: 36400000 at 43309776 (12:01:49.776)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36500000 at 43340450 (12:02:20.450)
+ERROR: over MAXROWS: 80
+Processing event: 36600000 at 43371123 (12:02:51.123)
+ERROR: over MAXROWS: 80
+Processing event: 36700000 at 43401797 (12:03:21.797)
+ERROR: over MAXROWS: 80
+Processing event: 36800000 at 43432471 (12:03:52.471)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36900000 at 43463144 (12:04:23.144)
+ERROR: over MAXROWS: 80
+Processing event: 37000000 at 43493818 (12:04:53.818)
+ERROR: over MAXROWS: 80
+Processing event: 37100000 at 43524492 (12:05:24.492)
+Processing event: 37200000 at 43555166 (12:05:55.166)
+ERROR: over MAXROWS: 80
+Processing event: 37300000 at 43585840 (12:06:25.840)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37400000 at 43616515 (12:06:56.515)
+ERROR: over MAXROWS: 80
+Processing event: 37500000 at 43647189 (12:07:27.189)
+Processing event: 37600000 at 43677863 (12:07:57.863)
+Processing event: 37700000 at 43708537 (12:08:28.537)
+ERROR: over MAXROWS: 80
+Processing event: 37800000 at 43739211 (12:08:59.211)
+ERROR: over MAXROWS: 80
+Processing event: 37900000 at 43769885 (12:09:29.885)
+ERROR: over MAXROWS: 80
+Processing event: 38000000 at 43800559 (12:10:00.559)
+Processing event: 38100000 at 43831233 (12:10:31.233)
+Processing event: 38200000 at 43861908 (12:11:01.908)
+Processing event: 38300000 at 43892582 (12:11:32.582)
+Processing event: 38400000 at 43923256 (12:12:03.256)
+Processing event: 38500000 at 43953930 (12:12:33.930)
+Processing event: 38600000 at 43984604 (12:13:04.604)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38700000 at 44015278 (12:13:35.278)
+Processing event: 38800000 at 44045952 (12:14:05.952)
+Processing event: 38900000 at 44076626 (12:14:36.626)
+ERROR: over MAXROWS: 80
+Processing event: 39000000 at 44107300 (12:15:07.300)
+ERROR: over MAXROWS: 80
+Processing event: 39100000 at 44137975 (12:15:37.975)
+Processing event: 39200000 at 44168649 (12:16:08.649)
+Processing event: 39300000 at 44199323 (12:16:39.323)
+Processing event: 39400000 at 44229997 (12:17:09.997)
+ERROR: over MAXROWS: 80
+Processing event: 39500000 at 44260671 (12:17:40.671)
+Processing event: 39600000 at 44291345 (12:18:11.345)
+Processing event: 39700000 at 44322019 (12:18:42.019)
+ERROR: over MAXROWS: 80
+Processing event: 39800000 at 44352693 (12:19:12.693)
+Processing event: 39900000 at 44383367 (12:19:43.367)
+Processing event: 40000000 at 44414042 (12:20:14.042)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40100000 at 44444715 (12:20:44.715)
+Processing event: 40200000 at 44475390 (12:21:15.390)
+ERROR: over MAXROWS: 80
+Processing event: 40300000 at 44506063 (12:21:46.063)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40400000 at 44536737 (12:22:16.737)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40500000 at 44567411 (12:22:47.411)
+Processing event: 40600000 at 44598085 (12:23:18.085)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40700000 at 44628758 (12:23:48.758)
+ERROR: over MAXROWS: 80
+Processing event: 40800000 at 44659433 (12:24:19.433)
+ERROR: over MAXROWS: 80
+Processing event: 40900000 at 44690107 (12:24:50.107)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41000000 at 44720780 (12:25:20.780)
+Processing event: 41100000 at 44751455 (12:25:51.455)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41200000 at 44782129 (12:26:22.129)
+ERROR: over MAXROWS: 80
+Processing event: 41300000 at 44812802 (12:26:52.802)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41400000 at 44843484 (12:27:23.484)
+ERROR: over MAXROWS: 80
+Processing event: 41500000 at 44874158 (12:27:54.158)
+Processing event: 41600000 at 44904834 (12:28:24.834)
+ERROR: over MAXROWS: 80
+Processing event: 41700000 at 44935509 (12:28:55.509)
+Processing event: 41800000 at 44966183 (12:29:26.183)
+Processing event: 41900000 at 44996857 (12:29:56.857)
+Processing event: 42000000 at 45027531 (12:30:27.531)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42100000 at 45058205 (12:30:58.205)
+Processing event: 42200000 at 45088879 (12:31:28.879)
+ERROR: over MAXROWS: 80
+Processing event: 42300000 at 45119554 (12:31:59.554)
+Processing event: 42400000 at 45150228 (12:32:30.228)
+Processing event: 42500000 at 45180902 (12:33:00.902)
+Processing event: 42600000 at 45211576 (12:33:31.576)
+ERROR: over MAXROWS: 80
+Processing event: 42700000 at 45242250 (12:34:02.250)
+Processing event: 42800000 at 45272924 (12:34:32.924)
+ERROR: over MAXROWS: 80
+Processing event: 42900000 at 45303598 (12:35:03.598)
+Processing event: 43000000 at 45334272 (12:35:34.272)
+ERROR: over MAXROWS: 80
+Processing event: 43100000 at 45364946 (12:36:04.946)
+Processing event: 43200000 at 45395621 (12:36:35.621)
+Processing event: 43300000 at 45426295 (12:37:06.295)
+ERROR: over MAXROWS: 80
+Processing event: 43400000 at 45456969 (12:37:36.969)
+Processing event: 43500000 at 45487643 (12:38:07.643)
+Processing event: 43600000 at 45518317 (12:38:38.317)
+Processing event: 43700000 at 45548991 (12:39:08.991)
+Processing event: 43800000 at 45579665 (12:39:39.665)
+Processing event: 43900000 at 45610339 (12:40:10.339)
+Processing event: 44000000 at 45641013 (12:40:41.013)
+Processing event: 44100000 at 45671687 (12:41:11.687)
+Processing event: 44200000 at 45702362 (12:41:42.362)
+Processing event: 44300000 at 45733035 (12:42:13.035)
+Processing event: 44400000 at 45763710 (12:42:43.710)
+Processing event: 44500000 at 45794384 (12:43:14.384)
+Processing event: 44600000 at 45825058 (12:43:45.058)
+Processing event: 44700000 at 45855731 (12:44:15.731)
+Processing event: 44800000 at 45886406 (12:44:46.406)
+Processing event: 44900000 at 45917079 (12:45:17.079)
+ERROR: over MAXROWS: 80
+Processing event: 45000000 at 45947753 (12:45:47.753)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45100000 at 45978427 (12:46:18.427)
+Processing event: 45200000 at 46009101 (12:46:49.101)
+ERROR: over MAXROWS: 80
+Processing event: 45300000 at 46039775 (12:47:19.775)
+Processing event: 45400000 at 46070449 (12:47:50.449)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45500000 at 46101123 (12:48:21.123)
+Processing event: 45600000 at 46131797 (12:48:51.797)
+Processing event: 45700000 at 46162471 (12:49:22.471)
+ERROR: over MAXROWS: 80
+Processing event: 45800000 at 46193145 (12:49:53.145)
+Processing event: 45900000 at 46223821 (12:50:23.821)
+ERROR: over MAXROWS: 80
+Processing event: 46000000 at 46254495 (12:50:54.495)
+ERROR: over MAXROWS: 80
+Processing event: 46100000 at 46285169 (12:51:25.169)
+Processing event: 46200000 at 46315843 (12:51:55.843)
+Processing event: 46300000 at 46346517 (12:52:26.517)
+Processing event: 46400000 at 46377192 (12:52:57.192)
+Processing event: 46500000 at 46407865 (12:53:27.865)
+Processing event: 46600000 at 46438539 (12:53:58.539)
+Processing event: 46700000 at 46469214 (12:54:29.214)
+Processing event: 46800000 at 46499888 (12:54:59.888)
+Processing event: 46900000 at 46530570 (12:55:30.570)
+Channel 19 temporarily desynced at 12:55:44.205   :46944454
+Channel 20 temporarily desynced at 12:55:44.205   :46944454
+Channel 19 very very very very very very desynced at 12:55:44.817    :46946454
+Channel 20 very very very very very very desynced at 12:55:44.817    :46946454
+Processing event: 47000000 at 46561244 (12:56:01.244)
+Processing event: 47100000 at 46591919 (12:56:31.919)
+ERROR: over MAXROWS: 80
+Processing event: 47200000 at 46622593 (12:57:02.593)
+Processing event: 47300000 at 46653267 (12:57:33.267)
+Processing event: 47400000 at 46683942 (12:58:03.942)
+Processing event: 47500000 at 46714616 (12:58:34.616)
+ERROR: over MAXROWS: 80
+Processing event: 47600000 at 46745290 (12:59:05.290)
+Processing event: 47700000 at 46775964 (12:59:35.964)
+ERROR: over MAXROWS: 80
+Processing event: 47800000 at 46806638 (13:00:06.638)
+Processing event: 47900000 at 46837312 (13:00:37.312)
+Processing event: 48000000 at 46867986 (13:01:07.986)
+Processing event: 48100000 at 46898660 (13:01:38.660)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 48200000 at 46929333 (13:02:09.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 48300000 at 46960007 (13:02:40.007)
+Processing event: 48400000 at 46990682 (13:03:10.682)
+Processing event: 48500000 at 47021355 (13:03:41.355)
+Processing event: 48600000 at 47052029 (13:04:12.029)
+ERROR: over MAXROWS: 80
+Processing event: 48700000 at 47082703 (13:04:42.703)
+Processing event: 48800000 at 47113377 (13:05:13.377)
+ERROR: over MAXROWS: 80
+Processing event: 48900000 at 47144051 (13:05:44.051)
+Processing event: 49000000 at 47174726 (13:06:14.726)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 49100000 at 47205400 (13:06:45.400)
+ERROR: over MAXROWS: 80
+Processing event: 49200000 at 47236074 (13:07:16.074)
+Processing event: 49300000 at 47266748 (13:07:46.748)
+ERROR: over MAXROWS: 80
+Processing event: 49400000 at 47297422 (13:08:17.422)
+Processing event: 49500000 at 47328096 (13:08:48.096)
+Processing event: 49600000 at 47358770 (13:09:18.770)
+Processing event: 49700000 at 47389445 (13:09:49.445)
+Processing event: 49800000 at 47420118 (13:10:20.118)
+ERROR: over MAXROWS: 80
+Processing event: 49900000 at 47450793 (13:10:50.793)
+ERROR: over MAXROWS: 80
+Processing event: 50000000 at 47481467 (13:11:21.467)
+Processing event: 50100000 at 47512141 (13:11:52.141)
+Processing event: 50200000 at 47542815 (13:12:22.815)
+Processing event: 50300000 at 47573490 (13:12:53.490)
+Processing event: 50400000 at 47604164 (13:13:24.164)
+ERROR: over MAXROWS: 80
+Processing event: 50500000 at 47634838 (13:13:54.838)
+ERROR: over MAXROWS: 80
+Processing event: 50600000 at 47665512 (13:14:25.512)
+ERROR: over MAXROWS: 80
+Processing event: 50700000 at 47696186 (13:14:56.186)
+ERROR: over MAXROWS: 80
+Processing event: 50800000 at 47726860 (13:15:26.860)
+Processing event: 50900000 at 47757535 (13:15:57.535)
+Processing event: 51000000 at 47788209 (13:16:28.209)
+ERROR: over MAXROWS: 80
+Processing event: 51100000 at 47818883 (13:16:58.883)
+ERROR: over MAXROWS: 80
+Processing event: 51200000 at 47849557 (13:17:29.557)
+Processing event: 51300000 at 47880231 (13:18:00.231)
+ERROR: over MAXROWS: 80
+Processing event: 51400000 at 47910905 (13:18:30.905)
+ERROR: over MAXROWS: 80
+Processing event: 51500000 at 47941579 (13:19:01.579)
+Processing event: 51600000 at 47972253 (13:19:32.253)
+Processing event: 51700000 at 48002927 (13:20:02.927)
+ERROR: over MAXROWS: 80
+Processing event: 51800000 at 48033601 (13:20:33.601)
+Processing event: 51900000 at 48064275 (13:21:04.275)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52000000 at 48094950 (13:21:34.950)
+ERROR: over MAXROWS: 80
+Processing event: 52100000 at 48125623 (13:22:05.623)
+Processing event: 52200000 at 48156297 (13:22:36.297)
+ERROR: over MAXROWS: 80
+Processing event: 52300000 at 48186975 (13:23:06.975)
+ERROR: over MAXROWS: 80
+Processing event: 52400000 at 48217649 (13:23:37.649)
+ERROR: over MAXROWS: 80
+Processing event: 52500000 at 48248332 (13:24:08.332)
+ERROR: over MAXROWS: 80
+Processing event: 52600000 at 48279006 (13:24:39.006)
+ERROR: over MAXROWS: 80
+Processing event: 52700000 at 48309680 (13:25:09.680)
+Processing event: 52800000 at 48340354 (13:25:40.354)
+Processing event: 52900000 at 48371029 (13:26:11.029)
+Processing event: 53000000 at 48401703 (13:26:41.703)
+Processing event: 53100000 at 48432376 (13:27:12.376)
+Processing event: 53200000 at 48463050 (13:27:43.050)
+Processing event: 53300000 at 48493724 (13:28:13.724)
+Processing event: 53400000 at 48524398 (13:28:44.398)
+ERROR: over MAXROWS: 80
+Processing event: 53500000 at 48555072 (13:29:15.072)
+ERROR: over MAXROWS: 80
+Processing event: 53600000 at 48585746 (13:29:45.746)
+ERROR: over MAXROWS: 80
+Processing event: 53700000 at 48616419 (13:30:16.419)
+Processing event: 53800000 at 48647094 (13:30:47.094)
+ERROR: over MAXROWS: 80
+Processing event: 53900000 at 48677768 (13:31:17.768)
+ERROR: over MAXROWS: 80
+Processing event: 54000000 at 48708442 (13:31:48.442)
+ERROR: over MAXROWS: 80
+Processing event: 54100000 at 48739116 (13:32:19.116)
+Processing event: 54200000 at 48769790 (13:32:49.790)
+Processing event: 54300000 at 48800464 (13:33:20.464)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54400000 at 48831139 (13:33:51.139)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54500000 at 48861813 (13:34:21.813)
+Processing event: 54600000 at 48892487 (13:34:52.487)
+ERROR: over MAXROWS: 80
+Processing event: 54700000 at 48923161 (13:35:23.161)
+Processing event: 54800000 at 48953835 (13:35:53.835)
+Processing event: 54900000 at 48984509 (13:36:24.509)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55000000 at 49015183 (13:36:55.183)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55100000 at 49045857 (13:37:25.857)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55200000 at 49076531 (13:37:56.531)
+Processing event: 55300000 at 49107206 (13:38:27.206)
+ERROR: over MAXROWS: 80
+Processing event: 55400000 at 49137880 (13:38:57.880)
+Processing event: 55500000 at 49168554 (13:39:28.554)
+ERROR: over MAXROWS: 80
+Processing event: 55600000 at 49199228 (13:39:59.228)
+Processing event: 55700000 at 49229902 (13:40:29.902)
+Processing event: 55800000 at 49260576 (13:41:00.576)
+ERROR: over MAXROWS: 80
+Processing event: 55900000 at 49291251 (13:41:31.251)
+Processing event: 56000000 at 49321925 (13:42:01.925)
+Processing event: 56100000 at 49352599 (13:42:32.599)
+Processing event: 56200000 at 49383273 (13:43:03.273)
+ERROR: over MAXROWS: 80
+Processing event: 56300000 at 49413947 (13:43:33.947)
+Processing event: 56400000 at 49444621 (13:44:04.621)
+Processing event: 56500000 at 49475295 (13:44:35.295)
+ERROR: over MAXROWS: 80
+Processing event: 56600000 at 49505969 (13:45:05.969)
+Processing event: 56700000 at 49536644 (13:45:36.644)
+ERROR: over MAXROWS: 80
+Processing event: 56800000 at 49567318 (13:46:07.318)
+ERROR: over MAXROWS: 80
+Processing event: 56900000 at 49597991 (13:46:37.991)
+Processing event: 57000000 at 49628666 (13:47:08.666)
+Processing event: 57100000 at 49659340 (13:47:39.340)
+ERROR: over MAXROWS: 80
+Processing event: 57200000 at 49690014 (13:48:10.014)
+Processing event: 57300000 at 49720688 (13:48:40.688)
+ERROR: over MAXROWS: 80
+Processing event: 57400000 at 49751362 (13:49:11.362)
+Processing event: 57500000 at 49782036 (13:49:42.036)
+ERROR: over MAXROWS: 80
+Processing event: 57600000 at 49812710 (13:50:12.710)
+ERROR: over MAXROWS: 80
+Processing event: 57700000 at 49843384 (13:50:43.384)
+Processing event: 57800000 at 49874058 (13:51:14.058)
+ERROR: over MAXROWS: 80
+Processing event: 57900000 at 49904732 (13:51:44.732)
+Processing event: 58000000 at 49935409 (13:52:15.409)
+Processing event: 58100000 at 49966091 (13:52:46.091)
+ERROR: over MAXROWS: 80
+Processing event: 58200000 at 49996766 (13:53:16.766)
+Processing event: 58300000 at 50027440 (13:53:47.440)
+ERROR: over MAXROWS: 80
+Processing event: 58400000 at 50058114 (13:54:18.114)
+ERROR: over MAXROWS: 80
+Processing event: 58500000 at 50088788 (13:54:48.788)
+Processing event: 58600000 at 50119462 (13:55:19.462)
+ERROR: over MAXROWS: 80
+Processing event: 58700000 at 50150136 (13:55:50.136)
+ERROR: over MAXROWS: 80
+Processing event: 58800000 at 50180810 (13:56:20.810)
+Processing event: 58900000 at 50211484 (13:56:51.484)
+ERROR: over MAXROWS: 80
+Processing event: 59000000 at 50242158 (13:57:22.158)
+Processing event: 59100000 at 50272833 (13:57:52.833)
+Processing event: 59200000 at 50303507 (13:58:23.507)
+Processing event: 59300000 at 50334181 (13:58:54.181)
+Processing event: 59400000 at 50364855 (13:59:24.855)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59500000 at 50395529 (13:59:55.529)
+Processing event: 59600000 at 50426203 (14:00:26.203)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59700000 at 50456877 (14:00:56.877)
+ERROR: over MAXROWS: 80
+Processing event: 59800000 at 50487551 (14:01:27.551)
+ERROR: over MAXROWS: 80
+Processing event: 59900000 at 50518226 (14:01:58.226)
+Processing event: 60000000 at 50548900 (14:02:28.900)
+Processing event: 60100000 at 50579574 (14:02:59.574)
+Processing event: 60200000 at 50610248 (14:03:30.248)
+Processing event: 60300000 at 50640922 (14:04:00.922)
+Processing event: 60400000 at 50671597 (14:04:31.597)
+ERROR: over MAXROWS: 80
+Processing event: 60500000 at 50702271 (14:05:02.271)
+ERROR: over MAXROWS: 80
+Processing event: 60600000 at 50732945 (14:05:32.945)
+Processing event: 60700000 at 50763619 (14:06:03.619)
+Processing event: 60800000 at 50794293 (14:06:34.293)
+Processing event: 60900000 at 50824967 (14:07:04.967)
+Processing event: 61000000 at 50855641 (14:07:35.641)
+ERROR: over MAXROWS: 80
+Processing event: 61100000 at 50886314 (14:08:06.314)
+Processing event: 61200000 at 50916988 (14:08:36.988)
+Processing event: 61300000 at 50947662 (14:09:07.662)
+Processing event: 61400000 at 50978337 (14:09:38.337)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 61500000 at 51009011 (14:10:09.011)
+Processing event: 61600000 at 51039685 (14:10:39.685)
+ERROR: over MAXROWS: 80
+Processing event: 61700000 at 51070360 (14:11:10.360)
+Processing event: 61800000 at 51101033 (14:11:41.033)
+Processing event: 61900000 at 51131708 (14:12:11.708)
+ERROR: over MAXROWS: 80
+Processing event: 62000000 at 51162382 (14:12:42.382)
+Processing event: 62100000 at 51193056 (14:13:13.056)
+ERROR: over MAXROWS: 80
+Processing event: 62200000 at 51223730 (14:13:43.730)
+Processing event: 62300000 at 51254405 (14:14:14.405)
+Processing event: 62400000 at 51285079 (14:14:45.079)
+Processing event: 62500000 at 51315753 (14:15:15.753)
+Processing event: 62600000 at 51346427 (14:15:46.427)
+Processing event: 62700000 at 51377101 (14:16:17.101)
+Processing event: 62800000 at 51407776 (14:16:47.776)
+ERROR: over MAXROWS: 80
+Processing event: 62900000 at 51438449 (14:17:18.449)
+Processing event: 63000000 at 51469123 (14:17:49.123)
+Processing event: 63100000 at 51499797 (14:18:19.797)
+ERROR: over MAXROWS: 80
+Processing event: 63200000 at 51530472 (14:18:50.472)
+Processing event: 63300000 at 51561146 (14:19:21.146)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63400000 at 51591820 (14:19:51.820)
+ERROR: over MAXROWS: 80
+Processing event: 63500000 at 51622494 (14:20:22.494)
+ERROR: over MAXROWS: 80
+Processing event: 63600000 at 51653176 (14:20:53.176)
+ERROR: over MAXROWS: 80
+Processing event: 63700000 at 51683850 (14:21:23.850)
+Processing event: 63800000 at 51714525 (14:21:54.525)
+ERROR: over MAXROWS: 80
+Processing event: 63900000 at 51745199 (14:22:25.199)
+Processing event: 64000000 at 51775873 (14:22:55.873)
+ERROR: over MAXROWS: 80
+Processing event: 64100000 at 51806547 (14:23:26.547)
+Processing event: 64200000 at 51837221 (14:23:57.221)
+ERROR: over MAXROWS: 80
+Processing event: 64300000 at 51867895 (14:24:27.895)
+Processing event: 64400000 at 51898580 (14:24:58.580)
+Processing event: 64500000 at 51929254 (14:25:29.254)
+Processing event: 64600000 at 51959928 (14:25:59.928)
+ERROR: over MAXROWS: 80
+Processing event: 64700000 at 51990602 (14:26:30.602)
+Processing event: 64800000 at 52021276 (14:27:01.276)
+Processing event: 64900000 at 52051950 (14:27:31.950)
+Processing event: 65000000 at 52082635 (14:28:02.635)
+Processing event: 65100000 at 52113309 (14:28:33.309)
+ERROR: over MAXROWS: 80
+Processing event: 65200000 at 52143983 (14:29:03.983)
+ERROR: over MAXROWS: 80
+Processing event: 65300000 at 52174657 (14:29:34.657)
+Processing event: 65400000 at 52205331 (14:30:05.331)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65500000 at 52236005 (14:30:36.005)
+ERROR: over MAXROWS: 80
+Processing event: 65600000 at 52266679 (14:31:06.679)
+Processing event: 65700000 at 52297353 (14:31:37.353)
+ERROR: over MAXROWS: 80
+Processing event: 65800000 at 52328027 (14:32:08.027)
+Processing event: 65900000 at 52358702 (14:32:38.702)
+ERROR: over MAXROWS: 80
+Processing event: 66000000 at 52389376 (14:33:09.376)
+Processing event: 66100000 at 52420050 (14:33:40.050)
+ERROR: over MAXROWS: 80
+Processing event: 66200000 at 52450725 (14:34:10.725)
+ERROR: over MAXROWS: 80
+Processing event: 66300000 at 52481399 (14:34:41.399)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 66400000 at 52512073 (14:35:12.073)
+ERROR: over MAXROWS: 80
+Processing event: 66500000 at 52542747 (14:35:42.747)
+ERROR: over MAXROWS: 80
+Processing event: 66600000 at 52573422 (14:36:13.422)
+Processing event: 66700000 at 52604096 (14:36:44.096)
+Processing event: 66800000 at 52634770 (14:37:14.770)
+Processing event: 66900000 at 52665444 (14:37:45.444)
+Processing event: 67000000 at 52696119 (14:38:16.119)
+ERROR: over MAXROWS: 80
+Processing event: 67100000 at 52726793 (14:38:46.793)
+ERROR: over MAXROWS: 80
+Processing event: 67200000 at 52757467 (14:39:17.467)
+Processing event: 67300000 at 52788142 (14:39:48.142)
+ERROR: over MAXROWS: 80
+Processing event: 67400000 at 52818816 (14:40:18.816)
+Processing event: 67500000 at 52849490 (14:40:49.490)
+Processing event: 67600000 at 52880163 (14:41:20.163)
+Processing event: 67700000 at 52910837 (14:41:50.837)
+Processing event: 67800000 at 52941511 (14:42:21.511)
+ERROR: over MAXROWS: 80
+Processing event: 67900000 at 52972185 (14:42:52.185)
+Processing event: 68000000 at 53002859 (14:43:22.859)
+ERROR: over MAXROWS: 80
+Processing event: 68100000 at 53033533 (14:43:53.533)
+ERROR: over MAXROWS: 80
+Processing event: 68200000 at 53064207 (14:44:24.207)
+ERROR: over MAXROWS: 80
+Processing event: 68300000 at 53094881 (14:44:54.881)
+Processing event: 68400000 at 53125555 (14:45:25.555)
+Processing event: 68500000 at 53156229 (14:45:56.229)
+Processing event: 68600000 at 53186904 (14:46:26.904)
+Processing event: 68700000 at 53217578 (14:46:57.578)
+Processing event: 68800000 at 53248254 (14:47:28.254)
+Processing event: 68900000 at 53278928 (14:47:58.928)
+ERROR: over MAXROWS: 80
+Processing event: 69000000 at 53309602 (14:48:29.602)
+ERROR: over MAXROWS: 80
+Processing event: 69100000 at 53340285 (14:49:00.285)
+Processing event: 69200000 at 53370959 (14:49:30.959)
+Processing event: 69300000 at 53401633 (14:50:01.633)
+Processing event: 69400000 at 53432307 (14:50:32.307)
+Processing event: 69500000 at 53462982 (14:51:02.982)
+Processing event: 69600000 at 53493656 (14:51:33.656)
+Processing event: 69700000 at 53524331 (14:52:04.331)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 69800000 at 53555005 (14:52:35.005)
+Processing event: 69900000 at 53585679 (14:53:05.679)
+ERROR: over MAXROWS: 80
+Processing event: 70000000 at 53616353 (14:53:36.353)
+Processing event: 70100000 at 53647049 (14:54:07.049)
+Processing event: 70200000 at 53677723 (14:54:37.723)
+Processing event: 70300000 at 53708397 (14:55:08.397)
+Processing event: 70400000 at 53739071 (14:55:39.071)
+ERROR: over MAXROWS: 80
+Processing event: 70500000 at 53769745 (14:56:09.745)
+ERROR: over MAXROWS: 80
+Processing event: 70600000 at 53800419 (14:56:40.419)
+ERROR: over MAXROWS: 80
+Processing event: 70700000 at 53831095 (14:57:11.095)
+Processing event: 70800000 at 53861769 (14:57:41.769)
+Processing event: 70900000 at 53892443 (14:58:12.443)
+ERROR: over MAXROWS: 80
+Processing event: 71000000 at 53923128 (14:58:43.128)
+Processing event: 71100000 at 53953803 (14:59:13.803)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71200000 at 53984487 (14:59:44.487)
+ERROR: over MAXROWS: 80
+Processing event: 71300000 at 54015162 (15:00:15.162)
+Processing event: 71400000 at 54045836 (15:00:45.836)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71500000 at 54076511 (15:01:16.511)
+ERROR: over MAXROWS: 80
+Processing event: 71600000 at 54107185 (15:01:47.185)
+Processing event: 71700000 at 54137859 (15:02:17.859)
+Processing event: 71800000 at 54168534 (15:02:48.534)
+Processing event: 71900000 at 54199218 (15:03:19.218)
+ERROR: over MAXROWS: 80
+Processing event: 72000000 at 54229892 (15:03:49.892)
+Processing event: 72100000 at 54260567 (15:04:20.567)
+Processing event: 72200000 at 54291241 (15:04:51.241)
+Processing event: 72300000 at 54321915 (15:05:21.915)
+Processing event: 72400000 at 54352589 (15:05:52.589)
+ERROR: over MAXROWS: 80
+Processing event: 72500000 at 54383275 (15:06:23.275)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 72600000 at 54413949 (15:06:53.949)
+ERROR: over MAXROWS: 80
+Processing event: 72700000 at 54444623 (15:07:24.623)
+Processing event: 72800000 at 54475307 (15:07:55.307)
+ERROR: over MAXROWS: 80
+Processing event: 72900000 at 54505982 (15:08:25.982)
+ERROR: over MAXROWS: 80
+Processing event: 73000000 at 54536656 (15:08:56.656)
+ERROR: over MAXROWS: 80
+Processing event: 73100000 at 54567330 (15:09:27.330)
+Processing event: 73200000 at 54598015 (15:09:58.015)
+Processing event: 73300000 at 54628700 (15:10:28.700)
+Processing event: 73400000 at 54659374 (15:10:59.374)
+Processing event: 73500000 at 54690049 (15:11:30.049)
+Processing event: 73600000 at 54720723 (15:12:00.723)
+Processing event: 73700000 at 54751397 (15:12:31.397)
+Processing event: 73800000 at 54782071 (15:13:02.071)
+Processing event: 73900000 at 54812750 (15:13:32.750)
+Processing event: 74000000 at 54843424 (15:14:03.424)
+Processing event: 74100000 at 54874098 (15:14:34.098)
+ERROR: over MAXROWS: 80
+Processing event: 74200000 at 54904772 (15:15:04.772)
+ERROR: over MAXROWS: 80
+Processing event: 74300000 at 54935446 (15:15:35.446)
+Processing event: 74400000 at 54966121 (15:16:06.121)
+Processing event: 74500000 at 54996795 (15:16:36.795)
+Processing event: 74600000 at 55027488 (15:17:07.488)
+Processing event: 74700000 at 55058173 (15:17:38.173)
+Processing event: 74800000 at 55088848 (15:18:08.848)
+ERROR: over MAXROWS: 80
+Processing event: 74900000 at 55119522 (15:18:39.522)
+Processing event: 75000000 at 55150196 (15:19:10.196)
+Processing event: 75100000 at 55180870 (15:19:40.870)
+Processing event: 75200000 at 55211544 (15:20:11.544)
+Processing event: 75300000 at 55242219 (15:20:42.219)
+Processing event: 75400000 at 55272892 (15:21:12.892)
+Processing event: 75500000 at 55303567 (15:21:43.567)
+ERROR: over MAXROWS: 80
+Processing event: 75600000 at 55334241 (15:22:14.241)
+Processing event: 75700000 at 55364915 (15:22:44.915)
+ERROR: over MAXROWS: 80
+Processing event: 75800000 at 55395590 (15:23:15.590)
+Processing event: 75900000 at 55426263 (15:23:46.263)
+Processing event: 76000000 at 55456938 (15:24:16.938)
+Processing event: 76100000 at 55487621 (15:24:47.621)
+Processing event: 76200000 at 55518295 (15:25:18.295)
+Processing event: 76300000 at 55548970 (15:25:48.970)
+Processing event: 76400000 at 55579644 (15:26:19.644)
+Processing event: 76500000 at 55610328 (15:26:50.328)
+Processing event: 76600000 at 55641003 (15:27:21.003)
+ERROR: over MAXROWS: 80
+Processing event: 76700000 at 55671687 (15:27:51.687)
+Processing event: 76800000 at 55702362 (15:28:22.362)
+ERROR: over MAXROWS: 80
+Processing event: 76900000 at 55733037 (15:28:53.037)
+Processing event: 77000000 at 55763711 (15:29:23.711)
+ERROR: over MAXROWS: 80
+Processing event: 77100000 at 55794385 (15:29:54.385)
+Processing event: 77200000 at 55825060 (15:30:25.060)
+Processing event: 77300000 at 55855734 (15:30:55.734)
+Processing event: 77400000 at 55886408 (15:31:26.408)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77500000 at 55917082 (15:31:57.082)
+Processing event: 77600000 at 55947756 (15:32:27.756)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77700000 at 55978440 (15:32:58.440)
+Processing event: 77800000 at 56009126 (15:33:29.126)
+Processing event: 77900000 at 56039800 (15:33:59.800)
+Processing event: 78000000 at 56070474 (15:34:30.474)
+Processing event: 78100000 at 56101148 (15:35:01.148)
+ERROR: over MAXROWS: 80
+Processing event: 78200000 at 56131823 (15:35:31.823)
+ERROR: over MAXROWS: 80
+Processing event: 78300000 at 56162497 (15:36:02.497)
+ERROR: over MAXROWS: 80
+Processing event: 78400000 at 56193171 (15:36:33.171)
+Processing event: 78500000 at 56223845 (15:37:03.845)
+ERROR: over MAXROWS: 80
+Processing event: 78600000 at 56254520 (15:37:34.520)
+ERROR: over MAXROWS: 80
+Processing event: 78700000 at 56285194 (15:38:05.194)
+Processing event: 78800000 at 56315868 (15:38:35.868)
+Processing event: 78900000 at 56346542 (15:39:06.542)
+ERROR: over MAXROWS: 80
+Processing event: 79000000 at 56377216 (15:39:37.216)
+Processing event: 79100000 at 56407891 (15:40:07.891)
+Processing event: 79200000 at 56438565 (15:40:38.565)
+ERROR: over MAXROWS: 80
+Processing event: 79300000 at 56469240 (15:41:09.240)
+ERROR: over MAXROWS: 80
+Processing event: 79400000 at 56499914 (15:41:39.914)
+Processing event: 79500000 at 56530588 (15:42:10.588)
+ERROR: over MAXROWS: 80
+Processing event: 79600000 at 56561262 (15:42:41.262)
+Processing event: 79700000 at 56591936 (15:43:11.936)
+Processing event: 79800000 at 56622610 (15:43:42.610)
+Processing event: 79900000 at 56653285 (15:44:13.285)
+Processing event: 80000000 at 56683967 (15:44:43.967)
+Processing event: 80100000 at 56714642 (15:45:14.642)
+Processing event: 80200000 at 56745327 (15:45:45.327)
+Processing event: 80300000 at 56776001 (15:46:16.001)
+ERROR: over MAXROWS: 80
+Processing event: 80400000 at 56806675 (15:46:46.675)
+Processing event: 80500000 at 56837349 (15:47:17.349)
+Processing event: 80600000 at 56868023 (15:47:48.023)
+ERROR: over MAXROWS: 80
+Processing event: 80700000 at 56898698 (15:48:18.698)
+Processing event: 80800000 at 56929372 (15:48:49.372)
+Processing event: 80900000 at 56960046 (15:49:20.046)
+Processing event: 81000000 at 56990721 (15:49:50.721)
+ERROR: over MAXROWS: 80
+Processing event: 81100000 at 57021396 (15:50:21.396)
+Processing event: 81200000 at 57052070 (15:50:52.070)
+Processing event: 81300000 at 57082745 (15:51:22.745)
+Processing event: 81400000 at 57113419 (15:51:53.419)
+Processing event: 81500000 at 57144093 (15:52:24.093)
+Processing event: 81600000 at 57174767 (15:52:54.767)
+ERROR: over MAXROWS: 80
+Processing event: 81700000 at 57205441 (15:53:25.441)
+Processing event: 81800000 at 57236116 (15:53:56.116)
+Processing event: 81900000 at 57266790 (15:54:26.790)
+Processing event: 82000000 at 57297474 (15:54:57.474)
+ERROR: over MAXROWS: 80
+Processing event: 82100000 at 57328149 (15:55:28.149)
+Processing event: 82200000 at 57358823 (15:55:58.823)
+Processing event: 82300000 at 57389497 (15:56:29.497)
+Processing event: 82400000 at 57420171 (15:57:00.171)
+Processing event: 82500000 at 57450856 (15:57:30.856)
+Processing event: 82600000 at 57481531 (15:58:01.531)
+Processing event: 82700000 at 57512206 (15:58:32.206)
+ERROR: over MAXROWS: 80
+Processing event: 82800000 at 57542890 (15:59:02.890)
+Processing event: 82900000 at 57573564 (15:59:33.564)
+Processing event: 83000000 at 57604239 (16:00:04.239)
+Processing event: 83100000 at 57634913 (16:00:34.913)
+ERROR: over MAXROWS: 80
+Processing event: 83200000 at 57665587 (16:01:05.587)
+Processing event: 83300000 at 57696262 (16:01:36.262)
+Processing event: 83400000 at 57726946 (16:02:06.946)
+Processing event: 83500000 at 57757620 (16:02:37.620)
+ERROR: over MAXROWS: 80
+Processing event: 83600000 at 57788294 (16:03:08.294)
+ERROR: over MAXROWS: 80
+Processing event: 83700000 at 57818968 (16:03:38.968)
+ERROR: over MAXROWS: 80
+Processing event: 83800000 at 57849643 (16:04:09.643)
+Processing event: 83900000 at 57880317 (16:04:40.317)
+ERROR: over MAXROWS: 80
+Processing event: 84000000 at 57910991 (16:05:10.991)
+Processing event: 84100000 at 57941665 (16:05:41.665)
+Processing event: 84200000 at 57972340 (16:06:12.340)
+Processing event: 84300000 at 58003014 (16:06:43.014)
+Processing event: 84400000 at 58033688 (16:07:13.688)
+Processing event: 84500000 at 58064363 (16:07:44.363)
+Processing event: 84600000 at 58095038 (16:08:15.038)
+Processing event: 84700000 at 58125712 (16:08:45.712)
+Processing event: 84800000 at 58156387 (16:09:16.387)
+Processing event: 84900000 at 58187070 (16:09:47.070)
+ERROR: over MAXROWS: 80
+Processing event: 85000000 at 58217745 (16:10:17.745)
+Processing event: 85100000 at 58248419 (16:10:48.419)
+Processing event: 85200000 at 58279093 (16:11:19.093)
+Processing event: 85300000 at 58309768 (16:11:49.768)
+Processing event: 85400000 at 58340443 (16:12:20.443)
+ERROR: over MAXROWS: 80
+Processing event: 85500000 at 58371125 (16:12:51.125)
+Processing event: 85600000 at 58401799 (16:13:21.799)
+Processing event: 85700000 at 58432473 (16:13:52.473)
+Processing event: 85800000 at 58463157 (16:14:23.157)
+Processing event: 85900000 at 58493832 (16:14:53.832)
+Processing event: 86000000 at 58524506 (16:15:24.506)
+ERROR: over MAXROWS: 80
+Processing event: 86100000 at 58555180 (16:15:55.180)
+ERROR: over MAXROWS: 80
+Processing event: 86200000 at 58585854 (16:16:25.854)
+Processing event: 86300000 at 58616529 (16:16:56.529)
+Processing event: 86400000 at 58647203 (16:17:27.203)
+Processing event: 86500000 at 58677877 (16:17:57.877)
+Processing event: 86600000 at 58708551 (16:18:28.551)
+ERROR: over MAXROWS: 80
+Processing event: 86700000 at 58739226 (16:18:59.226)
+Processing event: 86800000 at 58769900 (16:19:29.900)
+Processing event: 86900000 at 58800574 (16:20:00.574)
+Processing event: 87000000 at 58831260 (16:20:31.260)
+ERROR: over MAXROWS: 80
+Processing event: 87100000 at 58861934 (16:21:01.934)
+Processing event: 87200000 at 58892608 (16:21:32.608)
+ERROR: over MAXROWS: 80
+Processing event: 87300000 at 58923283 (16:22:03.283)
+ERROR: over MAXROWS: 80
+Processing event: 87400000 at 58953957 (16:22:33.957)
+ERROR: over MAXROWS: 80
+Processing event: 87500000 at 58984632 (16:23:04.632)
+ERROR: over MAXROWS: 80
+Processing event: 87600000 at 59015306 (16:23:35.306)
+ERROR: over MAXROWS: 80
+Processing event: 87700000 at 59045980 (16:24:05.980)
+Processing event: 87800000 at 59076654 (16:24:36.654)
+Processing event: 87900000 at 59107329 (16:25:07.329)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 88000000 at 59138003 (16:25:38.003)
+Processing event: 88100000 at 59168677 (16:26:08.677)
+Processing event: 88200000 at 59199351 (16:26:39.351)
+Processing event: 88300000 at 59230025 (16:27:10.025)
+ERROR: over MAXROWS: 80
+Processing event: 88400000 at 59260700 (16:27:40.700)
+Processing event: 88500000 at 59291374 (16:28:11.374)
+Processing event: 88600000 at 59322058 (16:28:42.058)
+Processing event: 88700000 at 59352732 (16:29:12.732)
+ERROR: over MAXROWS: 80
+Processing event: 88800000 at 59383406 (16:29:43.406)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 88900000 at 59414081 (16:30:14.081)
+Processing event: 89000000 at 59444755 (16:30:44.755)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 89100000 at 59475429 (16:31:15.429)
+Processing event: 89200000 at 59506103 (16:31:46.103)
+Processing event: 89300000 at 59536778 (16:32:16.778)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 89400000 at 59567452 (16:32:47.452)
+Processing event: 89500000 at 59598126 (16:33:18.126)
+Processing event: 89600000 at 59628800 (16:33:48.800)
+Processing event: 89700000 at 59659475 (16:34:19.475)
+Processing event: 89800000 at 59690149 (16:34:50.149)
+Processing event: 89900000 at 59720823 (16:35:20.823)
+Processing event: 90000000 at 59751498 (16:35:51.498)
+Processing event: 90100000 at 59782172 (16:36:22.172)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 90200000 at 59812847 (16:36:52.847)
+Processing event: 90300000 at 59843521 (16:37:23.521)
+Processing event: 90400000 at 59874195 (16:37:54.195)
+Processing event: 90500000 at 59904880 (16:38:24.880)
+Processing event: 90600000 at 59935554 (16:38:55.554)
+ERROR: over MAXROWS: 80
+Processing event: 90700000 at 59966228 (16:39:26.228)
+Processing event: 90800000 at 59996902 (16:39:56.902)
+Processing event: 90900000 at 60027576 (16:40:27.576)
+ERROR: over MAXROWS: 80
+Processing event: 91000000 at 60058259 (16:40:58.259)
+Processing event: 91100000 at 60088933 (16:41:28.933)
+Processing event: 91200000 at 60119607 (16:41:59.607)
+ERROR: over MAXROWS: 80
+Processing event: 91300000 at 60150282 (16:42:30.282)
+Processing event: 91400000 at 60180956 (16:43:00.956)
+Processing event: 91500000 at 60211630 (16:43:31.630)
+Processing event: 91600000 at 60242305 (16:44:02.305)
+Processing event: 91700000 at 60272990 (16:44:32.990)
+Processing event: 91800000 at 60303664 (16:45:03.664)
+Processing event: 91900000 at 60334339 (16:45:34.339)
+ERROR: over MAXROWS: 80
+Processing event: 92000000 at 60365013 (16:46:05.013)
+Processing event: 92100000 at 60395686 (16:46:35.686)
+Processing event: 92200000 at 60426361 (16:47:06.361)
+Processing event: 92300000 at 60457045 (16:47:37.045)
+Processing event: 92400000 at 60487730 (16:48:07.730)
+Processing event: 92500000 at 60518404 (16:48:38.404)
+ERROR: over MAXROWS: 80
+Processing event: 92600000 at 60549078 (16:49:09.078)
+Processing event: 92700000 at 60579753 (16:49:39.753)
+Processing event: 92800000 at 60610427 (16:50:10.427)
+Processing event: 92900000 at 60641101 (16:50:41.101)
+Processing event: 93000000 at 60671775 (16:51:11.775)
+ERROR: over MAXROWS: 80
+Processing event: 93100000 at 60702460 (16:51:42.460)
+Processing event: 93200000 at 60733134 (16:52:13.134)
+Processing event: 93300000 at 60763809 (16:52:43.809)
+Processing event: 93400000 at 60794483 (16:53:14.483)
+Processing event: 93500000 at 60825166 (16:53:45.166)
+ERROR: over MAXROWS: 80
+Processing event: 93600000 at 60855842 (16:54:15.842)
+Processing event: 93700000 at 60886516 (16:54:46.516)
+Processing event: 93800000 at 60917191 (16:55:17.191)
+Processing event: 93900000 at 60947865 (16:55:47.865)
+ERROR: over MAXROWS: 80
+Processing event: 94000000 at 60978540 (16:56:18.540)
+ERROR: over MAXROWS: 80
+Processing event: 94100000 at 61009214 (16:56:49.214)
+Processing event: 94200000 at 61039888 (16:57:19.888)
+Processing event: 94300000 at 61070563 (16:57:50.563)
+Processing event: 94400000 at 61101237 (16:58:21.237)
+Processing event: 94500000 at 61131932 (16:58:51.932)
+ERROR: over MAXROWS: 80
+Processing event: 94600000 at 61162606 (16:59:22.606)
+Processing event: 94700000 at 61193280 (16:59:53.280)
+ERROR: over MAXROWS: 80
+Processing event: 94800000 at 61223964 (17:00:23.964)
+ERROR: over MAXROWS: 80
+Processing event: 94900000 at 61254639 (17:00:54.639)
+ERROR: over MAXROWS: 80
+Processing event: 95000000 at 61285313 (17:01:25.313)
+Processing event: 95100000 at 61315987 (17:01:55.987)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 95200000 at 61346661 (17:02:26.661)
+Processing event: 95300000 at 61377335 (17:02:57.335)
+ERROR: over MAXROWS: 80
+Processing event: 95400000 at 61408009 (17:03:28.009)
+ERROR: over MAXROWS: 80
+Processing event: 95500000 at 61438683 (17:03:58.683)
+Processing event: 95600000 at 61469358 (17:04:29.358)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 95700000 at 61500032 (17:05:00.032)
+ERROR: over MAXROWS: 80
+Processing event: 95800000 at 61530706 (17:05:30.706)
+ERROR: over MAXROWS: 80
+Processing event: 95900000 at 61561390 (17:06:01.390)
+Processing event: 96000000 at 61592064 (17:06:32.064)
+Processing event: 96100000 at 61622738 (17:07:02.738)
+Processing event: 96200000 at 61653414 (17:07:33.414)
+Processing event: 96300000 at 61684088 (17:08:04.088)
+Processing event: 96400000 at 61714770 (17:08:34.770)
+Processing event: 96500000 at 61745444 (17:09:05.444)
+Processing event: 96600000 at 61776118 (17:09:36.118)
+Processing event: 96700000 at 61806792 (17:10:06.792)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 96800000 at 61837466 (17:10:37.466)
+Processing event: 96900000 at 61868141 (17:11:08.141)
+Processing event: 97000000 at 61898815 (17:11:38.815)
+ERROR: over MAXROWS: 80
+Processing event: 97100000 at 61929489 (17:12:09.489)
+Processing event: 97200000 at 61960163 (17:12:40.163)
+ERROR: over MAXROWS: 80
+Processing event: 97300000 at 61990847 (17:13:10.847)
+Processing event: 97400000 at 62021521 (17:13:41.521)
+Processing event: 97500000 at 62052194 (17:14:12.194)
+ERROR: over MAXROWS: 80
+Processing event: 97600000 at 62082868 (17:14:42.868)
+Processing event: 97700000 at 62113543 (17:15:13.543)
+Processing event: 97800000 at 62144217 (17:15:44.217)
+Processing event: 97900000 at 62174891 (17:16:14.891)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 98000000 at 62205565 (17:16:45.565)
+ERROR: over MAXROWS: 80
+Processing event: 98100000 at 62236239 (17:17:16.239)
+Processing event: 98200000 at 62266913 (17:17:46.913)
+Processing event: 98300000 at 62297587 (17:18:17.587)
+Processing event: 98400000 at 62328261 (17:18:48.261)
+ERROR: over MAXROWS: 80
+Processing event: 98500000 at 62358936 (17:19:18.936)
+Processing event: 98600000 at 62389610 (17:19:49.610)
+Processing event: 98700000 at 62420284 (17:20:20.284)
+Processing event: 98800000 at 62450958 (17:20:50.958)
+Processing event: 98900000 at 62481632 (17:21:21.632)
+ERROR: over MAXROWS: 80
+Processing event: 99000000 at 62512306 (17:21:52.306)
+Processing event: 99100000 at 62542980 (17:22:22.980)
+Processing event: 99200000 at 62573654 (17:22:53.654)
+Processing event: 99300000 at 62604329 (17:23:24.329)
+Processing event: 99400000 at 62635003 (17:23:55.003)
+ERROR: over MAXROWS: 80
+Processing event: 99500000 at 62665677 (17:24:25.677)
+Processing event: 99600000 at 62696351 (17:24:56.351)
+ERROR: over MAXROWS: 80
+Processing event: 99700000 at 62727025 (17:25:27.025)
+Processing event: 99800000 at 62757699 (17:25:57.699)
+Processing event: 99900000 at 62788373 (17:26:28.373)
+Processing event: 100000000 at 62819048 (17:26:59.048)
+Processing event: 100100000 at 62849732 (17:27:29.732)
+Processing event: 100200000 at 62880406 (17:28:00.406)
+Processing event: 100300000 at 62911081 (17:28:31.081)
+Processing event: 100400000 at 62941756 (17:29:01.756)
+ERROR: over MAXROWS: 80
+Processing event: 100500000 at 62972430 (17:29:32.430)
+ERROR: over MAXROWS: 80
+Processing event: 100600000 at 63003104 (17:30:03.104)
+Processing event: 100700000 at 63033779 (17:30:33.779)
+Processing event: 100800000 at 63064453 (17:31:04.453)
+Processing event: 100900000 at 63095128 (17:31:35.128)
+Processing event: 101000000 at 63125814 (17:32:05.814)
+ERROR: over MAXROWS: 80
+Processing event: 101100000 at 63156488 (17:32:36.488)
+Processing event: 101200000 at 63187172 (17:33:07.172)
+ERROR: over MAXROWS: 80
+Processing event: 101300000 at 63217846 (17:33:37.846)
+Processing event: 101400000 at 63248521 (17:34:08.521)
+Processing event: 101500000 at 63279195 (17:34:39.195)
+ERROR: over MAXROWS: 80
+Processing event: 101600000 at 63309869 (17:35:09.869)
+ERROR: over MAXROWS: 80
+Processing event: 101700000 at 63340544 (17:35:40.544)
+Processing event: 101800000 at 63371218 (17:36:11.218)
+ERROR: over MAXROWS: 80
+Processing event: 101900000 at 63401900 (17:36:41.900)
+Processing event: 102000000 at 63432584 (17:37:12.584)
+Processing event: 102100000 at 63463269 (17:37:43.269)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 102200000 at 63493954 (17:38:13.954)
+Processing event: 102300000 at 63524628 (17:38:44.628)
+ERROR: over MAXROWS: 80
+Processing event: 102400000 at 63555302 (17:39:15.302)
+Processing event: 102500000 at 63585976 (17:39:45.976)
+Processing event: 102600000 at 63616650 (17:40:16.650)
+Processing event: 102700000 at 63647324 (17:40:47.324)
+ERROR: over MAXROWS: 80
+Processing event: 102800000 at 63677998 (17:41:17.998)
+Processing event: 102900000 at 63708672 (17:41:48.672)
+Processing event: 103000000 at 63739347 (17:42:19.347)
+Processing event: 103100000 at 63770021 (17:42:50.021)
+Processing event: 103200000 at 63800695 (17:43:20.695)
+Processing event: 103300000 at 63831369 (17:43:51.369)
+Processing event: 103400000 at 63862043 (17:44:22.043)
+ERROR: over MAXROWS: 80
+Processing event: 103500000 at 63892717 (17:44:52.717)
+ERROR: over MAXROWS: 80
+Processing event: 103600000 at 63923391 (17:45:23.391)
+Processing event: 103700000 at 63954065 (17:45:54.065)
+ERROR: over MAXROWS: 80
+Processing event: 103800000 at 63984739 (17:46:24.739)
+Processing event: 103900000 at 64015413 (17:46:55.413)
+Processing event: 104000000 at 64046087 (17:47:26.087)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 104100000 at 64076761 (17:47:56.761)
+ERROR: over MAXROWS: 80
+Processing event: 104200000 at 64107445 (17:48:27.445)
+Processing event: 104300000 at 64138119 (17:48:58.119)
+Processing event: 104400000 at 64168793 (17:49:28.793)
+Processing event: 104500000 at 64199467 (17:49:59.467)
+Processing event: 104600000 at 64230141 (17:50:30.141)
+Processing event: 104700000 at 64260815 (17:51:00.815)
+ERROR: over MAXROWS: 80
+Processing event: 104800000 at 64291489 (17:51:31.489)
+Processing event: 104900000 at 64322163 (17:52:02.163)
+Processing event: 105000000 at 64352837 (17:52:32.837)
+Processing event: 105100000 at 64383511 (17:53:03.511)
+Processing event: 105200000 at 64414185 (17:53:34.185)
+Processing event: 105300000 at 64444859 (17:54:04.859)
+Processing event: 105400000 at 64475533 (17:54:35.533)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 105500000 at 64506207 (17:55:06.207)
+Processing event: 105600000 at 64536881 (17:55:36.881)
+Processing event: 105700000 at 64567556 (17:56:07.556)
+Processing event: 105800000 at 64598230 (17:56:38.230)
+Processing event: 105900000 at 64628904 (17:57:08.904)
+Processing event: 106000000 at 64659578 (17:57:39.578)
+Processing event: 106100000 at 64690252 (17:58:10.252)
+Processing event: 106200000 at 64720927 (17:58:40.927)
+Processing event: 106300000 at 64751600 (17:59:11.600)
+Processing event: 106400000 at 64782274 (17:59:42.274)
+Processing event: 106500000 at 64812949 (18:00:12.949)
+Processing event: 106600000 at 64843623 (18:00:43.623)
+ERROR: over MAXROWS: 80
+Processing event: 106700000 at 64874297 (18:01:14.297)
+Processing event: 106800000 at 64904971 (18:01:44.971)
+ERROR: over MAXROWS: 80
+Processing event: 106900000 at 64935645 (18:02:15.645)
+Processing event: 107000000 at 64966320 (18:02:46.320)
+ERROR: over MAXROWS: 80
+Processing event: 107100000 at 64996994 (18:03:16.994)
+Processing event: 107200000 at 65027668 (18:03:47.668)
+Processing event: 107300000 at 65058342 (18:04:18.342)
+Processing event: 107400000 at 65089016 (18:04:49.016)
+Processing event: 107500000 at 65119698 (18:05:19.698)
+ERROR: over MAXROWS: 80
+Processing event: 107600000 at 65150372 (18:05:50.372)
+Processing event: 107700000 at 65181046 (18:06:21.046)
+Processing event: 107800000 at 65211720 (18:06:51.720)
+ERROR: over MAXROWS: 80
+Processing event: 107900000 at 65242394 (18:07:22.394)
+Processing event: 108000000 at 65273068 (18:07:53.068)
+Processing event: 108100000 at 65303742 (18:08:23.742)
+Processing event: 108200000 at 65334416 (18:08:54.416)
+ERROR: over MAXROWS: 80
+Processing event: 108300000 at 65365090 (18:09:25.090)
+Processing event: 108400000 at 65395764 (18:09:55.764)
+Processing event: 108500000 at 65426439 (18:10:26.439)
+ERROR: over MAXROWS: 80
+Processing event: 108600000 at 65457113 (18:10:57.113)
+Processing event: 108700000 at 65487786 (18:11:27.786)
+Processing event: 108800000 at 65518461 (18:11:58.461)
+Processing event: 108900000 at 65549135 (18:12:29.135)
+Processing event: 109000000 at 65579809 (18:12:59.809)
+Processing event: 109100000 at 65610483 (18:13:30.483)
+ERROR: over MAXROWS: 80
+Processing event: 109200000 at 65641157 (18:14:01.157)
+ERROR: over MAXROWS: 80
+Processing event: 109300000 at 65671831 (18:14:31.831)
+ERROR: over MAXROWS: 80
+Processing event: 109400000 at 65702505 (18:15:02.505)
+Processing event: 109500000 at 65733180 (18:15:33.180)
+ERROR: over MAXROWS: 80
+Processing event: 109600000 at 65763854 (18:16:03.854)
+Processing event: 109700000 at 65794528 (18:16:34.528)
+Processing event: 109800000 at 65825202 (18:17:05.202)
+Processing event: 109900000 at 65855876 (18:17:35.876)
+Processing event: 110000000 at 65886550 (18:18:06.550)
+Processing event: 110100000 at 65917224 (18:18:37.224)
+Processing event: 110200000 at 65947898 (18:19:07.898)
+Processing event: 110300000 at 65978572 (18:19:38.572)
+ERROR: over MAXROWS: 80
+Processing event: 110400000 at 66009246 (18:20:09.246)
+Processing event: 110500000 at 66039920 (18:20:39.920)
+Processing event: 110600000 at 66070594 (18:21:10.594)
+Processing event: 110700000 at 66101268 (18:21:41.268)
+Processing event: 110800000 at 66131943 (18:22:11.943)
+ERROR: over MAXROWS: 80
+Processing event: 110900000 at 66162617 (18:22:42.617)
+Processing event: 111000000 at 66193291 (18:23:13.291)
+Processing event: 111100000 at 66223965 (18:23:43.965)
+Processing event: 111200000 at 66254639 (18:24:14.639)
+Processing event: 111300000 at 66285313 (18:24:45.313)
+Processing event: 111400000 at 66315988 (18:25:15.988)
+Processing event: 111500000 at 66346662 (18:25:46.662)
+Processing event: 111600000 at 66377336 (18:26:17.336)
+ERROR: over MAXROWS: 80
+Processing event: 111700000 at 66408010 (18:26:48.010)
+Processing event: 111800000 at 66438684 (18:27:18.684)
+Processing event: 111900000 at 66469359 (18:27:49.359)
+Processing event: 112000000 at 66500032 (18:28:20.032)
+Processing event: 112100000 at 66530707 (18:28:50.707)
+Processing event: 112200000 at 66561392 (18:29:21.392)
+ERROR: over MAXROWS: 80
+Processing event: 112300000 at 66592066 (18:29:52.066)
+Processing event: 112400000 at 66622740 (18:30:22.740)
+ERROR: over MAXROWS: 80
+Processing event: 112500000 at 66653414 (18:30:53.414)
+Processing event: 112600000 at 66684088 (18:31:24.088)
+Processing event: 112700000 at 66714762 (18:31:54.762)
+Processing event: 112800000 at 66745436 (18:32:25.436)
+ERROR: over MAXROWS: 80
+Processing event: 112900000 at 66776110 (18:32:56.110)
+Processing event: 113000000 at 66806792 (18:33:26.792)
+Processing event: 113100000 at 66837466 (18:33:57.466)
+ERROR: over MAXROWS: 80
+Processing event: 113200000 at 66868140 (18:34:28.140)
+Processing event: 113300000 at 66898815 (18:34:58.815)
+Processing event: 113400000 at 66929488 (18:35:29.488)
+Processing event: 113500000 at 66960163 (18:36:00.163)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 113600000 at 66990836 (18:36:30.836)
+Processing event: 113700000 at 67021510 (18:37:01.510)
+Processing event: 113800000 at 67052184 (18:37:32.184)
+ERROR: over MAXROWS: 80
+Processing event: 113900000 at 67082858 (18:38:02.858)
+ERROR: over MAXROWS: 80
+Processing event: 114000000 at 67113533 (18:38:33.533)
+Processing event: 114100000 at 67144207 (18:39:04.207)
+Processing event: 114200000 at 67174881 (18:39:34.881)
+Processing event: 114300000 at 67205556 (18:40:05.556)
+Processing event: 114400000 at 67236230 (18:40:36.230)
+ERROR: over MAXROWS: 80
+Processing event: 114500000 at 67266904 (18:41:06.904)
+Processing event: 114600000 at 67297578 (18:41:37.578)
+Processing event: 114700000 at 67328253 (18:42:08.253)
+Processing event: 114800000 at 67358927 (18:42:38.927)
+Processing event: 114900000 at 67389601 (18:43:09.601)
+Processing event: 115000000 at 67420275 (18:43:40.275)
+Processing event: 115100000 at 67450949 (18:44:10.949)
+ERROR: over MAXROWS: 80
+Processing event: 115200000 at 67481623 (18:44:41.623)
+Processing event: 115300000 at 67512297 (18:45:12.297)
+ERROR: over MAXROWS: 80
+Processing event: 115400000 at 67542971 (18:45:42.971)
+Processing event: 115500000 at 67573646 (18:46:13.646)
+Processing event: 115600000 at 67604320 (18:46:44.320)
+Processing event: 115700000 at 67634994 (18:47:14.994)
+Processing event: 115800000 at 67665669 (18:47:45.669)
+Processing event: 115900000 at 67696353 (18:48:16.353)
+Processing event: 116000000 at 67727028 (18:48:47.028)
+Processing event: 116100000 at 67757702 (18:49:17.702)
+Processing event: 116200000 at 67788376 (18:49:48.376)
+Processing event: 116300000 at 67819050 (18:50:19.050)
+Processing event: 116400000 at 67849725 (18:50:49.725)
+Processing event: 116500000 at 67880399 (18:51:20.399)
+Processing event: 116600000 at 67911073 (18:51:51.073)
+Processing event: 116700000 at 67941747 (18:52:21.747)
+Processing event: 116800000 at 67972421 (18:52:52.421)
+Processing event: 116900000 at 68003095 (18:53:23.095)
+Processing event: 117000000 at 68033770 (18:53:53.770)
+ERROR: over MAXROWS: 80
+Processing event: 117100000 at 68064444 (18:54:24.444)
+Processing event: 117200000 at 68095118 (18:54:55.118)
+ERROR: over MAXROWS: 80
+Processing event: 117300000 at 68125792 (18:55:25.792)
+Processing event: 117400000 at 68156466 (18:55:56.466)
+ERROR: over MAXROWS: 80
+Processing event: 117500000 at 68187140 (18:56:27.140)
+Processing event: 117600000 at 68217814 (18:56:57.814)
+Processing event: 117700000 at 68248490 (18:57:28.490)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 117800000 at 68279164 (18:57:59.164)
+ERROR: over MAXROWS: 80
+Processing event: 117900000 at 68309838 (18:58:29.838)
+Processing event: 118000000 at 68340512 (18:59:00.512)
+Processing event: 118100000 at 68371186 (18:59:31.186)
+Processing event: 118200000 at 68401860 (19:00:01.860)
+Processing event: 118300000 at 68432535 (19:00:32.535)
+Processing event: 118400000 at 68463209 (19:01:03.209)
+ERROR: over MAXROWS: 80
+Processing event: 118500000 at 68493883 (19:01:33.883)
+Processing event: 118600000 at 68524565 (19:02:04.565)
+Processing event: 118700000 at 68555240 (19:02:35.240)
+Processing event: 118800000 at 68585914 (19:03:05.914)
+ERROR: over MAXROWS: 80
+Processing event: 118900000 at 68616588 (19:03:36.588)
+ERROR: over MAXROWS: 80
+Processing event: 119000000 at 68647262 (19:04:07.262)
+Processing event: 119100000 at 68677936 (19:04:37.936)
+Processing event: 119200000 at 68708610 (19:05:08.610)
+Processing event: 119300000 at 68739284 (19:05:39.284)
+Processing event: 119400000 at 68769958 (19:06:09.958)
+Processing event: 119500000 at 68800632 (19:06:40.632)
+Processing event: 119600000 at 68831307 (19:07:11.307)
+Processing event: 119700000 at 68861981 (19:07:41.981)
+Processing event: 119800000 at 68892655 (19:08:12.655)
+Processing event: 119900000 at 68923330 (19:08:43.330)
+ERROR: over MAXROWS: 80
+Processing event: 120000000 at 68954004 (19:09:14.004)
+Processing event: 120100000 at 68984679 (19:09:44.679)
+Processing event: 120200000 at 69015353 (19:10:15.353)
+Processing event: 120300000 at 69046027 (19:10:46.027)
+Processing event: 120400000 at 69076701 (19:11:16.701)
+Processing event: 120500000 at 69107375 (19:11:47.375)
+ERROR: over MAXROWS: 80
+Processing event: 120600000 at 69138049 (19:12:18.049)
+Processing event: 120700000 at 69168723 (19:12:48.723)
+Processing event: 120800000 at 69199397 (19:13:19.397)
+Processing event: 120900000 at 69230071 (19:13:50.071)
+Processing event: 121000000 at 69260746 (19:14:20.746)
+Processing event: 121100000 at 69291420 (19:14:51.420)
+Processing event: 121200000 at 69322094 (19:15:22.094)
+Processing event: 121300000 at 69352768 (19:15:52.768)
+Processing event: 121400000 at 69383442 (19:16:23.442)
+Processing event: 121500000 at 69414116 (19:16:54.116)
+Processing event: 121600000 at 69444790 (19:17:24.790)
+Processing event: 121700000 at 69475464 (19:17:55.464)
+Processing event: 121800000 at 69506138 (19:18:26.138)
+Processing event: 121900000 at 69536812 (19:18:56.812)
+ERROR: over MAXROWS: 80
+Processing event: 122000000 at 69567486 (19:19:27.486)
+Processing event: 122100000 at 69598160 (19:19:58.160)
+ERROR: over MAXROWS: 80
+Processing event: 122200000 at 69628834 (19:20:28.834)
+Processing event: 122300000 at 69659508 (19:20:59.508)
+Processing event: 122400000 at 69690182 (19:21:30.182)
+ERROR: over MAXROWS: 80
+Processing event: 122500000 at 69720856 (19:22:00.856)
+Processing event: 122600000 at 69751547 (19:22:31.547)
+Processing event: 122700000 at 69782221 (19:23:02.221)
+Processing event: 122800000 at 69812895 (19:23:32.895)
+Processing event: 122900000 at 69843569 (19:24:03.569)
+Processing event: 123000000 at 69874244 (19:24:34.244)
+Processing event: 123100000 at 69904918 (19:25:04.918)
+Processing event: 123200000 at 69935592 (19:25:35.592)
+Processing event: 123300000 at 69966266 (19:26:06.266)
+Processing event: 123400000 at 69996940 (19:26:36.940)
+Processing event: 123500000 at 70027614 (19:27:07.614)
+Processing event: 123600000 at 70058288 (19:27:38.288)
+Processing event: 123700000 at 70088963 (19:28:08.963)
+Processing event: 123800000 at 70119637 (19:28:39.637)
+Processing event: 123900000 at 70150322 (19:29:10.322)
+Processing event: 124000000 at 70180996 (19:29:40.996)
+ERROR: over MAXROWS: 80
+Processing event: 124100000 at 70211679 (19:30:11.679)
+Processing event: 124200000 at 70242353 (19:30:42.353)
+ERROR: over MAXROWS: 80
+Processing event: 124300000 at 70273027 (19:31:13.027)
+Processing event: 124400000 at 70303701 (19:31:43.701)
+Processing event: 124500000 at 70334375 (19:32:14.375)
+ERROR: over MAXROWS: 80
+Processing event: 124600000 at 70365049 (19:32:45.049)
+Processing event: 124700000 at 70395723 (19:33:15.723)
+ERROR: over MAXROWS: 80
+Processing event: 124800000 at 70426398 (19:33:46.398)
+Processing event: 124900000 at 70457072 (19:34:17.072)
+ERROR: over MAXROWS: 80
+Processing event: 125000000 at 70487746 (19:34:47.746)
+Processing event: 125100000 at 70518421 (19:35:18.421)
+Processing event: 125200000 at 70549095 (19:35:49.095)
+Processing event: 125300000 at 70579770 (19:36:19.770)
+ERROR: over MAXROWS: 80
+Processing event: 125400000 at 70610444 (19:36:50.444)
+Processing event: 125500000 at 70641117 (19:37:21.117)
+Processing event: 125600000 at 70671792 (19:37:51.792)
+Processing event: 125700000 at 70702465 (19:38:22.465)
+Processing event: 125800000 at 70733139 (19:38:53.139)
+ERROR: over MAXROWS: 80
+Processing event: 125900000 at 70763813 (19:39:23.813)
+Processing event: 126000000 at 70794488 (19:39:54.488)
+ERROR: over MAXROWS: 80
+Processing event: 126100000 at 70825162 (19:40:25.162)
+Processing event: 126200000 at 70855836 (19:40:55.836)
+Processing event: 126300000 at 70886510 (19:41:26.510)
+Processing event: 126400000 at 70917184 (19:41:57.184)
+Processing event: 126500000 at 70947857 (19:42:27.857)
+Processing event: 126600000 at 70978531 (19:42:58.531)
+Processing event: 126700000 at 71009205 (19:43:29.205)
+Processing event: 126800000 at 71039879 (19:43:59.879)
+Processing event: 126900000 at 71070554 (19:44:30.554)
+Processing event: 127000000 at 71101228 (19:45:01.228)
+Processing event: 127100000 at 71131902 (19:45:31.902)
+Processing event: 127200000 at 71162576 (19:46:02.576)
+Processing event: 127300000 at 71193250 (19:46:33.250)
+Processing event: 127400000 at 71223924 (19:47:03.924)
+Processing event: 127500000 at 71254598 (19:47:34.598)
+ERROR: over MAXROWS: 80
+Processing event: 127600000 at 71285273 (19:48:05.273)
+Processing event: 127700000 at 71315947 (19:48:35.947)
+Processing event: 127800000 at 71346631 (19:49:06.631)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 127900000 at 71377305 (19:49:37.305)
+ERROR: over MAXROWS: 80
+Processing event: 128000000 at 71407979 (19:50:07.979)
+Processing event: 128100000 at 71438653 (19:50:38.653)
+ERROR: over MAXROWS: 80
+Processing event: 128200000 at 71469327 (19:51:09.327)
+Processing event: 128300000 at 71500001 (19:51:40.001)
+Processing event: 128400000 at 71530675 (19:52:10.675)
+Processing event: 128500000 at 71561349 (19:52:41.349)
+Processing event: 128600000 at 71592023 (19:53:12.023)
+ERROR: over MAXROWS: 80
+Processing event: 128700000 at 71622698 (19:53:42.698)
+Processing event: 128800000 at 71653372 (19:54:13.372)
+Processing event: 128900000 at 71684046 (19:54:44.046)
+Processing event: 129000000 at 71714720 (19:55:14.720)
+ERROR: over MAXROWS: 80
+Processing event: 129100000 at 71745394 (19:55:45.394)
+ERROR: over MAXROWS: 80
+Processing event: 129200000 at 71776068 (19:56:16.068)
+Processing event: 129300000 at 71806742 (19:56:46.742)
+Processing event: 129400000 at 71837416 (19:57:17.416)
+Processing event: 129500000 at 71868090 (19:57:48.090)
+Processing event: 129600000 at 71898773 (19:58:18.773)
+Processing event: 129700000 at 71929447 (19:58:49.447)
+Processing event: 129800000 at 71960120 (19:59:20.120)
+Processing event: 129900000 at 71990794 (19:59:50.794)
+Processing event: 130000000 at 72021468 (20:00:21.468)
+ERROR: over MAXROWS: 80
+Processing event: 130100000 at 72052143 (20:00:52.143)
+Processing event: 130200000 at 72082817 (20:01:22.817)
+Processing event: 130300000 at 72113491 (20:01:53.491)
+Processing event: 130400000 at 72144165 (20:02:24.165)
+Processing event: 130500000 at 72174839 (20:02:54.839)
+Channel 2 temporarily desynced at 20:03:06.393   :130537682
+Processing event: 130600000 at 72205513 (20:03:25.513)
+Processing event: 130700000 at 72236188 (20:03:56.188)
+Processing event: 130800000 at 72266862 (20:04:26.862)
+Processing event: 130900000 at 72297536 (20:04:57.536)
+Processing event: 131000000 at 72328210 (20:05:28.210)
+Processing event: 131100000 at 72358884 (20:05:58.884)
+Processing event: 131200000 at 72389558 (20:06:29.558)
+Processing event: 131300000 at 72420232 (20:07:00.232)
+Processing event: 131400000 at 72450907 (20:07:30.907)
+Processing event: 131500000 at 72481581 (20:08:01.581)
+Processing event: 131600000 at 72512255 (20:08:32.255)
+Processing event: 131700000 at 72542929 (20:09:02.929)
+ERROR: over MAXROWS: 80
+Processing event: 131800000 at 72573604 (20:09:33.604)
+Processing event: 131900000 at 72604278 (20:10:04.278)
+Processing event: 132000000 at 72634952 (20:10:34.952)
+ERROR: over MAXROWS: 80
+Processing event: 132100000 at 72665626 (20:11:05.626)
+Processing event: 132200000 at 72696300 (20:11:36.300)
+ERROR: over MAXROWS: 80
+Processing event: 132300000 at 72726974 (20:12:06.974)
+Processing event: 132400000 at 72757648 (20:12:37.648)
+Processing event: 132500000 at 72788322 (20:13:08.322)
+Processing event: 132600000 at 72818996 (20:13:38.996)
+Processing event: 132700000 at 72849670 (20:14:09.670)
+Processing event: 132800000 at 72880344 (20:14:40.344)
+Processing event: 132900000 at 72911018 (20:15:11.018)
+Processing event: 133000000 at 72941692 (20:15:41.692)
+Processing event: 133100000 at 72972367 (20:16:12.367)
+Processing event: 133200000 at 73003040 (20:16:43.040)
+ERROR: over MAXROWS: 80
+Processing event: 133300000 at 73033714 (20:17:13.714)
+ERROR: over MAXROWS: 80
+Processing event: 133400000 at 73064388 (20:17:44.388)
+Processing event: 133500000 at 73095062 (20:18:15.062)
+Processing event: 133600000 at 73125736 (20:18:45.736)
+Processing event: 133700000 at 73156410 (20:19:16.410)
+Processing event: 133800000 at 73187084 (20:19:47.084)
+Processing event: 133900000 at 73217758 (20:20:17.758)
+Processing event: 134000000 at 73248432 (20:20:48.432)
+Processing event: 134100000 at 73279107 (20:21:19.107)
+Processing event: 134200000 at 73309781 (20:21:49.781)
+Processing event: 134300000 at 73340454 (20:22:20.454)
+Processing event: 134400000 at 73371128 (20:22:51.128)
+ERROR: over MAXROWS: 80
+Processing event: 134500000 at 73401803 (20:23:21.803)
+Processing event: 134600000 at 73432477 (20:23:52.477)
+ERROR: over MAXROWS: 80
+Processing event: 134700000 at 73463151 (20:24:23.151)
+Processing event: 134800000 at 73493825 (20:24:53.825)
+Processing event: 134900000 at 73524499 (20:25:24.499)
+Processing event: 135000000 at 73555173 (20:25:55.173)
+Processing event: 135100000 at 73585847 (20:26:25.847)
+Processing event: 135200000 at 73616529 (20:26:56.529)
+Processing event: 135300000 at 73647203 (20:27:27.203)
+Processing event: 135400000 at 73677877 (20:27:57.877)
+Processing event: 135500000 at 73708551 (20:28:28.551)
+Processing event: 135600000 at 73739225 (20:28:59.225)
+Processing event: 135700000 at 73769900 (20:29:29.900)
+Processing event: 135800000 at 73800574 (20:30:00.574)
+Processing event: 135900000 at 73831248 (20:30:31.248)
+ERROR: over MAXROWS: 80
+Processing event: 136000000 at 73861922 (20:31:01.922)
+Processing event: 136100000 at 73892596 (20:31:32.596)
+ERROR: over MAXROWS: 80
+Processing event: 136200000 at 73923270 (20:32:03.270)
+Processing event: 136300000 at 73953944 (20:32:33.944)
+Processing event: 136400000 at 73984618 (20:33:04.618)
+ERROR: over MAXROWS: 80
+Processing event: 136500000 at 74015292 (20:33:35.292)
+Processing event: 136600000 at 74045966 (20:34:05.966)
+Processing event: 136700000 at 74076640 (20:34:36.640)
+Processing event: 136800000 at 74107313 (20:35:07.313)
+Processing event: 136900000 at 74137988 (20:35:37.988)
+Processing event: 137000000 at 74168662 (20:36:08.662)
+Processing event: 137100000 at 74199336 (20:36:39.336)
+ERROR: over MAXROWS: 80
+Processing event: 137200000 at 74230010 (20:37:10.010)
+Processing event: 137300000 at 74260685 (20:37:40.685)
+Processing event: 137400000 at 74291359 (20:38:11.359)
+ERROR: over MAXROWS: 80
+Processing event: 137500000 at 74322032 (20:38:42.032)
+Processing event: 137600000 at 74352706 (20:39:12.706)
+Processing event: 137700000 at 74383381 (20:39:43.381)
+Processing event: 137800000 at 74414055 (20:40:14.055)
+Processing event: 137900000 at 74444729 (20:40:44.729)
+Processing event: 138000000 at 74475403 (20:41:15.403)
+Processing event: 138100000 at 74506077 (20:41:46.077)
+Processing event: 138200000 at 74536751 (20:42:16.751)
+Processing event: 138300000 at 74567425 (20:42:47.425)
+Processing event: 138400000 at 74598110 (20:43:18.110)
+Processing event: 138500000 at 74628784 (20:43:48.784)
+Processing event: 138600000 at 74659458 (20:44:19.458)
+Processing event: 138700000 at 74690132 (20:44:50.132)
+ERROR: over MAXROWS: 80
+Processing event: 138800000 at 74720806 (20:45:20.806)
+ERROR: over MAXROWS: 80
+Processing event: 138900000 at 74751480 (20:45:51.480)
+Processing event: 139000000 at 74782154 (20:46:22.154)
+Processing event: 139100000 at 74812828 (20:46:52.828)
+Processing event: 139200000 at 74843502 (20:47:23.502)
+Processing event: 139300000 at 74874176 (20:47:54.176)
+ERROR: over MAXROWS: 80
+Processing event: 139400000 at 74904851 (20:48:24.851)
+Processing event: 139500000 at 74935525 (20:48:55.525)
+ERROR: over MAXROWS: 80
+Processing event: 139600000 at 74966199 (20:49:26.199)
+Processing event: 139700000 at 74996873 (20:49:56.873)
+ERROR: over MAXROWS: 80
+Processing event: 139800000 at 75027547 (20:50:27.547)
+Processing event: 139900000 at 75058222 (20:50:58.222)
+ERROR: over MAXROWS: 80
+Processing event: 140000000 at 75088896 (20:51:28.896)
+Processing event: 140100000 at 75119570 (20:51:59.570)
+Processing event: 140200000 at 75150244 (20:52:30.244)
+Processing event: 140300000 at 75180918 (20:53:00.918)
+ERROR: over MAXROWS: 80
+Processing event: 140400000 at 75211593 (20:53:31.593)
+Processing event: 140500000 at 75242267 (20:54:02.267)
+Processing event: 140600000 at 75272952 (20:54:32.952)
+ERROR: over MAXROWS: 80
+Processing event: 140700000 at 75303634 (20:55:03.634)
+Processing event: 140800000 at 75334309 (20:55:34.309)
+Processing event: 140900000 at 75364983 (20:56:04.983)
+Processing event: 141000000 at 75395657 (20:56:35.657)
+Processing event: 141100000 at 75426331 (20:57:06.331)
+Processing event: 141200000 at 75457005 (20:57:37.005)
+Processing event: 141300000 at 75487679 (20:58:07.679)
+Processing event: 141400000 at 75518352 (20:58:38.352)
+Processing event: 141500000 at 75549027 (20:59:09.027)
+Processing event: 141600000 at 75579701 (20:59:39.701)
+Processing event: 141700000 at 75610375 (21:00:10.375)
+RootApp ERROR: cannot open image file "plots/BeamSpot.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC2.gif" for writing. Please check permissions.
+==Zero counting by BX==
+1 39788 39787.9
+2 39788 39788
+3 39788 39787.8
+4 39788 39788
+5 39788 39787.9
+6 39788 39787.8
+7 39788 39787.7
+8 39787 39786.9
+9 39787 39786.5
+10 39787 39787
+11 39787 39786.5
+12 39787 39786.3
+13 39787 39782.6
+14 39787 39786.5
+15 39787 39786.7
+16 39787 39786.7
+17 39787 39786.8
+18 39786 39785.7
+19 39783 39782.6
+20 39793 39792.8
+21 39789 39788.3
+22 39789 39788.5
+23 39788 39787.9
+24 39788 39787.7
+25 39788 39788
+26 39788 39788
+27 39788 39788
+28 39788 39788
+29 39788 39788
+30 39788 39788
+31 39788 39788
+32 39788 39788
+33 39788 39788
+34 39788 39788
+35 39788 39788
+36 39788 39788
+37 39788 39788
+38 39788 39788
+39 39788 39788
+40 39788 39788
+41 39788 39788
+42 39788 39788
+43 39788 39788
+44 39788 39787.9
+45 39788 39788
+46 39788 39788
+47 39788 39787.9
+48 39788 39788
+49 39788 39788
+50 39788 39788
+51 39788 39788
+52 39788 39788
+53 39787 39787
+54 39787 39787
+55 39787 39787
+56 39787 39787
+57 39787 39787
+58 39787 39787
+59 39787 39787
+60 39787 36061.2
+61 39787 36142.2
+62 39787 36503.4
+63 39786 36554.9
+64 39784 36367.2
+65 39796 36687.6
+66 39789 36566.2
+67 39789 36513
+68 39788 36114.4
+69 39788 36306.8
+70 39788 36243
+71 39788 36332.2
+72 39788 35922.4
+73 39788 35928.4
+74 39788 36090.6
+75 39788 36091.4
+76 39788 36002.5
+77 39788 36063.5
+78 39788 36198.3
+79 39788 36187.1
+80 39788 35901.8
+81 39788 36002.7
+82 39788 36250.8
+83 39788 36268.8
+84 39788 36010
+85 39788 36007.7
+86 39788 36339.2
+87 39788 36295.4
+88 39788 36115.4
+89 39788 36017.1
+90 39788 36369.3
+91 39788 36258.8
+92 39788 36191.8
+93 39788 36181.1
+94 39788 36240.2
+95 39788 36154.8
+96 39788 36397
+97 39788 36340.6
+98 39788 36399.5
+99 39787 36248.2
+100 39787 36240.7
+101 39787 36255.5
+102 39787 36306.2
+103 39787 36301.8
+104 39787 36461.6
+105 39787 36527.4
+106 39787 36695.4
+107 39787 37845.5
+108 39786 39785.9
+109 39786 39786
+110 29853 29852.9
+111 39789 39789
+112 39789 39788.8
+113 39788 39788
+114 39788 39788
+115 39788 39788
+116 39788 36946.5
+117 39788 36608.3
+118 39788 36045.8
+119 39788 36007.9
+120 39788 36369.6
+121 39788 36512
+122 39788 36179.2
+123 39788 36275.6
+124 39788 36068
+125 39788 36170.9
+126 39788 36053.8
+127 39788 36091.8
+128 39788 36013.7
+129 39788 35964.2
+130 39788 35921.6
+131 39788 35976.9
+132 39788 36077.4
+133 39788 36104.3
+134 39788 36027.9
+135 39788 36109.3
+136 39788 35970.2
+137 39788 35999.2
+138 39788 36024.7
+139 39788 36050.2
+140 39788 35890.8
+141 39788 35810.2
+142 39788 35994.8
+143 39788 35963.7
+144 39787 35919
+145 39787 35859.2
+146 39787 36008.7
+147 39787 35920.3
+148 39787 36012.1
+149 39787 35913
+150 39787 35872
+151 39787 35726.8
+152 39787 36309.4
+153 39786 36206.9
+154 39786 36053
+155 39634 35869.9
+156 39789 36257.9
+157 39789 36159.8
+158 39788 36035.6
+159 39788 36100.8
+160 39788 36120.5
+161 39788 36220.3
+162 39788 36039.8
+163 39788 36242.8
+164 39788 39787.8
+165 39788 39788
+166 39788 39788
+167 39788 39788
+168 39788 39787.9
+169 39788 39788
+170 39788 39788
+171 39788 39788
+172 39788 39787.9
+173 39788 39788
+174 39788 39787.9
+175 39788 39788
+176 39788 39788
+177 39788 39788
+178 39788 39788
+179 39788 39788
+180 39788 39788
+181 39788 39788
+182 39788 39788
+183 39788 39788
+184 39788 39788
+185 39788 39788
+186 39788 39788
+187 39788 39788
+188 39788 39788
+189 39787 39787
+190 39787 39786.9
+191 39787 39787
+192 39787 39787
+193 39787 39787
+194 39787 39787
+195 39787 39787
+196 39787 39786.9
+197 39787 39786.9
+198 39786 39786
+199 39786 35942.2
+200 39716 35923.2
+201 39789 36543.9
+202 39789 36507.3
+203 39788 36286.1
+204 39788 36707.6
+205 39788 36636.8
+206 39788 36547.9
+207 39788 35938.2
+208 39788 36143.7
+209 39788 36145.2
+210 39788 36261.4
+211 39788 35827.7
+212 39788 35956.8
+213 39788 36074
+214 39788 36055.1
+215 39788 36105.6
+216 39788 36173.8
+217 39788 36268
+218 39788 36319.2
+219 39788 35974.5
+220 39788 36044.6
+221 39788 36249.8
+222 39788 36298.9
+223 39788 35960.4
+224 39788 36010.8
+225 39788 36279.4
+226 39788 36268.5
+227 39788 36154.7
+228 39788 36157.9
+229 39788 36292.2
+230 39788 36298.2
+231 39788 36027.9
+232 39788 36069.7
+233 39788 36232.4
+234 39787 36183.6
+235 39787 36227.8
+236 39787 36185.9
+237 39787 36391
+238 39787 36354.9
+239 39787 36287.5
+240 39787 36249
+241 39787 36329.2
+242 39787 36434.2
+243 39786 36348.8
+244 39786 36491.4
+245 39720 36646.8
+246 39790 37846.2
+247 39789 39788.8
+248 39788 39787.9
+249 39788 39788
+250 39788 39787.9
+251 39788 39788
+252 39788 39788
+253 39788 39788
+254 39788 39788
+255 39788 36940
+256 39788 36644.1
+257 39788 36043.1
+258 39788 36081.1
+259 39788 36265.9
+260 39788 36574
+261 39788 36202.1
+262 39788 36342.2
+263 39788 35947.3
+264 39788 36159.1
+265 39788 36043.8
+266 39788 36077.5
+267 39788 35831.8
+268 39788 35995.3
+269 39788 35958.3
+270 39788 36007.2
+271 39788 35939
+272 39788 36176.5
+273 39788 36039.8
+274 39788 36088.2
+275 39788 35863.7
+276 39788 36022.7
+277 39788 36141.2
+278 39788 36022.6
+279 39787 35844.8
+280 39787 35961.6
+281 39787 36010.1
+282 39787 35970.6
+283 39787 35997.2
+284 39787 36024.2
+285 39787 36013.7
+286 39787 35887.1
+287 39787 36012.9
+288 39787 35979.7
+289 39786 35889.8
+290 39724 35750.2
+291 39790 36305.6
+292 39789 36272.6
+293 39788 36037.9
+294 39788 36077.1
+295 39788 36217.1
+296 39788 36281.3
+297 39788 36155.7
+298 39788 36159
+299 39788 36267.9
+300 39788 36281
+301 39788 36132.3
+302 39788 36289.2
+303 39788 39787.2
+304 39788 39788
+305 39788 39787.9
+306 39788 39788
+307 39788 39787.9
+308 39788 39788
+309 39788 39788
+310 39788 39788
+311 39788 39788
+312 39788 39788
+313 39788 39787.9
+314 39788 39788
+315 39788 39788
+316 39788 39788
+317 39788 39787.9
+318 39788 39788
+319 39788 39788
+320 39788 39788
+321 39788 39788
+322 39788 39788
+323 39788 39788
+324 39787 39786.8
+325 39787 39787
+326 39787 39787
+327 39787 39786.9
+328 39787 39787
+329 39787 39787
+330 39787 39787
+331 39787 39787
+332 39787 39786.9
+333 39787 39787
+334 39786 39785.9
+335 39782 39782
+336 39790 39790
+337 39789 39789
+338 39788 36016.6
+339 39788 36148.8
+340 39788 36302.2
+341 39788 36378.5
+342 39788 36322.2
+343 39788 36600.8
+344 39788 36381.1
+345 39788 36384.6
+346 39788 35963.7
+347 39788 36153.8
+348 39788 36088.8
+349 39788 36219.3
+350 39788 35790.8
+351 39788 35837.1
+352 39788 35949.9
+353 39788 35997.7
+354 39788 35952.8
+355 39788 36098.4
+356 39788 36123.2
+357 39788 36111.7
+358 39788 35924.5
+359 39788 35999.5
+360 39788 36111.3
+361 39788 36126.2
+362 39788 36085.2
+363 39788 35994.3
+364 39788 36205.5
+365 39788 36159.9
+366 39788 36138.2
+367 39788 36118.4
+368 39788 36288.2
+369 39787 36170
+370 39787 36123.2
+371 39787 36121.5
+372 39787 36101.6
+373 39787 36059.5
+374 39787 36347.8
+375 39787 36286.5
+376 39787 36319.8
+377 39787 36256.2
+378 39787 36327.8
+379 39786 36242.9
+380 39783 36263.9
+381 39792 36334.7
+382 39789 36294
+383 39789 36388.8
+384 39788 36475.2
+385 39788 37692.2
+386 39788 39787.8
+387 39788 39788
+388 39788 39788
+389 39788 39787.9
+390 39788 39788
+391 39788 39788
+392 39788 39788
+393 39788 39788
+394 39788 36934.5
+395 39788 36651.6
+396 39788 36160.9
+397 39788 36083.4
+398 39788 36326.2
+399 39788 36535.5
+400 39788 36332.7
+401 39788 36369.8
+402 39788 36060
+403 39788 36184
+404 39788 36156.8
+405 39788 36222.9
+406 39788 35747.5
+407 39788 35774.3
+408 39788 35907
+409 39788 35913.6
+410 39788 35863.9
+411 39788 35914.2
+412 39788 36108.1
+413 39788 36058.8
+414 39787 35812.8
+415 39787 35789
+416 39787 36131.6
+417 39787 36024.8
+418 39787 35991.5
+419 39787 35855
+420 39787 36236.8
+421 39787 36033.8
+422 39787 36136.6
+423 39787 35969.7
+424 39786 36299.2
+425 39784 36053.8
+426 39794 36108.5
+427 39789 36030.5
+428 39789 36238.7
+429 39788 36058
+430 39788 36133
+431 39788 36076.4
+432 39788 36250.6
+433 39788 36077.6
+434 39788 36211.8
+435 39788 36149.2
+436 39788 36281.3
+437 39788 36196.3
+438 39788 36151.5
+439 39788 36088.9
+440 39788 36196.8
+441 39788 36270.1
+442 39788 39787.7
+443 39788 39788
+444 39788 39787.9
+445 39788 39788
+446 39788 39787.9
+447 39788 39788
+448 39788 39788
+449 39788 39787.9
+450 39788 39788
+451 39788 39787.9
+452 39788 39788
+453 39788 39788
+454 39788 39788
+455 39788 39788
+456 39788 39787.8
+457 39788 39788
+458 39788 39787.9
+459 39787 39786.9
+460 39787 39787
+461 39787 39787
+462 39787 39787
+463 39787 39787
+464 39787 39787
+465 39787 39787
+466 39787 39787
+467 39787 39787
+468 39787 39786.9
+469 39786 39785.9
+470 39784 39783.9
+471 39797 39797
+472 39789 39789
+473 39789 39789
+474 39788 39788
+475 39788 39788
+476 39788 39788
+477 39788 35979.6
+478 39788 35939.8
+479 39788 36425.4
+480 39788 36355.8
+481 39788 36263.4
+482 39788 36546.3
+483 39788 36402.3
+484 39788 36438.3
+485 39788 35894.6
+486 39788 36050.2
+487 39788 36059.8
+488 39788 36170.5
+489 39788 35968.2
+490 39788 35970.2
+491 39788 36125.8
+492 39788 36128.2
+493 39788 36044
+494 39788 36190
+495 39788 36198.2
+496 39788 36157.5
+497 39788 36006.1
+498 39788 36070.2
+499 39788 36131.5
+500 39788 36098
+501 39788 35929.2
+502 39788 35921.4
+503 39788 36141.2
+504 39788 36127.9
+505 39787 35978.7
+506 39787 35963.2
+507 39787 36108.2
+508 39787 36065.8
+509 39787 36032.5
+510 39787 35974.2
+511 39787 36000.5
+512 39787 35885
+513 39787 36421.1
+514 39786 36354.2
+515 39786 36293.1
+516 29867 27192.6
+517 39789 36231.8
+518 39789 36299.4
+519 39788 36231
+520 39788 36168.4
+521 39788 36288.7
+522 39788 36383
+523 39788 36532.4
+524 39788 37714.8
+525 39788 39787.8
+526 39788 39788
+527 39788 39788
+528 39788 39788
+529 39788 39788
+530 39788 39788
+531 39788 39788
+532 39788 39788
+533 39788 36867.2
+534 39788 36579.7
+535 39788 36157.2
+536 39788 36117.2
+537 39788 36207.8
+538 39788 36441
+539 39788 36239.8
+540 39788 36373.2
+541 39788 35884.2
+542 39788 36060.6
+543 39788 36050.9
+544 39788 36155.9
+545 39788 35929.5
+546 39788 35851.4
+547 39788 36014.7
+548 39788 36104.2
+549 39788 35976.3
+550 39787 36033.1
+551 39787 36204.6
+552 39787 36228.3
+553 39787 35911.8
+554 39787 35927.9
+555 39787 36132
+556 39787 36096
+557 39787 35886.5
+558 39787 35854.2
+559 39786 36076.6
+560 39786 36069.2
+561 39703 35838.3
+562 39789 35927.6
+563 39789 36063.4
+564 39788 35992.3
+565 39788 35894.2
+566 39788 35827.9
+567 39788 35939.8
+568 39788 35806.8
+569 39788 36284.2
+570 39788 36189.7
+571 39788 36263.2
+572 39788 36081.4
+573 39788 36190.8
+574 39788 36220.3
+575 39788 36210.3
+576 39788 36138.2
+577 39788 36245.1
+578 39788 36278.7
+579 39788 36125.8
+580 39788 36332.9
+581 39788 39787.5
+582 39788 39787.9
+583 39788 39788
+584 39788 39788
+585 39788 39788
+586 39788 39788
+587 39788 39788
+588 39788 39788
+589 39788 39788
+590 39788 39788
+591 39788 39788
+592 39788 39788
+593 39788 39787.8
+594 39788 39787.9
+595 39787 39787
+596 39787 39786.9
+597 39787 39787
+598 39787 39787
+599 39787 39787
+600 39787 39787
+601 39787 39787
+602 39787 39787
+603 39787 39787
+604 39786 39786
+605 39786 39786
+606 39717 39717
+607 39790 39790
+608 39789 39788.9
+609 39788 39788
+610 39788 39788
+611 39788 39788
+612 39788 39788
+613 39788 39788
+614 39788 39788
+615 39788 39788
+616 39788 35980.3
+617 39788 36141.8
+618 39788 36388.1
+619 39788 36314.1
+620 39788 36237.4
+621 39788 36609
+622 39788 36311
+623 39788 36325.7
+624 39788 35960.9
+625 39788 36162.9
+626 39788 36016.9
+627 39788 36149.2
+628 39788 35942
+629 39788 35918.4
+630 39788 35952.8
+631 39788 36036
+632 39788 35976.9
+633 39788 36055.7
+634 39788 36077.2
+635 39788 36182.9
+636 39788 35877.7
+637 39788 35992.8
+638 39788 36074.8
+639 39788 36164.9
+640 39787 36057.3
+641 39787 35981.8
+642 39787 36184
+643 39787 36137.8
+644 39787 36043
+645 39787 36030.8
+646 39787 36149.6
+647 39787 36058.8
+648 39787 36018.8
+649 39786 35981.8
+650 39786 35971.9
+651 39721 35885.8
+652 39790 36339.7
+653 39789 36344.2
+654 39788 36251.5
+655 39788 36190.7
+656 39788 36246.3
+657 39788 36311
+658 39788 36127.9
+659 39788 36125.1
+660 39788 36230.4
+661 39788 36327.8
+662 39788 36283.8
+663 39788 37688.4
+664 39788 39787.7
+665 39788 39788
+666 39788 39788
+667 39788 39788
+668 39788 39788
+669 39788 39788
+670 39788 39788
+671 39788 39787.9
+672 39788 36891
+673 39788 36673.3
+674 39788 36100.3
+675 39788 36110.1
+676 39788 36342.4
+677 39788 36526.8
+678 39788 36130.8
+679 39788 36403
+680 39788 36080.9
+681 39788 36126.7
+682 39788 36025.7
+683 39788 36240.4
+684 39788 35954.5
+685 39787 35868.9
+686 39787 35841.2
+687 39787 36005.6
+688 39787 35964.9
+689 39787 36041.8
+690 39787 36020.7
+691 39787 36197.8
+692 39787 35962
+693 39787 36028.3
+694 39787 35990.3
+695 39786 36180.2
+696 39726 35842.3
+697 39790 35903.2
+698 39789 35900.8
+699 39788 36100.4
+700 39788 35890.2
+701 39788 35946.8
+702 39788 35967.2
+703 39788 36069.1
+704 39788 35959.2
+705 39788 35929.4
+706 39788 35997.7
+707 39788 36078.2
+708 39788 36126.1
+709 39788 36047.4
+710 39788 36108.4
+711 39788 36175.1
+712 39788 36114.5
+713 39788 36089
+714 39788 36093.4
+715 39788 36121.8
+716 39788 36131.3
+717 39788 36143.8
+718 39788 35974.7
+719 39788 36262.6
+720 39788 39787.8
+721 39788 39787.9
+722 39788 39788
+723 39788 39787.9
+724 39788 39788
+725 39788 39788
+726 39788 39788
+727 39788 39788
+728 39788 39788
+729 39788 39787.9
+730 39787 39787
+731 39787 39787
+732 39787 39787
+733 39787 39787
+734 39787 39787
+735 39787 39787
+736 39787 39787
+737 39787 39787
+738 39787 39787
+739 39787 39786.9
+740 39786 39786
+741 39782 39782
+742 39791 39791
+743 39789 39788.9
+744 39788 39788
+745 39788 39788
+746 39788 39788
+747 39788 39788
+748 39788 39788
+749 39788 39788
+750 39788 39788
+751 39788 39788
+752 39788 39788
+753 39788 39788
+754 39788 39788
+755 39788 39788
+756 39788 39788
+757 39788 39788
+758 39788 39788
+759 39788 39788
+760 39788 39788
+761 39788 39788
+762 39788 39788
+763 39788 39788
+764 39788 39787.9
+765 39788 39788
+766 39788 39787.9
+767 39788 39788
+768 39788 39788
+769 39788 39788
+770 39788 39788
+771 39788 39788
+772 39788 39787.9
+773 39788 39788
+774 39788 39788
+775 39787 39786.8
+776 39787 39787
+777 39787 39787
+778 39787 39786.9
+779 39787 39787
+780 39787 39786.9
+781 39787 39787
+782 39787 39787
+783 39787 39787
+784 39787 39787
+785 39786 39786
+786 39783 39783
+787 39792 39792
+788 39789 39789
+789 39789 39789
+790 39788 39788
+791 39788 39788
+792 39788 39788
+793 39788 39788
+794 39788 39788
+795 39788 39788
+796 39788 39788
+797 39788 39788
+798 39788 39788
+799 39788 39788
+800 39788 39788
+801 39788 39788
+802 39788 39788
+803 39788 35699.8
+804 39788 35877.8
+805 39788 36513.2
+806 39788 36459
+807 39788 36099.5
+808 39788 36612.4
+809 39788 36549.8
+810 39788 36432.4
+811 39788 35772.1
+812 39788 36015.2
+813 39788 36219.9
+814 39788 36296.9
+815 39788 35727
+816 39788 35702.8
+817 39788 36106.5
+818 39788 36192.3
+819 39788 35935.8
+820 39787 36016.8
+821 39787 36280.8
+822 39787 36268.2
+823 39787 35828.2
+824 39787 35978.5
+825 39787 36270.9
+826 39787 36286.2
+827 39787 35706.2
+828 39787 35823.5
+829 39787 36184.2
+830 39786 36189.9
+831 39784 35898.6
+832 39794 35894.4
+833 39789 36325.5
+834 39789 36182.7
+835 39788 35949.9
+836 39788 35892.1
+837 39788 36195.7
+838 39788 36070.3
+839 39788 36090.7
+840 39788 36185.7
+841 39788 36305.8
+842 39788 36189.3
+843 39788 36093
+844 39788 36163.6
+845 39788 36273.9
+846 39788 36367.4
+847 39788 36216.3
+848 39788 36282.9
+849 39788 36540
+850 39788 37818.3
+851 39788 39787.6
+852 39788 39788
+853 39788 39788
+854 39788 39788
+855 39788 39788
+856 39788 39788
+857 39788 39788
+858 39788 39788
+859 39788 36786.5
+860 39788 36472.6
+861 39788 36227.5
+862 39788 36100.6
+863 39788 36254.8
+864 39788 36334.1
+865 39788 36131.9
+866 39787 36300.7
+867 39787 36008.6
+868 39787 36152.2
+869 39787 36051.2
+870 39787 36220
+871 39787 35883.8
+872 39787 35809.5
+873 39787 35893.8
+874 39787 35988.2
+875 39786 35976.5
+876 39785 36023.1
+877 39798 35927.8
+878 39789 36169
+879 39789 35875.8
+880 39788 35904.5
+881 39788 36065.2
+882 39788 36150.9
+883 39788 35911.8
+884 39788 35895.1
+885 39788 35993
+886 39788 36060.8
+887 39788 35925.4
+888 39788 35955.8
+889 39788 35987.5
+890 39788 35996
+891 39788 35922.2
+892 39788 35972.3
+893 39788 35980.7
+894 39788 35935.4
+895 39788 36156
+896 39788 36144.1
+897 39788 36074.5
+898 39788 36092.9
+899 39788 36080.5
+900 39788 36190.6
+901 39788 36002.2
+902 39788 36120.2
+903 39788 36084.1
+904 39788 36158.9
+905 39788 36037.8
+906 39788 36315
+907 39788 39787.5
+908 39788 39788
+909 39788 39787.9
+910 39788 39787.9
+911 39787 39787
+912 39787 39787
+913 39787 39787
+914 39787 39786.9
+915 39787 39787
+916 39787 39787
+917 39787 39787
+918 39787 39787
+919 39787 39787
+920 39786 39786
+921 39786 39786
+922 29946 29946
+923 39789 39789
+924 39789 39788.9
+925 39788 39788
+926 39788 39787.9
+927 39788 39788
+928 39788 39787.9
+929 39788 39788
+930 39788 39788
+931 39788 39787.9
+932 39788 39787.9
+933 39788 39788
+934 39788 39788
+935 39788 39788
+936 39788 39788
+937 39788 39788
+938 39788 39787.9
+939 39788 39788
+940 39788 39788
+941 39788 39788
+942 39788 35967.2
+943 39788 35999.8
+944 39788 36469.3
+945 39788 36391.7
+946 39788 36046.1
+947 39788 36495.4
+948 39788 36476
+949 39788 36333.2
+950 39788 35785.2
+951 39788 36052.5
+952 39788 36098.9
+953 39788 36152.9
+954 39788 35800.9
+955 39788 35872.1
+956 39787 36118.2
+957 39787 36081
+958 39787 35847.2
+959 39787 36039
+960 39787 36124.2
+961 39787 36091.2
+962 39787 35769.8
+963 39787 35955.6
+964 39787 36140.8
+965 39786 36095.7
+966 39786 35940.3
+967 39711 35932.3
+968 39789 36257.9
+969 39789 36150
+970 39788 35973.9
+971 39788 35995
+972 39788 36222.5
+973 39788 36064
+974 39788 35991.9
+975 39788 35951.8
+976 39788 36143.4
+977 39788 35928.4
+978 39788 36366.8
+979 39788 36356.7
+980 39788 36335.2
+981 39788 36349.4
+982 39788 36111.8
+983 39788 36175.8
+984 39788 36202.8
+985 39788 36210.2
+986 39788 36083.4
+987 39788 36233.7
+988 39788 36424.2
+989 39788 37735.8
+990 39788 39787.8
+991 39788 39788
+992 39788 39787.9
+993 39788 39788
+994 39788 39788
+995 39788 39788
+996 39788 39788
+997 39788 39788
+998 39788 36787.6
+999 39788 36650.9
+1000 39788 36000.4
+1001 39787 35967.2
+1002 39787 36245.8
+1003 39787 36469.8
+1004 39787 36198.4
+1005 39787 36362.9
+1006 39787 35972.2
+1007 39787 36115.8
+1008 39787 36079.9
+1009 39787 36128.2
+1010 39786 35800.2
+1011 39786 35795.8
+1012 39717 35801.7
+1013 39790 35856.2
+1014 39789 35944.4
+1015 39788 36030.8
+1016 39788 35946.5
+1017 39788 36077.9
+1018 39788 35885
+1019 39788 35933.5
+1020 39788 36049.1
+1021 39788 36073.2
+1022 39788 35829
+1023 39788 35820.1
+1024 39788 36032.1
+1025 39788 35987.5
+1026 39788 35853.4
+1027 39788 35855.4
+1028 39788 36072.3
+1029 39788 35942.8
+1030 39788 35936.9
+1031 39788 35900
+1032 39788 35994.1
+1033 39788 35911.1
+1034 39788 36174.2
+1035 39788 36201.2
+1036 39788 36218.5
+1037 39788 36023
+1038 39788 36149.2
+1039 39788 36219.1
+1040 39788 36130.7
+1041 39788 36050.6
+1042 39788 36199.4
+1043 39788 36247.4
+1044 39788 36080.8
+1045 39788 36292.1
+1046 39787 39786.4
+1047 39787 39787
+1048 39787 39787
+1049 39787 39787
+1050 39787 39786.9
+1051 39787 39787
+1052 39787 39787
+1053 39787 39787
+1054 39787 39786.9
+1055 39786 39786
+1056 39786 39786
+1057 39723 39722.8
+1058 39790 39790
+1059 39789 39789
+1060 39788 39788
+1061 39788 39788
+1062 39788 39788
+1063 39788 39788
+1064 39788 39788
+1065 39788 39788
+1066 39788 39788
+1067 39788 39788
+1068 39788 39788
+1069 39788 39787.9
+1070 39788 39787.9
+1071 39788 39787.8
+1072 39788 39788
+1073 39788 39788
+1074 39788 39788
+1075 39788 39788
+1076 39788 39788
+1077 39788 39788
+1078 39788 39788
+1079 39788 39787.9
+1080 39788 39788
+1081 39788 39788
+1082 39788 39788
+1083 39788 39788
+1084 39788 39788
+1085 39788 39788
+1086 39788 39787.9
+1087 39788 39788
+1088 39788 39788
+1089 39788 39788
+1090 39788 39787.9
+1091 39787 39786.9
+1092 39787 39786.9
+1093 39787 36013
+1094 39787 36091.2
+1095 39787 36385.8
+1096 39787 36391.1
+1097 39787 36487.2
+1098 39787 36796.2
+1099 39787 36447.9
+1100 39787 36448.7
+1101 39786 36124.2
+1102 39753 36181.5
+1103 39790 36107.5
+1104 39789 36119.1
+1105 39788 35901.4
+1106 39788 35898.1
+1107 39788 35949.9
+1108 39788 35887
+1109 39788 36046.7
+1110 39788 36096.4
+1111 39788 36061.5
+1112 39788 36205.8
+1113 39788 35954.5
+1114 39788 35986.2
+1115 39788 36082.7
+1116 39788 36132.2
+1117 39788 36020.9
+1118 39788 36048.7
+1119 39788 36070.3
+1120 39788 36121
+1121 39788 36142
+1122 39788 36105.6
+1123 39788 36185
+1124 39788 36123.1
+1125 39788 36143.8
+1126 39788 36075.2
+1127 39788 36153.8
+1128 39788 36081.5
+1129 39788 36225.5
+1130 39788 36230.3
+1131 39788 36168.7
+1132 39788 36106.4
+1133 39788 36156.5
+1134 39788 36218.7
+1135 39788 36188
+1136 39787 36166.3
+1137 39787 36342.6
+1138 39787 36426.3
+1139 39787 36493.3
+1140 39787 37747.3
+1141 39787 39786.8
+1142 39787 39786.9
+1143 39787 39786.9
+1144 39787 39787
+1145 39787 39787
+1146 39786 39786
+1147 39782 39782
+1148 39791 39791
+1149 39789 36910
+1150 39789 36623.9
+1151 39788 36135.1
+1152 39788 35986.8
+1153 39788 36429.3
+1154 39788 36623.5
+1155 39788 36241.8
+1156 39788 36408.2
+1157 39788 36055.8
+1158 39788 36289
+1159 39788 36078.5
+1160 39788 36189.7
+1161 39788 35905
+1162 39788 36057.8
+1163 39788 35980.8
+1164 39788 35956.2
+1165 39788 36084.9
+1166 39788 36246.8
+1167 39788 36173.4
+1168 39788 36228.5
+1169 39788 36042.8
+1170 39788 36072.6
+1171 39788 36086.9
+1172 39788 36134.1
+1173 39788 35944.4
+1174 39788 35997
+1175 39788 35947.2
+1176 39788 35985.8
+1177 39788 36023.4
+1178 39788 36079.5
+1179 39788 36005.3
+1180 39788 36031.6
+1181 39787 35938
+1182 39787 36020.1
+1183 39787 36061.9
+1184 39787 35969.8
+1185 39787 36186
+1186 39787 36187.6
+1187 39787 36242.1
+1188 39787 36178.2
+1189 39787 36145.8
+1190 39787 36256.8
+1191 39786 36251.7
+1192 39783 36176.4
+1193 39793 36070.8
+1194 39789 36187.4
+1195 39789 36196.8
+1196 39788 36332.7
+1197 39788 39787.5
+1198 39788 39788
+1199 39788 39788
+1200 39788 39788
+1201 39788 39788
+1202 39788 39788
+1203 39788 39787.9
+1204 39788 39788
+1205 39788 39788
+1206 39788 39787.9
+1207 39788 39788
+1208 39788 39788
+1209 39788 39788
+1210 39788 39788
+1211 39788 39788
+1212 39788 39788
+1213 39788 39788
+1214 39788 39788
+1215 39788 39787.9
+1216 39788 39788
+1217 39788 39788
+1218 39788 39787.9
+1219 39788 39788
+1220 39788 39787.9
+1221 39788 39788
+1222 39788 39788
+1223 39788 39788
+1224 39788 39787.9
+1225 39788 39788
+1226 39787 39787
+1227 39787 39787
+1228 39787 39787
+1229 39787 39787
+1230 39787 39787
+1231 39787 39786.9
+1232 39787 35980.1
+1233 39787 36022.7
+1234 39787 36236.5
+1235 39787 36438.4
+1236 39786 36328
+1237 39784 36679.8
+1238 39795 36416.2
+1239 39789 36360.2
+1240 39789 36040.2
+1241 39788 36200.5
+1242 39788 36069.9
+1243 39788 36143.2
+1244 39788 35973.1
+1245 39788 35900.1
+1246 39788 36021.3
+1247 39788 36107.9
+1248 39788 36076
+1249 39788 36142.5
+1250 39788 36238.4
+1251 39788 36220.5
+1252 39788 36039.8
+1253 39788 36086.9
+1254 39788 36123.9
+1255 39788 36181.5
+1256 39788 35960.8
+1257 39788 35975.2
+1258 39788 36124.6
+1259 39788 36067.2
+1260 39788 36036.1
+1261 39788 36068.7
+1262 39788 36135.8
+1263 39788 36166.5
+1264 39788 36064.9
+1265 39788 35995
+1266 39788 36055.1
+1267 39788 36002
+1268 39788 36319.5
+1269 39788 36238.6
+1270 39788 36204.2
+1271 39788 36177.2
+1272 39787 36323.1
+1273 39787 36350.4
+1274 39787 36201.2
+1275 39787 36241.3
+1276 39787 36228.7
+1277 39787 36365.9
+1278 39787 36320.8
+1279 39787 37612.8
+1280 39787 39786.9
+1281 39786 39786
+1282 39786 39786
+1283 39798 39798
+1284 39789 39789
+1285 39789 39789
+1286 39788 39788
+1287 39788 39788
+1288 39788 36887.7
+1289 39788 36687.2
+1290 39788 36067.4
+1291 39788 36049.3
+1292 39788 36336
+1293 39788 36494.8
+1294 39788 36121.1
+1295 39788 36281.4
+1296 39788 36024.1
+1297 39788 36171.6
+1298 39788 35939.9
+1299 39788 36057.7
+1300 39788 35869.4
+1301 39788 35812
+1302 39788 35881.5
+1303 39788 35944.2
+1304 39788 35970
+1305 39788 36016.5
+1306 39788 36020.7
+1307 39788 36061.4
+1308 39788 35897.8
+1309 39788 35930.5
+1310 39788 36016.8
+1311 39788 36025.2
+1312 39788 35978.5
+1313 39788 35939.4
+1314 39788 36093.6
+1315 39788 36022.8
+1316 39788 36111.9
+1317 39787 36034.8
+1318 39787 36077.7
+1319 39787 36051.4
+1320 39787 36112.4
+1321 39787 36001
+1322 39787 36040.7
+1323 39787 35875.9
+1324 39787 36272.3
+1325 39787 36152
+1326 39786 36149.8
+1327 39786 36018.8
+1328 31868 29044.8
+1329 39789 36156.5
+1330 39789 36122.2
+1331 39788 36104.4
+1332 39788 36139.8
+1333 39788 36116.9
+1334 39788 36031.8
+1335 39788 36175.5
+1336 39788 39787.6
+1337 39788 39788
+1338 39788 39788
+1339 39788 39788
+1340 39788 39788
+1341 39788 39788
+1342 39788 39788
+1343 39788 39788
+1344 39788 39788
+1345 39788 39788
+1346 39788 39788
+1347 39788 39788
+1348 39788 39788
+1349 39788 39788
+1350 39788 39788
+1351 39788 39788
+1352 39788 39788
+1353 39788 39787.9
+1354 39788 39788
+1355 39788 39788
+1356 39788 39788
+1357 39788 39788
+1358 39788 39788
+1359 39788 39788
+1360 39788 39788
+1361 39788 39788
+1362 39787 39786.9
+1363 39787 39787
+1364 39787 39787
+1365 39787 39787
+1366 39787 39786.9
+1367 39787 39787
+1368 39787 39787
+1369 39787 39787
+1370 39787 39787
+1371 39786 35734.2
+1372 39786 35961.2
+1373 39715 36245.3
+1374 39789 36330.8
+1375 39789 35873.5
+1376 39788 36332.4
+1377 39788 36323.9
+1378 39788 36242.7
+1379 39788 35721.3
+1380 39788 35939.9
+1381 39788 36006.3
+1382 39788 36077.3
+1383 39788 35816.1
+1384 39788 35892.3
+1385 39788 36084.8
+1386 39788 36050.8
+1387 39788 35904.2
+1388 39788 36056.1
+1389 39788 36185.7
+1390 39788 36185.4
+1391 39788 35838.5
+1392 39788 35918.4
+1393 39788 36187
+1394 39788 36153.4
+1395 39788 35792.4
+1396 39788 35874.8
+1397 39788 36172.2
+1398 39788 36144.8
+1399 39788 35814.3
+1400 39788 35850.7
+1401 39788 36150.3
+1402 39788 36010.5
+1403 39788 35837.7
+1404 39788 35825.8
+1405 39788 36050.4
+1406 39788 35955.8
+1407 39787 36233
+1408 39787 36272.2
+1409 39787 36351.6
+1410 39787 36212.8
+1411 39787 36189.2
+1412 39787 36177.8
+1413 39787 36253
+1414 39787 36253.9
+1415 39787 36148
+1416 39786 36272.2
+1417 39786 36424.7
+1418 39717 37685.2
+1419 39790 39789.8
+1420 39789 39788.9
+1421 39788 39788
+1422 39788 39788
+1423 39788 39788
+1424 39788 39788
+1425 39788 39788
+1426 39788 39788
+1427 39788 36923
+1428 39788 36695.8
+1429 39788 36279.8
+1430 39788 36194.1
+1431 39788 36326.5
+1432 39788 36556.4
+1433 39788 36313.6
+1434 39788 36435.6
+1435 39788 35963.5
+1436 39788 36163.8
+1437 39788 36138.6
+1438 39788 36270.2
+1439 39788 35817
+1440 39788 35861.8
+1441 39788 36029.8
+1442 39788 36039.8
+1443 39788 35938.6
+1444 39788 36024.7
+1445 39788 36154.5
+1446 39788 36190.2
+1447 39788 35815.7
+1448 39788 35935.9
+1449 39788 36047.5
+1450 39788 36136.4
+1451 39788 35655.5
+1452 39787 35686.8
+1453 39787 35980.8
+1454 39787 35969.9
+1455 39787 35756.9
+1456 39787 35740.5
+1457 39787 35969.6
+1458 39787 35919.5
+1459 39787 35753.7
+1460 39787 35726.4
+1461 39786 35851.3
+1462 39786 35758.3
+1463 39724 36016
+1464 39790 36121.8
+1465 39789 36075.7
+1466 39788 35970.9
+1467 39788 36071.8
+1468 39788 36099
+1469 39788 36002.7
+1470 39788 35962.6
+1471 39788 35933.1
+1472 39788 36041.5
+1473 39788 35874.2
+1474 39788 36162.2
+1475 39788 39787.6
+1476 39788 39787.9
+1477 39788 39788
+1478 39788 39788
+1479 39788 39787.9
+1480 39788 39788
+1481 39788 39787.9
+1482 39788 39787.9
+1483 39788 39788
+1484 39788 39787.9
+1485 39788 39788
+1486 39788 39788
+1487 39788 39788
+1488 39788 39787.9
+1489 39788 39788
+1490 39788 39788
+1491 39788 39788
+1492 39788 39787.9
+1493 39788 39787.9
+1494 39788 39788
+1495 39788 39788
+1496 39788 39787.9
+1497 39787 39787
+1498 39787 39786.9
+1499 39787 39786.9
+1500 39787 39787
+1501 39787 39787
+1502 39787 39787
+1503 39787 39787
+1504 39787 39786.9
+1505 39787 39787
+1506 39787 39787
+1507 39786 39786
+1508 39770 39770
+1509 39790 39789.9
+1510 39789 35878.6
+1511 39788 36009.4
+1512 39788 36315.1
+1513 39788 36285.8
+1514 39788 36144.8
+1515 39788 36563
+1516 39788 36395.2
+1517 39788 36371.4
+1518 39788 35898.2
+1519 39788 36030.2
+1520 39788 36039.1
+1521 39788 36089.2
+1522 39788 35810.3
+1523 39788 35887.2
+1524 39788 35964.5
+1525 39788 36014.2
+1526 39788 35999.8
+1527 39788 36101
+1528 39788 36145
+1529 39788 36180.8
+1530 39788 35971.9
+1531 39788 35972.6
+1532 39788 36038.4
+1533 39788 36079.1
+1534 39788 35899.8
+1535 39788 35844.6
+1536 39788 36001.5
+1537 39788 36039.5
+1538 39788 36017.3
+1539 39788 35943.8
+1540 39788 36100.1
+1541 39788 36038.5
+1542 39787 35972.3
+1543 39787 35895.5
+1544 39787 35948.2
+1545 39787 35899.9
+1546 39787 36255.6
+1547 39787 36225.1
+1548 39787 36228
+1549 39787 36171.3
+1550 39787 36242.4
+1551 39787 36185.8
+1552 39786 36170.9
+1553 39783 36204.8
+1554 39791 36243.8
+1555 39789 36194.7
+1556 39789 36218.3
+1557 39788 37610.6
+1558 39788 39787.9
+1559 39788 39788
+1560 39788 39787.9
+1561 39788 39788
+1562 39788 39788
+1563 39788 39787.9
+1564 39788 39788
+1565 39788 39788
+1566 39788 36689.7
+1567 39788 36555
+1568 39788 36215.9
+1569 39788 36240.5
+1570 39788 36160.9
+1571 39788 36467.8
+1572 39788 36306.3
+1573 39788 36474.5
+1574 39788 35839.9
+1575 39788 36082.2
+1576 39788 36211.2
+1577 39788 36353.2
+1578 39788 35697.1
+1579 39788 35799.8
+1580 39788 36018.3
+1581 39788 36017.2
+1582 39788 35805
+1583 39788 35909.4
+1584 39788 36043
+1585 39788 36149.6
+1586 39788 35663.4
+1587 39787 35821.1
+1588 39787 36120.7
+1589 39787 36181.8
+1590 39787 35644
+1591 39787 35714.3
+1592 39787 36085.2
+1593 39787 36071.2
+1594 39787 35728.5
+1595 39787 35798.1
+1596 39787 36059.8
+1597 39786 36006.5
+1598 39783 35773.2
+1599 39793 35873.4
+1600 39789 35978.2
+1601 39789 35948.4
+1602 39788 35920.2
+1603 39788 36099
+1604 39788 36147.8
+1605 39788 36064.8
+1606 39788 35801.2
+1607 39788 35991.8
+1608 39788 36047.3
+1609 39788 36075.8
+1610 39788 35821.3
+1611 39788 35919.6
+1612 39788 35993.5
+1613 39788 36196.6
+1614 39788 39787.8
+1615 39788 39787.9
+1616 39788 39788
+1617 39788 39788
+1618 39788 39787.9
+1619 39788 39788
+1620 39788 39788
+1621 39788 39788
+1622 39788 39787.9
+1623 39788 39788
+1624 39788 39787.9
+1625 39788 39788
+1626 39788 39788
+1627 39788 39788
+1628 39788 39788
+1629 39788 39788
+1630 39788 39788
+1631 39788 39788
+1632 39787 39787
+1633 39787 39787
+1634 39787 39787
+1635 39787 39787
+1636 39787 39787
+1637 39787 39787
+1638 39787 39787
+1639 39787 39786.9
+1640 39787 39787
+1641 39787 39787
+1642 39786 39785.9
+1643 39784 39784
+1644 39796 39796
+1645 39789 39789
+1646 39789 39789
+1647 39788 39788
+1648 39788 39788
+1649 39788 39788
+1650 39788 39788
+1651 39788 39788
+1652 39788 39788
+1653 39788 39788
+1654 39788 39788
+1655 39788 39787.9
+1656 39788 39787.8
+1657 39788 39787.9
+1658 39788 39787.9
+1659 39788 39788
+1660 39788 39788
+1661 39788 39788
+1662 39788 39788
+1663 39788 39788
+1664 39788 39788
+1665 39788 39788
+1666 39788 39788
+1667 39788 39788
+1668 39788 39788
+1669 39788 39788
+1670 39788 39788
+1671 39788 39788
+1672 39788 39788
+1673 39788 39788
+1674 39788 39788
+1675 39788 39788
+1676 39788 39788
+1677 39788 39787.9
+1678 39787 39787
+1679 39787 39787
+1680 39787 39787
+1681 39787 39787
+1682 39787 39787
+1683 39787 39787
+1684 39787 39787
+1685 39787 39787
+1686 39787 39787
+1687 39786 39786
+1688 39786 39786
+1689 39798 39798
+1690 39789 39789
+1691 39789 39789
+1692 39788 39787.9
+1693 39788 39788
+1694 39788 39788
+1695 39788 39787.9
+1696 39788 39788
+1697 39788 35985
+1698 39788 36120.2
+1699 39788 36507
+1700 39788 36411.2
+1701 39788 36277.9
+1702 39788 36669.6
+1703 39788 36454.1
+1704 39788 36521.2
+1705 39788 35955.7
+1706 39788 36182.2
+1707 39788 36101.2
+1708 39788 36279.6
+1709 39788 35708.1
+1710 39788 35820.4
+1711 39788 35909.9
+1712 39788 36062.6
+1713 39788 35771.8
+1714 39788 36027.6
+1715 39788 36029.3
+1716 39788 36154.8
+1717 39788 35669.6
+1718 39788 35841.1
+1719 39788 35999
+1720 39788 36117.9
+1721 39788 35690.9
+1722 39788 35802.8
+1723 39787 36012.5
+1724 39787 36097.7
+1725 39787 35802.7
+1726 39787 35840.3
+1727 39787 36049.6
+1728 39787 36072.4
+1729 39787 35753.2
+1730 39787 35830.4
+1731 39787 35899.9
+1732 39786 35901.4
+1733 39786 36111.1
+1734 39520 35912.2
+1735 39789 36165.7
+1736 39789 36150.4
+1737 39788 36074.3
+1738 39788 36130.8
+1739 39788 36088.9
+1740 39788 36162.5
+1741 39788 35977.7
+1742 39788 36207.2
+1743 39788 36205.3
+1744 39788 37611.7
+1745 39788 39787.9
+1746 39788 39788
+1747 39788 39788
+1748 39788 39788
+1749 39788 39788
+1750 39788 39788
+1751 39788 39788
+1752 39788 39787.9
+1753 39788 36636
+1754 39788 36543.2
+1755 39788 36087.9
+1756 39788 36088.2
+1757 39788 36270.8
+1758 39788 36514.1
+1759 39788 36158.8
+1760 39788 36391.4
+1761 39788 35881.8
+1762 39788 36086.3
+1763 39788 36090.2
+1764 39788 36196.2
+1765 39788 35669.2
+1766 39788 35706.2
+1767 39788 35726.8
+1768 39787 35918.8
+1769 39787 35840.8
+1770 39787 35939.4
+1771 39787 35883.6
+1772 39787 36024.8
+1773 39787 35738.8
+1774 39787 35703.5
+1775 39787 35942
+1776 39787 36036.1
+1777 39786 35758.7
+1778 39786 35741.1
+1779 39715 35866.5
+1780 39789 35973.2
+1781 39789 35851.8
+1782 39788 35866.7
+1783 39788 36030.3
+1784 39788 36000.8
+1785 39788 35875.8
+1786 39788 35854.8
+1787 39788 35849.1
+1788 39788 35852.5
+1789 39788 35967.4
+1790 39788 36025.9
+1791 39788 35949.1
+1792 39788 35936.6
+1793 39788 35940.2
+1794 39788 36118.5
+1795 39788 35899.7
+1796 39788 36007.4
+1797 39788 35847.2
+1798 39788 36013.1
+1799 39788 35774.9
+1800 39788 36073
+1801 39788 39787.2
+1802 39788 39788
+1803 39788 39788
+1804 39788 39788
+1805 39788 39788
+1806 39788 39788
+1807 39788 39788
+1808 39788 39788
+1809 39788 39788
+1810 39788 39788
+1811 39788 39788
+1812 39788 39788
+1813 39787 39787
+1814 39787 39787
+1815 39787 39787
+1816 39787 39787
+1817 39787 39786.9
+1818 39787 39786.9
+1819 39787 39786.9
+1820 39787 39786.9
+1821 39787 39787
+1822 39786 39786
+1823 39786 39786
+1824 39720 39720
+1825 39790 39790
+1826 39789 39789
+1827 39788 39788
+1828 39788 39787.9
+1829 39788 39788
+1830 39788 39788
+1831 39788 39787.9
+1832 39788 39788
+1833 39788 39788
+1834 39788 39788
+1835 39788 39788
+1836 39788 35829
+1837 39788 35931.5
+1838 39788 36462.4
+1839 39788 36465.7
+1840 39788 36198.5
+1841 39788 36583.8
+1842 39788 36418.7
+1843 39788 36431.5
+1844 39788 35883.8
+1845 39788 36122.6
+1846 39788 36052.4
+1847 39788 36139.5
+1848 39788 35793.7
+1849 39788 35808
+1850 39788 35919.6
+1851 39788 35936.1
+1852 39788 35881.5
+1853 39788 35977.1
+1854 39788 36017
+1855 39788 36058.5
+1856 39788 35901.5
+1857 39788 35908.1
+1858 39787 35953.5
+1859 39787 36074.2
+1860 39787 36008.5
+1861 39787 35923.2
+1862 39787 36102.1
+1863 39787 36127.9
+1864 39787 36003.8
+1865 39787 36017.8
+1866 39787 36207.8
+1867 39787 36171.2
+1868 39786 35981.1
+1869 39724 35937
+1870 39790 36106.8
+1871 39789 36134.8
+1872 39788 36017.9
+1873 39788 36023.8
+1874 39788 36094.1
+1875 39788 36118.1
+1876 39788 35899
+1877 39788 35987.7
+1878 39788 36091.5
+1879 39788 36113
+1880 39788 36033.4
+1881 39788 36171.9
+1882 39788 36307.4
+1883 39788 37648.3
+1884 39788 39787.9
+1885 39788 39787.9
+1886 39788 39788
+1887 39788 39788
+1888 39788 39788
+1889 39788 39787.8
+1890 39788 39788
+1891 39788 39788
+1892 39788 36761.3
+1893 39788 36663.3
+1894 39788 36264.8
+1895 39788 36123.1
+1896 39788 36144.5
+1897 39788 36451.8
+1898 39788 36248.2
+1899 39788 36452
+1900 39788 35825.9
+1901 39788 36073.2
+1902 39788 36109.8
+1903 39787 36225.4
+1904 39787 35713.5
+1905 39787 35814.4
+1906 39787 35997.5
+1907 39787 36111.7
+1908 39787 35893.8
+1909 39787 35950.8
+1910 39787 36087.8
+1911 39787 36210.9
+1912 39787 35720.7
+1913 39786 35790
+1914 39781 36105.5
+1915 39790 36120.2
+1916 39789 35804.1
+1917 39788 35823.2
+1918 39788 36142.8
+1919 39788 36105.4
+1920 39788 35801
+1921 39788 35847.6
+1922 39788 36203.6
+1923 39788 36128.7
+1924 39788 35803.8
+1925 39788 35775.8
+1926 39788 36110.5
+1927 39788 36000.8
+1928 39788 36044.5
+1929 39788 36101.2
+1930 39788 36266.1
+1931 39788 36091.8
+1932 39788 35925.6
+1933 39788 36088.9
+1934 39788 36156.8
+1935 39788 36100.1
+1936 39788 35870.8
+1937 39788 35962.6
+1938 39788 36114.5
+1939 39788 36284.4
+1940 39788 39787.8
+1941 39788 39788
+1942 39788 39787.8
+1943 39788 39788
+1944 39788 39788
+1945 39788 39787.9
+1946 39788 39788
+1947 39788 39787.9
+1948 39787 39787
+1949 39787 39787
+1950 39787 39787
+1951 39787 39787
+1952 39787 39787
+1953 39787 39787
+1954 39787 39786.8
+1955 39787 39787
+1956 39787 39787
+1957 39787 39787
+1958 39786 39786
+1959 39783 39783
+1960 39792 39792
+1961 39789 39789
+1962 39789 39788.9
+1963 39788 39788
+1964 39788 39788
+1965 39788 39788
+1966 39788 39788
+1967 39788 39788
+1968 39788 39787.9
+1969 39788 39788
+1970 39788 39787.9
+1971 39788 39788
+1972 39788 39788
+1973 39788 39788
+1974 39788 39788
+1975 39788 39788
+1976 39788 39788
+1977 39788 39788
+1978 39788 39788
+1979 39788 39788
+1980 39788 39788
+1981 39788 39787.9
+1982 39788 39787.9
+1983 39788 39788
+1984 39788 39788
+1985 39788 39787.9
+1986 39788 39788
+1987 39788 36076.2
+1988 39788 36158.3
+1989 39788 36475.6
+1990 39788 36486.5
+1991 39788 36329.7
+1992 39788 36651.7
+1993 39787 36442.8
+1994 39787 36516.2
+1995 39787 36020.8
+1996 39787 36154.7
+1997 39787 36114.8
+1998 39787 36295.3
+1999 39787 35800.2
+2000 39787 35798.7
+2001 39787 35963.8
+2002 39787 36043
+2003 39786 35741.3
+2004 39783 35927.1
+2005 39794 36143.1
+2006 39789 36212.4
+2007 39789 35805.6
+2008 39788 35845.3
+2009 39788 36023.2
+2010 39788 36133.2
+2011 39788 35846.9
+2012 39788 35847
+2013 39788 36131.5
+2014 39788 36099.8
+2015 39788 35930.8
+2016 39788 35929.7
+2017 39788 36166.4
+2018 39788 36022.6
+2019 39788 35950.7
+2020 39788 35885.9
+2021 39788 35946.1
+2022 39788 35903.2
+2023 39788 36063.8
+2024 39788 36033.6
+2025 39788 36146.7
+2026 39788 36014.4
+2027 39788 35976.3
+2028 39788 35992
+2029 39788 36006.3
+2030 39788 35985
+2031 39788 35870.4
+2032 39788 35947.8
+2033 39788 36088.1
+2034 39788 37474.9
+2035 39788 39787.6
+2036 39788 39788
+2037 39788 39788
+2038 39787 39786.9
+2039 39787 39786.9
+2040 39787 39787
+2041 39787 39787
+2042 39787 39787
+2043 39787 36818.8
+2044 39787 36797
+2045 39787 36188.2
+2046 39787 36182.5
+2047 39787 36410.5
+2048 39786 36679.6
+2049 39784 36313.1
+2050 39797 36500.1
+2051 39789 36198.9
+2052 39789 36305.5
+2053 39788 36224.8
+2054 39788 36290.4
+2055 39788 35704.1
+2056 39788 35819.8
+2057 39788 35807.6
+2058 39788 35863.7
+2059 39788 35843.5
+2060 39788 35938.9
+2061 39788 35901.8
+2062 39788 36001.2
+2063 39788 35742.8
+2064 39788 35846.4
+2065 39788 35883.7
+2066 39788 35973.2
+2067 39788 35794.9
+2068 39788 35820.6
+2069 39788 36052.2
+2070 39788 36057.3
+2071 39788 36027.4
+2072 39788 36014.5
+2073 39788 36100.7
+2074 39788 35993.8
+2075 39788 35964.2
+2076 39788 35994.7
+2077 39788 35993.2
+2078 39788 35860.6
+2079 39788 35993.9
+2080 39788 35999.2
+2081 39788 35910.6
+2082 39788 35924.2
+2083 39788 35900.5
+2084 39787 35958.2
+2085 39787 35868.7
+2086 39787 35998.1
+2087 39787 35837.9
+2088 39787 35894.8
+2089 39787 35792
+2090 39787 36025.1
+2091 39787 39786.9
+2092 39787 39787
+2093 39786 39786
+2094 39786 39786
+2095 29857 29857
+2096 39789 39789
+2097 39789 39789
+2098 39788 39787.9
+2099 39788 39788
+2100 39788 39788
+2101 39788 39788
+2102 39788 39787.9
+2103 39788 39788
+2104 39788 39788
+2105 39788 39787.9
+2106 39788 39788
+2107 39788 39788
+2108 39788 39788
+2109 39788 39787.9
+2110 39788 39788
+2111 39788 39788
+2112 39788 39788
+2113 39788 39787.9
+2114 39788 39788
+2115 39788 39788
+2116 39788 39788
+2117 39788 39788
+2118 39788 39788
+2119 39788 39788
+2120 39788 39788
+2121 39788 39788
+2122 39788 39788
+2123 39788 39788
+2124 39788 39788
+2125 39788 39788
+2126 39788 36062.3
+2127 39788 36185.3
+2128 39788 36511.3
+2129 39787 36482.6
+2130 39787 36217
+2131 39787 36679.7
+2132 39787 36541.2
+2133 39787 36468.1
+2134 39787 35925.1
+2135 39787 36162.8
+2136 39787 36126.1
+2137 39787 36202.7
+2138 39786 35820.2
+2139 39786 35922.8
+2140 39680 36050
+2141 39789 36101
+2142 39789 35887.4
+2143 39788 36060.3
+2144 39788 36189.3
+2145 39788 36243.7
+2146 39788 35870.9
+2147 39788 35905.2
+2148 39788 36222
+2149 39788 36130
+2150 39788 35771.8
+2151 39788 35750.9
+2152 39788 36124.2
+2153 39788 35995.1
+2154 39788 35826.5
+2155 39788 35806.8
+2156 39788 36091.2
+2157 39788 36000.8
+2158 39788 35903.2
+2159 39788 35760.2
+2160 39788 36026.8
+2161 39788 35935.6
+2162 39788 36165.4
+2163 39788 36089
+2164 39788 36313.5
+2165 39788 36157.8
+2166 39788 36066
+2167 39788 36093.8
+2168 39788 36206.2
+2169 39788 36140.8
+2170 39788 36148.5
+2171 39788 36205.6
+2172 39788 36405.7
+2173 39788 37712
+2174 39787 39786.6
+2175 39787 39787
+2176 39787 39787
+2177 39787 39787
+2178 39787 39787
+2179 39787 39787
+2180 39787 39787
+2181 39787 39787
+2182 39787 36731.2
+2183 39786 36720.2
+2184 39786 36171.7
+2185 39716 36013.5
+2186 39789 36324.8
+2187 39789 36623.1
+2188 39788 36146.8
+2189 39788 36316.2
+2190 39788 35976
+2191 39788 36232.9
+2192 39788 36074.5
+2193 39788 36131.5
+2194 39788 35729.2
+2195 39788 35828.3
+2196 39788 35695.5
+2197 39788 35838.7
+2198 39788 35836.3
+2199 39788 35963.9
+2200 39788 35894
+2201 39788 35963.2
+2202 39788 35634.8
+2203 39788 35864.8
+2204 39788 35820
+2205 39788 35893.4
+2206 39788 35674
+2207 39788 35772.9
+2208 39788 35926
+2209 39788 35931.2
+2210 39788 35747.8
+2211 39788 35815.3
+2212 39788 35991.5
+2213 39788 36003
+2214 39788 35826.5
+2215 39788 35807.8
+2216 39788 35851.5
+2217 39788 35813.5
+2218 39788 36074.3
+2219 39787 36088.5
+2220 39787 36061.5
+2221 39787 35898.2
+2222 39787 35991
+2223 39787 36077.2
+2224 39787 36011.8
+2225 39787 35899.5
+2226 39787 35871
+2227 39787 36003
+2228 39786 35796.3
+2229 39786 36059.6
+2230 39721 39720.5
+2231 39790 39789.9
+2232 39789 39789
+2233 39788 39788
+2234 39788 39788
+2235 39788 39787.9
+2236 39788 39787.9
+2237 39788 39788
+2238 39788 39788
+2239 39788 39788
+2240 39788 39788
+2241 39788 39788
+2242 39788 39788
+2243 39788 39788
+2244 39788 39788
+2245 39788 39788
+2246 39788 39788
+2247 39788 39787.8
+2248 39788 39787.9
+2249 39788 39788
+2250 39788 39788
+2251 39788 39788
+2252 39788 39787.8
+2253 39788 39788
+2254 39788 39788
+2255 39788 39788
+2256 39788 39788
+2257 39788 39788
+2258 39788 39788
+2259 39788 39788
+2260 39788 39788
+2261 39788 39788
+2262 39788 39788
+2263 39788 39787.9
+2264 39787 39787
+2265 39787 35933.2
+2266 39787 35981.1
+2267 39787 36356
+2268 39787 36363.9
+2269 39787 36006
+2270 39787 36511.2
+2271 39787 36284.9
+2272 39787 36283
+2273 39787 35727.8
+2274 39786 36099
+2275 39724 35857.2
+2276 39790 36081.7
+2277 39789 35864.2
+2278 39788 35913.6
+2279 39788 35896.2
+2280 39788 35954.8
+2281 39788 35921.9
+2282 39788 36058.5
+2283 39788 35967.8
+2284 39788 35944.8
+2285 39788 35678.3
+2286 39788 35834.6
+2287 39788 36004.3
+2288 39788 36052.7
+2289 39788 35849.5
+2290 39788 35995.4
+2291 39788 36102.1
+2292 39788 36072.8
+2293 39788 35934.9
+2294 39788 35992.2
+2295 39788 36101.6
+2296 39788 35997.7
+2297 39788 35923.5
+2298 39788 35998.1
+2299 39788 36016.2
+2300 39788 35836.2
+2301 39788 36180.8
+2302 39788 36276.6
+2303 39788 36112.2
+2304 39788 36037.2
+2305 39788 36008.8
+2306 39788 36053.4
+2307 39788 35944.8
+2308 39788 35953.2
+2309 39787 35927.7
+2310 39787 36155.2
+2311 39787 36113.8
+2312 39787 37534.9
+2313 39787 39786.8
+2314 39787 39786.9
+2315 39787 39787
+2316 39787 39787
+2317 39787 39787
+2318 39787 39787
+2319 39786 39785.9
+2320 39782 39781.8
+2321 39791 36682.5
+2322 39789 36628.1
+2323 39788 36030.5
+2324 39788 36026.9
+2325 39788 36205.1
+2326 39788 36498.6
+2327 39788 36199
+2328 39788 36437.7
+2329 39788 35886.6
+2330 39788 36101.5
+2331 39788 36082.8
+2332 39788 36196.6
+2333 39788 35600.9
+2334 39788 35626.1
+2335 39788 35778.4
+2336 39788 35801.1
+2337 39788 35781.7
+2338 39788 35897.6
+2339 39788 35972.8
+2340 39788 36013.2
+2341 39788 35570.7
+2342 39788 35804.2
+2343 39788 35914.8
+2344 39788 35944.3
+2345 39788 35575.5
+2346 39788 35634.6
+2347 39788 35832.4
+2348 39788 35769.2
+2349 39788 35699.7
+2350 39788 35755.3
+2351 39788 35894.5
+2352 39788 35836.1
+2353 39788 35752.9
+2354 39787 35794
+2355 39787 35933.2
+2356 39787 35648.5
+2357 39787 35771.2
+2358 39787 35877.7
+2359 39787 35880.4
+2360 39787 35668.2
+2361 39787 35847.7
+2362 39787 35966.8
+2363 39787 35850
+2364 39786 35847.9
+2365 39783 35829.5
+2366 39792 35828.3
+2367 39789 35738.9
+2368 39789 35993.5
+2369 39788 39787.4
+2370 39788 39788
+2371 39788 39788
+2372 39788 39788
+2373 39788 39788
+2374 39788 39787.9
+2375 39788 39788
+2376 39788 39788
+2377 39788 39788
+2378 39788 39788
+2379 39788 39788
+2380 39788 39788
+2381 39788 39788
+2382 39788 39788
+2383 39788 39788
+2384 39788 39787.9
+2385 39788 39787.9
+2386 39788 39788
+2387 39788 39788
+2388 39788 39788
+2389 39788 39787.9
+2390 39788 39788
+2391 39788 39787.8
+2392 39788 39788
+2393 39788 39788
+2394 39788 39788
+2395 39788 39787.9
+2396 39788 39788
+2397 39788 39788
+2398 39788 39788
+2399 39787 39787
+2400 39787 39787
+2401 39787 39787
+2402 39787 39787
+2403 39787 39786.8
+2404 39787 35774.4
+2405 39787 35993.7
+2406 39787 36313
+2407 39787 36396.1
+2408 39787 36270.8
+2409 39786 36576.4
+2410 39784 36318.9
+2411 39794 36346.2
+2412 39789 35945
+2413 39789 36104.3
+2414 39788 35962.8
+2415 39788 36152.2
+2416 39788 35770.6
+2417 39788 35786.4
+2418 39788 35945.8
+2419 39788 35996.6
+2420 39788 35938.6
+2421 39788 35978.8
+2422 39788 36058.2
+2423 39788 36118.2
+2424 39788 35818.2
+2425 39788 35836.2
+2426 39788 36050.3
+2427 39788 36082.9
+2428 39788 35726.2
+2429 39788 35752.9
+2430 39788 35972.8
+2431 39788 35985.7
+2432 39788 35840.6
+2433 39788 35873.8
+2434 39788 36004.7
+2435 39788 35941.3
+2436 39788 35931.1
+2437 39788 35856.3
+2438 39788 35918.1
+2439 39788 35807
+2440 39788 36072
+2441 39788 36020.5
+2442 39788 35999.4
+2443 39788 35868.9
+2444 39787 35889.4
+2445 39787 35998.3
+2446 39787 35945.1
+2447 39787 35878.9
+2448 39787 35996.7
+2449 39787 36034.7
+2450 39787 36125.4
+2451 39787 37492.8
+2452 39787 39786.8
+2453 39787 39787
+2454 39786 39786
+2455 39785 39784.9
+2456 39798 39797.9
+2457 39789 39788.9
+2458 39789 39789
+2459 39788 39788
+2460 39788 36817.9
+2461 39788 36743.7
+2462 39788 36203.2
+2463 39788 36015.9
+2464 39788 36345
+2465 39788 36476.2
+2466 39788 36169.4
+2467 39788 36347.8
+2468 39788 36043.3
+2469 39788 36136.2
+2470 39788 36042.8
+2471 39788 36219.7
+2472 39788 35808.7
+2473 39788 35889.2
+2474 39788 35833.7
+2475 39788 35965.6
+2476 39788 35859.1
+2477 39788 35972
+2478 39788 35924.2
+2479 39788 36059.9
+2480 39788 35746.1
+2481 39788 35819
+2482 39788 35868.2
+2483 39788 35989.2
+2484 39788 35669.8
+2485 39788 35755.8
+2486 39788 35819.6
+2487 39788 35892.9
+2488 39788 35767.2
+2489 39788 35789.1
+2490 39787 35836.5
+2491 39787 35836.7
+2492 39787 35768.8
+2493 39787 35840.3
+2494 39787 35787.1
+2495 39787 35691.7
+2496 39787 35944
+2497 39787 36002.8
+2498 39787 35912.8
+2499 39786 35836
+2500 39786 35891.8
+2501 29886 26957.6
+2502 39789 35757.6
+2503 39789 35796.4
+2504 39788 35790.2
+2505 39788 35856.2
+2506 39788 35653.7
+2507 39788 35929.2
+2508 39788 39787.6
+2509 39788 39788
+2510 39788 39787.9
+2511 39788 39788
+2512 39788 39788
+2513 39788 39787.9
+2514 39788 39788
+2515 39788 39787.9
+2516 39788 39788
+2517 39788 39788
+2518 39788 39787.9
+2519 39788 39788
+2520 39788 39787.9
+2521 39788 39788
+2522 39788 39788
+2523 39788 39788
+2524 39788 39788
+2525 39788 39788
+2526 39788 39787.9
+2527 39788 39788
+2528 39788 39788
+2529 39788 39787.9
+2530 39788 39788
+2531 39788 39788
+2532 39788 39788
+2533 39788 39787.9
+2534 39788 39787.9
+2535 39787 39787
+2536 39787 39787
+2537 39787 39786.9
+2538 39787 39786.9
+2539 39787 39787
+2540 39787 39786.8
+2541 39787 39787
+2542 39787 39787
+2543 39787 39787
+2544 39786 39786
+2545 39786 39786
+2546 39709 39709
+2547 39789 39789
+2548 39789 39789
+2549 39788 39788
+2550 39788 39788
+2551 39788 39788
+2552 39788 39788
+2553 39788 39787.9
+2554 39788 39788
+2555 39788 39788
+2556 39788 39787.9
+2557 39788 39787.8
+2558 39788 39788
+2559 39788 39788
+2560 39788 39787.9
+2561 39788 39788
+2562 39788 39788
+2563 39788 39788
+2564 39788 39788
+2565 39788 39788
+2566 39788 39788
+2567 39788 39788
+2568 39788 39788
+2569 39788 39788
+2570 39788 39788
+2571 39788 39788
+2572 39788 39788
+2573 39788 39788
+2574 39788 39787.9
+2575 39788 39788
+2576 39788 39788
+2577 39788 39788
+2578 39788 39788
+2579 39788 39788
+2580 39787 39787
+2581 39787 39787
+2582 39787 39787
+2583 39787 39787
+2584 39787 39787
+2585 39787 39787
+2586 39787 39787
+2587 39787 39787
+2588 39787 39787
+2589 39786 39786
+2590 39786 39786
+2591 39717 35582.2
+2592 39790 35822.4
+2593 39789 36279.8
+2594 39788 36273.8
+2595 39788 35906.9
+2596 39788 36430.3
+2597 39788 36293.5
+2598 39788 36245.1
+2599 39788 35682.7
+2600 39788 35937.2
+2601 39788 35956.2
+2602 39788 36055.2
+2603 39788 35578.1
+2604 39788 35644.8
+2605 39788 35937.4
+2606 39788 35942.3
+2607 39788 35655.5
+2608 39788 35874.9
+2609 39788 36021.4
+2610 39788 36013.7
+2611 39788 35536
+2612 39788 35794.8
+2613 39788 36010.2
+2614 39788 35984.1
+2615 39788 35367.2
+2616 39788 35597.7
+2617 39788 35896.5
+2618 39788 35828.2
+2619 39788 35541.7
+2620 39788 35609.5
+2621 39788 35910.3
+2622 39788 35793.2
+2623 39788 35543.8
+2624 39788 35568.1
+2625 39787 35729.4
+2626 39787 35640.2
+2627 39787 35958.8
+2628 39787 36026.2
+2629 39787 36165
+2630 39787 35995.3
+2631 39787 35875
+2632 39787 35925.6
+2633 39787 35972.6
+2634 39786 35952.4
+2635 39786 35805
+2636 39723 35866.5
+2637 39790 36012.7
+2638 39789 37428.4
+2639 39788 39787.8
+2640 39788 39788
+2641 39788 39788
+2642 39788 39788
+2643 39788 39788
+2644 39788 39788
+2645 39788 39788
+2646 39788 39788
+2647 39788 36634.1
+2648 39788 36508.3
+2649 39788 35970.2
+2650 39788 35896.8
+2651 39788 36264.1
+2652 39788 36435.6
+2653 39788 36050.5
+2654 39788 36225
+2655 39788 35966.8
+2656 39788 36068.9
+2657 39788 36031.8
+2658 39788 36064.1
+2659 39788 35702.7
+2660 39788 35728.2
+2661 39788 35763.6
+2662 39788 35755.3
+2663 39788 35797.6
+2664 39788 35834.7
+2665 39788 35812.2
+2666 39788 35840.5
+2667 39788 35743
+2668 39788 35671.8
+2669 39788 35912.8
+2670 39787 35889.4
+2671 39787 35649.8
+2672 39787 35623
+2673 39787 35849.2
+2674 39787 35784.5
+2675 39787 35694.1
+2676 39787 35649.4
+2677 39787 35811.8
+2678 39787 35721.3
+2679 39787 35778
+2680 39786 35685.9
+2681 39733 35627.3
+2682 39790 35607
+2683 39789 36044.7
+2684 39788 35978.7
+2685 39788 36011.9
+2686 39788 35848.5
+2687 39788 36021.9
+2688 39788 35932.8
+2689 39788 35792
+2690 39788 35813.2
+2691 39788 35947.8
+2692 39788 35926.8
+2693 39788 35752.7
+2694 39788 35914.3
+2695 39788 39787.8
+2696 39788 39788
+2697 39788 39788
+2698 39788 39788
+2699 39788 39788
+2700 39788 39787.9
+2701 39788 39787.9
+2702 39788 39788
+2703 39788 39788
+2704 39788 39788
+2705 39788 39788
+2706 39788 39788
+2707 39788 39788
+2708 39788 39787.9
+2709 39788 39788
+2710 39788 39787.9
+2711 39788 39788
+2712 39788 39787.9
+2713 39788 39788
+2714 39788 39788
+2715 39787 39787
+2716 39787 39787
+2717 39787 39786.9
+2718 39787 39786.9
+2719 39787 39787
+2720 39787 39787
+2721 39787 39786.9
+2722 39787 39787
+2723 39787 39787
+2724 39787 39787
+2725 39786 39786
+2726 39782 39782
+2727 39791 39791
+2728 39789 39788.9
+2729 39788 39788
+2730 39788 35721.8
+2731 39788 36051.2
+2732 39788 36398.8
+2733 39788 36466.2
+2734 39788 36177
+2735 39788 36545.5
+2736 39788 36392.2
+2737 39788 36416.3
+2738 39788 35859.3
+2739 39788 36104.6
+2740 39788 36055.4
+2741 39788 36187
+2742 39788 35892.5
+2743 39788 35793.5
+2744 39788 35961
+2745 39788 36034.8
+2746 39788 35826.3
+2747 39788 35930.1
+2748 39788 36104.3
+2749 39788 36220.3
+2750 39788 35742.7
+2751 39788 35814.8
+2752 39788 36007.8
+2753 39788 36128.8
+2754 39788 35825.6
+2755 39788 35766.6
+2756 39788 36039.8
+2757 39788 36042.2
+2758 39788 35795.6
+2759 39788 35809.3
+2760 39787 36039.8
+2761 39787 35980.9
+2762 39787 35829.7
+2763 39787 35784.4
+2764 39787 35964.8
+2765 39787 35894.2
+2766 39787 35978.7
+2767 39787 35935.2
+2768 39787 36168.8
+2769 39787 35968.8
+2770 39786 35927.5
+2771 39783 35931.4
+2772 39793 36008.8
+2773 39789 35986.2
+2774 39789 35789.3
+2775 39788 35876.4
+2776 39788 36117.4
+2777 39788 37474.5
+2778 39788 39787.3
+2779 39788 39787.9
+2780 39788 39788
+2781 39788 39788
+2782 39788 39788
+2783 39788 39788
+2784 39788 39787.9
+2785 39788 39788
+2786 39788 36606.1
+2787 39788 36473.7
+2788 39788 36031.7
+2789 39788 36013.8
+2790 39788 36113.8
+2791 39788 36448.1
+2792 39788 36087.3
+2793 39788 36260.5
+2794 39788 35761
+2795 39788 35976.6
+2796 39788 35853.5
+2797 39788 36022.8
+2798 39788 35632.2
+2799 39788 35672.2
+2800 39788 35771.2
+2801 39788 35904.2
+2802 39788 35777.5
+2803 39788 35896.2
+2804 39788 35854.2
+2805 39787 35893.1
+2806 39787 35516.7
+2807 39787 35718
+2808 39787 35708.8
+2809 39787 35785
+2810 39787 35702.7
+2811 39787 35794.5
+2812 39787 35809.2
+2813 39787 35851.2
+2814 39787 35833.4
+2815 39786 35821.2
+2816 39784 35849.1
+2817 39795 35838.8
+2818 39789 35788.3
+2819 39789 35809.8
+2820 39788 35739.6
+2821 39788 35663.7
+2822 39788 36010.2
+2823 39788 36101.2
+2824 39788 35886.6
+2825 39788 35810.6
+2826 39788 35908.8
+2827 39788 36058.3
+2828 39788 35800.6
+2829 39788 35842.6
+2830 39788 35739.2
+2831 39788 35861.2
+2832 39788 35664.2
+2833 39788 35946.9
+2834 39788 39787.2
+2835 39788 39787.9
+2836 39788 39788
+2837 39788 39788
+2838 39788 39788
+2839 39788 39788
+2840 39788 39787.8
+2841 39788 39788
+2842 39788 39788
+2843 39788 39788
+2844 39788 39788
+2845 39788 39787.9
+2846 39788 39788
+2847 39788 39788
+2848 39788 39788
+2849 39788 39788
+2850 39788 39788
+2851 39787 39786.9
+2852 39787 39787
+2853 39787 39786.8
+2854 39787 39787
+2855 39787 39787
+2856 39787 39787
+2857 39787 39787
+2858 39787 39787
+2859 39787 39787
+2860 39786 39786
+2861 39785 39785
+2862 39798 39798
+2863 39789 39788.9
+2864 39789 39788.8
+2865 39788 39788
+2866 39788 39787.8
+2867 39788 39788
+2868 39788 39788
+2869 39788 35899.8
+2870 39788 36079.2
+2871 39788 36354.5
+2872 39788 36505.7
+2873 39788 36261
+2874 39788 36676.9
+2875 39788 36437.9
+2876 39788 36443
+2877 39788 35874.5
+2878 39788 36197.4
+2879 39788 36055.3
+2880 39788 36158.7
+2881 39788 35729.8
+2882 39788 35816.9
+2883 39788 35932.3
+2884 39788 35947.6
+2885 39788 35831.8
+2886 39788 36058.1
+2887 39788 36041.3
+2888 39788 36084.5
+2889 39788 35705.2
+2890 39788 35842.8
+2891 39788 35984.8
+2892 39788 35994.9
+2893 39788 35782.5
+2894 39788 35789.3
+2895 39788 36033.9
+2896 39787 35988.2
+2897 39787 35957.3
+2898 39787 35899
+2899 39787 36073.7
+2900 39787 36065.6
+2901 39787 35857.8
+2902 39787 35874.8
+2903 39787 35936.4
+2904 39787 35831.4
+2905 39786 36115.1
+2906 39786 36235.5
+2907 30127 27417.5
+2908 39789 36018.2
+2909 39789 36069
+2910 39788 36204.4
+2911 39788 36105.2
+2912 39788 36063.3
+2913 39788 35973.1
+2914 39788 36131.2
+2915 39788 36212.5
+2916 39788 37529.7
+2917 39788 39788
+2918 39788 39787.9
+2919 39788 39788
+2920 39788 39788
+2921 39788 39788
+2922 39788 39788
+2923 39788 39788
+2924 39788 39788
+2925 39788 36671.9
+2926 39788 36657.8
+2927 39788 36183.8
+2928 39788 36105.9
+2929 39788 36087.2
+2930 39788 36439.4
+2931 39788 36177.8
+2932 39788 36285.5
+2933 39788 35877.7
+2934 39788 36090.2
+2935 39788 36044.8
+2936 39788 36086.6
+2937 39788 35791.5
+2938 39788 35831.8
+2939 39788 36014.1
+2940 39788 35934.7
+2941 39787 35833.4
+2942 39787 35812.2
+2943 39787 36032.5
+2944 39787 36056.7
+2945 39787 35761.5
+2946 39787 35845
+2947 39787 36062.4
+2948 39787 36038.9
+2949 39787 35636.6
+2950 39786 35637.8
+2951 39786 35890.8
+2952 39713 35767.4
+2953 39789 35583.6
+2954 39789 35644.9
+2955 39788 35865.3
+2956 39788 35718.7
+2957 39788 35692.8
+2958 39788 35639.4
+2959 39788 35854.3
+2960 39788 35691.4
+2961 39788 35897.8
+2962 39788 35944.4
+2963 39788 36026.2
+2964 39788 35948
+2965 39788 35752.9
+2966 39788 35807.7
+2967 39788 35906.4
+2968 39788 35854.2
+2969 39788 35684.5
+2970 39788 35751.3
+2971 39788 35940.5
+2972 39788 36079.1
+2973 39788 39787.2
+2974 39788 39788
+2975 39788 39788
+2976 39788 39788
+2977 39788 39788
+2978 39788 39787.9
+2979 39788 39788
+2980 39788 39788
+2981 39788 39787.8
+2982 39788 39788
+2983 39788 39788
+2984 39788 39788
+2985 39788 39788
+2986 39787 39786.9
+2987 39787 39787
+2988 39787 39787
+2989 39787 39787
+2990 39787 39787
+2991 39787 39787
+2992 39787 39787
+2993 39787 39787
+2994 39787 39787
+2995 39786 39786
+2996 39786 39785.9
+2997 39717 39717
+2998 39790 39790
+2999 39789 39788.9
+3000 39788 39787.9
+3001 39788 39788
+3002 39788 39788
+3003 39788 39788
+3004 39788 39788
+3005 39788 39788
+3006 39788 39788
+3007 39788 39788
+3008 39788 35639.2
+3009 39788 35908.3
+3010 39788 36052.7
+3011 39788 36149.6
+3012 39788 35989.3
+3013 39788 36406.1
+3014 39788 36183.8
+3015 39788 36141.9
+3016 39788 35683.1
+3017 39788 35942.1
+3018 39788 35886.3
+3019 39788 35954.6
+3020 39788 35729.5
+3021 39788 35744.1
+3022 39788 35910.4
+3023 39788 35812.8
+3024 39788 35838.4
+3025 39788 35925.1
+3026 39788 35951.6
+3027 39788 35923.2
+3028 39788 35738.2
+3029 39788 35786.5
+3030 39788 35869.3
+3031 39787 35853.5
+3032 39787 35760.5
+3033 39787 35727.5
+3034 39787 35940.7
+3035 39787 35851.8
+3036 39787 35850.8
+3037 39787 35783.1
+3038 39787 35908.6
+3039 39787 35829.8
+3040 39786 35886.2
+3041 39786 35824.8
+3042 39724 35773.8
+3043 39790 35735.2
+3044 39789 36087.2
+3045 39788 36072.6
+3046 39788 36082.8
+3047 39788 35955.2
+3048 39788 36094.8
+3049 39788 36028.6
+3050 39788 35999.6
+3051 39788 35959.6
+3052 39788 35959.2
+3053 39788 35975.7
+3054 39788 36106.8
+3055 39788 37446
+3056 39788 39787.9
+3057 39788 39788
+3058 39788 39788
+3059 39788 39788
+3060 39788 39788
+3061 39788 39788
+3062 39788 39788
+3063 39788 39787.9
+3064 39788 36660.5
+3065 39788 36684.6
+3066 39788 36042.8
+3067 39788 35985.4
+3068 39788 36143
+3069 39788 36473.1
+3070 39788 36063.2
+3071 39788 36241.4
+3072 39788 35748.4
+3073 39788 36046.1
+3074 39788 35853.5
+3075 39788 35929.2
+3076 39787 35721
+3077 39787 35722.9
+3078 39787 35760.2
+3079 39787 35839.5
+3080 39787 35779.2
+3081 39787 35955.4
+3082 39787 35871.2
+3083 39787 36046.3
+3084 39787 35558
+3085 39787 35717.2
+3086 39786 35814.8
+3087 39766 35885.3
+3088 39790 35544.8
+3089 39789 35690.8
+3090 39788 35814.6
+3091 39788 35773.8
+3092 39788 35595.2
+3093 39788 35696.7
+3094 39788 35826.8
+3095 39788 35716.9
+3096 39788 35627
+3097 39788 35615.8
+3098 39788 35677.5
+3099 39788 35589.7
+3100 39788 35958.8
+3101 39788 36000.1
+3102 39788 35958.6
+3103 39788 35819.9
+3104 39788 35858.3
+3105 39788 35995.3
+3106 39788 35929.8
+3107 39788 35843.2
+3108 39788 35717.8
+3109 39788 35907.5
+3110 39788 35768.1
+3111 39788 35988.7
+3112 39788 39787.8
+3113 39788 39788
+3114 39788 39788
+3115 39788 39788
+3116 39788 39788
+3117 39788 39788
+3118 39788 39788
+3119 39788 39788
+3120 39788 39787.9
+3121 39787 39786.9
+3122 39787 39786.9
+3123 39787 39786.9
+3124 39787 39787
+3125 39787 39787
+3126 39787 39787
+3127 39787 39787
+3128 39787 39786.9
+3129 39787 39787
+3130 39787 39787
+3131 39786 39785.9
+3132 39783 39782.9
+3133 39791 39790.9
+3134 39789 39789
+3135 39789 39788.9
+3136 39788 39788
+3137 39788 39788
+3138 39788 39788
+3139 39788 39787.9
+3140 39788 39788
+3141 39788 39788
+3142 39788 39788
+3143 39788 39788
+3144 39788 39787.9
+3145 39788 39788
+3146 39788 39788
+3147 39788 35887
+3148 39788 36065.4
+3149 39788 36454.4
+3150 39788 36395
+3151 39788 36211.2
+3152 39788 36577.8
+3153 39788 36406.4
+3154 39788 36401.5
+3155 39788 35830.1
+3156 39788 36070.9
+3157 39788 36017.5
+3158 39788 36094.4
+3159 39788 35754.6
+3160 39788 35831.8
+3161 39788 35867.8
+3162 39788 35978.2
+3163 39788 35812.8
+3164 39788 35937.8
+3165 39788 35996.9
+3166 39787 36057.3
+3167 39787 35723
+3168 39787 35896.2
+3169 39787 35982.7
+3170 39787 36039.6
+3171 39787 35692
+3172 39787 35711.5
+3173 39787 35978.8
+3174 39787 36003.6
+3175 39787 35763.8
+3176 39786 35710.6
+3177 39783 35955.6
+3178 39793 35953.4
+3179 39789 35805.9
+3180 39789 35787.2
+3181 39788 35861.3
+3182 39788 35770.4
+3183 39788 36234.4
+3184 39788 36210.8
+3185 39788 36242.7
+3186 39788 36094.8
+3187 39788 36109.6
+3188 39788 36161.8
+3189 39788 36094.3
+3190 39788 36070
+3191 39788 36061.5
+3192 39788 36208.9
+3193 39788 36280.3
+3194 39788 37625.2
+3195 39788 39787.8
+3196 39788 39788
+3197 39788 39788
+3198 39788 39787.9
+3199 39788 39787.9
+3200 39788 39788
+3201 39788 39788
+3202 39788 39788
+3203 39788 36699.9
+3204 39788 36444.8
+3205 39788 36067.9
+3206 39788 35901.1
+3207 39788 36219.3
+3208 39788 36416.4
+3209 39788 36096.3
+3210 39788 36197.8
+3211 39787 35821.3
+3212 39787 36018.2
+3213 39787 36015.2
+3214 39787 35982.7
+3215 39787 35621.1
+3216 39787 35620.3
+3217 39787 35701.2
+3218 39787 35762.1
+3219 39787 35846.2
+3220 39787 35878.9
+3221 39786 35896.4
+3222 39784 35841.6
+3223 39795 35734.6
+3224 39789 35815.6
+3225 39789 35833.8
+3226 39788 35812.7
+3227 39788 35615.8
+3228 39788 35552.1
+3229 39788 35683.4
+3230 39788 35572.5
+3231 39788 35767.8
+3232 39788 35660.1
+3233 39788 35782.6
+3234 39788 35651.2
+3235 39788 35774.1
+3236 39788 35735
+3237 39788 35665.1
+3238 39788 35511.2
+3239 39788 35963.8
+3240 39788 36022.2
+3241 39788 35762.8
+3242 39788 35765
+3243 39788 36057.4
+3244 39788 36015.7
+3245 39788 35734.3
+3246 39788 35939.5
+3247 39788 35911.8
+3248 39788 35873.5
+3249 39788 35714.2
+3250 39788 35970.4
+3251 39788 39787.5
+3252 39788 39788
+3253 39788 39788
+3254 39788 39788
+3255 39788 39788
+3256 39788 39788
+3257 39787 39787
+3258 39787 39787
+3259 39787 39786.9
+3260 39787 39787
+3261 39787 39787
+3262 39787 39787
+3263 39787 39787
+3264 39787 39787
+3265 39787 39787
+3266 39786 39785.9
+3267 39786 39785.9
+3268 39798 39798
+3269 39789 39788.9
+3270 39789 39789
+3271 39788 39788
+3272 39788 39788
+3273 39788 39788
+3274 39788 39788
+3275 39788 39787.9
+3276 39788 39788
+3277 39788 39787.9
+3278 39788 39788
+3279 39788 39788
+3280 39788 39788
+3281 39788 39788
+3282 39788 39787.9
+3283 39788 39788
+3284 39788 39788
+3285 39788 39788
+3286 39788 35992.9
+3287 39788 36048
+3288 39788 36437.6
+3289 39788 36445
+3290 39788 36327
+3291 39788 36757.7
+3292 39788 36561.6
+3293 39788 36445
+3294 39788 35984.5
+3295 39788 36354.9
+3296 39788 36119.8
+3297 39788 36246.8
+3298 39788 35798.5
+3299 39788 35870.7
+3300 39788 35942.5
+3301 39788 35984.8
+3302 39787 35890.4
+3303 39787 36040.9
+3304 39787 36152.9
+3305 39787 36104.2
+3306 39787 35785.3
+3307 39787 35952.4
+3308 39787 36031.9
+3309 39787 36044.8
+3310 39787 35811.3
+3311 39786 35862.8
+3312 39786 35971.6
+3313 38793 35012.3
+3314 39789 35926.9
+3315 39789 36036.4
+3316 39788 36018.7
+3317 39788 35939.4
+3318 39788 36004.6
+3319 39788 35940.8
+3320 39788 35848.7
+3321 39788 35825
+3322 39788 36163
+3323 39788 36198.2
+3324 39788 35964.4
+3325 39788 35972.3
+3326 39788 36094
+3327 39788 36212.2
+3328 39788 36023.8
+3329 39788 36068.6
+3330 39788 36009.4
+3331 39788 36180.6
+3332 39788 36082.6
+3333 39788 37621.4
+3334 39788 39787.7
+3335 39788 39787.9
+3336 39788 39788
+3337 39788 39787.9
+3338 39788 39788
+3339 39788 39788
+3340 39788 39787.9
+3341 39788 39788
+3342 39788 36596.3
+3343 39788 36585.2
+3344 39788 36179.2
+3345 39788 36133.7
+3346 39788 36154.8
+3347 39787 36465.3
+3348 39787 36129.1
+3349 39787 36328.9
+3350 39787 35786.4
+3351 39787 36077.8
+3352 39787 35891.6
+3353 39787 36018.7
+3354 39787 35777.3
+3355 39787 35778.9
+3356 39786 35833.7
+3357 39786 35942.2
+3358 39715 35740.9
+3359 39789 35930.3
+3360 39789 35976.4
+3361 39788 36135
+3362 39788 35642.2
+3363 39788 35770.3
+3364 39788 35914.8
+3365 39788 36006.8
+3366 39788 35605.9
+3367 39788 35616.4
+3368 39788 35802.8
+3369 39788 35913.1
+3370 39788 35596.2
+3371 39788 35666.6
+3372 39788 35875.1
+3373 39788 35933.2
+3374 39788 35569.8
+3375 39788 35566.5
+3376 39788 35846.2
+3377 39788 35835.8
+3378 39788 35823.9
+3379 39788 35840.8
+3380 39788 36098
+3381 39788 36017.9
+3382 39788 35799.2
+3383 39788 35845.8
+3384 39788 36018
+3385 39788 35982.8
+3386 39788 35657.8
+3387 39788 35833.7
+3388 39788 35910
+3389 39788 36033.1
+3390 39788 39787.9
+3391 39788 39787.8
+3392 39787 39787
+3393 39787 39787
+3394 39787 39787
+3395 39787 39787
+3396 39787 39786.9
+3397 39787 39787
+3398 39787 39787
+3399 39787 39787
+3400 39787 39787
+3401 39786 39786
+3402 39786 39785.9
+3403 39720 39720
+3404 39790 39790
+3405 39789 39788.9
+3406 39788 39788
+3407 39788 39788
+3408 39788 39788
+3409 39788 39788
+3410 39788 39787.9
+3411 39788 39788
+3412 39788 39788
+3413 39788 39788
+3414 39788 39788
+3415 39788 39788
+3416 39788 39788
+3417 39788 39788
+3418 39788 39787.9
+3419 39788 39787.8
+3420 39788 39788
+3421 39788 39788
+3422 39788 39788
+3423 39788 39788
+3424 39788 39788
+3425 39788 39787.9
+3426 39788 39787.9
+3427 39788 39788
+3428 39788 39788
+3429 39788 39787.8
+3430 39788 39787.9
+3431 39788 39787.9
+3432 39788 39788
+3433 39788 39787.9
+3434 39788 39787.9
+3435 39788 39788
+3436 39788 39788
+3437 39787 39787
+3438 39787 39787
+3439 39787 39787
+3440 39787 39787
+3441 39787 39787
+3442 39787 39787
+3443 39787 39787
+3444 39787 39787
+3445 39787 39787
+3446 39786 39786
+3447 39786 39785.9
+3448 39724 39724
+3449 39790 39790
+3450 39789 39788.9
+3451 39788 39788
+3452 39788 39788
+3453 39788 39788
+3454 39788 39788
+3455 39788 39788
+3456 39788 39788
+3457 39788 39787.9
+3458 39788 39788
+3459 39788 39788
+3460 39788 39788
+3461 39788 39788
+3462 39788 39788
+3463 39788 39788
+3464 39788 39788
+3465 39788 39788
+3466 39788 39788
+3467 39788 39788
+3468 39788 39788
+3469 39788 39788
+3470 39788 39788
+3471 39788 39788
+3472 39788 39788
+3473 39788 39788
+3474 39788 39788
+3475 39788 39788
+3476 39788 39788
+3477 39788 39788
+3478 39788 39788
+3479 39788 39788
+3480 39788 39788
+3481 39788 39788
+3482 39787 39787
+3483 39787 39787
+3484 39787 39787
+3485 39787 39787
+3486 39787 39787
+3487 39787 39787
+3488 39787 39787
+3489 39787 39787
+3490 39787 39787
+3491 39787 39787
+3492 39786 39786
+3493 39781 39781
+3494 39790 39789.9
+3495 39789 39789
+3496 39788 39788
+3497 39788 39788
+3498 39788 39788
+3499 39788 39788
+3500 39788 39787.9
+3501 39788 39788
+3502 39788 39788
+3503 39788 39788
+3504 39788 39788
+3505 39788 39788
+3506 39788 39788
+3507 39788 39788
+3508 39788 39788
+3509 39788 39788
+3510 39788 39787.9
+3511 39788 39788
+3512 39788 39788
+3513 39788 39788
+3514 39788 39788
+3515 39788 39788
+3516 39788 39788
+3517 39788 39788
+3518 39788 39788
+3519 39788 39788
+3520 39788 39788
+3521 39788 39788
+3522 39788 39788
+3523 39788 39788
+3524 39788 39788
+3525 39788 39788
+3526 39788 39788
+3527 39787 39787
+3528 39787 39787
+3529 39787 39786.9
+3530 39787 39787
+3531 39787 39787
+3532 39787 39787
+3533 39787 39787
+3534 39787 39787
+3535 39787 39787
+3536 39787 39787
+3537 39786 39786
+3538 39783 39782.9
+3539 39791 39791
+3540 39789 39789
+3541 39789 39789
+3542 39788 39788
+3543 39788 39788
+3544 39788 39788
+3545 39788 39788
+3546 39788 39788
+3547 39788 39788
+3548 39788 39788
+3549 39788 39788
+3550 39788 39788
+3551 39788 39788
+3552 39788 39788
+3553 39788 39788
+3554 39788 39788
+3555 39788 39788
+3556 39788 39788
+3557 39788 39788
+3558 39788 39788
+3559 39788 39788
+3560 39788 39788
+3561 39788 39788
+3562 39788 39788
+3563 39788 39788
+There was an desync error in channel 19 at time 12:55:44.817
+There was an desync error in channel 20 at time 12:55:44.817
+Channel 1 was dead for the full fill
+Channel 7 was dead for the full fill
+Channel 22 was dead for the full fill
+Channel 23 was dead for the full fill
