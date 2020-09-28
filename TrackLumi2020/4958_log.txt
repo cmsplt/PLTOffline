@@ -1,0 +1,3992 @@
+DataFileName:      /localdata/2016/SLINK/Slink_20160528.114912.dat
+GainCalFileName:   ../GainCal/GainCalFits_20160501.155303.dat
+AlignmentFileName: ../ALIGNMENT/Trans_Alignment_4892.dat
+TrackDistributionFileName: ../TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt
+WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTEvent::SetPlaneClustering setting clustering to 6
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 6
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+Processing event: 0 at 11:49:19.463 to determine active bunches
+Processing event: 50000 at 11:49:34.796 to determine active bunches
+Processing event: 100000 at 11:49:50.137 to determine active bunches
+Processing event: 150000 at 11:50:05.470 to determine active bunches
+Processing event: 200000 at 11:50:20.811 to determine active bunches
+Processing event: 250000 at 11:50:36.143 to determine active bunches
+Processing event: 300000 at 11:50:51.484 to determine active bunches
+Processing event: 350000 at 11:51:06.817 to determine active bunches
+Processing event: 400000 at 11:51:22.158 to determine active bunches
+Processing event: 450000 at 11:51:37.491 to determine active bunches
+Processing event: 500000 at 11:51:52.832 to determine active bunches
+Processing event: 550000 at 11:52:08.165 to determine active bunches
+Processing event: 600000 at 11:52:23.508 to determine active bunches
+Processing event: 650000 at 11:52:38.840 to determine active bunches
+Processing event: 700000 at 11:52:54.181 to determine active bunches
+Processing event: 750000 at 11:53:09.514 to determine active bunches
+Processing event: 800000 at 11:53:24.855 to determine active bunches
+Processing event: 850000 at 11:53:40.188 to determine active bunches
+Processing event: 900000 at 11:53:55.529 to determine active bunches
+Processing event: 950000 at 11:54:10.862 to determine active bunches
+Processing event: 1000000 at 11:54:26.203 to determine active bunches
+Total of 1453 bunches filled
+PLTGainCal sees a parameter file with 5 params
+Adding ch 2 -> 8 1 13
+Adding ch 4 -> 8 1 21
+Adding ch 5 -> 8 1 29
+Adding ch 7 -> 8 2 5
+Adding ch 8 -> 8 2 13
+Adding ch 10 -> 8 2 21
+Adding ch 11 -> 8 2 29
+Adding ch 13 -> 7 1 5
+Adding ch 14 -> 7 1 13
+Adding ch 16 -> 7 1 21
+Adding ch 17 -> 7 1 29
+Adding ch 19 -> 7 2 5
+Adding ch 20 -> 7 2 13
+ERROR: over MAXCOLS 62
+ERROR: over MAXCOLS 62
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+Processing event: 0 at 42559463 (11:49:19.463)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 100000 at 42590137 (11:49:50.137)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Failure in Channel 1 at event 0 at approximately  11:50
+Failure in Channel 22 at event 0 at approximately  11:50
+Failure in Channel 23 at event 0 at approximately  11:50
+Processing event: 200000 at 42620811 (11:50:20.811)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 300000 at 42651484 (11:50:51.484)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 400000 at 42682158 (11:51:22.158)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 500000 at 42712832 (11:51:52.832)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 600000 at 42743508 (11:52:23.508)
+ERROR: over MAXROWS: 80
+Processing event: 700000 at 42774181 (11:52:54.181)
+Processing event: 800000 at 42804855 (11:53:24.855)
+Processing event: 900000 at 42835529 (11:53:55.529)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1000000 at 42866203 (11:54:26.203)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1100000 at 42896876 (11:54:56.876)
+ERROR: over MAXROWS: 80
+Processing event: 1200000 at 42927550 (11:55:27.550)
+ERROR: over MAXROWS: 80
+Processing event: 1300000 at 42958223 (11:55:58.223)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1400000 at 42988897 (11:56:28.897)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1500000 at 43019570 (11:56:59.570)
+ERROR: over MAXROWS: 80
+Processing event: 1600000 at 43050244 (11:57:30.244)
+ERROR: over MAXROWS: 80
+Processing event: 1700000 at 43080917 (11:58:00.917)
+ERROR: over MAXROWS: 80
+Processing event: 1800000 at 43111591 (11:58:31.591)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 1900000 at 43142265 (11:59:02.265)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2000000 at 43172939 (11:59:32.939)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2100000 at 43203612 (12:00:03.612)
+ERROR: over MAXROWS: 80
+Processing event: 2200000 at 43234286 (12:00:34.286)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2300000 at 43264960 (12:01:04.960)
+ERROR: over MAXROWS: 80
+Processing event: 2400000 at 43295634 (12:01:35.634)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2500000 at 43326308 (12:02:06.308)
+Processing event: 2600000 at 43356982 (12:02:36.982)
+ERROR: over MAXROWS: 80
+Processing event: 2700000 at 43387655 (12:03:07.655)
+ERROR: over MAXROWS: 80
+Processing event: 2800000 at 43418328 (12:03:38.328)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 2900000 at 43449003 (12:04:09.003)
+Processing event: 3000000 at 43479677 (12:04:39.677)
+Processing event: 3100000 at 43510351 (12:05:10.351)
+Processing event: 3200000 at 43541024 (12:05:41.024)
+ERROR: over MAXROWS: 80
+Processing event: 3300000 at 43571698 (12:06:11.698)
+Processing event: 3400000 at 43602372 (12:06:42.372)
+ERROR: over MAXROWS: 80
+Processing event: 3500000 at 43633046 (12:07:13.046)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 3600000 at 43663719 (12:07:43.719)
+ERROR: over MAXROWS: 80
+Processing event: 3700000 at 43694393 (12:08:14.393)
+ERROR: over MAXROWS: 80
+Processing event: 3800000 at 43725067 (12:08:45.067)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 3900000 at 43755741 (12:09:15.741)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4000000 at 43786415 (12:09:46.415)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4100000 at 43817089 (12:10:17.089)
+Processing event: 4200000 at 43847762 (12:10:47.762)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4300000 at 43878435 (12:11:18.435)
+ERROR: over MAXROWS: 80
+Processing event: 4400000 at 43909117 (12:11:49.117)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4500000 at 43939790 (12:12:19.790)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4600000 at 43970464 (12:12:50.464)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4700000 at 44001138 (12:13:21.138)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4800000 at 44031811 (12:13:51.811)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 4900000 at 44062485 (12:14:22.485)
+ERROR: over MAXROWS: 80
+Processing event: 5000000 at 44093159 (12:14:53.159)
+Processing event: 5100000 at 44123833 (12:15:23.833)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5200000 at 44154507 (12:15:54.507)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5300000 at 44185180 (12:16:25.180)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5400000 at 44215854 (12:16:55.854)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5500000 at 44246527 (12:17:26.527)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5600000 at 44277201 (12:17:57.201)
+ERROR: over MAXROWS: 80
+Processing event: 5700000 at 44307874 (12:18:27.874)
+Processing event: 5800000 at 44338548 (12:18:58.548)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 5900000 at 44369222 (12:19:29.222)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6000000 at 44399896 (12:19:59.896)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6100000 at 44430570 (12:20:30.570)
+Processing event: 6200000 at 44461244 (12:21:01.244)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6300000 at 44491917 (12:21:31.917)
+Processing event: 6400000 at 44522594 (12:22:02.594)
+Processing event: 6500000 at 44553267 (12:22:33.267)
+Processing event: 6600000 at 44583942 (12:23:03.942)
+ERROR: over MAXROWS: 80
+Processing event: 6700000 at 44614616 (12:23:34.616)
+Processing event: 6800000 at 44645290 (12:24:05.290)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 6900000 at 44675963 (12:24:35.963)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 7000000 at 44706637 (12:25:06.637)
+ERROR: over MAXROWS: 80
+Processing event: 7100000 at 44737311 (12:25:37.311)
+ERROR: over MAXROWS: 80
+Processing event: 7200000 at 44767985 (12:26:07.985)
+ERROR: over MAXROWS: 80
+Processing event: 7300000 at 44798659 (12:26:38.659)
+Processing event: 7400000 at 44829333 (12:27:09.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 7500000 at 44860006 (12:27:40.006)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 7600000 at 44890680 (12:28:10.680)
+ERROR: over MAXROWS: 80
+Processing event: 7700000 at 44921354 (12:28:41.354)
+ERROR: over MAXROWS: 80
+Processing event: 7800000 at 44952028 (12:29:12.028)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 7900000 at 44982702 (12:29:42.702)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 8000000 at 45013376 (12:30:13.376)
+ERROR: over MAXROWS: 80
+Processing event: 8100000 at 45044050 (12:30:44.050)
+ERROR: over MAXROWS: 80
+Processing event: 8200000 at 45074723 (12:31:14.723)
+ERROR: over MAXROWS: 80
+Processing event: 8300000 at 45105397 (12:31:45.397)
+Processing event: 8400000 at 45136071 (12:32:16.071)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 8500000 at 45166745 (12:32:46.745)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 8600000 at 45197419 (12:33:17.419)
+ERROR: over MAXROWS: 80
+Processing event: 8700000 at 45228093 (12:33:48.093)
+Processing event: 8800000 at 45258767 (12:34:18.767)
+ERROR: over MAXROWS: 80
+Processing event: 8900000 at 45289441 (12:34:49.441)
+ERROR: over MAXROWS: 80
+Processing event: 9000000 at 45320114 (12:35:20.114)
+ERROR: over MAXROWS: 80
+Processing event: 9100000 at 45350788 (12:35:50.788)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9200000 at 45381462 (12:36:21.462)
+Processing event: 9300000 at 45412135 (12:36:52.135)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9400000 at 45442809 (12:37:22.809)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9500000 at 45473483 (12:37:53.483)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9600000 at 45504157 (12:38:24.157)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9700000 at 45534830 (12:38:54.830)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9800000 at 45565504 (12:39:25.504)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 9900000 at 45596178 (12:39:56.178)
+ERROR: over MAXROWS: 80
+Processing event: 10000000 at 45626859 (12:40:26.859)
+ERROR: over MAXROWS: 80
+Processing event: 10100000 at 45657533 (12:40:57.533)
+Processing event: 10200000 at 45688207 (12:41:28.207)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10300000 at 45718880 (12:41:58.880)
+Processing event: 10400000 at 45749554 (12:42:29.554)
+ERROR: over MAXROWS: 80
+Processing event: 10500000 at 45780228 (12:43:00.228)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10600000 at 45810902 (12:43:30.902)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10700000 at 45841575 (12:44:01.575)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10800000 at 45872249 (12:44:32.249)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 10900000 at 45902922 (12:45:02.922)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11000000 at 45933596 (12:45:33.596)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11100000 at 45964270 (12:46:04.270)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11200000 at 45994943 (12:46:34.943)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11300000 at 46025616 (12:47:05.616)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 11400000 at 46056290 (12:47:36.290)
+Processing event: 11500000 at 46086964 (12:48:06.964)
+Processing event: 11600000 at 46117637 (12:48:37.637)
+Processing event: 11700000 at 46148311 (12:49:08.311)
+ERROR: over MAXROWS: 80
+Processing event: 11800000 at 46178985 (12:49:38.985)
+ERROR: over MAXROWS: 80
+Processing event: 11900000 at 46209659 (12:50:09.659)
+ERROR: over MAXROWS: 80
+Processing event: 12000000 at 46240333 (12:50:40.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12100000 at 46271007 (12:51:11.007)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12200000 at 46301681 (12:51:41.681)
+Processing event: 12300000 at 46332355 (12:52:12.355)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12400000 at 46363030 (12:52:43.030)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12500000 at 46393704 (12:53:13.704)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12600000 at 46424377 (12:53:44.377)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12700000 at 46455051 (12:54:15.051)
+ERROR: over MAXROWS: 80
+Processing event: 12800000 at 46485724 (12:54:45.724)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 12900000 at 46516409 (12:55:16.409)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13000000 at 46547083 (12:55:47.083)
+Processing event: 13100000 at 46577756 (12:56:17.756)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13200000 at 46608430 (12:56:48.430)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13300000 at 46639104 (12:57:19.104)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13400000 at 46669778 (12:57:49.778)
+ERROR: over MAXROWS: 80
+Processing event: 13500000 at 46700452 (12:58:20.452)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13600000 at 46731125 (12:58:51.125)
+ERROR: over MAXROWS: 80
+Processing event: 13700000 at 46761800 (12:59:21.800)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13800000 at 46792474 (12:59:52.474)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 13900000 at 46823147 (13:00:23.147)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14000000 at 46853821 (13:00:53.821)
+Processing event: 14100000 at 46884495 (13:01:24.495)
+ERROR: over MAXROWS: 80
+Processing event: 14200000 at 46915168 (13:01:55.168)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14300000 at 46945843 (13:02:25.843)
+Processing event: 14400000 at 46976516 (13:02:56.516)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14500000 at 47007190 (13:03:27.190)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14600000 at 47037864 (13:03:57.864)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14700000 at 47068538 (13:04:28.538)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14800000 at 47099211 (13:04:59.211)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 14900000 at 47129885 (13:05:29.885)
+ERROR: over MAXROWS: 80
+Processing event: 15000000 at 47160559 (13:06:00.559)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15100000 at 47191233 (13:06:31.233)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15200000 at 47221917 (13:07:01.917)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15300000 at 47252591 (13:07:32.591)
+ERROR: over MAXROWS: 80
+Processing event: 15400000 at 47283264 (13:08:03.264)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15500000 at 47313946 (13:08:33.946)
+ERROR: over MAXROWS: 80
+Processing event: 15600000 at 47344619 (13:09:04.619)
+Processing event: 15700000 at 47375293 (13:09:35.293)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 15800000 at 47405966 (13:10:05.966)
+Processing event: 15900000 at 47436640 (13:10:36.640)
+Processing event: 16000000 at 47467314 (13:11:07.314)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16100000 at 47497988 (13:11:37.988)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16200000 at 47528661 (13:12:08.661)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16300000 at 47559335 (13:12:39.335)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16400000 at 47590009 (13:13:10.009)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16500000 at 47620683 (13:13:40.683)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16600000 at 47651357 (13:14:11.357)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16700000 at 47682031 (13:14:42.031)
+ERROR: over MAXROWS: 80
+Processing event: 16800000 at 47712705 (13:15:12.705)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 16900000 at 47743378 (13:15:43.378)
+ERROR: over MAXROWS: 80
+Processing event: 17000000 at 47774052 (13:16:14.052)
+ERROR: over MAXROWS: 80
+Processing event: 17100000 at 47804726 (13:16:44.726)
+ERROR: over MAXROWS: 80
+Processing event: 17200000 at 47835400 (13:17:15.400)
+Processing event: 17300000 at 47866074 (13:17:46.074)
+ERROR: over MAXROWS: 80
+Processing event: 17400000 at 47896748 (13:18:16.748)
+ERROR: over MAXROWS: 80
+Processing event: 17500000 at 47927422 (13:18:47.422)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 17600000 at 47958096 (13:19:18.096)
+Processing event: 17700000 at 47988770 (13:19:48.770)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 17800000 at 48019443 (13:20:19.443)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 17900000 at 48050117 (13:20:50.117)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 18000000 at 48080791 (13:21:20.791)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 18100000 at 48111465 (13:21:51.465)
+ERROR: over MAXROWS: 80
+Processing event: 18200000 at 48142139 (13:22:22.139)
+ERROR: over MAXROWS: 80
+Processing event: 18300000 at 48172813 (13:22:52.813)
+Processing event: 18400000 at 48203488 (13:23:23.488)
+Processing event: 18500000 at 48234162 (13:23:54.162)
+Processing event: 18600000 at 48264836 (13:24:24.836)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 18700000 at 48295509 (13:24:55.509)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 18800000 at 48326183 (13:25:26.183)
+Processing event: 18900000 at 48356857 (13:25:56.857)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19000000 at 48387531 (13:26:27.531)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19100000 at 48418204 (13:26:58.204)
+Processing event: 19200000 at 48448879 (13:27:28.879)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19300000 at 48479552 (13:27:59.552)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19400000 at 48510226 (13:28:30.226)
+Processing event: 19500000 at 48540900 (13:29:00.900)
+ERROR: over MAXROWS: 80
+Processing event: 19600000 at 48571573 (13:29:31.573)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19700000 at 48602247 (13:30:02.247)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19800000 at 48632921 (13:30:32.921)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 19900000 at 48663595 (13:31:03.595)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20000000 at 48694268 (13:31:34.268)
+ERROR: over MAXROWS: 80
+Processing event: 20100000 at 48724943 (13:32:04.943)
+ERROR: over MAXROWS: 80
+Processing event: 20200000 at 48755617 (13:32:35.617)
+ERROR: over MAXROWS: 80
+Processing event: 20300000 at 48786290 (13:33:06.290)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20400000 at 48816964 (13:33:36.964)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20500000 at 48847637 (13:34:07.637)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20600000 at 48878311 (13:34:38.311)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20700000 at 48908986 (13:35:08.986)
+ERROR: over MAXROWS: 80
+Processing event: 20800000 at 48939659 (13:35:39.659)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 20900000 at 48970333 (13:36:10.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 21000000 at 49001007 (13:36:41.007)
+ERROR: over MAXROWS: 80
+Processing event: 21100000 at 49031689 (13:37:11.689)
+Processing event: 21200000 at 49062362 (13:37:42.362)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 21300000 at 49093036 (13:38:13.036)
+ERROR: over MAXROWS: 80
+Processing event: 21400000 at 49123709 (13:38:43.709)
+ERROR: over MAXROWS: 80
+Processing event: 21500000 at 49154383 (13:39:14.383)
+ERROR: over MAXROWS: 80
+Processing event: 21600000 at 49185057 (13:39:45.057)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 21700000 at 49215731 (13:40:15.731)
+Processing event: 21800000 at 49246405 (13:40:46.405)
+ERROR: over MAXROWS: 80
+Processing event: 21900000 at 49277079 (13:41:17.079)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22000000 at 49307752 (13:41:47.752)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22100000 at 49338426 (13:42:18.426)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22200000 at 49369100 (13:42:49.100)
+ERROR: over MAXROWS: 80
+Processing event: 22300000 at 49399773 (13:43:19.773)
+Processing event: 22400000 at 49430447 (13:43:50.447)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22500000 at 49461121 (13:44:21.121)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 22600000 at 49491794 (13:44:51.794)
+Processing event: 22700000 at 49522468 (13:45:22.468)
+ERROR: over MAXROWS: 80
+Processing event: 22800000 at 49553142 (13:45:53.142)
+Processing event: 22900000 at 49583816 (13:46:23.816)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23000000 at 49614490 (13:46:54.490)
+Processing event: 23100000 at 49645163 (13:47:25.163)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23200000 at 49675837 (13:47:55.837)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23300000 at 49706511 (13:48:26.511)
+ERROR: over MAXROWS: 80
+Processing event: 23400000 at 49737185 (13:48:57.185)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23500000 at 49767859 (13:49:27.859)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23600000 at 49798532 (13:49:58.532)
+ERROR: over MAXROWS: 80
+Processing event: 23700000 at 49829206 (13:50:29.206)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 23800000 at 49859880 (13:50:59.880)
+Processing event: 23900000 at 49890554 (13:51:30.554)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24000000 at 49921228 (13:52:01.228)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24100000 at 49951913 (13:52:31.913)
+Processing event: 24200000 at 49982586 (13:53:02.586)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24300000 at 50013260 (13:53:33.260)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24400000 at 50043933 (13:54:03.933)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24500000 at 50074607 (13:54:34.607)
+ERROR: over MAXROWS: 80
+Processing event: 24600000 at 50105281 (13:55:05.281)
+ERROR: over MAXROWS: 80
+Processing event: 24700000 at 50135954 (13:55:35.954)
+Processing event: 24800000 at 50166627 (13:56:06.627)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 24900000 at 50197301 (13:56:37.301)
+Processing event: 25000000 at 50227975 (13:57:07.975)
+ERROR: over MAXROWS: 80
+Processing event: 25100000 at 50258649 (13:57:38.649)
+Processing event: 25200000 at 50289323 (13:58:09.323)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 25300000 at 50319996 (13:58:39.996)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 25400000 at 50350670 (13:59:10.670)
+ERROR: over MAXROWS: 80
+Processing event: 25500000 at 50381343 (13:59:41.343)
+Processing event: 25600000 at 50412017 (14:00:12.017)
+Processing event: 25700000 at 50442691 (14:00:42.691)
+Processing event: 25800000 at 50473364 (14:01:13.364)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 25900000 at 50504038 (14:01:44.038)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26000000 at 50534712 (14:02:14.712)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26100000 at 50565386 (14:02:45.386)
+Processing event: 26200000 at 50596060 (14:03:16.060)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26300000 at 50626734 (14:03:46.734)
+ERROR: over MAXROWS: 80
+Processing event: 26400000 at 50657408 (14:04:17.408)
+Processing event: 26500000 at 50688082 (14:04:48.082)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 26600000 at 50718756 (14:05:18.756)
+Processing event: 26700000 at 50749438 (14:05:49.438)
+Processing event: 26800000 at 50780112 (14:06:20.112)
+Processing event: 26900000 at 50810786 (14:06:50.786)
+ERROR: over MAXROWS: 80
+Processing event: 27000000 at 50841459 (14:07:21.459)
+Processing event: 27100000 at 50872133 (14:07:52.133)
+ERROR: over MAXROWS: 80
+Processing event: 27200000 at 50902807 (14:08:22.807)
+ERROR: over MAXROWS: 80
+Processing event: 27300000 at 50933480 (14:08:53.480)
+ERROR: over MAXROWS: 80
+Processing event: 27400000 at 50964154 (14:09:24.154)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27500000 at 50994828 (14:09:54.828)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27600000 at 51025501 (14:10:25.501)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27700000 at 51056174 (14:10:56.174)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27800000 at 51086847 (14:11:26.847)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 27900000 at 51117520 (14:11:57.520)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28000000 at 51148194 (14:12:28.194)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28100000 at 51178868 (14:12:58.868)
+Processing event: 28200000 at 51209541 (14:13:29.541)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28300000 at 51240215 (14:14:00.215)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28400000 at 51270889 (14:14:30.889)
+Processing event: 28500000 at 51301563 (14:15:01.563)
+Processing event: 28600000 at 51332237 (14:15:32.237)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28700000 at 51362910 (14:16:02.910)
+Processing event: 28800000 at 51393584 (14:16:33.584)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 28900000 at 51424258 (14:17:04.258)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29000000 at 51454932 (14:17:34.932)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29100000 at 51485606 (14:18:05.606)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29200000 at 51516279 (14:18:36.279)
+ERROR: over MAXROWS: 80
+Processing event: 29300000 at 51546953 (14:19:06.953)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29400000 at 51577627 (14:19:37.627)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29500000 at 51608301 (14:20:08.301)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29600000 at 51638975 (14:20:38.975)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 29700000 at 51669648 (14:21:09.648)
+Processing event: 29800000 at 51700322 (14:21:40.322)
+ERROR: over MAXROWS: 80
+Processing event: 29900000 at 51730996 (14:22:10.996)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30000000 at 51761669 (14:22:41.669)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30100000 at 51792343 (14:23:12.343)
+Processing event: 30200000 at 51823017 (14:23:43.017)
+ERROR: over MAXROWS: 80
+Processing event: 30300000 at 51853690 (14:24:13.690)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30400000 at 51884364 (14:24:44.364)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30500000 at 51915038 (14:25:15.038)
+Processing event: 30600000 at 51945711 (14:25:45.711)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30700000 at 51976385 (14:26:16.385)
+Processing event: 30800000 at 52007058 (14:26:47.058)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 30900000 at 52037732 (14:27:17.732)
+ERROR: over MAXROWS: 80
+Processing event: 31000000 at 52068405 (14:27:48.405)
+ERROR: over MAXROWS: 80
+Processing event: 31100000 at 52099079 (14:28:19.079)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 31200000 at 52129752 (14:28:49.752)
+ERROR: over MAXROWS: 80
+Processing event: 31300000 at 52160426 (14:29:20.426)
+ERROR: over MAXROWS: 80
+Processing event: 31400000 at 52191100 (14:29:51.100)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 31500000 at 52221773 (14:30:21.773)
+ERROR: over MAXROWS: 80
+Processing event: 31600000 at 52252447 (14:30:52.447)
+Processing event: 31700000 at 52283121 (14:31:23.121)
+ERROR: over MAXROWS: 80
+Processing event: 31800000 at 52313795 (14:31:53.795)
+Processing event: 31900000 at 52344469 (14:32:24.469)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32000000 at 52375143 (14:32:55.143)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32100000 at 52405817 (14:33:25.817)
+Processing event: 32200000 at 52436490 (14:33:56.490)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32300000 at 52467172 (14:34:27.172)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32400000 at 52497846 (14:34:57.846)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32500000 at 52528519 (14:35:28.519)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32600000 at 52559193 (14:35:59.193)
+Processing event: 32700000 at 52589867 (14:36:29.867)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 32800000 at 52620541 (14:37:00.541)
+Processing event: 32900000 at 52651215 (14:37:31.215)
+Processing event: 33000000 at 52681889 (14:38:01.889)
+Processing event: 33100000 at 52712563 (14:38:32.563)
+Processing event: 33200000 at 52743236 (14:39:03.236)
+Processing event: 33300000 at 52773910 (14:39:33.910)
+Processing event: 33400000 at 52804584 (14:40:04.584)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33500000 at 52835257 (14:40:35.257)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33600000 at 52865931 (14:41:05.931)
+ERROR: over MAXROWS: 80
+Processing event: 33700000 at 52896605 (14:41:36.605)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33800000 at 52927279 (14:42:07.279)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 33900000 at 52957952 (14:42:37.952)
+Processing event: 34000000 at 52988626 (14:43:08.626)
+ERROR: over MAXROWS: 80
+Processing event: 34100000 at 53019300 (14:43:39.300)
+Processing event: 34200000 at 53049974 (14:44:09.974)
+Processing event: 34300000 at 53080648 (14:44:40.648)
+Processing event: 34400000 at 53111321 (14:45:11.321)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34500000 at 53141995 (14:45:41.995)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34600000 at 53172669 (14:46:12.669)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 34700000 at 53203342 (14:46:43.342)
+ERROR: over MAXROWS: 80
+Processing event: 34800000 at 53234016 (14:47:14.016)
+Processing event: 34900000 at 53264690 (14:47:44.690)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 35000000 at 53295363 (14:48:15.363)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 35100000 at 53326037 (14:48:46.037)
+ERROR: over MAXROWS: 80
+Processing event: 35200000 at 53356711 (14:49:16.711)
+ERROR: over MAXROWS: 80
+Processing event: 35300000 at 53387385 (14:49:47.385)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 35400000 at 53418059 (14:50:18.059)
+ERROR: over MAXROWS: 80
+Processing event: 35500000 at 53448733 (14:50:48.733)
+ERROR: over MAXROWS: 80
+Processing event: 35600000 at 53479406 (14:51:19.406)
+ERROR: over MAXROWS: 80
+Processing event: 35700000 at 53510080 (14:51:50.080)
+Processing event: 35800000 at 53540754 (14:52:20.754)
+ERROR: over MAXROWS: 80
+Processing event: 35900000 at 53571430 (14:52:51.430)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36000000 at 53602104 (14:53:22.104)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36100000 at 53632777 (14:53:52.777)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36200000 at 53663451 (14:54:23.451)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36300000 at 53694124 (14:54:54.124)
+ERROR: over MAXROWS: 80
+Processing event: 36400000 at 53724798 (14:55:24.798)
+Processing event: 36500000 at 53755472 (14:55:55.472)
+Processing event: 36600000 at 53786145 (14:56:26.145)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36700000 at 53816819 (14:56:56.819)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 36800000 at 53847492 (14:57:27.492)
+ERROR: over MAXROWS: 80
+Processing event: 36900000 at 53878177 (14:57:58.177)
+ERROR: over MAXROWS: 80
+Processing event: 37000000 at 53908860 (14:58:28.860)
+ERROR: over MAXROWS: 80
+Processing event: 37100000 at 53939544 (14:58:59.544)
+Processing event: 37200000 at 53970217 (14:59:30.217)
+ERROR: over MAXROWS: 80
+Processing event: 37300000 at 54000891 (15:00:00.891)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37400000 at 54031565 (15:00:31.565)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37500000 at 54062238 (15:01:02.238)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37600000 at 54092912 (15:01:32.912)
+Processing event: 37700000 at 54123586 (15:02:03.586)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37800000 at 54154268 (15:02:34.268)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 37900000 at 54184942 (15:03:04.942)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38000000 at 54215615 (15:03:35.615)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38100000 at 54246289 (15:04:06.289)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38200000 at 54276963 (15:04:36.963)
+ERROR: over MAXROWS: 80
+Processing event: 38300000 at 54307636 (15:05:07.636)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38400000 at 54338310 (15:05:38.310)
+Processing event: 38500000 at 54368983 (15:06:08.983)
+Processing event: 38600000 at 54399657 (15:06:39.657)
+ERROR: over MAXROWS: 80
+Processing event: 38700000 at 54430331 (15:07:10.331)
+Processing event: 38800000 at 54461005 (15:07:41.005)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 38900000 at 54491679 (15:08:11.679)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 39000000 at 54522353 (15:08:42.353)
+ERROR: over MAXROWS: 80
+Processing event: 39100000 at 54553026 (15:09:13.026)
+ERROR: over MAXROWS: 80
+Processing event: 39200000 at 54583699 (15:09:43.699)
+Processing event: 39300000 at 54614373 (15:10:14.373)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 39400000 at 54645047 (15:10:45.047)
+ERROR: over MAXROWS: 80
+Processing event: 39500000 at 54675720 (15:11:15.720)
+ERROR: over MAXROWS: 80
+Processing event: 39600000 at 54706395 (15:11:46.395)
+ERROR: over MAXROWS: 80
+Processing event: 39700000 at 54737068 (15:12:17.068)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 39800000 at 54767742 (15:12:47.742)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 39900000 at 54798416 (15:13:18.416)
+ERROR: over MAXROWS: 80
+Processing event: 40000000 at 54829090 (15:13:49.090)
+ERROR: over MAXROWS: 80
+Processing event: 40100000 at 54859764 (15:14:19.764)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40200000 at 54890438 (15:14:50.438)
+Processing event: 40300000 at 54921112 (15:15:21.112)
+ERROR: over MAXROWS: 80
+Processing event: 40400000 at 54951785 (15:15:51.785)
+ERROR: over MAXROWS: 80
+Processing event: 40500000 at 54982459 (15:16:22.459)
+Processing event: 40600000 at 55013132 (15:16:53.132)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 40700000 at 55043806 (15:17:23.806)
+Processing event: 40800000 at 55074480 (15:17:54.480)
+ERROR: over MAXROWS: 80
+Processing event: 40900000 at 55105159 (15:18:25.159)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41000000 at 55135833 (15:18:55.833)
+Processing event: 41100000 at 55166507 (15:19:26.507)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41200000 at 55197180 (15:19:57.180)
+Processing event: 41300000 at 55227854 (15:20:27.854)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41400000 at 55258527 (15:20:58.527)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41500000 at 55289201 (15:21:29.201)
+Processing event: 41600000 at 55319875 (15:21:59.875)
+ERROR: over MAXROWS: 80
+Processing event: 41700000 at 55350549 (15:22:30.549)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 41800000 at 55381223 (15:23:01.223)
+ERROR: over MAXROWS: 80
+Processing event: 41900000 at 55411896 (15:23:31.896)
+ERROR: over MAXROWS: 80
+Processing event: 42000000 at 55442570 (15:24:02.570)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42100000 at 55473244 (15:24:33.244)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42200000 at 55503919 (15:25:03.919)
+ERROR: over MAXROWS: 80
+Processing event: 42300000 at 55534592 (15:25:34.592)
+Processing event: 42400000 at 55565266 (15:26:05.266)
+ERROR: over MAXROWS: 80
+Processing event: 42500000 at 55595940 (15:26:35.940)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42600000 at 55626614 (15:27:06.614)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42700000 at 55657288 (15:27:37.288)
+Processing event: 42800000 at 55687962 (15:28:07.962)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 42900000 at 55718636 (15:28:38.636)
+Processing event: 43000000 at 55749309 (15:29:09.309)
+ERROR: over MAXROWS: 80
+Processing event: 43100000 at 55779993 (15:29:39.993)
+ERROR: over MAXROWS: 80
+Processing event: 43200000 at 55810667 (15:30:10.667)
+Processing event: 43300000 at 55841340 (15:30:41.340)
+Processing event: 43400000 at 55872022 (15:31:12.022)
+Processing event: 43500000 at 55902696 (15:31:42.696)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 43600000 at 55933370 (15:32:13.370)
+Processing event: 43700000 at 55964043 (15:32:44.043)
+ERROR: over MAXROWS: 80
+Processing event: 43800000 at 55994717 (15:33:14.717)
+ERROR: over MAXROWS: 80
+Processing event: 43900000 at 56025391 (15:33:45.391)
+Processing event: 44000000 at 56056065 (15:34:16.065)
+ERROR: over MAXROWS: 80
+Processing event: 44100000 at 56086739 (15:34:46.739)
+ERROR: over MAXROWS: 80
+Processing event: 44200000 at 56117413 (15:35:17.413)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 44300000 at 56148086 (15:35:48.086)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 44400000 at 56178760 (15:36:18.760)
+Processing event: 44500000 at 56209434 (15:36:49.434)
+ERROR: over MAXROWS: 80
+Processing event: 44600000 at 56240108 (15:37:20.108)
+Processing event: 44700000 at 56270782 (15:37:50.782)
+ERROR: over MAXROWS: 80
+Processing event: 44800000 at 56301456 (15:38:21.456)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 44900000 at 56332130 (15:38:52.130)
+Processing event: 45000000 at 56362803 (15:39:22.803)
+ERROR: over MAXROWS: 80
+Processing event: 45100000 at 56393477 (15:39:53.477)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45200000 at 56424161 (15:40:24.161)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45300000 at 56454834 (15:40:54.834)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45400000 at 56485508 (15:41:25.508)
+ERROR: over MAXROWS: 80
+Processing event: 45500000 at 56516182 (15:41:56.182)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45600000 at 56546855 (15:42:26.855)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45700000 at 56577529 (15:42:57.529)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45800000 at 56608203 (15:43:28.203)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 45900000 at 56638877 (15:43:58.877)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 46000000 at 56669550 (15:44:29.550)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 46100000 at 56700224 (15:45:00.224)
+ERROR: over MAXROWS: 80
+Processing event: 46200000 at 56730898 (15:45:30.898)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 46300000 at 56761572 (15:46:01.572)
+Processing event: 46400000 at 56792245 (15:46:32.245)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 46500000 at 56822919 (15:47:02.919)
+ERROR: over MAXROWS: 80
+Processing event: 46600000 at 56853593 (15:47:33.593)
+Processing event: 46700000 at 56884266 (15:48:04.266)
+ERROR: over MAXROWS: 80
+Processing event: 46800000 at 56914940 (15:48:34.940)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 46900000 at 56945613 (15:49:05.613)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 47000000 at 56976287 (15:49:36.287)
+ERROR: over MAXROWS: 80
+Processing event: 47100000 at 57006961 (15:50:06.961)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 47200000 at 57037634 (15:50:37.634)
+ERROR: over MAXROWS: 80
+Processing event: 47300000 at 57068308 (15:51:08.308)
+Processing event: 47400000 at 57098982 (15:51:38.982)
+ERROR: over MAXROWS: 80
+Processing event: 47500000 at 57129656 (15:52:09.656)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 47600000 at 57160331 (15:52:40.331)
+Processing event: 47700000 at 57191005 (15:53:11.005)
+ERROR: over MAXROWS: 80
+Processing event: 47800000 at 57221679 (15:53:41.679)
+Processing event: 47900000 at 57252353 (15:54:12.353)
+Processing event: 48000000 at 57283027 (15:54:43.027)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 48100000 at 57313701 (15:55:13.701)
+Processing event: 48200000 at 57344374 (15:55:44.374)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 48300000 at 57375048 (15:56:15.048)
+ERROR: over MAXROWS: 80
+Processing event: 48400000 at 57405722 (15:56:45.722)
+Processing event: 48500000 at 57436396 (15:57:16.396)
+Processing event: 48600000 at 57467069 (15:57:47.069)
+Processing event: 48700000 at 57497744 (15:58:17.744)
+Processing event: 48800000 at 57528418 (15:58:48.418)
+Processing event: 48900000 at 57559100 (15:59:19.100)
+Processing event: 49000000 at 57589774 (15:59:49.774)
+ERROR: over MAXROWS: 80
+Processing event: 49100000 at 57620448 (16:00:20.448)
+Processing event: 49200000 at 57651121 (16:00:51.121)
+ERROR: over MAXROWS: 80
+Processing event: 49300000 at 57681795 (16:01:21.795)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 49400000 at 57712469 (16:01:52.469)
+ERROR: over MAXROWS: 80
+Processing event: 49500000 at 57743143 (16:02:23.143)
+ERROR: over MAXROWS: 80
+Processing event: 49600000 at 57773816 (16:02:53.816)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 49700000 at 57804491 (16:03:24.491)
+ERROR: over MAXROWS: 80
+Processing event: 49800000 at 57835164 (16:03:55.164)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 49900000 at 57865838 (16:04:25.838)
+ERROR: over MAXROWS: 80
+Processing event: 50000000 at 57896512 (16:04:56.512)
+ERROR: over MAXROWS: 80
+Processing event: 50100000 at 57927185 (16:05:27.185)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 50200000 at 57957859 (16:05:57.859)
+Processing event: 50300000 at 57988532 (16:06:28.532)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 50400000 at 58019206 (16:06:59.206)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 50500000 at 58049880 (16:07:29.880)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 50600000 at 58080554 (16:08:00.554)
+ERROR: over MAXROWS: 80
+Processing event: 50700000 at 58111228 (16:08:31.228)
+ERROR: over MAXROWS: 80
+Processing event: 50800000 at 58141901 (16:09:01.901)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 50900000 at 58172575 (16:09:32.575)
+ERROR: over MAXROWS: 80
+Processing event: 51000000 at 58203248 (16:10:03.248)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 51100000 at 58233922 (16:10:33.922)
+ERROR: over MAXROWS: 80
+Processing event: 51200000 at 58264596 (16:11:04.596)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 51300000 at 58295270 (16:11:35.270)
+Processing event: 51400000 at 58325943 (16:12:05.943)
+ERROR: over MAXROWS: 80
+Processing event: 51500000 at 58356617 (16:12:36.617)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 51600000 at 58387291 (16:13:07.291)
+Processing event: 51700000 at 58417965 (16:13:37.965)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 51800000 at 58448639 (16:14:08.639)
+Processing event: 51900000 at 58479313 (16:14:39.313)
+ERROR: over MAXROWS: 80
+Processing event: 52000000 at 58509986 (16:15:09.986)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52100000 at 58540659 (16:15:40.659)
+Processing event: 52200000 at 58571333 (16:16:11.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52300000 at 58602007 (16:16:42.007)
+ERROR: over MAXROWS: 80
+Processing event: 52400000 at 58632681 (16:17:12.681)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52500000 at 58663355 (16:17:43.355)
+ERROR: over MAXROWS: 80
+Processing event: 52600000 at 58694029 (16:18:14.029)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52700000 at 58724703 (16:18:44.703)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 52800000 at 58755377 (16:19:15.377)
+Processing event: 52900000 at 58786051 (16:19:46.051)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 53000000 at 58816725 (16:20:16.725)
+Processing event: 53100000 at 58847399 (16:20:47.399)
+Processing event: 53200000 at 58878072 (16:21:18.072)
+Processing event: 53300000 at 58908746 (16:21:48.746)
+ERROR: over MAXROWS: 80
+Processing event: 53400000 at 58939419 (16:22:19.419)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 53500000 at 58970104 (16:22:50.104)
+Processing event: 53600000 at 59000778 (16:23:20.778)
+ERROR: over MAXROWS: 80
+Processing event: 53700000 at 59031451 (16:23:51.451)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 53800000 at 59062125 (16:24:22.125)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 53900000 at 59092798 (16:24:52.798)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54000000 at 59123473 (16:25:23.473)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54100000 at 59154147 (16:25:54.147)
+ERROR: over MAXROWS: 80
+Processing event: 54200000 at 59184820 (16:26:24.820)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54300000 at 59215495 (16:26:55.495)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54400000 at 59246169 (16:27:26.169)
+Processing event: 54500000 at 59276850 (16:27:56.850)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54600000 at 59307524 (16:28:27.524)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54700000 at 59338198 (16:28:58.198)
+ERROR: over MAXROWS: 80
+Processing event: 54800000 at 59368872 (16:29:28.872)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 54900000 at 59399546 (16:29:59.546)
+Processing event: 55000000 at 59430220 (16:30:30.220)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55100000 at 59460896 (16:31:00.896)
+ERROR: over MAXROWS: 80
+Processing event: 55200000 at 59491569 (16:31:31.569)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55300000 at 59522243 (16:32:02.243)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55400000 at 59552917 (16:32:32.917)
+ERROR: over MAXROWS: 80
+Processing event: 55500000 at 59583591 (16:33:03.591)
+Processing event: 55600000 at 59614265 (16:33:34.265)
+Processing event: 55700000 at 59644939 (16:34:04.939)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55800000 at 59675613 (16:34:35.613)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 55900000 at 59706287 (16:35:06.287)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 56000000 at 59736961 (16:35:36.961)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 56100000 at 59767635 (16:36:07.635)
+ERROR: over MAXROWS: 80
+Processing event: 56200000 at 59798308 (16:36:38.308)
+Processing event: 56300000 at 59828982 (16:37:08.982)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 56400000 at 59859655 (16:37:39.655)
+ERROR: over MAXROWS: 80
+Processing event: 56500000 at 59890328 (16:38:10.328)
+ERROR: over MAXROWS: 80
+Processing event: 56600000 at 59921002 (16:38:41.002)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 56700000 at 59951676 (16:39:11.676)
+ERROR: over MAXROWS: 80
+Processing event: 56800000 at 59982350 (16:39:42.350)
+ERROR: over MAXROWS: 80
+Processing event: 56900000 at 60013033 (16:40:13.033)
+Processing event: 57000000 at 60043707 (16:40:43.707)
+Processing event: 57100000 at 60074381 (16:41:14.381)
+ERROR: over MAXROWS: 80
+Processing event: 57200000 at 60105055 (16:41:45.055)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 57300000 at 60135729 (16:42:15.729)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 57400000 at 60166402 (16:42:46.402)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 57500000 at 60197076 (16:43:17.076)
+Processing event: 57600000 at 60227749 (16:43:47.749)
+Processing event: 57700000 at 60258423 (16:44:18.423)
+ERROR: over MAXROWS: 80
+Processing event: 57800000 at 60289097 (16:44:49.097)
+ERROR: over MAXROWS: 80
+Processing event: 57900000 at 60319771 (16:45:19.771)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58000000 at 60350445 (16:45:50.445)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58100000 at 60381119 (16:46:21.119)
+Processing event: 58200000 at 60411793 (16:46:51.793)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58300000 at 60442466 (16:47:22.466)
+Processing event: 58400000 at 60473140 (16:47:53.140)
+ERROR: over MAXROWS: 80
+Processing event: 58500000 at 60503814 (16:48:23.814)
+ERROR: over MAXROWS: 80
+Processing event: 58600000 at 60534488 (16:48:54.488)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58700000 at 60565162 (16:49:25.162)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58800000 at 60595835 (16:49:55.835)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 58900000 at 60626509 (16:50:26.509)
+Processing event: 59000000 at 60657183 (16:50:57.183)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59100000 at 60687857 (16:51:27.857)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59200000 at 60718530 (16:51:58.530)
+ERROR: over MAXROWS: 80
+Processing event: 59300000 at 60749204 (16:52:29.204)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59400000 at 60779877 (16:52:59.877)
+ERROR: over MAXROWS: 80
+Processing event: 59500000 at 60810551 (16:53:30.551)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59600000 at 60841225 (16:54:01.225)
+ERROR: over MAXROWS: 80
+Processing event: 59700000 at 60871898 (16:54:31.898)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59800000 at 60902572 (16:55:02.572)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 59900000 at 60933246 (16:55:33.246)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60000000 at 60963919 (16:56:03.919)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60100000 at 60994601 (16:56:34.601)
+ERROR: over MAXROWS: 80
+Processing event: 60200000 at 61025287 (16:57:05.287)
+ERROR: over MAXROWS: 80
+Processing event: 60300000 at 61055961 (16:57:35.961)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60400000 at 61086635 (16:58:06.635)
+ERROR: over MAXROWS: 80
+Processing event: 60500000 at 61117309 (16:58:37.309)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60600000 at 61147982 (16:59:07.982)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60700000 at 61178656 (16:59:38.656)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 60800000 at 61209330 (17:00:09.330)
+ERROR: over MAXROWS: 80
+Processing event: 60900000 at 61240003 (17:00:40.003)
+ERROR: over MAXROWS: 80
+Processing event: 61000000 at 61270677 (17:01:10.677)
+Processing event: 61100000 at 61301350 (17:01:41.350)
+Processing event: 61200000 at 61332024 (17:02:12.024)
+ERROR: over MAXROWS: 80
+Processing event: 61300000 at 61362698 (17:02:42.698)
+ERROR: over MAXROWS: 80
+Processing event: 61400000 at 61393372 (17:03:13.372)
+Processing event: 61500000 at 61424045 (17:03:44.045)
+Processing event: 61600000 at 61454719 (17:04:14.719)
+ERROR: over MAXROWS: 80
+Processing event: 61700000 at 61485393 (17:04:45.393)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 61800000 at 61516067 (17:05:16.067)
+Processing event: 61900000 at 61546740 (17:05:46.740)
+Processing event: 62000000 at 61577424 (17:06:17.424)
+Processing event: 62100000 at 61608098 (17:06:48.098)
+ERROR: over MAXROWS: 80
+Processing event: 62200000 at 61638772 (17:07:18.772)
+ERROR: over MAXROWS: 80
+Processing event: 62300000 at 61669446 (17:07:49.446)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 62400000 at 61700120 (17:08:20.120)
+Processing event: 62500000 at 61730794 (17:08:50.794)
+ERROR: over MAXROWS: 80
+Processing event: 62600000 at 61761468 (17:09:21.468)
+Processing event: 62700000 at 61792142 (17:09:52.142)
+ERROR: over MAXROWS: 80
+Processing event: 62800000 at 61822816 (17:10:22.816)
+Processing event: 62900000 at 61853489 (17:10:53.489)
+ERROR: over MAXROWS: 80
+Processing event: 63000000 at 61884163 (17:11:24.163)
+Processing event: 63100000 at 61914838 (17:11:54.838)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63200000 at 61945511 (17:12:25.511)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63300000 at 61976186 (17:12:56.186)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63400000 at 62006859 (17:13:26.859)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63500000 at 62037533 (17:13:57.533)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 63600000 at 62068207 (17:14:28.207)
+Processing event: 63700000 at 62098881 (17:14:58.881)
+Processing event: 63800000 at 62129555 (17:15:29.555)
+ERROR: over MAXROWS: 80
+Processing event: 63900000 at 62160228 (17:16:00.228)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64000000 at 62190902 (17:16:30.902)
+ERROR: over MAXROWS: 80
+Processing event: 64100000 at 62221575 (17:17:01.575)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64200000 at 62252249 (17:17:32.249)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64300000 at 62282923 (17:18:02.923)
+ERROR: over MAXROWS: 80
+Processing event: 64400000 at 62313597 (17:18:33.597)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64500000 at 62344270 (17:19:04.270)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64600000 at 62374944 (17:19:34.944)
+ERROR: over MAXROWS: 80
+Processing event: 64700000 at 62405618 (17:20:05.618)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64800000 at 62436292 (17:20:36.292)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 64900000 at 62466966 (17:21:06.966)
+ERROR: over MAXROWS: 80
+Processing event: 65000000 at 62497639 (17:21:37.639)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65100000 at 62528314 (17:22:08.314)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65200000 at 62558988 (17:22:38.988)
+ERROR: over MAXROWS: 80
+Processing event: 65300000 at 62589662 (17:23:09.662)
+ERROR: over MAXROWS: 80
+Processing event: 65400000 at 62620336 (17:23:40.336)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65500000 at 62651010 (17:24:11.010)
+Processing event: 65600000 at 62681691 (17:24:41.691)
+Processing event: 65700000 at 62712365 (17:25:12.365)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65800000 at 62743039 (17:25:43.039)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 65900000 at 62773713 (17:26:13.713)
+Processing event: 66000000 at 62804386 (17:26:44.386)
+ERROR: over MAXROWS: 80
+Processing event: 66100000 at 62835060 (17:27:15.060)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 66200000 at 62865734 (17:27:45.734)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 66300000 at 62896408 (17:28:16.408)
+ERROR: over MAXROWS: 80
+Processing event: 66400000 at 62927081 (17:28:47.081)
+Processing event: 66500000 at 62957755 (17:29:17.755)
+Processing event: 66600000 at 62988429 (17:29:48.429)
+Processing event: 66700000 at 63019103 (17:30:19.103)
+ERROR: over MAXROWS: 80
+Processing event: 66800000 at 63049776 (17:30:49.776)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 66900000 at 63080450 (17:31:20.450)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 67000000 at 63111124 (17:31:51.124)
+Processing event: 67100000 at 63141799 (17:32:21.799)
+Processing event: 67200000 at 63172473 (17:32:52.473)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 67300000 at 63203147 (17:33:23.147)
+ERROR: over MAXROWS: 80
+Processing event: 67400000 at 63233820 (17:33:53.820)
+ERROR: over MAXROWS: 80
+Processing event: 67500000 at 63264496 (17:34:24.496)
+Processing event: 67600000 at 63295170 (17:34:55.170)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 67700000 at 63325843 (17:35:25.843)
+Processing event: 67800000 at 63356517 (17:35:56.517)
+ERROR: over MAXROWS: 80
+Processing event: 67900000 at 63387191 (17:36:27.191)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 68000000 at 63417865 (17:36:57.865)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 68100000 at 63448539 (17:37:28.539)
+ERROR: over MAXROWS: 80
+Processing event: 68200000 at 63479212 (17:37:59.212)
+ERROR: over MAXROWS: 80
+Processing event: 68300000 at 63509886 (17:38:29.886)
+Processing event: 68400000 at 63540571 (17:39:00.571)
+ERROR: over MAXROWS: 80
+Processing event: 68500000 at 63571245 (17:39:31.245)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 68600000 at 63601918 (17:40:01.918)
+ERROR: over MAXROWS: 80
+Processing event: 68700000 at 63632592 (17:40:32.592)
+ERROR: over MAXROWS: 80
+Processing event: 68800000 at 63663266 (17:41:03.266)
+ERROR: over MAXROWS: 80
+Processing event: 68900000 at 63693940 (17:41:33.940)
+Processing event: 69000000 at 63724614 (17:42:04.614)
+ERROR: over MAXROWS: 80
+Processing event: 69100000 at 63755288 (17:42:35.288)
+Processing event: 69200000 at 63785962 (17:43:05.962)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 69300000 at 63816636 (17:43:36.636)
+Processing event: 69400000 at 63847310 (17:44:07.310)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 69500000 at 63877984 (17:44:37.984)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 69600000 at 63908657 (17:45:08.657)
+ERROR: over MAXROWS: 80
+Processing event: 69700000 at 63939331 (17:45:39.331)
+Processing event: 69800000 at 63970004 (17:46:10.004)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 69900000 at 64000678 (17:46:40.678)
+ERROR: over MAXROWS: 80
+Processing event: 70000000 at 64031352 (17:47:11.352)
+Processing event: 70100000 at 64062026 (17:47:42.026)
+Processing event: 70200000 at 64092700 (17:48:12.700)
+Processing event: 70300000 at 64123374 (17:48:43.374)
+Processing event: 70400000 at 64154047 (17:49:14.047)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 70500000 at 64184722 (17:49:44.722)
+ERROR: over MAXROWS: 80
+Processing event: 70600000 at 64215395 (17:50:15.395)
+ERROR: over MAXROWS: 80
+Processing event: 70700000 at 64246069 (17:50:46.069)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 70800000 at 64276742 (17:51:16.742)
+Processing event: 70900000 at 64307416 (17:51:47.416)
+ERROR: over MAXROWS: 80
+Processing event: 71000000 at 64338090 (17:52:18.090)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71100000 at 64368763 (17:52:48.763)
+Processing event: 71200000 at 64399444 (17:53:19.444)
+Processing event: 71300000 at 64430118 (17:53:50.118)
+ERROR: over MAXROWS: 80
+Processing event: 71400000 at 64460792 (17:54:20.792)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71500000 at 64491466 (17:54:51.466)
+ERROR: over MAXROWS: 80
+Processing event: 71600000 at 64522140 (17:55:22.140)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71700000 at 64552814 (17:55:52.814)
+Processing event: 71800000 at 64583488 (17:56:23.488)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 71900000 at 64614161 (17:56:54.161)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 72000000 at 64644835 (17:57:24.835)
+ERROR: over MAXROWS: 80
+Processing event: 72100000 at 64675509 (17:57:55.509)
+Processing event: 72200000 at 64706183 (17:58:26.183)
+ERROR: over MAXROWS: 80
+Processing event: 72300000 at 64736856 (17:58:56.856)
+ERROR: over MAXROWS: 80
+Processing event: 72400000 at 64767531 (17:59:27.531)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 72500000 at 64798204 (17:59:58.204)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 72600000 at 64828878 (18:00:28.878)
+Processing event: 72700000 at 64859553 (18:00:59.553)
+ERROR: over MAXROWS: 80
+Processing event: 72800000 at 64890226 (18:01:30.226)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 72900000 at 64920900 (18:02:00.900)
+ERROR: over MAXROWS: 80
+Processing event: 73000000 at 64951574 (18:02:31.574)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 73100000 at 64982248 (18:03:02.248)
+Processing event: 73200000 at 65012921 (18:03:32.921)
+ERROR: over MAXROWS: 80
+Processing event: 73300000 at 65043594 (18:04:03.594)
+Processing event: 73400000 at 65074268 (18:04:34.268)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 73500000 at 65104941 (18:05:04.941)
+ERROR: over MAXROWS: 80
+Processing event: 73600000 at 65135615 (18:05:35.615)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 73700000 at 65166289 (18:06:06.289)
+Processing event: 73800000 at 65196962 (18:06:36.962)
+Processing event: 73900000 at 65227636 (18:07:07.636)
+Processing event: 74000000 at 65258310 (18:07:38.310)
+Processing event: 74100000 at 65288984 (18:08:08.984)
+Processing event: 74200000 at 65319658 (18:08:39.658)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 74300000 at 65350332 (18:09:10.332)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 74400000 at 65381005 (18:09:41.005)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 74500000 at 65411678 (18:10:11.678)
+Processing event: 74600000 at 65442352 (18:10:42.352)
+Processing event: 74700000 at 65473027 (18:11:13.027)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 74800000 at 65503701 (18:11:43.701)
+Processing event: 74900000 at 65534374 (18:12:14.374)
+Processing event: 75000000 at 65565048 (18:12:45.048)
+ERROR: over MAXROWS: 80
+Processing event: 75100000 at 65595721 (18:13:15.721)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 75200000 at 65626395 (18:13:46.395)
+ERROR: over MAXROWS: 80
+Processing event: 75300000 at 65657069 (18:14:17.069)
+ERROR: over MAXROWS: 80
+Processing event: 75400000 at 65687743 (18:14:47.743)
+ERROR: over MAXROWS: 80
+Processing event: 75500000 at 65718416 (18:15:18.416)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 75600000 at 65749090 (18:15:49.090)
+Processing event: 75700000 at 65779764 (18:16:19.764)
+Processing event: 75800000 at 65810437 (18:16:50.437)
+Processing event: 75900000 at 65841111 (18:17:21.111)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76000000 at 65871785 (18:17:51.785)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76100000 at 65902458 (18:18:22.458)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76200000 at 65933133 (18:18:53.133)
+Processing event: 76300000 at 65963807 (18:19:23.807)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76400000 at 65994481 (18:19:54.481)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76500000 at 66025155 (18:20:25.155)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 76600000 at 66055828 (18:20:55.828)
+ERROR: over MAXROWS: 80
+Processing event: 76700000 at 66086502 (18:21:26.502)
+Processing event: 76800000 at 66117184 (18:21:57.184)
+Processing event: 76900000 at 66147858 (18:22:27.858)
+Processing event: 77000000 at 66178531 (18:22:58.531)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77100000 at 66209205 (18:23:29.205)
+ERROR: over MAXROWS: 80
+Processing event: 77200000 at 66239878 (18:23:59.878)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77300000 at 66270553 (18:24:30.553)
+ERROR: over MAXROWS: 80
+Processing event: 77400000 at 66301227 (18:25:01.227)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77500000 at 66331902 (18:25:31.902)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77600000 at 66362575 (18:26:02.575)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77700000 at 66393249 (18:26:33.249)
+Processing event: 77800000 at 66423923 (18:27:03.923)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 77900000 at 66454596 (18:27:34.596)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 78000000 at 66485270 (18:28:05.270)
+Processing event: 78100000 at 66515944 (18:28:35.944)
+ERROR: over MAXROWS: 80
+Processing event: 78200000 at 66546617 (18:29:06.617)
+ERROR: over MAXROWS: 80
+Processing event: 78300000 at 66577291 (18:29:37.291)
+Processing event: 78400000 at 66607964 (18:30:07.964)
+Processing event: 78500000 at 66638638 (18:30:38.638)
+Processing event: 78600000 at 66669311 (18:31:09.311)
+ERROR: over MAXROWS: 80
+Processing event: 78700000 at 66699985 (18:31:39.985)
+Processing event: 78800000 at 66730659 (18:32:10.659)
+Processing event: 78900000 at 66761333 (18:32:41.333)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 79000000 at 66792007 (18:33:12.007)
+ERROR: over MAXROWS: 80
+Processing event: 79100000 at 66822680 (18:33:42.680)
+Processing event: 79200000 at 66853354 (18:34:13.354)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 79300000 at 66884028 (18:34:44.028)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 79400000 at 66914702 (18:35:14.702)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 79500000 at 66945375 (18:35:45.375)
+Processing event: 79600000 at 66976049 (18:36:16.049)
+ERROR: over MAXROWS: 80
+Processing event: 79700000 at 67006723 (18:36:46.723)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 79800000 at 67037397 (18:37:17.397)
+ERROR: over MAXROWS: 80
+Processing event: 79900000 at 67068070 (18:37:48.070)
+Processing event: 80000000 at 67098744 (18:38:18.744)
+Processing event: 80100000 at 67129418 (18:38:49.418)
+Processing event: 80200000 at 67160092 (18:39:20.092)
+ERROR: over MAXROWS: 80
+Processing event: 80300000 at 67190766 (18:39:50.766)
+Processing event: 80400000 at 67221440 (18:40:21.440)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 80500000 at 67252113 (18:40:52.113)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 80600000 at 67282787 (18:41:22.787)
+ERROR: over MAXROWS: 80
+Processing event: 80700000 at 67313460 (18:41:53.460)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 80800000 at 67344134 (18:42:24.134)
+ERROR: over MAXROWS: 80
+Processing event: 80900000 at 67374808 (18:42:54.808)
+Processing event: 81000000 at 67405481 (18:43:25.481)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 81100000 at 67436155 (18:43:56.155)
+ERROR: over MAXROWS: 80
+Processing event: 81200000 at 67466829 (18:44:26.829)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 81300000 at 67497503 (18:44:57.503)
+Processing event: 81400000 at 67528177 (18:45:28.177)
+ERROR: over MAXROWS: 80
+Processing event: 81500000 at 67558851 (18:45:58.851)
+Processing event: 81600000 at 67589524 (18:46:29.524)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 81700000 at 67620198 (18:47:00.198)
+ERROR: over MAXROWS: 80
+Processing event: 81800000 at 67650872 (18:47:30.872)
+ERROR: over MAXROWS: 80
+Processing event: 81900000 at 67681546 (18:48:01.546)
+ERROR: over MAXROWS: 80
+Processing event: 82000000 at 67712220 (18:48:32.220)
+Processing event: 82100000 at 67742894 (18:49:02.894)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 82200000 at 67773568 (18:49:33.568)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 82300000 at 67804241 (18:50:04.241)
+ERROR: over MAXROWS: 80
+Processing event: 82400000 at 67834923 (18:50:34.923)
+ERROR: over MAXROWS: 80
+Processing event: 82500000 at 67865597 (18:51:05.597)
+Processing event: 82600000 at 67896271 (18:51:36.271)
+ERROR: over MAXROWS: 80
+Processing event: 82700000 at 67926945 (18:52:06.945)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 82800000 at 67957619 (18:52:37.619)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 82900000 at 67988292 (18:53:08.292)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83000000 at 68018966 (18:53:38.966)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83100000 at 68049640 (18:54:09.640)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83200000 at 68080314 (18:54:40.314)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83300000 at 68110988 (18:55:10.988)
+Processing event: 83400000 at 68141662 (18:55:41.662)
+Processing event: 83500000 at 68172336 (18:56:12.336)
+ERROR: over MAXROWS: 80
+Processing event: 83600000 at 68203010 (18:56:43.010)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83700000 at 68233684 (18:57:13.684)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 83800000 at 68264358 (18:57:44.358)
+Processing event: 83900000 at 68295031 (18:58:15.031)
+Processing event: 84000000 at 68325706 (18:58:45.706)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 84100000 at 68356379 (18:59:16.379)
+Processing event: 84200000 at 68387053 (18:59:47.053)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 84300000 at 68417727 (19:00:17.727)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 84400000 at 68448401 (19:00:48.401)
+ERROR: over MAXROWS: 80
+Processing event: 84500000 at 68479074 (19:01:19.074)
+ERROR: over MAXROWS: 80
+Processing event: 84600000 at 68509748 (19:01:49.748)
+Processing event: 84700000 at 68540422 (19:02:20.422)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 84800000 at 68571096 (19:02:51.096)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 84900000 at 68601769 (19:03:21.769)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 85000000 at 68632443 (19:03:52.443)
+ERROR: over MAXROWS: 80
+Processing event: 85100000 at 68663116 (19:04:23.116)
+ERROR: over MAXROWS: 80
+Processing event: 85200000 at 68693790 (19:04:53.790)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 85300000 at 68724464 (19:05:24.464)
+Processing event: 85400000 at 68755138 (19:05:55.138)
+ERROR: over MAXROWS: 80
+Processing event: 85500000 at 68785812 (19:06:25.812)
+Failure in Channel 5 at event 85379697 at approximately  19:06
+Processing event: 85600000 at 68816485 (19:06:56.485)
+ERROR: over MAXROWS: 80
+Processing event: 85700000 at 68847159 (19:07:27.159)
+ERROR: over MAXROWS: 80
+Processing event: 85800000 at 68877833 (19:07:57.833)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 85900000 at 68908507 (19:08:28.507)
+Processing event: 86000000 at 68939181 (19:08:59.181)
+Channel 11 temporarily desynced at 19:09:18.786   :86063898
+Processing event: 86100000 at 68969856 (19:09:29.856)
+ERROR: over MAXROWS: 80
+Processing event: 86200000 at 69000529 (19:10:00.529)
+ERROR: over MAXROWS: 80
+Processing event: 86300000 at 69031203 (19:10:31.203)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 86400000 at 69061876 (19:11:01.876)
+ERROR: over MAXROWS: 80
+Processing event: 86500000 at 69092550 (19:11:32.550)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 86600000 at 69123223 (19:12:03.223)
+Processing event: 86700000 at 69153897 (19:12:33.897)
+Processing event: 86800000 at 69184571 (19:13:04.571)
+Processing event: 86900000 at 69215245 (19:13:35.245)
+Processing event: 87000000 at 69245919 (19:14:05.919)
+Processing event: 87100000 at 69276593 (19:14:36.593)
+ERROR: over MAXROWS: 80
+Processing event: 87200000 at 69307266 (19:15:07.266)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 87300000 at 69337940 (19:15:37.940)
+ERROR: over MAXROWS: 80
+Processing event: 87400000 at 69368614 (19:16:08.614)
+Processing event: 87500000 at 69399288 (19:16:39.288)
+ERROR: over MAXROWS: 80
+Processing event: 87600000 at 69429962 (19:17:09.962)
+ERROR: over MAXROWS: 80
+Processing event: 87700000 at 69460636 (19:17:40.636)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 87800000 at 69491309 (19:18:11.309)
+ERROR: over MAXROWS: 80
+Processing event: 87900000 at 69521983 (19:18:41.983)
+ERROR: over MAXROWS: 80
+Processing event: 88000000 at 69552665 (19:19:12.665)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 88100000 at 69583339 (19:19:43.339)
+ERROR: over MAXROWS: 80
+Processing event: 88200000 at 69614012 (19:20:14.012)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 88300000 at 69644687 (19:20:44.687)
+Processing event: 88400000 at 69675360 (19:21:15.360)
+ERROR: over MAXROWS: 80
+Processing event: 88500000 at 69706034 (19:21:46.034)
+Processing event: 88600000 at 69736708 (19:22:16.708)
+ERROR: over MAXROWS: 80
+Processing event: 88700000 at 69767383 (19:22:47.383)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 88800000 at 69798057 (19:23:18.057)
+Processing event: 88900000 at 69828730 (19:23:48.730)
+Processing event: 89000000 at 69859404 (19:24:19.404)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 89100000 at 69890078 (19:24:50.078)
+Processing event: 89200000 at 69920752 (19:25:20.752)
+Processing event: 89300000 at 69951426 (19:25:51.426)
+Processing event: 89400000 at 69982100 (19:26:22.100)
+ERROR: over MAXROWS: 80
+Processing event: 89500000 at 70012774 (19:26:52.774)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 89600000 at 70043449 (19:27:23.449)
+Processing event: 89700000 at 70074123 (19:27:54.123)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 89800000 at 70104797 (19:28:24.797)
+Processing event: 89900000 at 70135471 (19:28:55.471)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 90000000 at 70166145 (19:29:26.145)
+ERROR: over MAXROWS: 80
+Processing event: 90100000 at 70196818 (19:29:56.818)
+Processing event: 90200000 at 70227493 (19:30:27.493)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 90300000 at 70258166 (19:30:58.166)
+Processing event: 90400000 at 70288840 (19:31:28.840)
+Processing event: 90500000 at 70319514 (19:31:59.514)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 90600000 at 70350188 (19:32:30.188)
+Processing event: 90700000 at 70380862 (19:33:00.862)
+ERROR: over MAXROWS: 80
+Processing event: 90800000 at 70411536 (19:33:31.536)
+ERROR: over MAXROWS: 80
+Processing event: 90900000 at 70442210 (19:34:02.210)
+Processing event: 91000000 at 70472884 (19:34:32.884)
+ERROR: over MAXROWS: 80
+Processing event: 91100000 at 70503558 (19:35:03.558)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 91200000 at 70534231 (19:35:34.231)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 91300000 at 70564905 (19:36:04.905)
+Processing event: 91400000 at 70595579 (19:36:35.579)
+Processing event: 91500000 at 70626252 (19:37:06.252)
+Processing event: 91600000 at 70656926 (19:37:36.926)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 91700000 at 70687600 (19:38:07.600)
+Processing event: 91800000 at 70718274 (19:38:38.274)
+Processing event: 91900000 at 70748948 (19:39:08.948)
+ERROR: over MAXROWS: 80
+Processing event: 92000000 at 70779622 (19:39:39.622)
+Processing event: 92100000 at 70810296 (19:40:10.296)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 92200000 at 70840970 (19:40:40.970)
+ERROR: over MAXROWS: 80
+Processing event: 92300000 at 70871644 (19:41:11.644)
+ERROR: over MAXROWS: 80
+Processing event: 92400000 at 70902318 (19:41:42.318)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 92500000 at 70932994 (19:42:12.994)
+Processing event: 92600000 at 70963667 (19:42:43.667)
+ERROR: over MAXROWS: 80
+Processing event: 92700000 at 70994341 (19:43:14.341)
+ERROR: over MAXROWS: 80
+Processing event: 92800000 at 71025015 (19:43:45.015)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 92900000 at 71055689 (19:44:15.689)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 93000000 at 71086362 (19:44:46.362)
+Processing event: 93100000 at 71117036 (19:45:17.036)
+ERROR: over MAXROWS: 80
+Processing event: 93200000 at 71147710 (19:45:47.710)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 93300000 at 71178384 (19:46:18.384)
+RootApp ERROR: cannot open image file "plots/BeamSpot.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch7.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch7.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch7.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY7_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY7_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY7_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX7_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX7_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX7_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC2.gif" for writing. Please check permissions.
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+==Zero counting by BX==
+1 26217 23863.2
+170 26217 24179.8
+171 26217 24101
+172 26217 23872.9
+173 26217 23778.8
+174 26217 24514.1
+175 26217 24520.3
+176 26217 24170
+177 26217 24196.2
+178 26217 24495.8
+179 26217 24313.9
+180 26217 24271.2
+181 26217 24178.2
+219 26217 24044.4
+220 26217 24187.6
+221 26217 24069.8
+222 26217 24063.1
+223 26217 24119.7
+224 26217 24172.8
+225 26217 24124.1
+226 26217 24273.2
+227 26217 24117
+228 26217 24147
+229 26217 24135.9
+230 26217 24247.3
+231 26217 24110.2
+232 26217 24247.7
+233 26217 24177.1
+234 26217 24288.2
+235 26217 24311.4
+236 26217 24384.5
+237 26217 24235
+238 26217 24376.2
+239 26217 24184.2
+240 26217 24327.4
+241 26217 24245.4
+242 26217 24292.8
+243 26217 24423.5
+244 26217 24412.1
+245 26203 24325.3
+246 26219 24384.2
+247 26219 24506.2
+248 26219 24525.7
+249 26219 24390.2
+250 26218 24467.4
+251 26218 24483.6
+252 26218 24508.4
+253 26218 24372.8
+254 26218 24428.4
+255 26217 24460.7
+256 26217 24531.3
+257 26217 24493.8
+258 26217 24524.6
+259 26217 24533.8
+260 26217 24543.4
+261 26217 24524.6
+262 26217 24552.5
+263 26217 24519.3
+264 26217 24507.3
+265 26217 24467.9
+266 26217 24474.6
+267 26217 24704.9
+268 26217 24693.6
+269 26217 24631
+270 26217 24681.5
+271 26217 24729.5
+272 26217 24703.3
+273 26217 24704
+274 26217 24726.8
+275 26217 24665.7
+276 26217 24697.4
+277 26217 24629.1
+278 26217 24656.7
+279 26217 24536.4
+280 26217 24613.2
+281 26217 24534.1
+282 26217 24583.6
+283 26217 24604.2
+284 26217 24613.1
+285 26217 24537.6
+286 26217 24575.5
+287 26217 24555.7
+288 26217 24567.4
+289 26217 24515.2
+290 26204 24652.3
+328 26217 24028.9
+329 26217 24267.1
+330 26217 24102.8
+331 26217 24162.8
+332 26217 24073.9
+333 26217 24214.1
+334 26217 24139.2
+335 26216 24310.8
+336 26219 24087.1
+337 26219 24204
+338 26219 24218.6
+339 26219 24303.2
+340 26218 24126
+341 26218 24324.8
+342 26218 24138.2
+343 26218 24299.5
+344 26218 24300.3
+345 26218 24435.3
+346 26217 24296
+347 26217 24401.7
+348 26217 24266.6
+349 26217 24425.9
+350 26217 24309.8
+351 26217 24373.4
+352 26217 24489.2
+353 26217 24489.7
+354 26217 24474.2
+355 26217 24535.3
+356 26217 24573.3
+357 26217 24627.2
+358 26217 24491.9
+359 26217 24571.2
+360 26217 24563.9
+361 26217 24609.7
+362 26217 24486.9
+363 26217 24585.2
+364 26217 24540.1
+365 26217 24563.2
+366 26217 24548.9
+367 26217 24585.2
+368 26217 24573.7
+369 26217 24596.3
+370 26217 24580.1
+371 26217 24593.8
+372 26217 24549.6
+373 26217 24569.5
+374 26217 24534.5
+375 26217 24583.3
+376 26217 24811.8
+377 26217 24841.3
+378 26217 24814.1
+379 26217 24816.7
+380 26216 24886.5
+381 26219 24915.3
+382 26219 24845.3
+383 26219 24875.4
+384 26219 24823.2
+385 26219 24866.9
+386 26218 24825.7
+387 26218 24829.1
+388 26218 24589.5
+389 26218 24643.6
+390 26218 24536.6
+391 26217 24652.1
+392 26217 24619.5
+393 26217 24654.2
+394 26217 24584.1
+395 26217 24652
+396 26217 24576.7
+397 26217 24559.2
+398 26217 24581.3
+399 26217 24689.2
+437 26217 24029.2
+438 26217 24208.2
+439 26217 24033.1
+440 26217 24147.5
+441 26217 24057.7
+442 26217 24227.3
+443 26217 24131.3
+444 26217 24317.5
+445 26217 24079.5
+446 26217 24250.6
+447 26217 24135.1
+448 26217 24284.4
+449 26217 24100.5
+450 26217 24245.8
+451 26217 24134.2
+452 26217 24266.6
+453 26217 24306.1
+454 26217 24431.2
+455 26217 24250.6
+456 26217 24385.8
+457 26217 24255.6
+458 26217 24382
+459 26217 24254.8
+460 26217 24360.8
+461 26217 24371.2
+462 26217 24461.7
+463 26217 24338.7
+464 26217 24413.7
+465 26217 24517.8
+466 26217 24555.9
+467 26217 24435.8
+468 26217 24504.9
+469 26217 24453
+470 26217 24531.2
+471 26221 24416.6
+472 26219 24468.7
+473 26219 24587.4
+474 26219 24529.2
+475 26219 24417.7
+476 26218 24509.8
+477 26218 24499.8
+478 26218 24624.9
+479 26218 24519.2
+480 26218 24588.7
+481 26217 24457.2
+482 26217 24528.7
+483 26217 24472.5
+484 26217 24540.9
+485 26217 24630.1
+486 26217 24670.7
+487 26217 24712.2
+488 26217 24695
+489 26217 24705.2
+490 26217 24727.2
+491 26217 24705.4
+492 26217 24764.6
+493 26217 24645.8
+494 26217 24746.4
+495 26217 24652.8
+496 26217 24715.3
+497 26217 24571.1
+498 26217 24651.6
+499 26217 24595.3
+500 26217 24635.2
+501 26217 24636.7
+502 26217 24712.1
+503 26217 24620.8
+504 26217 24749.8
+505 26217 24725.7
+506 26217 24712
+507 26217 24678.8
+508 26217 24770.8
+546 26217 23931.9
+547 26217 24148.9
+548 26217 24019.5
+549 26217 24114.2
+550 26217 23906.6
+551 26217 24133.2
+552 26217 24060.6
+553 26217 24187.2
+554 26217 23930.6
+555 26217 24126.7
+556 26217 24116.9
+557 26217 24226.9
+558 26217 24078.2
+559 26217 24217
+560 26217 24156.6
+561 26188 24246.7
+562 26219 24238.3
+563 26219 24333
+564 26219 24240
+565 26219 24370
+566 26218 24207.2
+567 26218 24279.4
+568 26218 24231
+569 26218 24364.4
+570 26218 24414.9
+571 26217 24490.8
+572 26217 24401.9
+573 26217 24473.2
+574 26217 24543.2
+575 26217 24560.7
+576 26217 24437.4
+577 26217 24530.2
+578 26217 24495.9
+579 26217 24493.9
+580 26217 24453.8
+581 26217 24474.2
+582 26217 24494.6
+583 26217 24499.6
+584 26217 24519.1
+585 26217 24535.6
+586 26217 24482.3
+587 26217 24542.4
+588 26217 24538.2
+589 26217 24572.7
+590 26217 24413.8
+591 26217 24470.5
+592 26217 24470
+593 26217 24487.9
+594 26217 24667.8
+595 26217 24671.1
+596 26217 24660.8
+597 26217 24683.2
+598 26217 24706.2
+599 26217 24700.7
+600 26217 24694.7
+601 26217 24725.6
+602 26217 24644.9
+603 26217 24662.9
+604 26217 24654.2
+605 26217 24685.8
+606 26201 24459.8
+607 26219 24492.9
+608 26219 24479
+609 26219 24572.8
+610 26219 24498.5
+611 26218 24507.7
+612 26218 24535.8
+613 26218 24572.8
+614 26218 24457.8
+615 26218 24498.5
+616 26217 24510.8
+617 26217 24625.6
+655 26219 24012
+656 26218 24165.7
+657 26218 24026.1
+658 26218 24128.7
+659 26218 24113.7
+660 26218 24212.9
+661 26217 24116.7
+662 26217 24286.2
+663 26217 24073.2
+664 26217 24207.1
+665 26217 24144.8
+666 26217 24286.8
+667 26217 24050.2
+668 26217 24229.4
+669 26217 24111.9
+670 26217 24245.8
+671 26217 24286.2
+672 26217 24333.7
+673 26217 24286.3
+674 26217 24375.2
+675 26217 24255.6
+676 26217 24358.8
+677 26217 24254.4
+678 26217 24370.2
+679 26217 24397
+680 26217 24432.4
+681 26217 24335.8
+682 26217 24429.2
+683 26217 24548.7
+684 26217 24529.5
+685 26217 24452.4
+686 26217 24516.4
+687 26217 24496.8
+688 26217 24555.1
+689 26217 24451.1
+690 26217 24488.8
+691 26217 24429
+692 26217 24539.8
+693 26217 24470.6
+694 26217 24471.8
+695 26217 24549.6
+696 26205 24558.7
+697 26219 24533.8
+698 26219 24535.8
+699 26219 24464.4
+700 26219 24519.1
+701 26218 24501.5
+702 26218 24511.3
+703 26218 24590.8
+704 26218 24621
+705 26218 24576.6
+706 26218 24605.6
+707 26217 24601.3
+708 26217 24682.2
+709 26217 24647.1
+710 26217 24647.1
+711 26217 24599.5
+712 26217 24623.7
+713 26217 24589.8
+714 26217 24603.9
+715 26217 24504.8
+716 26217 24564.5
+717 26217 24529.5
+718 26217 24544.5
+719 26217 24607.3
+720 26217 24629.8
+721 26217 24545.5
+722 26217 24610.7
+723 26217 24514.2
+724 26217 24595.8
+725 26217 24551.7
+726 26217 24673.2
+895 26217 24027.3
+896 26217 24198.3
+897 26217 24033.4
+898 26217 24119.4
+899 26217 23988.1
+900 26217 24169.8
+901 26217 24063.6
+902 26217 24255.8
+903 26217 24018.2
+904 26217 24218.7
+905 26217 24121
+906 26217 24238.6
+907 26217 24012.5
+908 26217 24211.5
+909 26217 24117.8
+910 26217 24268.6
+911 26217 24216.3
+912 26217 24330.3
+913 26217 24166.8
+914 26217 24298.6
+915 26217 24241.8
+916 26217 24333
+917 26217 24189.2
+918 26217 24306.6
+919 26217 24351.4
+920 26217 24415.8
+921 26217 24332.2
+922 19738 18384.8
+923 26219 24444.3
+924 26219 24476.3
+925 26219 24414.8
+926 26219 24475.6
+927 26218 24439.3
+928 26218 24480.3
+929 26218 24400.4
+930 26218 24471
+931 26218 24474.3
+932 26217 24505.4
+933 26217 24392.2
+934 26217 24453.6
+935 26217 24484.2
+936 26217 24530.2
+937 26217 24402.7
+938 26217 24461.1
+939 26217 24433.5
+940 26217 24506.4
+941 26217 24466.2
+942 26217 24482.3
+943 26217 24752.3
+944 26217 24735.2
+945 26217 24584.8
+946 26217 24740.9
+947 26217 24651.7
+948 26217 24716.7
+949 26217 24722.9
+950 26217 24714.6
+951 26217 24630.5
+952 26217 24646.7
+953 26217 24629.2
+954 26217 24627.9
+955 26217 24506.3
+956 26217 24500.5
+957 26217 24442.4
+958 26217 24552.8
+959 26217 24515.8
+960 26217 24563.7
+961 26217 24504.3
+962 26217 24653.2
+963 26217 24562.8
+964 26217 24662.1
+965 26217 24648.3
+966 26217 24764.2
+1004 26217 24029.5
+1005 26217 24134
+1006 26217 24003.8
+1007 26217 24156.2
+1008 26217 24088.8
+1009 26217 24148.8
+1010 26217 24070.8
+1011 26217 24214.3
+1012 26202 24067.9
+1013 26219 24132.1
+1014 26219 24081.3
+1015 26219 24226
+1016 26219 24145.1
+1017 26218 24237.8
+1018 26218 24106.2
+1019 26218 24280.3
+1020 26218 24291.5
+1021 26218 24394.9
+1022 26217 24222.8
+1023 26217 24369.9
+1024 26217 24322.7
+1025 26217 24361
+1026 26217 24220.9
+1027 26217 24356
+1028 26217 24410.2
+1029 26217 24426.5
+1030 26217 24344.2
+1031 26217 24442
+1032 26217 24509.9
+1033 26217 24551.8
+1034 26217 24422.3
+1035 26217 24508.7
+1036 26217 24484.2
+1037 26217 24532
+1038 26217 24413.2
+1039 26217 24516
+1040 26217 24626.4
+1041 26217 24629.8
+1042 26217 24492.5
+1043 26217 24577.5
+1044 26217 24698.9
+1045 26217 24766
+1046 26217 24701.5
+1047 26217 24778.2
+1048 26217 24710.6
+1049 26217 24737.4
+1050 26217 24690.5
+1051 26217 24736.2
+1052 26217 24677.2
+1053 26217 24782.2
+1054 26217 24643.2
+1055 26217 24674.1
+1056 26217 24765.8
+1057 26204 24792.2
+1058 26219 24702.8
+1059 26219 24727.4
+1060 26219 24793.7
+1061 26219 24858.5
+1062 26218 24797.2
+1063 26218 24804
+1064 26218 24716
+1065 26218 24743.8
+1066 26218 24726.2
+1067 26217 24784.2
+1068 26217 24715.1
+1069 26217 24782.6
+1070 26217 24772.3
+1071 26217 24802.6
+1072 26217 24699.9
+1073 26217 24745.6
+1074 26217 24667
+1075 26217 24769
+1113 26217 24051.9
+1114 26217 24188.8
+1115 26217 24008.7
+1116 26217 24136.8
+1117 26217 24095.7
+1118 26217 24166
+1119 26217 24105.9
+1120 26217 24284.2
+1121 26217 24121.6
+1122 26217 24197.3
+1123 26217 24162.2
+1124 26217 24303.8
+1125 26217 24168.1
+1126 26217 24248.8
+1127 26217 24154
+1128 26217 24274.8
+1129 26217 24319
+1130 26217 24371.5
+1131 26217 24248.2
+1132 26217 24399.8
+1133 26217 24332.6
+1134 26217 24341.3
+1135 26217 24328.8
+1136 26217 24398.6
+1137 26217 24425.8
+1138 26217 24447.9
+1139 26217 24359.9
+1140 26217 24474.9
+1141 26217 24545.8
+1142 26217 24532.4
+1143 26217 24469.2
+1144 26217 24530.9
+1145 26217 24514
+1146 26217 24555.2
+1147 26216 24475.9
+1148 26219 24531.2
+1149 26219 24502.6
+1150 26219 24478.6
+1151 26219 24568.4
+1152 26219 24641.5
+1153 26218 24583.4
+1154 26218 24704.7
+1155 26218 24699.6
+1156 26218 24789.8
+1157 26218 24791.2
+1158 26217 24655.2
+1159 26217 24717.9
+1160 26217 24716.7
+1161 26217 24790.2
+1162 26217 24767.4
+1163 26217 24792.4
+1164 26217 24830.6
+1165 26217 24867.8
+1166 26217 24894.4
+1167 26217 24836.9
+1168 26217 24876.8
+1169 26217 24826.1
+1170 26217 24886.3
+1171 26217 24770.2
+1172 26217 24836.6
+1173 26217 24787.7
+1174 26217 24760
+1175 26217 24670.5
+1176 26217 24771.3
+1177 26217 24791.2
+1178 26217 24772.8
+1179 26217 24736.6
+1180 26217 24817.7
+1181 26217 24773.8
+1182 26217 24691.7
+1183 26217 24639.8
+1184 26217 24894
+1222 26217 23998.6
+1223 26217 24152.8
+1224 26217 24050.3
+1225 26217 24117.8
+1226 26217 23968.7
+1227 26217 24163.7
+1228 26217 24141.2
+1229 26217 24227.4
+1230 26217 23921.2
+1231 26217 24159.2
+1232 26217 24096.8
+1233 26217 24211.3
+1234 26217 24013.6
+1235 26217 24185
+1236 26217 24158.6
+1237 26216 24293.4
+1238 26221 24188.7
+1239 26219 24302.4
+1240 26219 24230.8
+1241 26219 24327.5
+1242 26219 24157.2
+1243 26218 24247.9
+1244 26218 24146.7
+1245 26218 24298.7
+1246 26218 24371.8
+1247 26218 24432.7
+1248 26217 24372.2
+1249 26217 24438.8
+1250 26217 24453.5
+1251 26217 24519.2
+1252 26217 24442.6
+1253 26217 24514.9
+1254 26217 24380.9
+1255 26217 24477.2
+1256 26217 24444.8
+1257 26217 24526.5
+1258 26217 24564.5
+1259 26217 24611.5
+1260 26217 24572.6
+1261 26217 24609.8
+1262 26217 24619
+1263 26217 24701.5
+1264 26217 24610.5
+1265 26217 24736.9
+1266 26217 24713.2
+1267 26217 24614.1
+1268 26217 24733.5
+1269 26217 24748.8
+1270 26217 24880.7
+1271 26217 24836.1
+1272 26217 24792.8
+1273 26217 24869.5
+1274 26217 24882.3
+1275 26217 24843.7
+1276 26217 24827.4
+1277 26217 24882.2
+1278 26217 24735.5
+1279 26217 24780.8
+1280 26217 24812.4
+1281 26217 24844.4
+1282 26217 24666.5
+1283 26222 24750.9
+1284 26219 24668.8
+1285 26219 24757.7
+1286 26219 24739.2
+1287 26219 24816.1
+1288 26218 24674.2
+1289 26218 24809.8
+1290 26218 24695.2
+1291 26218 24607.7
+1292 26218 24594.5
+1293 26217 24754.2
+1331 26219 23975
+1332 26219 24126.2
+1333 26218 23944.2
+1334 26218 24079.3
+1335 26218 24046.8
+1336 26218 24130.6
+1337 26218 24112.9
+1338 26217 24219.7
+1339 26217 24070.1
+1340 26217 24108.6
+1341 26217 24084.5
+1342 26217 24156.1
+1343 26217 24076
+1344 26217 24213.1
+1345 26217 24077.3
+1346 26217 24173.2
+1347 26217 24210.9
+1348 26217 24271.8
+1349 26217 24238.2
+1350 26217 24335.7
+1351 26217 24194.6
+1352 26217 24250.2
+1353 26217 24154.2
+1354 26217 24259.8
+1355 26217 24360.9
+1356 26217 24406.9
+1357 26217 24343.4
+1358 26217 24397.6
+1359 26217 24512.6
+1360 26217 24533.1
+1361 26217 24455.4
+1362 26217 24480.9
+1363 26217 24474.6
+1364 26217 24498.2
+1365 26217 24449.2
+1366 26217 24471.5
+1367 26217 24493.8
+1368 26217 24613.8
+1369 26217 24504.7
+1370 26217 24551.7
+1371 26217 24641.2
+1372 26217 24748.9
+1373 26197 24667.8
+1374 26219 24647.2
+1375 26219 24556.3
+1376 26219 24574.2
+1377 26219 24609.9
+1378 26218 24588.3
+1379 26218 24860.2
+1380 26218 24755.8
+1381 26218 24832.6
+1382 26218 24791.1
+1383 26217 24903.2
+1384 26217 24872.7
+1385 26217 24872.8
+1386 26217 24894.9
+1387 26217 24825.8
+1388 26217 24913.1
+1389 26217 24851
+1390 26217 24900.6
+1391 26217 24680.2
+1392 26217 24749.8
+1393 26217 24681.7
+1394 26217 24709.8
+1395 26217 24703.2
+1396 26217 24762.3
+1397 26217 24742.2
+1398 26217 24785.1
+1399 26217 24745.4
+1400 26217 24762.6
+1401 26217 24575.2
+1402 26217 24735
+1789 26217 23920.4
+1790 26217 24080.8
+1791 26217 24024.3
+1792 26217 24137.4
+1793 26217 23977.2
+1794 26217 24129.2
+1795 26217 24101
+1796 26217 24209.2
+1797 26217 23901.8
+1798 26217 24121.7
+1799 26217 24109.2
+1800 26217 24221.8
+1801 26217 23989.3
+1802 26217 24136.9
+1803 26217 24114.9
+1804 26217 24193.8
+1805 26217 24112.9
+1806 26217 24263.3
+1807 26217 24214.6
+1808 26217 24341.2
+1809 26217 24119.8
+1810 26217 24270
+1811 26217 24171.8
+1812 26217 24272.1
+1813 26217 24298.8
+1814 26217 24289.1
+1815 26217 24298.1
+1816 26217 24380.8
+1817 26217 24378.2
+1818 26217 24408.1
+1819 26217 24398.7
+1820 26217 24480.6
+1821 26217 24319.1
+1822 26217 24415.2
+1823 26217 24368.4
+1824 26202 24389.7
+1825 26219 24357.4
+1826 26219 24437.4
+1827 26219 24337.8
+1828 26219 24415.2
+1829 26218 24402.5
+1830 26218 24461.5
+1831 26218 24432.2
+1832 26218 24479.7
+1833 26218 24388.3
+1834 26217 24431.3
+1835 26217 24508.2
+1836 26217 24592.2
+1837 26217 24650.2
+1838 26217 24747.8
+1839 26217 24750.9
+1840 26217 24817
+1841 26217 24771.6
+1842 26217 24916
+1843 26217 24868.6
+1844 26217 24865.4
+1845 26217 24763.1
+1846 26217 24811.2
+1847 26217 24815.2
+1848 26217 24796.8
+1849 26217 24636.9
+1850 26217 24694.2
+1851 26217 24621.3
+1852 26217 24778.2
+1853 26217 24658.6
+1854 26217 24784.9
+1855 26217 24633.2
+1856 26217 24889.8
+1857 26217 24731.6
+1858 26217 24546.8
+1859 26217 24547.2
+1860 26217 24680.1
+1898 26217 24023.2
+1899 26217 24162.4
+1900 26217 23984.3
+1901 26217 24104.4
+1902 26217 24057.8
+1903 26217 24136.6
+1904 26217 24106.2
+1905 26217 24228.8
+1906 26217 24047.2
+1907 26217 24110.6
+1908 26217 24064
+1909 26217 24187.6
+1910 26217 24010.1
+1911 26217 24171.7
+1912 26217 24095.2
+1913 26217 24212.6
+1914 26215 24185
+1915 26219 24328.2
+1916 26219 24166.2
+1917 26219 24302.6
+1918 26219 24145
+1919 26218 24233.8
+1920 26218 24143.6
+1921 26218 24262.1
+1922 26218 24377.6
+1923 26218 24416.9
+1924 26218 24333
+1925 26217 24404.2
+1926 26217 24493.3
+1927 26217 24510.9
+1928 26217 24387.4
+1929 26217 24471.3
+1930 26217 24469.9
+1931 26217 24469.2
+1932 26217 24383.2
+1933 26217 24422.5
+1934 26217 24463.5
+1935 26217 24479.6
+1936 26217 24343.6
+1937 26217 24408.9
+1938 26217 24586
+1939 26217 24657.9
+1940 26217 24618
+1941 26217 24682.2
+1942 26217 24610.8
+1943 26217 24685.2
+1944 26217 24602.6
+1945 26217 24600.6
+1946 26217 24593.4
+1947 26217 24872.8
+1948 26217 24791.2
+1949 26217 24779.5
+1950 26217 24884.2
+1951 26217 24902.8
+1952 26217 24809.8
+1953 26217 24847.8
+1954 26217 24741.8
+1955 26217 24785.5
+1956 26217 24729.4
+1957 26217 24776.4
+1958 26217 24620.4
+1959 26216 24798.8
+1960 26219 24692.2
+1961 26219 24793.1
+1962 26219 24759.4
+1963 26219 24806.1
+1964 26219 24760.4
+1965 26218 24733.1
+1966 26218 24788
+1967 26218 24700.4
+1968 26218 24563.2
+1969 26218 24707.8
+2007 26219 23947.3
+2008 26219 24139.2
+2009 26219 23961.2
+2010 26218 24096.2
+2011 26218 24005.9
+2012 26218 24081.7
+2013 26218 24056.4
+2014 26218 24191.8
+2015 26217 23966.1
+2016 26217 24075.9
+2017 26217 24037.5
+2018 26217 24168.2
+2019 26217 24060.1
+2020 26217 24154
+2021 26217 24107.3
+2022 26217 24238.3
+2023 26217 24186.1
+2024 26217 24289.5
+2025 26217 24202.4
+2026 26217 24321.9
+2027 26217 24170.4
+2028 26217 24232.8
+2029 26217 24206.2
+2030 26217 24291.8
+2031 26217 24257.8
+2032 26217 24325.3
+2033 26217 24244.5
+2034 26217 24336.8
+2035 26217 24376.2
+2036 26217 24432.6
+2037 26217 24308.1
+2038 26217 24392.2
+2039 26217 24379.2
+2040 26217 24398.5
+2041 26217 24328.1
+2042 26217 24362.3
+2043 26217 24429.1
+2044 26217 24451.3
+2045 26217 24521.8
+2046 26217 24525.8
+2047 26217 24562.4
+2048 26217 24653.4
+2049 26217 24633.5
+2050 26221 24702.8
+2051 26219 24554.1
+2052 26219 24643
+2053 26219 24572.9
+2054 26219 24652
+2055 26218 24659.6
+2056 26218 24735.7
+2057 26218 24732.6
+2058 26218 24783.6
+2059 26218 24692
+2060 26217 24824.7
+2061 26217 24810.1
+2062 26217 24825.1
+2063 26217 24614.1
+2064 26217 24775.2
+2065 26217 24763.3
+2066 26217 24737.1
+2067 26217 24654.8
+2068 26217 24655.4
+2069 26217 24645.4
+2070 26217 24727.1
+2071 26217 24654.4
+2072 26217 24749.4
+2073 26217 24760.2
+2074 26217 24770
+2075 26217 24668.1
+2076 26217 24632.2
+2077 26217 24526.5
+2078 26217 24824.9
+2116 26217 24143.3
+2117 26217 24192.5
+2118 26217 23994.8
+2119 26217 24097.9
+2120 26217 24204.1
+2121 26217 24154.1
+2122 26217 24071.6
+2123 26217 24263.2
+2124 26217 24170.3
+2125 26217 24151.6
+2126 26217 24126
+2127 26217 24194.3
+2128 26217 24100.8
+2129 26217 24177
+2130 26217 24021.8
+2131 26217 24149.4
+2132 26217 24248.3
+2133 26217 24264.5
+2134 26217 24147
+2135 26217 24221.3
+2136 26217 24213.8
+2137 26217 24282.6
+2138 26217 24102
+2139 26217 24215.3
+2140 26183 24322.2
+2141 26219 24347.7
+2142 26219 24196.2
+2143 26219 24307.1
+2144 26219 24455.8
+2145 26218 24425.8
+2146 26218 24329.2
+2147 26218 24344.9
+2148 26218 24420.8
+2149 26218 24414.2
+2150 26217 24310.1
+2151 26217 24371.8
+2152 26217 24559.8
+2153 26217 24566.6
+2154 26217 24421.2
+2155 26217 24520.1
+2156 26217 24673.7
+2157 26217 24704.5
+2158 26217 24620.2
+2159 26217 24619.8
+2160 26217 24686.5
+2161 26217 24625.3
+2162 26217 24540.3
+2163 26217 24579.2
+2164 26217 24870.2
+2165 26217 24837.9
+2166 26217 24806.2
+2167 26217 24821.2
+2168 26217 24924
+2169 26217 24892
+2170 26217 24849.1
+2171 26217 24816.5
+2172 26217 24813
+2173 26217 24886.6
+2174 26217 24808.6
+2175 26217 24785.5
+2176 26217 24707.9
+2177 26217 24665.6
+2178 26217 24618.6
+2179 26217 24684.6
+2180 26217 24822.9
+2181 26217 24812.1
+2182 26217 24707.4
+2183 26217 24706.3
+2184 26217 24756.6
+2185 26201 24672.3
+2186 26219 24584.7
+2187 26219 24708.6
+2225 26217 24016.9
+2226 26217 24176.8
+2227 26217 24037.3
+2228 26217 24092.3
+2229 26217 24015.3
+2230 26203 24149.6
+2231 26219 24122.8
+2232 26219 24223.6
+2233 26219 24013.3
+2234 26219 24114.1
+2235 26218 24119.8
+2236 26218 24233.8
+2237 26218 24007.5
+2238 26218 24211.4
+2239 26218 24110
+2240 26217 24221.4
+2241 26217 24234.3
+2242 26217 24318.8
+2243 26217 24209.8
+2244 26217 24300.3
+2245 26217 24188.2
+2246 26217 24248.8
+2247 26217 24193.7
+2248 26217 24249.1
+2249 26217 24328.4
+2250 26217 24396
+2251 26217 24304.1
+2252 26217 24346.7
+2253 26217 24424.4
+2254 26217 24456.4
+2255 26217 24403.1
+2256 26217 24432.3
+2257 26217 24400.5
+2258 26217 24460.4
+2259 26217 24383.3
+2260 26217 24411.8
+2261 26217 24423.8
+2262 26217 24594.6
+2263 26217 24537.3
+2264 26217 24593.7
+2265 26217 24578.7
+2266 26217 24647.8
+2267 26217 24654
+2268 26217 24561.6
+2269 26217 24559.3
+2270 26217 24565.9
+2271 26217 24578
+2272 26217 24556.2
+2273 26217 24693.3
+2274 26217 24679
+2275 26204 24779.6
+2276 26219 24701.3
+2277 26219 24772.2
+2278 26219 24782
+2279 26219 24836.8
+2280 26218 24755.9
+2281 26218 24690.8
+2282 26218 24728.2
+2283 26218 24717.2
+2284 26218 24684.9
+2285 26217 24676
+2286 26217 24715.2
+2287 26217 24696.1
+2288 26217 24814.1
+2289 26217 24675.7
+2290 26217 24830.8
+2291 26217 24758.4
+2292 26217 24817.4
+2293 26217 24726.8
+2294 26217 24607.1
+2295 26217 24617.6
+2296 26217 24723.3
+2683 26219 23955.2
+2684 26219 24050.3
+2685 26219 23917.9
+2686 26218 24009.2
+2687 26218 24013.6
+2688 26218 24058.8
+2689 26218 23997.9
+2690 26218 24145.2
+2691 26218 23962
+2692 26217 24032.2
+2693 26217 24034.9
+2694 26217 24087.5
+2695 26217 23983.2
+2696 26217 24108.8
+2697 26217 23990.7
+2698 26217 24094.8
+2699 26217 24155.2
+2700 26217 24259.8
+2701 26217 24099.8
+2702 26217 24202.3
+2703 26217 24063.6
+2704 26217 24166.5
+2705 26217 24075.4
+2706 26217 24195.7
+2707 26217 24335.2
+2708 26217 24344.4
+2709 26217 24251.1
+2710 26217 24319.8
+2711 26217 24463.2
+2712 26217 24441.6
+2713 26217 24341.7
+2714 26217 24348.1
+2715 26217 24375.2
+2716 26217 24366.6
+2717 26217 24304.2
+2718 26217 24334.4
+2719 26217 24322.7
+2720 26217 24315.2
+2721 26217 24230.2
+2722 26217 24284.2
+2723 26217 24371.1
+2724 26217 24362.6
+2725 26217 24328.8
+2726 26216 24337.8
+2727 26219 24257.2
+2728 26219 24417
+2729 26219 24411.2
+2730 26219 24431.2
+2731 26218 24684.2
+2732 26218 24704.9
+2733 26218 24717.7
+2734 26218 24773.7
+2735 26218 24745.2
+2736 26218 24718.6
+2737 26217 24875.4
+2738 26217 24714.1
+2739 26217 24777.3
+2740 26217 24699
+2741 26217 24831.6
+2742 26217 24742.1
+2743 26217 24707.2
+2744 26217 24751.2
+2745 26217 24671.3
+2746 26217 24814.9
+2747 26217 24742.2
+2748 26217 24858.6
+2749 26217 24715.2
+2750 26217 24874.5
+2751 26217 24783.5
+2752 26217 24613.3
+2753 26217 24572.5
+2754 26217 24716.8
+2792 26217 24019
+2793 26217 24144.3
+2794 26217 24061.4
+2795 26217 24155.4
+2796 26217 24044.6
+2797 26217 24155.2
+2798 26217 24132.8
+2799 26217 24245.2
+2800 26217 24008
+2801 26217 24116.2
+2802 26217 24058.2
+2803 26217 24212.5
+2804 26217 24085.5
+2805 26217 24225.1
+2806 26217 24074.2
+2807 26217 24224.2
+2808 26217 24234.4
+2809 26217 24312.3
+2810 26217 24203.9
+2811 26217 24305.1
+2812 26217 24129.1
+2813 26217 24261.4
+2814 26217 24160.8
+2815 26217 24247.9
+2816 26216 24289.2
+2817 26221 24352.7
+2818 26219 24256.1
+2819 26219 24329.9
+2820 26219 24406.6
+2821 26219 24459.7
+2822 26218 24340.8
+2823 26218 24415.8
+2824 26218 24330.8
+2825 26218 24359.7
+2826 26218 24301
+2827 26217 24350.9
+2828 26217 24376.3
+2829 26217 24446.6
+2830 26217 24322.2
+2831 26217 24406.8
+2832 26217 24598.8
+2833 26217 24675.7
+2834 26217 24532.8
+2835 26217 24551.5
+2836 26217 24421.5
+2837 26217 24499.5
+2838 26217 24566.3
+2839 26217 24661.3
+2840 26217 24567
+2841 26217 24796.9
+2842 26217 24716.2
+2843 26217 24607.1
+2844 26217 24613.6
+2845 26217 24646.6
+2846 26217 24601.2
+2847 26217 24645.2
+2848 26217 24514.8
+2849 26217 24702.6
+2850 26217 24592.2
+2851 26217 24599.7
+2852 26217 24628.7
+2853 26217 24620.5
+2854 26217 24581.8
+2855 26217 24825.2
+2856 26217 24586.8
+2857 26217 24586.8
+2858 26217 24510.4
+2859 26217 24569.7
+2860 26217 24520.2
+2861 26217 24647.2
+2862 26222 24522.9
+2863 26219 24727.5
+2901 26217 23965
+2902 26217 24142
+2903 26217 24090.6
+2904 26217 24177.6
+2905 26217 23981.8
+2906 26217 24194.5
+2907 19914 18353.8
+2908 26219 24314.7
+2909 26219 23925.8
+2910 26219 24071.6
+2911 26219 24096.7
+2912 26218 24237.4
+2913 26218 23957.6
+2914 26218 24150.2
+2915 26218 24068.2
+2916 26218 24232.2
+2917 26217 24118.1
+2918 26217 24262.9
+2919 26217 24130
+2920 26217 24271.3
+2921 26217 24042.2
+2922 26217 24142
+2923 26217 24133.3
+2924 26217 24238.3
+2925 26217 24210.5
+2926 26217 24301.8
+2927 26217 24251.4
+2928 26217 24340.2
+2929 26217 24356.5
+2930 26217 24373.8
+2931 26217 24359.8
+2932 26217 24380.8
+2933 26217 24235.4
+2934 26217 24292.8
+2935 26217 24285.2
+2936 26217 24368.8
+2937 26217 24329.1
+2938 26217 24370.5
+2939 26217 24488.2
+2940 26217 24510.4
+2941 26217 24313.3
+2942 26217 24408.7
+2943 26217 24530.2
+2944 26217 24539.7
+2945 26217 24434.8
+2946 26217 24382.6
+2947 26217 24403.9
+2948 26217 24430.2
+2949 26217 24658.5
+2950 26217 24757.8
+2951 26217 24712.2
+2952 26196 24689
+2953 26219 24703
+2954 26219 24683.9
+2955 26219 24774.7
+2956 26219 24768.2
+2957 26218 24558.7
+2958 26218 24665.8
+2959 26218 24672.5
+2960 26218 24714.4
+2961 26218 24548
+2962 26217 24566.2
+2963 26217 24613.3
+2964 26217 24747.9
+2965 26217 24542.7
+2966 26217 24660.8
+2967 26217 24659.1
+2968 26217 24780.3
+2969 26217 24558.2
+2970 26217 24604.7
+2971 26217 24529.5
+2972 26217 24736.5
+3010 26217 23895.4
+3011 26217 24134.4
+3012 26217 24022.3
+3013 26217 24113.9
+3014 26217 23949.8
+3015 26217 24130.8
+3016 26217 24119.8
+3017 26217 24242.1
+3018 26217 23957.3
+3019 26217 24142.2
+3020 26217 24118.9
+3021 26217 24226.9
+3022 26217 23901
+3023 26217 24105.2
+3024 26217 24076.1
+3025 26217 24183.9
+3026 26217 24139.7
+3027 26217 24205.6
+3028 26217 24172.2
+3029 26217 24262.5
+3030 26217 24083.8
+3031 26217 24206.5
+3032 26217 24134.8
+3033 26217 24245.4
+3034 26217 24339.3
+3035 26217 24357.5
+3036 26217 24269.5
+3037 26217 24360.8
+3038 26217 24386
+3039 26217 24443.8
+3040 26217 24408.7
+3041 26217 24448.9
+3042 26204 24356.3
+3043 26219 24415.2
+3044 26219 24417.6
+3045 26219 24447.2
+3046 26219 24407.1
+3047 26218 24520.2
+3048 26218 24425.6
+3049 26218 24560.5
+3050 26218 24524.5
+3051 26218 24585.2
+3052 26217 24596.2
+3053 26217 24678.9
+3054 26217 24504.3
+3055 26217 24570.1
+3056 26217 24606.1
+3057 26217 24603.5
+3058 26217 24603.1
+3059 26217 24679.9
+3060 26217 24527
+3061 26217 24749.2
+3062 26217 24707.4
+3063 26217 24711.2
+3064 26217 24729.8
+3065 26217 24795.5
+3066 26217 24679.6
+3067 26217 24728.1
+3068 26217 24669.3
+3069 26217 24733.3
+3070 26217 24622.8
+3071 26217 24630.2
+3072 26217 24578.8
+3073 26217 24726.7
+3074 26217 24728.8
+3075 26217 24747.1
+3076 26217 24749.2
+3077 26217 24749.6
+3078 26217 24647
+3079 26217 24612.1
+3080 26217 24634.4
+3081 26217 24721.3
+3119 26217 23910.7
+3120 26217 24112.8
+3121 26217 23987.8
+3122 26217 24083.2
+3123 26217 23952.1
+3124 26217 24081.8
+3125 26217 23973.4
+3126 26217 24151
+3127 26217 23846.8
+3128 26217 24038.6
+3129 26217 23952.6
+3130 26217 24135.2
+3131 26217 23968.8
+3132 26216 24165.8
+3133 26219 24061.2
+3134 26219 24180.8
+3135 26219 24129.7
+3136 26219 24266.3
+3137 26219 24092.1
+3138 26218 24195.5
+3139 26218 24092.2
+3140 26218 24183.4
+3141 26218 24024.2
+3142 26218 24182.1
+3143 26217 24335
+3144 26217 24387.3
+3145 26217 24270.6
+3146 26217 24393.2
+3147 26217 24401.1
+3148 26217 24451.2
+3149 26217 24368.8
+3150 26217 24441.2
+3151 26217 24422
+3152 26217 24410.1
+3153 26217 24294.3
+3154 26217 24354.9
+3155 26217 24422.2
+3156 26217 24522.2
+3157 26217 24490
+3158 26217 24538.6
+3159 26217 24489.2
+3160 26217 24577.7
+3161 26217 24555.7
+3162 26217 24634.6
+3163 26217 24476.9
+3164 26217 24591.8
+3165 26217 24518.5
+3166 26217 24551.6
+3167 26217 24639.8
+3168 26217 24789.8
+3169 26217 24700.8
+3170 26217 24733.2
+3171 26217 24619.5
+3172 26217 24752.9
+3173 26217 24700.2
+3174 26217 24753.6
+3175 26217 24654.9
+3176 26217 24701.8
+3177 26216 24654.9
+3178 26219 24703.1
+3179 26219 24559.4
+3180 26219 24555.5
+3181 26219 24588
+3182 26219 24640.2
+3183 26218 24569.7
+3184 26218 24770.6
+3185 26218 24604.2
+3186 26218 24719.9
+3187 26218 24643.2
+3188 26217 24595.6
+3189 26217 24571.6
+3190 26217 24649.3
+Channel 1 was dead for the full fill
+Error in channel 5 at event 85379697 at approximately 19:06
+	Failure lasted through the end of the fill
+Channel 22 was dead for the full fill
+Channel 23 was dead for the full fill
+Invoking brilcalc for fill 4958
