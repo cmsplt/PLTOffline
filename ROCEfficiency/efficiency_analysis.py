@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+### Konstantinos Damanakis August 2020
+### This script reads the csv files produced by the ROCEfficiency.sh bash script and plots the per ROC or/and per channel efficiency over integrated luminosity. 
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
