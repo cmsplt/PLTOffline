@@ -22,6 +22,7 @@ err0=[]
 err1=[]
 err2=[]
 telescope=[]
+telescope_err=[]
 
 channel = [2, 4, 5, 8, 10, 11, 13, 14, 16, 17, 19, 20]  #exclude 7, 22, 23
 
@@ -48,11 +49,18 @@ for ch in channel:
     c = i.loc[(i['Channel']==ch) & (i['ROC']==2)]
     eff2.append(c['Efficiency'].values[0])
     err2.append(a.iloc[:, 5].values[0]) #error
- 
+
+ ###Calculate the correlation coefficient between all pair of planes of the same channel 
+  coef_01 = np.corrcoef(eff0, eff1)
+  coef_02 = np.corrcoef(eff0, eff2)
+  coef_12 = np.corrcoef(eff1, eff2)
+   
+
  #### If you want to plot the pertelescope efficiency
   for j in range(len(eff0)):
      telescope.append((eff0[j]+eff1[j]+eff2[j])/3) # Telescope efficiency
-
+     var = ((err0[j])**2 +(err1[j])**2 +(err2[j])**2+ 2*coef_01*(err0[j])*(err1[j])+ 2*coef_02*(err0[j])*(err2[j])+ 2*coef_12*(err1[j])*(err2[j]))/3
+     telescope_err.append(var)
     
 ###Plot Efficiency over Lumi
   plt.figure()
@@ -78,3 +86,4 @@ for ch in channel:
   err1.clear()
   err2.clear()
   telescope.clear()
+  telescope_err.clear()
