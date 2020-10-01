@@ -30,3 +30,27 @@ correspond to the pulse height study.
   The 3rd argument has been added in order to assign the fill number to the corresponding produce histogram
   which is then stored in the rootfile. This is just a method to automate the process and be able to run
   multiple fills with the bash script. 
+
+###############################################################################################################
+
+The script pulse_height_tests.cc is just a modified version of the original, which is used for two simple tests:
+  1) compare the charge distribution which correspond to events only from leading bunches with the distribution
+     which corresponds to events only from the next non colliding BX after each bunch train. Also, the standard
+     charge distribution is overlayed with the latter just for comparison.
+
+     To implement this test you have to run the following:
+
+                       ./FindLeadingBX.cc [Slink file]
+
+                       ./printNonCollidingBunchAfterEachTrain.py [Fill number]
+     
+     These will generate two csv files with the BX numbers. Then, the pulse_height_tests.cc script reads the 2
+     csv and generate the plot.
+                       ./pulse_height_tests.cc [Slink file] [gain cal file]
+
+ 
+ 2) Verify that the pulse height is stable with time over a Fill. You can run over a whole fill and every 1 hour
+    (~12M events) the charge distribution is estimated. The final plot contains a number of overlaid histograms
+    which correspond to each individual Pulse Height. Furthermore, one extra plot, which shows the histogram peak
+    over time, is generated.
+  
