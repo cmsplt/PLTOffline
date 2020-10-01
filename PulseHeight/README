@@ -23,6 +23,13 @@ correspond to the pulse height study.
                 ./PulseHeights.sh
 
    All the necessary information (fills, gaincal files etc) is hardcoded.
+   Then, you just have to run:
+            
+                ./plotPeaks.cc
+
+   and the plot will have been generated.
+
+
    Otherwise, if you want to select a different fill and plot the pulse height, you can just run:
 
                 ./PulseHeights_new.cc  [Slink data] [gaincal file] [Fill]
