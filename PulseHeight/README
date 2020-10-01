@@ -1,0 +1,32 @@
+The PulseHeight directory contrains all the necessary scripts to produce a number of different plots which
+correspond to the pulse height study.
+
+
+1) Produce the gain calibration files which are required to run the PulsHeight code. 
+   Just run the following bash script
+                
+                  ./gainCalFastFits.sh
+
+
+2) The PulseHeights_new.cc script takes as an input a Fill and a gain calibration file and 
+   plots the charge distribution as an output. It is important that the pixels with bad fit
+   results should be masked. To implement it, the code reads the fit result of every individual
+   pixel in the fiducial region and mask (ignores) those with bad fits. The fit information is
+   contained in the rootfiles which can be produced by the following command:
+
+                ./GainCalFastFits_modified.cc gaincalfast_<timestamp>.avg_Err.txt
+
+
+3) If you want to reproduce the pulse height over integrated luminosity plots for the selected Run-2
+   data, you just have to run:
+
+                ./PulseHeights.sh
+
+   All the necessary information (fills, gaincal files etc) is hardcoded.
+   Otherwise, if you want to select a different fill and plot the pulse height, you can just run:
+
+                ./PulseHeights_new.cc  [Slink data] [gaincal file] [Fill]
+
+  The 3rd argument has been added in order to assign the fill number to the corresponding produce histogram
+  which is then stored in the rootfile. This is just a method to automate the process and be able to run
+  multiple fills with the bash script. 
