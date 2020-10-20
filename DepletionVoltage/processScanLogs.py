@@ -5,41 +5,40 @@
 # and calculate depletion voltage (plateau of rate vs HV curve) and plot as a function of time/intLumi
 
 import pandas
-from typing import Dict, List, Tuple # [https://towardsdatascience.com/static-typing-in-python-55aa6dfe61b4]
 
-def TimerDecorator( func ):
+def timerDecorator( func ):
     # print the processing time for a function
     # [https://realpython.com/primer-on-python-decorators/]
     import functools, timeit
     @functools.wraps( func )
-    def Wrapper( *args, **kwargs ):
+    def wrapper( *args, **kwargs ):
         t0      = timeit.default_timer()
         value   = func( *args, **kwargs )
         t1      = timeit.default_timer()
         print( f'\t{func.__name__}(): { t1 - t0 }s' )
         return value
-    return Wrapper
+    return wrapper
 
-@TimerDecorator
-def ParseLogFile( logFile:str ) -> pandas.DataFrame:
+@timerDecorator
+def parseLogFile( logFile:str ) -> pandas.DataFrame:
     # Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")
-    def PerChList(prefix): return [ f'{prefix}{i}' for i in [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3] ]
+    def perChList(prefix): return [ f'{prefix}{i}' for i in [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3] ]
         # channel order hard-coded to match auto-HV scan log files:
         # $ grep 'HpFT0,HpFT1,HpFT2,HpFT3,HpNT0,HpNT1,HpNT2,HpNT3,HmFT0,HmFT1,HmFT2,HmFT3,HmNT0,HmNT1,HmNT2,HmNT3' AutoScanLogs/*.txt
-    cols = [ 'timestamp', 'ignore' ] + PerChList('vMon') + PerChList('iMon') + PerChList('rate') + [ 'avgRate' ]
+    cols = ['timestamp', 'ignore'] + perChList('vMon') + perChList('iMon') + perChList('rate') + ['avgRate']
         # [ timestamp, #M, vMon[0:15], iMon[0:15], rate[0:15], avgRate ]
     with open( f'{logFile}', "r" ) as log:
         data = [ line.rstrip( '\n' ).split(',') for num, line in enumerate( log ) if '#M' in line ]
     logData = pandas.DataFrame( data, columns = cols )
-    logData.timestamp = pandas.DatetimeIndex( pandas.to_datetime( logData.timestamp, format = '%Y.%m.%d %H:%M:%S.%f' ) ).tz_localize('Europe/Amsterdam').tz_convert('UTC')
+    logData.timestamp = pandas.DatetimeIndex( pandas.to_datetime( logData.timestamp, format='%Y.%m.%d %H:%M:%S.%f' ) ).tz_localize('Europe/Amsterdam').tz_convert('UTC')
         # convert timestamps from local CERN time to UTC
         # pandas.tz_localize and pandas.tz_convert only operate on pandas.DatetimeIndex because of reasons [https://stackoverflow.com/a/26090113/13019084]
     floatCol = logData.columns.to_list()[2:]
-    logData[floatCol] = logData[ floatCol ].apply( lambda x: x.astype( float ) )
+    logData[floatCol] = logData[floatCol].astype(float)
     return logData
 
-@TimerDecorator
-def Brilcalc( beginTS:str, endTS:str, lmeter:str ) -> pandas.DataFrame:
+@timerDecorator
+def brilcalc( beginTS:str, endTS:str, lmeter:str ) -> pandas.DataFrame:
     # load brilcalc hfet data for a given fill and load into a pandas dataframe
     # [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]
     import subprocess, shlex
@@ -54,19 +53,19 @@ def Brilcalc( beginTS:str, endTS:str, lmeter:str ) -> pandas.DataFrame:
         # skip line 0 (norm tag version), line 1 (column headers), and the last 4 lines (summary)
     brilcalcDF           = pandas.DataFrame( brilcalcData, columns = cols )
     floatCol             = [ 'delivered(/ub)', 'recorded(/ub)', 'avgpu' ]
-    brilcalcDF[floatCol] = brilcalcDF[ floatCol ].apply( lambda x: x.astype( float ) )
-    brilcalcDF['dt']     = pandas.to_datetime( brilcalcDF.time, unit = 's', utc = True)
+    brilcalcDF[floatCol] = brilcalcDF[floatCol].astype(float)
+    brilcalcDF['dt']     = pandas.to_datetime( brilcalcDF.time, unit='s', utc=True )
     return brilcalcDF
 
-@TimerDecorator
-def MergeDF( logData:pandas.DataFrame ) -> pandas.DataFrame:
+@timerDecorator
+def mergeDF( logData:pandas.DataFrame ) -> pandas.DataFrame:
     # merge logData and brilcalcDF based on closest timestamps and add new PLT/HF rate column to logData
     # [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]
     beginTS     = logData.timestamp.iloc[0].strftime( "%m/%d/%y %H:%M:%S" )
     endTS       = logData.timestamp.iloc[-1].strftime( "%m/%d/%y %H:%M:%S" )
-    brilcalcDF  = Brilcalc( beginTS, endTS, 'hfet' )
+    brilcalcDF  = brilcalc( beginTS, endTS, 'hfet' )
     if len(brilcalcDF) == 0:
-        brilcalcDF  = Brilcalc( beginTS, endTS, 'bcm1f' )
+        brilcalcDF  = brilcalc( beginTS, endTS, 'bcm1f' )
     mergedDF    = pandas.merge_asof( left=logData, right=brilcalcDF, left_on='timestamp', right_on='dt' )
         # lol this worked? join dataframes using nearest timestamp
         # [https://www.reddit.com/r/learnpython/comments/6wbc7t/help_joining_two_pandas_dataframes/]
@@ -75,7 +74,7 @@ def MergeDF( logData:pandas.DataFrame ) -> pandas.DataFrame:
         logData[f'rateN{ch}'] = mergedDF[f'rate{ch}'] / mergedDF['avgpu']
     return logData.dropna()
 
-def ProcessChannel( logData:pandas.DataFrame, ch:int ) -> pandas.DataFrame:
+def processChannel( logData:pandas.DataFrame, ch:int ) -> pandas.DataFrame:
     # determine scanpoints for ch, filter logData for each ch and scanpoint based on uniformity of vMon and rateN values, and return median/std for rateCh & rateNCh
     vMonGroup = logData[ f'vMon{ch}' ].groupby( logData[ f'vMon{ch}' ].round( decimals = 0 ) ).count() > 4
         # group all integer-rounded vMon values and mark 'true' if vMon group size > 4
@@ -96,13 +95,13 @@ def ProcessChannel( logData:pandas.DataFrame, ch:int ) -> pandas.DataFrame:
     scanDataCh  = pandas.DataFrame( data, index = scanSteps, columns = cols )
     return scanDataCh
 
-def CalculateDeplVolt( scanDataCh:pandas.DataFrame, ch:int, thr1:float, thr2:float ) -> int:
+def calculateDeplVolt( scanDataCh:pandas.DataFrame, ch:int, thr1:float, thr2:float ) -> int:
     # calculate depletion voltage based on percent change:
     # pick first value (highest to lowest HV setpoints) which is within 'thr1' of the previous value and within 'thr2' of next-to-previous value
     scanDataCh  = scanDataCh[::-1] # reverse order of scan points (from highest to lowest)
-    def PctCh(per): return scanDataCh[f'medianRateN{ch}'].pct_change( periods = per ).abs()
-    pctP1       = PctCh(1)
-    pctP2       = PctCh(2)
+    def pctCh(per): return scanDataCh[f'medianRateN{ch}'].pct_change( periods = per ).abs()
+    pctP1       = pctCh(1)
+    pctP2       = pctCh(2)
     deplVoltCh  = scanDataCh[ (pctP1>thr1) & (pctP2>thr2) ]
     if len( deplVoltCh ):
         deplVoltCh    = scanDataCh[ (pctP1>thr1) & (pctP2>thr2) ].index[0]
@@ -112,13 +111,15 @@ def CalculateDeplVolt( scanDataCh:pandas.DataFrame, ch:int, thr1:float, thr2:flo
         deplVoltCh = 0
     return deplVoltCh
 
-def PlotChannel( dateTime:str, ch:int, scanDataCh:pandas.DataFrame, deplVoltCh:float, dataDir:str ):
+def plotChannel( dateTime:str, ch:int, scanDataCh:pandas.DataFrame, deplVoltCh:float, dataDir:str ):
     # plot rate (raw and normalized) vs HV
     import os, matplotlib.pyplot
     scale   = scanDataCh[f'medianRateN{ch}'].iloc[-1] / scanDataCh[f'medianRate{ch}'].iloc[-1]
     fig, ax = matplotlib.pyplot.subplots()
     matplotlib.pyplot.style.use('seaborn-white')
     ax.set( title=f'Ch{ch} rate vs HV ({dateTime})', xlabel='', ylabel='' )
+    ax.set_ylabel( 'Raw inst. lumi rate', fontsize = 12)
+    ax.set_xlabel( 'HV setpoint (V)', fontsize = 12)
     ax.errorbar( scanDataCh.index, scanDataCh[f'medianRateN{ch}'], yerr=scanDataCh[f'stdevRateN{ch}'], ls="", marker="o", markersize='4', label='PLT/HF' )
     ax.errorbar( scanDataCh.index, scanDataCh[f'medianRate{ch}']*scale, yerr=scanDataCh[f'stdevRate{ch}']*scale, ls="", marker="o", markersize='4', label='PLT' )
     ax.legend( loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4)
@@ -137,13 +138,13 @@ def loadDepletionVoltageJSON( dataDir:str ) -> pandas.DataFrame:
     deplVolt.index = pandas.to_datetime( deplVolt.index, format = '%Y_%m_%d_%H_%M_%S' )
     return deplVolt
 
-def PlotAxVline( intLumi:str, label:str, position:str ):
+def plotAxVline( intLumi:str, label:str, position:str ):
     # add vertical line at the specified intLumi (given by lumiByDay)
     import matplotlib.pyplot
     matplotlib.pyplot.axvline( x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label )
     matplotlib.pyplot.text( x=intLumi+1, y=10, s=label, rotation=90, verticalalignment=position )
 
-def LumiByDay() -> pandas.DataFrame:
+def lumiByDay() -> pandas.DataFrame:
     # return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index
     import os
     file='lumiByDay.csv' if os.path.exists('lumiByDay.csv') else 'https://cern.ch/cmslumi/publicplots/lumiByDay.csv'
@@ -153,15 +154,15 @@ def LumiByDay() -> pandas.DataFrame:
     cumulativeIntLumi = lumiByDayRun2['Delivered(/ub)'].cumsum().divide(10**9).rename( 'Delivered(/fb)' )
     return pandas.concat( [ date, cumulativeIntLumi ], axis=1 ).set_index('Date')['Delivered(/fb)']
 
-def PlotDeplVolt( ch:int, dataDir:str ):
+def plotDeplVolt( ch:int, dataDir:str ):
     # plot depletion voltage vs time for channel 'ch'
     # to do: plot deplVolt vs intLumi
-    import matplotlib.pyplot, numpy
+    import matplotlib.pyplot
     deplVolt = loadDepletionVoltageJSON( dataDir )
     dataCh = deplVolt[ch][ deplVolt[ch] != 0 ] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
     dataChDate = dataCh.index.to_series().dt.strftime("%Y-%m-%d").to_list() # to_series() required to do things to a DatetimeIndex [https://stackoverflow.com/a/49277956/13019084]
-    lumiByDay = LumiByDay()
-    lumiPerScanDate = [ lumiByDay[ pandas.to_datetime( scan.date() ) ] for scan in dataCh.index.to_list() ] # Run2 cumulativeIntLumi for each scan date
+    lumiByDaySeries = lumiByDay()
+    lumiPerScanDate = [ lumiByDaySeries[ pandas.to_datetime( scan.date() ) ] for scan in dataCh.index.to_list() ] # Run2 cumulativeIntLumi for each scan date
     fig, intLumiAx = matplotlib.pyplot.subplots( figsize = (10, 6) )
     intLumiAx.scatter( x=lumiPerScanDate, y=dataCh.to_list() )
     intLumiAx.set_title( f'Ch{ch} Depletion Voltage vs Integrated Luminosity', fontsize=14)
@@ -181,7 +182,7 @@ def PlotDeplVolt( ch:int, dataDir:str ):
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
         # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
         # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]
-    _ = [ PlotAxVline( lumiByDay[pandas.to_datetime(date).date()], hv,  'bottom' ) for date,hv in hvSetPoints.items() ]
+    _ = [ plotAxVline( lumiByDaySeries[pandas.to_datetime(date).date()], hv,  'bottom' ) for date,hv in hvSetPoints.items() ]
     matplotlib.pyplot.tight_layout()
     # matplotlib.pyplot.show()
     matplotlib.pyplot.savefig( f'{dataDir}/ch{ch}DepletionVoltage.png', dpi = 300 )
@@ -193,24 +194,24 @@ def main():
     deplVolt = {}
     for logFile in sorted( glob.glob( f'{dataDir}/Scan_*.txt' ) ):
         print( f'\nprocessing {logFile}...' )
-        deplVolt[logFile]   = []
-        logData             = ParseLogFile( logFile )
-        logData             = MergeDF( logData )
-        dateTime            = logData.timestamp.iloc[0].strftime( "%Y%m%d.%H%M%S" )
+        deplVolt[logFile] = []
+        logData     = parseLogFile( logFile )
+        logData     = mergeDF( logData )
+        dateTime    = logData.timestamp.iloc[0].strftime( "%Y%m%d.%H%M%S" )
         for ch in range(16):
-            scanDataCh  = ProcessChannel( logData, ch )
-            deplVoltCh  = CalculateDeplVolt( scanDataCh, ch, 0.01, 0.02 )
+            scanDataCh  = processChannel( logData, ch )
+            deplVoltCh  = calculateDeplVolt( scanDataCh, ch, 0.01, 0.02 )
             deplVolt[logFile].append( deplVoltCh )
-            PlotChannel( dateTime, ch, scanDataCh, deplVoltCh, dataDir )
+            plotChannel( dateTime, ch, scanDataCh, deplVoltCh, dataDir )
     with open( f'depletionVoltage.{dataDir}.json', 'w' ) as deplVoltFile:
         json.dump( deplVolt, deplVoltFile )
-    _ = [ PlotDeplVolt( ch, dataDir ) for ch in range(16) ]
+    # _ = [ plotDeplVolt( ch, dataDir ) for ch in range(16) ]
     return deplVolt
 
 if __name__ == "__main__":
     main()
 
-###########################################################################
+################################################################################
 
 # def IntLumiVsTime( year:str ) -> pandas.DataFrame:
 #     # return a dictionary with the total delivered integrted lumi as a function of time
