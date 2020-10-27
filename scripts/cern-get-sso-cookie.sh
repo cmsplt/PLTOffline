@@ -14,11 +14,11 @@ infoFmt="$(tput setaf 02)%s$(tput sgr 0 0)"
 convertCertificateFiles(){
     # Certificate-based authentication allows unattended authentication (until the certificate expires).
     printf "${errFmt}\n"  "${cert} user certificate/key file must be converted to specific formats"
-    printf "${infoFmt}\n"  "The user certificate needs to be passwordless, so import password should be left blank"
+    printf "${infoFmt}\n"  "Import password should be left blank"
     openssl pkcs12 -clcerts -nokeys -in "${cert}" -out "${PEM}"
-    printf "${infoFmt}\n"  "Import password should be blank again. A PEM pass phrase is required (but only needed in the next step)"
+    printf "${infoFmt}\n"  "Import password should be blank again. A *temporary* PEM pass phrase is required with at least 4 character (only needed in the next step)"
     openssl pkcs12 -nocerts         -in "${cert}" -out "${TMP}"
-    printf "${infoFmt}\n"  "Please repeat the pass phrase once more"
+    printf "${infoFmt}\n"  "Please repeat the same PEM pass phrase once more"
     openssl rsa                     -in "${TMP}"  -out "${KEY}"
     rm    -f  "${TMP}"
     chmod 644 "${PEM}"
@@ -26,7 +26,7 @@ convertCertificateFiles(){
 }
 
 checkUserCert(){
-    local certInstr="Please specify path to user certificate (.p12) file. If needed, first acquire one from the CERN Certification Authority: https://ca.cern.ch/ca/user/Request.aspx?template=EE2User"
+    local certInstr="Please specify path to user certificate (.p12) file. If needed, first acquire a *password-less* one from the CERN Certification Authority: https://ca.cern.ch/ca/user/Request.aspx?template=EE2User"
     if [[ ! -f "${cert}" ]]; then
         printf "${errFmt}\n" "${certInstr}"
         return 1
