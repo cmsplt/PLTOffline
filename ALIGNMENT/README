@@ -41,3 +41,22 @@ GainCal/GainCalFits_20160501.155303.dat.
 
 * In these two cases there was an intervening magnet ramp (during fills 4402 and 4457 respectively), but no
 physics fills were actually taken with the magnet off.
+
+==2017==
+---------- Forwarded message ---------
+From: Heideman, Joe <jheidema@vols.utk.edu>
+Date: Mon, 12 Jun 2017 at 18:17
+So far, no full alignment file has been made for 2017 from ./CalculateAlignment.
+The first real alignment file we had was "hand-made" by Nick [Brey] and Stefan [Spanier] from a couple different alignment files.
+They looked at the slope distributions for each channel and changed the values in the Trans_Alignment_[....].dat file until the distributions looked acceptable.
+This was good enough for the time because the masks could be set appropriately.
+This file was saved as Trans_Alignment_Nick.dat.
+The alignment still was a little off, especially for 22, 23 so we worked with them more by hand until the distributions were close to what we had last year
+(however this needs to be checked against the change in the beamspot location), but for now I think the alignment is good enough to begin some analysis.
+The current alignment file is Trans_Alignment_2017MagnetOn_Prelim.dat.
+There is no fill info because no single fill was used for this alignment file.
+I think the next step would be to try ./CalculateAlignment with this alignment file as an initial value point. 
+One word of warning on ./CalculateAlignment: For most 2017 data so far, it seems to bring the X slopes tightly to zero but blow up the Y distributions
+so it may be worth it to see what is different between the fitting of 2016 ad 2017 data (the program should output a root file with all the fit info and histograms).
+I would still use the gain cal file from mid May: GainCalFits_20170518.143905.dat.
+The GainCal file from the beginning of June has some inconsistencies (more than the file I just mentioned) in the pixel address information.
