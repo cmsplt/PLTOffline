@@ -50,6 +50,7 @@ class PLTEvent : public PLTTracking
       return fHits.size();
     }
 
+    bool FileIsOpen(void) { return fIsOpen; }
     int GetNextEvent(void);
     int GetNextEvent(uint32_t* buf, uint32_t bufSize);
 
