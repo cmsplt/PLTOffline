@@ -121,6 +121,7 @@ class PLTEvent : public PLTTracking
 
     InputType fInputType;
     PLTGainCal fGainCal;
+    bool fIsOpen; // check if the input file actually was successfully opened
     PLTBinaryFileReader fBinFile;
     PLTAlignment fAlignment;
 

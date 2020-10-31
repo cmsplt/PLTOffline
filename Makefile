@@ -1,6 +1,6 @@
 CC = g++
 LD = g++
-CFLAGS = -O3 -Wall `root-config --cflags`
+CFLAGS = -O3 -W -Wall `root-config --cflags`
 LIBS = `root-config --libs` -Llib -lMinuit -lSpectrum -lEve -lGeom
 INCLUDE = -Iinterface
 OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
@@ -19,13 +19,13 @@ print-%:
 all: $(OBJS) $(EXEOBJS) $(SCRIPTS) $(EXECS)
 
 lib/%.o : src/%.cc
-	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 lib/%.o : bin/%.cc
-	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 lib/%.o : scripts/%.cc
-	$(CC) -Wall $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 % : $(OBJS) lib/%.o
 	$(LD) $(LIBS) $(OBJS) $(LINKDEFOBJ) lib/$@.o -o $@

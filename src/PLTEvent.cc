@@ -3,6 +3,7 @@
 
 PLTEvent::PLTEvent ()
 {
+  fIsOpen = false;
   // Default constructor
   SetDefaults();
 }
@@ -10,18 +11,18 @@ PLTEvent::PLTEvent ()
 
 PLTEvent::PLTEvent (std::string const DataFileName, InputType inputType)
 {
-  // Constructor, but you won't have the gaincal data..
+  // Constructor with only data file (no gain cal or alignment)
   fBinFile.SetInputType(inputType);
-  fBinFile.Open(DataFileName);
+  fIsOpen = fBinFile.Open(DataFileName);
   SetDefaults();
 }
 
 
 PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, InputType inputType)
 {
-  // Constructor, which will also give you access to the gaincal values
+  // Constructor with data file and gain cal (but no alignment)
   fBinFile.SetInputType(inputType);
-  fBinFile.Open(DataFileName);
+  fIsOpen = fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   
   SetDefaults();
@@ -30,9 +31,9 @@ PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFil
 
 PLTEvent::PLTEvent (std::string const DataFileName, std::string const GainCalFileName, std::string const AlignmentFileName, InputType inputType)
 {
-  // Constructor, which will also give you access to the gaincal values
+  // Constructor with all of data file, gain cal, and alignment
   fBinFile.SetInputType(inputType);
-  fBinFile.Open(DataFileName);
+  fIsOpen = fBinFile.Open(DataFileName);
   fGainCal.ReadGainCalFile(GainCalFileName);
   fAlignment.ReadAlignmentFile(AlignmentFileName);
   
@@ -272,6 +273,12 @@ int PLTEvent::GetNextEvent(uint32_t* buf, uint32_t bufSize)
 {
   // First clear the event
   Clear();
+
+  if (!fIsOpen) {
+    // someone didn't check their return values, tsk tsk
+    std::cerr << "Error: call to GetNextEvent() with no input file open" << std::endl;
+    return -1;
+  }
 
   // The number we'll return.. number of hits, or -1 for end
   int ret = fBinFile.ReadEventHits(buf, bufSize, fHits, fErrors, fEvent, fTime, fBX, fDesyncChannels);
