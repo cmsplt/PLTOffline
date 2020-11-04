@@ -15,6 +15,7 @@
 #include <set>
 
 #include "TString.h"
+#include "TObjString.h"
 #include "TGraphErrors.h"
 #include "TFile.h"
 #include "TF1.h"
