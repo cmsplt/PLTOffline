@@ -89,6 +89,7 @@ ReadEvent
 RunBasicTeststandAnalysis
 RunTeststandGainCal
 ScalarTree
+SelectTimeRange
 ShowEvent
 ShowGainCalPoints
 SkimEvents
