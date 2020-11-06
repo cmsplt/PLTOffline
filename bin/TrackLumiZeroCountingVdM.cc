@@ -657,7 +657,7 @@ std::vector<int> FindActiveBunches(const std::string DataFileName) {
 
   // Set some basic style
   PLTU::SetStyle();
-  std::string DataFileName2 = "/raid/PLT/SlinkData_2016/Slink_20160527.124811.dat";
+  std::string DataFileName2 = DataFileName; //"/raid/PLT/SlinkData_2016/Slink_20160527.124811.dat";
   // Grab the plt event reader
   PLTEvent Event(DataFileName2);
   Event.SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_All);
