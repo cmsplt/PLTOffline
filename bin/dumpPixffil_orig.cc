@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
     return 1; 
   } 
   unsigned long long totevent=0;
-  unsigned long header=0;
+  //unsigned long header=0;
   unsigned long n1,n2;
   //unsigned long bxold=0;
   unsigned int wrdcount = 0;int event=0;int stopit=0;
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
 
     } else {
       if(((n1&0xff000000)==0x50000000)&(wrdcount==1))
-      {wrdcount=0; header=n1;bheader=true;
+	{wrdcount=0; bheader=true; //header=n1;
         //cout<<"Header for event = "<<dec<<(n1&0xffffff)<<" fedID "<<((n2&0xff00)>>8)<<" BX = "<<((n2&0xffff0000)>>16)<<endl;
         cout<<dec<<" BX = "<<((n2&0xfff00000)>>20)<<endl;
         stopit=0;

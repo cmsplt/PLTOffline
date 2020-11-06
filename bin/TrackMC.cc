@@ -53,7 +53,7 @@ std::set<int> ReadPixelMaskFile(const char* maskFileName) {
   }
   
   // So far so good, but if not flag this
-  bool success = true;
+  //bool success = true;
   
   int mFec, mFecChannel, hubAddress, roc, maskVal;
   std::string colString, rowString;
@@ -98,7 +98,7 @@ std::set<int> ReadPixelMaskFile(const char* maskFileName) {
     // Check for validity
     if (firstRow < ROWSTART || firstCol < COLSTART || lastRow > ROWSTOP || lastCol > COLSTOP) {
       std::cout<<"Row or column numbers are out of range; this line will be skipped"<<std::endl;
-      success = false;
+      //success = false;
     }
     
     //Convert mFec and mFecChannel to channel number

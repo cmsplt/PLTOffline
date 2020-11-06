@@ -45,7 +45,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
   Tree.Branch("Total", &Total, "Total/I");
   Tree.Branch("Hist", Hist, "Hist[9][3564]/I");
 
-  uint32_t LastTime;
+  //uint32_t LastTime;
   for (int ientry = 0; HistReader.GetNextBuffer() >= 0; ++ientry) {
     if (ientry % 1000 == 0) {
       std::cout << "Processing readout: " << ientry << std::endl;
@@ -53,7 +53,7 @@ int HistNTP (std::string const InFileName, std::string const OutFileName)
 
     if (ientry == 0) {
       FirstTime = HistReader.GetOrbitTime();
-      LastTime = HistReader.GetOrbitTime();
+      //LastTime = HistReader.GetOrbitTime();
     }
     Time = (int) (HistReader.GetOrbitTime() - FirstTime);
 

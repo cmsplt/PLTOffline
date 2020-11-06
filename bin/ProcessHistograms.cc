@@ -51,13 +51,13 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
   uint32_t BigBuff[NBUCKETS];
 
   uint32_t FirstOrbitTime = 0;
-  uint32_t LastOrbitTime;
+  //uint32_t LastOrbitTime;
 
   bool GotIt;
   bool SeenFirstEOF = false;
 
-  uint32_t OTime[NMAXCHANNELS][NOrbitsToAvg];
-  uint32_t O[NMAXCHANNELS][NOrbitsToAvg];
+  //uint32_t OTime[NMAXCHANNELS][NOrbitsToAvg];
+  //uint32_t O[NMAXCHANNELS][NOrbitsToAvg];
   uint32_t Counts[NMAXCHANNELS][NOrbitsToAvg][NBUCKETS];
   std::vector<unsigned int> Ch;
 
@@ -115,7 +115,7 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
       if (iOrbit == 0) {
         FirstOrbitTime = OrbitTime;
       } else if (iOrbit == NOrbitsToAvg - 1) {
-        LastOrbitTime = OrbitTime;
+        //LastOrbitTime = OrbitTime;
       }
 
       GotIt = false;
@@ -185,8 +185,8 @@ int ProcessHistograms (std::string const InFileName, int const FirstBucket, int 
         TotalSum += (BigBuff[ib] & 0xfff) / 4;
       }
 
-      OTime[Channel][iOrbit] = OrbitTime;
-      O[Channel][iOrbit] = Orbit;
+      //OTime[Channel][iOrbit] = OrbitTime;
+      //O[Channel][iOrbit] = Orbit;
 
     }
 

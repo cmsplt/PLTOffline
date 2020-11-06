@@ -24,18 +24,18 @@ void FindUltrablacks(unsigned long* buffer, double baseline, double rms, int* ul
 
 
    // Now we look for the first excursion above 10*RMS
-   int firstUB = -1, lastTrailerBin = -1, lastUB = -1;
+   int firstUB = -1; //lastTrailerBin = -1;
    unsigned long dat;
    for(int i = 0; i<900; i++) {
       dat = GetDataFromFedBuffer(buffer,i);
       if((dat < (baseline - 30*rms)) && (firstUB==-1)) {
         firstUB = i;
       } else if((dat < (baseline - 10*rms))) {
-         lastTrailerBin = i;
+	// lastTrailerBin = i;
       }
    }
 
-   lastUB = lastTrailerBin - 5;
+   // int lastUB = lastTrailerBin - 5;
 
    double ultrablackLevel = (baseline - GetDataFromFedBuffer(buffer,firstUB))/2.0 + GetDataFromFedBuffer(buffer,firstUB);
 

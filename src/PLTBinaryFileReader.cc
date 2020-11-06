@@ -206,8 +206,10 @@ int PLTBinaryFileReader::ReadEventHits(uint32_t* buf, uint32_t bufSize, std::vec
   if (fInputType == kBinaryFile) {
     return ReadEventHitsBinary(Hits, Errors, Event, Time, BX, DesyncChannels);
   } else if (fInputType == kTextFile) {
-    // we assume no errors in a text file, so fErrors will just stay empty
-    return ReadEventHitsText(Hits, Event, Time, BX);
+    // no time or BX info in the text file; also, we assume no errors in a text file, so fErrors will just stay empty
+    Time = 0;
+    BX = 0;
+    return ReadEventHitsText(Hits, Event);
   } else if (fInputType == kBuffer) {
     return ReadEventHitsBuffer(buf, bufSize, Hits, Errors, Event, Time, BX, DesyncChannels);
   } else {
@@ -333,7 +335,7 @@ int PLTBinaryFileReader::ReadEventHitsBinary(std::vector<PLTHit*>& Hits, std::ve
 }
 
 
-int PLTBinaryFileReader::ReadEventHitsText (std::vector<PLTHit*>& Hits, unsigned long& Event, uint32_t& Time, uint32_t& BX)
+int PLTBinaryFileReader::ReadEventHitsText (std::vector<PLTHit*>& Hits, unsigned long& Event)
 {
   int LastEventNumber = -1;
   int EventNumber = -1;

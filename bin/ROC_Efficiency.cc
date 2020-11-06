@@ -136,11 +136,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       if (Plane[0]->NClusters() && Plane[1]->NClusters()) {
         if (Tracks[0].IsFiducial(Channel, 2, Alignment, Event.PixelMask()) && Tracks[0].NHits() == 2 && Tracks[0].fTVY/Tracks[0].fTVZ < slope_y_high && Tracks[0].fTVY/Tracks[0].fTVZ > slope_y_low && Tracks[0].fTVX/Tracks[0].fTVZ < slope_x_high && Tracks[0].fTVX/Tracks[0].fTVZ > slope_x_low ) {
           ++HC[date][Channel].NFiducial[2];
-          PLTAlignment::CP* CP = Alignment.GetCP(Channel, 2);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[0].TX( CP->LZ ), Tracks[0].TY( CP->LZ ), Channel, 2);
-          std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-	  float cluster_charge = 0;
-	  if(Plane[2]->NClusters()) cluster_charge=Plane[2]->Cluster(0)->Charge();
+          //PLTAlignment::CP* CP = Alignment.GetCP(Channel, 2);
+          //std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[0].TX( CP->LZ ), Tracks[0].TY( CP->LZ ), Channel, 2);
+          //std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
+	  //float cluster_charge = 0;
+	  //if(Plane[2]->NClusters()) cluster_charge=Plane[2]->Cluster(0)->Charge();
           if (Plane[2]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[0].LResiduals( *(Plane[2]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
@@ -155,11 +155,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       if (Plane[0]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[1].IsFiducial(Channel, 1, Alignment, Event.PixelMask()) && Tracks[1].NHits() == 2 && Tracks[1].fTVY/Tracks[1].fTVZ < slope_y_high && Tracks[1].fTVY/Tracks[1].fTVZ > slope_y_low && Tracks[1].fTVX/Tracks[1].fTVZ < slope_x_high && Tracks[1].fTVX/Tracks[1].fTVZ > slope_x_low) {
           ++HC[date][Channel].NFiducial[1];
-          PLTAlignment::CP* CP = Alignment.GetCP(Channel, 1);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 1);
-          std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-	  float cluster_charge = 0;
-	  if(Plane[1]->NClusters()) cluster_charge=Plane[1]->Cluster(0)->Charge();
+          //PLTAlignment::CP* CP = Alignment.GetCP(Channel, 1);
+          //std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[1].TX( CP->LZ ), Tracks[1].TY( CP->LZ ), Channel, 1);
+          //std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
+	  //float cluster_charge = 0;
+	  //if(Plane[1]->NClusters()) cluster_charge=Plane[1]->Cluster(0)->Charge();
           if (Plane[1]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[1].LResiduals( *(Plane[1]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);
@@ -174,11 +174,11 @@ int TrackingEfficiency (std::string const DataFileName, std::string const GainCa
       if (Plane[1]->NClusters() && Plane[2]->NClusters()) {
         if (Tracks[2].IsFiducial(Channel, 0, Alignment, Event.PixelMask()) && Tracks[2].NHits() == 2 && Tracks[2].fTVY/Tracks[2].fTVZ < slope_y_high && Tracks[2].fTVY/Tracks[2].fTVZ > slope_y_low && Tracks[2].fTVX/Tracks[2].fTVZ < slope_x_high && Tracks[2].fTVX/Tracks[2].fTVZ > slope_x_low) {
           ++HC[date][Channel].NFiducial[0];
-          PLTAlignment::CP* CP = Alignment.GetCP(Channel, 0);
-          std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 0);
-          std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
-	  float cluster_charge = 0;
-	  if(Plane[0]->NClusters()) cluster_charge=Plane[0]->Cluster(0)->Charge();
+          //PLTAlignment::CP* CP = Alignment.GetCP(Channel, 0);
+          //std::pair<float, float> LXY = Alignment.TtoLXY(Tracks[2].TX( CP->LZ ), Tracks[2].TY( CP->LZ ), Channel, 0);
+          //std::pair<int, int> PXY = Alignment.PXYfromLXY(LXY);
+	  //float cluster_charge = 0;
+	  //if(Plane[0]->NClusters()) cluster_charge=Plane[0]->Cluster(0)->Charge();
           if (Plane[0]->NClusters() > 0) {
             std::pair<float, float> ResXY = Tracks[2].LResiduals( *(Plane[0]->Cluster(0)), Alignment );
             std::pair<float, float> const RPXY = Alignment.PXYDistFromLXYDist(ResXY);

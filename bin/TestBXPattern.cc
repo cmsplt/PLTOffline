@@ -15,8 +15,8 @@ int convertPixel(int pix) {
 bool decodeDataWord (uint32_t unsigned word, int counts[]) {
   if (word & 0xfffffff) {
     //const uint32_t unsigned plsmsk = 0xff;
-    const uint32_t unsigned pxlmsk = 0xff00;
-    const uint32_t unsigned dclmsk = 0x1f0000;
+    //const uint32_t unsigned pxlmsk = 0xff00;
+    //const uint32_t unsigned dclmsk = 0x1f0000;
     const uint32_t unsigned rocmsk = 0x3e00000;
     const uint32_t unsigned chnlmsk = 0xfc000000;
     uint32_t unsigned chan = ((word & chnlmsk) >> 26);
@@ -42,16 +42,7 @@ bool decodeDataWord (uint32_t unsigned word, int counts[]) {
       }
       return false;
     } else if (chan > 0 && chan < 37) {
-      // Oh, NOW we have a hit!
-      int mycol = 0;
-      //if (convPXL((word & pxlmsk) >> 8) > 0) {
-      if ( ((word & pxlmsk) >> 8) % 2) {
-        // Odd
-        mycol = ((word & dclmsk) >> 16) * 2 + 1;
-      } else {
-        // Even
-        mycol = ((word & dclmsk) >> 16) * 2;
-      }
+      // Oh, NOW we have a hit! We don't actually care where though
 
       roc -= 1; // The fed gives 123, and we use the convention 012
       //kga changed fiducial region
@@ -62,7 +53,6 @@ bool decodeDataWord (uint32_t unsigned word, int counts[]) {
         //std::cerr << "WARNING: PLTBinaryFileReader found ROC with number and chan: " << roc << "  " << chan << std::endl;
       }
 
-      //printf("%2lu %1lu %2i %2i %3lu %i\n", chan, (word & rocmsk) >> 21, mycol, abs(convPXL((word & pxlmsk) >> 8)), (word & plsmsk), -1);
       return true;
 
     } else {
@@ -77,7 +67,7 @@ int readEvent(std::ifstream& infile) {
   static int fLastTime = -1;
   static int fTimeMult = 0;
   uint32_t n1=0, n2=0, oldn1=0, oldn2=0;
-  uint32_t event, time, bx, fedid;
+  uint32_t time, bx;
  
   int nWords = 0;
   int wordcount = 0;
@@ -114,15 +104,11 @@ int readEvent(std::ifstream& infile) {
       // Found the header and it has correct FEDID
       wordcount = 1;
       bheader = true;
-      event = (n1 & 0xff000000) == 0x50000000 ? n1 & 0xffffff : n2 & 0xffffff;
-      //std::cout << "Found Event Header: " << Event << std::endl;
 
       if ((n1 & 0xff000000) == 0x50000000) {
         bx = ((n2 & 0xfff00000) >> 20);
-        fedid = ((n2 & 0xfff00) >> 8);
       } else {
         bx = ((n1 & 0xfff00000) >> 20);
-        fedid = ((n1 & 0xfff00) >> 8);
       }
 
       while (bheader) {

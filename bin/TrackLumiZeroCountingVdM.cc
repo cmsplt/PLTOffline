@@ -63,11 +63,10 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::map<int, float> MeanResidualX;
   std::map<int, float> SigmaResidualX;
 
-  bool useTrackQuality = true;
   FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
-    std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
-    useTrackQuality = false;
+    std::cout << "Track quality file not found; cannot proceed without this data" << std::endl;
+    return(1);
   } else {
     int nch, ch, roc;
     float mean, sigma;
@@ -425,7 +424,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	  channelHasIssuesNow[errorCh] = 1;
 	}
       }
-      if (problems[errorCh] < 20000);
+      if (problems[errorCh] < 20000)
         problems[errorCh]++;
     }
     //decrement the count until its zero. This is to make sure that the channel really is done 

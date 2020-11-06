@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
   int TDCbuflength = 0;
 
   bool bheader = false;
-  unsigned int lastheader = 0;
-  bool lheader = false;
+  //unsigned int lastheader = 0;
+  //bool lheader = false;
   int ifastorread = 0;
   bool fastorprint = false;
   int ifastorok = 0;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
 
   unsigned int oldevent = 0;
-  unsigned int header = 0;
+  //unsigned int header = 0;
   unsigned int n1, n2;
   unsigned long long n;
   unsigned int bigbuff[4096];
@@ -119,12 +119,12 @@ int main(int argc, char *argv[])
 
     if ((n1 == 0x53333333) && (n2 == 0x53333333)) {
       //tdc buffer, special handling
-      if ((lastheader & 0xff000000) == 0x50000000) {
-        lheader = true;
-      } else {
-        lheader = false;
-      }
-      lastheader = n1;
+      // if ((lastheader & 0xff000000) == 0x50000000) {
+      //   lheader = true;
+      // } else {
+      //   lheader = false;
+      // }
+      //lastheader = n1;
       n = (n1 & 0xf0000000) + oldevent;
       n = (n << 32);
       TDCbuff[TDCbuflength] = n;
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
       n = (n2 & 0xff000000) + oldevent;
       n = (n << 32) + n1;
       foutScaler.write((char*)&n, sizeof(unsigned long long));
-      lastheader = n2;
+      //lastheader = n2;
 
       for (int ih = 0; ih < 26; ih++) {
         in.read((char *) &n1, sizeof n1);
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
     } else if ((n2 & 0xffffffff) == 0x56666666) {
       //fast or record
       ictdc = 0;
-      lastheader = n2;
+      //lastheader = n2;
       if (n1 == 0xa) {
         ifastorread++;
         if ((ifastorread * 48 + offset) != (int) oldevent) {
@@ -240,9 +240,9 @@ int main(int argc, char *argv[])
     } else {
       if (((n1 & 0xff000000) == 0x50000000) & (wrdcount == 1)) {
         wrdcount = 0;
-        header = n1;
+        //header = n1;
         bheader = true;
-        lastheader = n1;
+        //lastheader = n1;
 
         if ((oldevent + 1) != (n1 & 0xffffff)) {
           std::cout << "event number sequence interruption expected: " << std::dec << (oldevent + 1) << " got: " << (n1 & 0xffffff) << std::endl;

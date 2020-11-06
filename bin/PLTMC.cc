@@ -680,7 +680,7 @@ void GetTracksHeadOnFirstROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignmen
   return;
 }
 
-void GetGausHitsOneROC (std::vector<PLTHit*>& Hits, PLTAlignment& Alignment)
+void GetGausHitsOneROC (std::vector<PLTHit*>& Hits)
 {
   // This function to generate events hitting telescopes head on
 
@@ -778,7 +778,7 @@ int PLTMC ()
       case 11:
         GetTracksCollisions2(Hits, Alignment);
       case 12:
-        GetGausHitsOneROC(Hits, Alignment);
+        GetGausHitsOneROC(Hits);
 	break;
     }
 

@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
   }
 
   unsigned long long totevent = 0;
-  uint32_t header = 0;
+  //uint32_t header = 0;
   uint32_t n1, n2;
   int wrdcount  =  0;
   int event = 0;
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
       if (((n1 & 0xff000000) == 0x50000000) & (wrdcount == 1)) {
         // Found the header
         wrdcount = 0;
-        header = n1;
+        //header = n1;
         bheader = true;
         stopit = 0;
         event = (n1 & 0xffffff);

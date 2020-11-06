@@ -62,11 +62,10 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::map<int, float> MeanResidualX;
   std::map<int, float> SigmaResidualX;
 
-  bool useTrackQuality = true;
   FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
-    std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
-    useTrackQuality = false;
+    std::cout << "Track quality file not found; cannot proceed without this data" << std::endl;
+    return(1);
   } else {
     int nch, ch, roc;
     float mean, sigma;

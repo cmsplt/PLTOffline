@@ -83,8 +83,8 @@ int PlotPixelVsTimeMagTest (std::string const InFileName, std::string const Curr
   }
 
 
-  float AvgADC[1000];
-  float Time[1000];
+  //float AvgADC[1000];
+  //float Time[1000];
   int iHit = 0;
 
   for (size_t i = 0; i != FileNames.size(); ++i) {
@@ -107,8 +107,8 @@ int PlotPixelVsTimeMagTest (std::string const InFileName, std::string const Curr
     if (mf != imFec || mfc != imFecChannel || hub != ihubAddress || roc != iROC || col != icol || row != irow || vcal != ivcal) {
       continue;
     }
-    AvgADC[iHit] = adc;
-    Time[iHit] = SecondsSinceStart;
+    //AvgADC[iHit] = adc;
+    //Time[iHit] = SecondsSinceStart;
     ++iHit;
   }
 

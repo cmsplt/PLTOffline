@@ -11,6 +11,7 @@ PLTPlane::PLTPlane (int const Channel, int const ROC)
 {
   // Con me
   fChannel = Channel;
+  fROC = ROC;
 }
 
 
@@ -239,7 +240,7 @@ void PLTPlane::ClusterizeAllTouching (FiducialRegion const FidR)
 
 
 
-void PLTPlane::ClusterizeOnePixOneCluster (FiducialRegion const FidR)
+void PLTPlane::ClusterizeOnePixOneCluster (FiducialRegion const /*FidR*/)
 {
   // Loop over hits and find biggest..then use as seeds..
   for (size_t i = 0; i != fHits.size(); ++i) {

@@ -56,7 +56,7 @@ int PlotBuckets (std::string const InFileName, int const ENTRY)
     for (int ich = 0; ich != 6; ++ich) {
       if (ich == 2) continue;
       Lumi[ich]->Set(ientry + 1);
-      if (HistReader.GetTotalInChannel(ich) < PLTHistReader::NBUCKETS*4000 && HistReader.GetTotalInChannel(ich) >= 0) {
+      if (HistReader.GetTotalInChannel(ich) < PLTHistReader::NBUCKETS*4000) {
         Lumi[ich]->SetPoint(ientry, ientry, HistReader.GetTotalInChannel(ich));
       } else {
         Lumi[ich]->SetPoint(ientry, ientry, 0);

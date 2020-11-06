@@ -127,7 +127,7 @@ int readEvent(std::ifstream& infile) {
   static int fLastTime = -1;
   static int fTimeMult = 0;
   uint32_t n1=0, n2=0, oldn1=0, oldn2=0;
-  uint32_t event, time, bx, fedid;
+  uint32_t event, time, bx; //fedid;
  
   int nWords = 0;
   int wordcount = 0;
@@ -169,10 +169,10 @@ int readEvent(std::ifstream& infile) {
 
       if ((n1 & 0xff000000) == 0x50000000) {
         bx = ((n2 & 0xfff00000) >> 20);
-        fedid = ((n2 & 0xfff00) >> 8);
+        //fedid = ((n2 & 0xfff00) >> 8);
       } else {
         bx = ((n1 & 0xfff00000) >> 20);
-        fedid = ((n1 & 0xfff00) >> 8);
+        //fedid = ((n1 & 0xfff00) >> 8);
       }
 
       std::cout << "Found header for event " << event << " BX " << bx << " (" << bx+1 << ")" << std::endl;
