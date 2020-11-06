@@ -1,16 +1,19 @@
-// USED FOR THE VDM SCAN, BUNCH-BY-BUNCH ANALYSIS
-// HAS EXCESSIVELY LONG NUMBERS TO ACCOUNT FOR THIS
-// AND PRODUCES MANY OUTPUT FILES, ONE FOR EACH BUNCH
 ////////////////////////////////////////////////////////////////////
 //
-//  TrackLumiZeroCounting -- a program to derive a luminosity
-//    using the rate of good tracks
-//    Based on MeasureAccidentals to derive good tracks, 
-//    PlotActiveBunches to determine filled bunches,
-//    and DetectFailure.cc to determine when a channel drops out.
+//  TrackLumiZeroCountingBXVdM.cc -- a modification of
+//    TrackLumiZeroCounting.cc to do bunch-by-bunch measurements
+//    during the VdM scan. It drops the dropout and error check
+//    functionality entirely (since if you have that in your scan
+//    you're already in trouble). It also doesn't need to check which
+//    bunches are filled (since that concept isn't necessary when
+//    you're going bunch by bunch), but it does currently have the
+//    triggered bunches hard-coded (although that's probably
+//    unnecessary when using the VdM trigger).
 //
 //  Paul Lujan, June 2016
 //  Edited by Daniel Gift, July 14 2016
+//  updated for 2020 studies, PJL Oct. 2020
+//
 ////////////////////////////////////////////////////////////////////
 
 #include <iostream>
@@ -32,6 +35,8 @@ const Int_t consecutiveZeros = 3000000; // Number of events with no hits before 
 const Int_t nValidChannels = 16; // Channels that could in theory have hits.
 const Int_t validChannels[nValidChannels] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 
 					     16, 17, 19, 20, 22, 23};
+std::vector<int> filledChannels = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
+
 // Trigger Bunches
 const int nFilledBunches = 32;
 const int numTriggers = 37;
@@ -80,11 +85,10 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::map<int, float> MeanResidualX;
   std::map<int, float> SigmaResidualX;
 
-  bool useTrackQuality = true;
   FILE *qfile = fopen(TrackDistributionFileName.c_str(), "r");
   if (qfile == NULL) {
-    std::cout << "Track quality file not found; accidental fraction will not be measured" << std::endl;
-    useTrackQuality = false;
+    std::cout << "Track quality file not found; cannot proceed without this data" << std::endl;
+    return(1);
   } else {
     int nch, ch, roc;
     float mean, sigma;
@@ -110,20 +114,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       SigmaResidualX[10*ch+roc] = sigma;
     }
     
-//     for (std::map<int, float>::iterator it = MeanSlopeY.begin(); it != MeanSlopeY.end(); ++it) {
-//     ch = it->first;
-//     std::cout << ch << " sX " << MeanSlopeX[ch] << "+/-" << SigmaSlopeX[ch]
-// 	      << " sY " << MeanSlopeY[ch] << "+/-" << SigmaSlopeY[ch]
-// 	      << " rX0 " << MeanResidualX[10*ch] << "+/-" << SigmaResidualX[10*ch]
-// 	      << " rX1 " << MeanResidualX[10*ch+1] << "+/-" << SigmaResidualX[10*ch+1]
-// 	      << " rX2 " << MeanResidualX[10*ch+2] << "+/-" << SigmaResidualX[10*ch+2]
-// 	      << " rY0 " << MeanResidualY[10*ch] << "+/-" << SigmaResidualY[10*ch]
-// 	      << " rY1 " << MeanResidualY[10*ch+1] << "+/-" << SigmaResidualY[10*ch+1]
-// 	      << " rY2 " << MeanResidualY[10*ch+2] << "+/-" << SigmaResidualY[10*ch+2]
-// 	      << std::endl;
-//     }
-//    return(0);
-
     fclose(qfile);
   } // read track quality file
 
@@ -163,68 +153,16 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   PLTAlignment Alignment;
   Alignment.ReadAlignmentFile(AlignmentFileName);
 
-  std::map<int, int> NTrkEvMap;
-
-  TH2F* HistBeamSpot[4];
-  HistBeamSpot[0] = new TH2F("BeamSpotX", "BeamSpot X=0;Y;Z;NTracks", 25, -25, 25, 25, -540, 540);
-  HistBeamSpot[1] = new TH2F("BeamSpotY", "BeamSpot Y=0;X;Z;NTracks", 25, -25, 25, 25, -540, 540);
-  HistBeamSpot[2] = new TH2F("BeamSpotZ", "BeamSpot Z=0;X;Y;NTracks", 30, -10, 10, 15, -10, 10);
-  HistBeamSpot[3] = new TH2F("BeamSpotZzoom", "BeamSpotZoom Z=0;X;Y;NTracks", 30, -5, 5, 30, -5, 5);
-
-  std::map<int, TH1F*> MapSlopeY;
-  std::map<int, TH1F*> MapSlopeX;
-  std::map<int, TH2F*> MapSlope2D;
-  std::map<int, TH1F*> MapResidualY;
-  std::map<int, TH1F*> MapResidualX;
-
-  // Arrays to keep track of variables
-  std::vector<int> nTotTracks(nSteps);
-  std::vector<int> nGoodTracks(nSteps);
-  std::vector<std::vector<float> > nAllTriple(nSteps, std::vector<float>(NBX));
-  std::vector<std::vector<float> > nGoodTriple(nSteps, std::vector<float>(NBX));
-  std::vector<std::vector<float> > nEmptyEventsFilledBX(nSteps, std::vector<float>(NBX));
-  std::vector<std::vector<float> > nNonEmptyFilledBX(nSteps, std::vector<float>(NBX));
-  std::vector<std::vector<int> > nEvents(nSteps, std::vector<int>(NBX));
-  std::vector<std::vector<int> > nEventsFilledBX(nSteps, std::vector<int>(NBX));
+  std::vector<std::vector<int> > nEventsBX(nSteps, std::vector<int>(NBX));
 
   typedef std::vector<std::vector<int> > vv;
 
   // Arrays to keep track of anaysis by channel and per bunch
-  std::vector<vv> nAllTripleBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
-  std::vector<vv> nGoodTripleBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
-  std::vector<vv> nEmptyEventsFilledBXBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
-  std::vector<vv> nNonEmptyFilledBXBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
-
-  int nEventsByBX[NBX] = {0};
-  float nEmptyEventsByBX[NBX] = {0.};
-
-  std::vector<int> zeroVector(nChannels);
-
-  // Double arrays to keep track channel-by-channel
-  std::vector<std::vector<int> > nAllTripleByChannel(nSteps, zeroVector);
-  std::vector<std::vector<int> > nGoodTripleByChannel(nSteps, zeroVector);
-  std::vector<std::vector<int> > nEmptyEventsFilledBXByChannel(nSteps, zeroVector);
-  std::vector<std::vector<int> > nNonEmptyFilledBXByChannel(nSteps, zeroVector);
-  std::vector<std::vector<int> > nEmptyEventsByBXByChannel(3564, zeroVector);
-
-  // Variables to keep track of dead channels
-  std::map<Int_t, Int_t> startEvent;
-  std::map<Int_t, std::string> startTime;
-  std::map<Int_t, Int_t> endEvent;
-  std::map<Int_t, std::string> endTime;
-  Int_t offset = 1;
-  Int_t zerosInARow[nChannels] = {0};
-
-  // Variables to keep track of channels with desync errors
-  std::vector<int> b;
-  std::vector<int>& wrong = b; //Initialization
-  std::vector<int> problems(nChannels);
-  std::vector<int> channelHasIssuesNow(nChannels); //to indicate that a channel had many desync errors and hasn't recovered
-  std::vector<int> hasProblemThisEvent(nChannels); //to indicate a channel had a Desyn error this event
-  std::vector<int> errorChannels; //Keep track of which channels had problems
-  std::vector<std::string> errorTimes; // and when
-  Int_t newHits[nChannels] = {0};
-    
+  std::vector<vv> nAllTripleChBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nGoodTripleChBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nEmptyEventsChBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  std::vector<vv> nNonEmptyEventsChBX(nSteps, vv(nChannels, std::vector<int>(NBX)));
+  
   int stepNumber = 0;
   uint32_t currentStepStart = 0;
   // const uint32_t stepLength = 60000; // 1 minute
@@ -232,7 +170,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 
   // Loop over all events in file
   for (int ientry = 0; Event.GetNextEvent() >= 0; ++ientry) {
-    
+
     //   if (ientry > 163000000) break;
 
     if (ientry % 100000 == 0) {
@@ -268,36 +206,14 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       if (stepNumber == 0 && currentStepStart == 0) currentStepStart = Event.Time();
       if ((Event.Time() - currentStepStart) > stepLength) {
 	//This should never be needed with thsi file. Always run with time stamps
-	/*	//std::cout << "starting new step @" << Event.Time() << " from " << currentStepStart << std::endl;
-	timestamps.push_back(std::make_pair(currentStepStart, Event.Time()-1));
-	nTotTracks.push_back(0);
-	nGoodTracks.push_back(0);
-	nAllTriple.push_back(0);
-	nGoodTriple.push_back(0);
-	nEvents.push_back(0);
-	nEventsFilledBX.push_back(0);
-	nEmptyEventsFilledBX.push_back(0);
-	nNonEmptyFilledBX.push_back(0);
-       
-	nTotTracksByChannel.push_back(zeroVector);
-        nGoodTracksByChannel.push_back(zeroVector);
-        nAllTripleByChannel.push_back(zeroVector);
-        nGoodTripleByChannel.push_back(zeroVector);
-        nEmptyEventsFilledBXByChannel.push_back(zeroVector);
-	nNonEmptyFilledBXByChannel.push_back(zeroVector);
-  
-	currentStepStart = Event.Time();
-	stepNumber++;
-	nSteps++;
-	*/
+	std::cout << "warning: not supported" << std::endl;
       }
     }
 
-    nEvents[stepNumber][BX]++; // Count number of events
+    nEventsBX[stepNumber][BX]++; // Count number of events
     
-    std::vector<int> hasGoodTracksInEvent = zeroVector;
-    for (int i = 0; i < nChannels; ++i)
-      newHits[i] = 0;
+    std::vector<int> hasGoodTracksInEvent(nChannels);
+
     // Loop over all planes with hits in event
     for (size_t it = 0; it != Event.NTelescopes(); ++it) {
       
@@ -305,39 +221,8 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       PLTTelescope* Telescope = Event.Telescope(it);
       int ch = Telescope->Channel();
            
-      if (!MapSlopeY[Telescope->Channel()]) {
-        TString Name = TString::Format("SlopeY_Ch%i", Telescope->Channel());
-        MapSlopeY[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.02, 0.06);
-        MapSlopeY[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
-        Name = TString::Format("SlopeX_Ch%i", Telescope->Channel());
-        MapSlopeX[Telescope->Channel()] = new TH1F(Name, Name, 40, -0.04, 0.04);
-        MapSlopeX[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
-        Name = TString::Format("Slope2D_Ch%i", Telescope->Channel());
-        MapSlope2D[Telescope->Channel()] = new TH2F(Name, Name, 100, -0.1, 0.1, 100, -0.1, 0.1);
-        MapSlope2D[Telescope->Channel()]->SetXTitle("Local Telescope Track-SlopeX #DeltaX/#DeltaZ");
-        MapSlope2D[Telescope->Channel()]->SetYTitle("Local Telescope Track-SlopeY #DeltaY/#DeltaZ");
-        Name = TString::Format("ResidualY%i_ROC0", Telescope->Channel());
-        MapResidualY[Telescope->Channel()*10+0] = new TH1F(Name, Name, 40, -0.02, 0.06);
-        MapResidualY[Telescope->Channel()*10+0]->SetXTitle("Local Telescope Residual-Y (cm)");
-        Name = TString::Format("ResidualX%i_ROC0", Telescope->Channel());
-        MapResidualX[Telescope->Channel()*10+0] = new TH1F(Name, Name, 40, -0.04, 0.04);
-        MapResidualX[Telescope->Channel()*10+0]->SetXTitle("Local Telescope Residual-X (cm)");
-        Name = TString::Format("ResidualY%i_ROC1", Telescope->Channel());
-        MapResidualY[Telescope->Channel()*10+1] = new TH1F(Name, Name, 40, -0.02, 0.06);
-        MapResidualY[Telescope->Channel()*10+1]->SetXTitle("Local Telescope Residual-Y (cm)");
-        Name = TString::Format("ResidualX%i_ROC1", Telescope->Channel());
-        MapResidualX[Telescope->Channel()*10+1] = new TH1F(Name, Name, 40, -0.04, 0.04);
-        MapResidualX[Telescope->Channel()*10+1]->SetXTitle("Local Telescope Residual-X (cm)");
-        Name = TString::Format("ResidualY%i_ROC2", Telescope->Channel());
-        MapResidualY[Telescope->Channel()*10+2] = new TH1F(Name, Name, 40, -0.02, 0.06);
-        MapResidualY[Telescope->Channel()*10+2]->SetXTitle("Local Telescope Residual-Y (cm)");
-        Name = TString::Format("ResidualX%i_ROC2", Telescope->Channel());
-        MapResidualX[Telescope->Channel()*10+2] = new TH1F(Name, Name, 40, -0.04, 0.04);
-        MapResidualX[Telescope->Channel()*10+2]->SetXTitle("Local Telescope Residual-X (cm)");
-      }
-
       if (Telescope->NTracks() > 0) {
-	nAllTripleBX[stepNumber][ch][BX]++; // Count number of triple coincidences
+	nAllTripleChBX[stepNumber][ch][BX]++; // Count number of triple coincidences
 	
 	bool foundOneGoodTrack = false;
 	for (size_t itrack = 0; itrack < Telescope->NTracks(); ++itrack) {
@@ -359,319 +244,62 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 	  break; // We found a valid track!
 	}
 	if (foundOneGoodTrack) { 
-	  nGoodTripleBX[stepNumber][ch][BX]++; //Count the number of valid triple coincidences
+	  nGoodTripleChBX[stepNumber][ch][BX]++; //Count the number of valid triple coincidences
 	  hasGoodTracksInEvent[ch]++; // Note that this channel had a good track
 	}
       }
-      newHits[ch] += (Int_t)Telescope->NTracks(); // count number of hits, to determine if channel is dead
     } // telescope loop
-    
-    nEventsByBX[Event.BX()]++; // Count number of events, sorted by BX
-
-    nEventsFilledBX[stepNumber][BX]++; // Count number of events that happened in filled bunches
     
     for (Int_t index = 0; index < nValidChannels; ++index) {
       Int_t channel = validChannels[index];
-      if (hasGoodTracksInEvent[channel] == 0) {
-      	nEmptyEventsByBXByChannel[Event.BX()][channel]++; // Count number of events with no good tracks
-      }
+
       if (hasGoodTracksInEvent[channel] > 0) {
-	nNonEmptyFilledBXBX[stepNumber][channel][BX]++; // There were tracks!
+	nNonEmptyEventsChBX[stepNumber][channel][BX]++; // There were tracks!
       }      
       else {
-	nEmptyEventsFilledBXBX[stepNumber][channel][BX]++; // No tracks 
-      }
-      
-      ////////////
-      // Begin checking for dead channels
-      ////////////
-      
-      // Loop through all channels and note how many hits in each  
-      // Keep track of how many times in a row a channel has had 0 hits
-      // Increment the number of 0's in a row seen
-      if (newHits[channel] == 0) {
-	++zerosInARow[channel];
-      }
-
-      // Or reset that count to 0        
-      else {
-	if (zerosInARow[channel] > consecutiveZeros) {
-	  std::cout << "Channel " << channel << " has recovered at event " << ientry << " at time " << Event.ReadableTime() << std::endl;
-	  // Account for the possibility of multiple failures in the same channel
-          // Store the errors as the number plus mutiples of 100
-	  for (Int_t possibleOffset = 0; possibleOffset < offset; ++possibleOffset) {
-	    if (endEvent[100 * possibleOffset + channel] == -1) {
-	      endEvent[100 * possibleOffset + channel] = ientry;
-	      endTime[100 * possibleOffset + channel] = Event.ReadableTime();
-	    }
-	  }
-	}
-	zerosInARow[channel] = 0;
-      }
-
-      // If a channel has had 0 hits for long enough, declare it dead
-      if (zerosInARow[channel] == consecutiveZeros) {
-	int nsec = Event.Time()/1000;
-	int hr = nsec/3600;
-	int min = (nsec-(hr*3600))/60;
-	
-	std::stringstream buf;
-	buf << std::setfill('0') << std::setw(2) << hr << ":" << std::setw(2) << min;
-	std::string failureTime = buf.str();
-	std::cout << "Failure in Channel "  << channel << " at event " << 
-	  ientry - consecutiveZeros + 1 << " at approximately  " << failureTime << std::endl;
-	// If there's already a failure with this channel, the index is the offset plus the channel
-	if (startEvent.count(channel)) {
-	  startEvent.insert(std::pair<Int_t, Int_t>(offset*100 + channel, ientry - consecutiveZeros + 1));
-	  startTime.insert(std::pair<Int_t, std::string> (offset * 100 + channel, failureTime));
-	  endEvent.insert(std::pair<Int_t, Int_t> (offset * 100 + channel, -1));
-	  endTime.insert(std::pair<Int_t, std::string> (offset * 100 + channel, "End"));
-	  ++offset;
-	}
-	// If there isn't yet a failure in this channel, do it normally
-	else {
-	  startEvent.insert(std::pair<Int_t, Int_t>(channel, ientry - consecutiveZeros + 1));
-	  startTime.insert(std::pair<Int_t, std::string> (channel, failureTime));
-	  endEvent.insert(std::pair<Int_t, Int_t> (channel, -1));
-	  endTime.insert(std::pair<Int_t, std::string> (channel, "End"));
-	}
+	nEmptyEventsChBX[stepNumber][channel][BX]++; // No tracks 
       }
     }
 
-    ////////////
-    // End checking for dead channels
-    ////////////
-
-    ////////////
-    // Begin checking for desync errors
-    ////////////
-
-    // Keep track of desync events
-    wrong = Event.getDesyncChannels(); //List of channels with desync error
-    for (size_t index = 0; index < wrong.size(); ++index) {
-      int errorCh = wrong[index];
-      hasProblemThisEvent[errorCh] = 1; // show this channel has a problem this event
-      if (!channelHasIssuesNow[errorCh]) { // if we haven't identified this as having consistent problems
-	if (problems[errorCh] == 0)
-	  std::cout<<"Channel "<<errorCh<<" temporarily desynced at "<<Event.ReadableTime()<<"   :"<<ientry<<std::endl;
-	if (problems[errorCh] >= 20000) { //now identify it as having consistent problems
-	  errorChannels.push_back(errorCh);
-	  errorTimes.push_back(Event.ReadableTime());
-	  std::cout<<"Channel "<<errorCh<<" very very very very very very desynced at "<<Event.ReadableTime()<<"    :"<<ientry<<std::endl;
-	  channelHasIssuesNow[errorCh] = 1;
-	}
-      }
-      if (problems[errorCh] < 20000)
-        problems[errorCh]++;
-    }
-    //decrement the count until its zero. This is to make sure that the channel really is done 
-    // having problems, and that it doesn't just temporarily become good but then go bad again
-    for (int channel = 0; channel < nChannels; ++channel) {
-      if (channelHasIssuesNow[channel]) { 
-	if (!hasProblemThisEvent[channel]) {
-	  problems[channel]--;
-	  if (problems[channel] < 1) {
-	    std::cout<<"Channel "<<channel<<" resynced at "<<Event.ReadableTime()<<"     :"<<ientry<<std::endl;
-	    channelHasIssuesNow[channel] = 0;
-	  }
-	}
-	else 
-	  hasProblemThisEvent[channel] = 0;
-      }
-    }
-
-    ////////////
-    // End check for desync errors
-    ////////////
-    
   } // event loop
-    // properly catch the last step
+  
+  // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
 
-  //Print out the desync errors
-  for (size_t i = 0; i < errorChannels.size(); ++i) 
-    std::cout<<"There was an desync error in channel "<<errorChannels[i]<<" at time "<<errorTimes[i]<<std::endl;
-
-  // Print out the channel failures
-  for (std::map<Int_t, Int_t>::iterator it = startEvent.begin(); it != startEvent.end(); it++) {
-    Int_t channel = (it->first) % 100;
-    if ((startEvent[channel] == 0) && (endEvent[channel] == -1))
-      std::cout << "Channel " << channel << " was dead for the full fill" << std::endl;
-    else {                                                               
-      std::cout << "Error in channel " << channel << " at event " << startEvent[channel] <<
-	" at approximately " << startTime[channel] << std::endl;
-      if (endEvent[channel] == -1)
-	std::cout << "\tFailure lasted through the end of the fill" << std::endl;
-      else
-	std::cout << "\tFailure ended at event " << endEvent[channel] << " at time " <<
-	  endTime[channel] << std::endl;
-    }
-  }
-  
-  // Make a vector of the good channels (that didn't die in the fill)
-  // These we will use to calculate luminosities
-  // Desync errors are ignored
-  std::vector<Int_t> functionalChannels;
-  for (int index = 0; index < nValidChannels; ++index) {
-    if (startEvent.count(validChannels[index]) == (Int_t)0) {
-      functionalChannels.push_back(validChannels[index]);
-    }
-  }
- 
-  TFile *f = new TFile("histo_slopes.root","RECREATE");
-  FILE *textf = fopen("TrackDistributions.txt", "w");
-
-  TCanvas Can("BeamSpot", "BeamSpot", 900, 900);
-  Can.Divide(3, 3);
-  Can.cd(1);
-  HistBeamSpot[0]->SetXTitle("X(cm)");
-  HistBeamSpot[0]->SetYTitle("Y(cm)");
-  HistBeamSpot[0]->Draw("colz");
-  Can.cd(2);
-  HistBeamSpot[1]->SetXTitle("X(cm)");
-  HistBeamSpot[1]->SetYTitle("Y(cm)");
-  HistBeamSpot[1]->Draw("colz");
-  Can.cd(3);
-  HistBeamSpot[2]->SetXTitle("X(cm)");
-  HistBeamSpot[2]->SetYTitle("Y(cm)");
-  HistBeamSpot[2]->Draw("colz");
-
-  HistBeamSpot[3]->SetXTitle("X (cm)");
-  HistBeamSpot[3]->SetYTitle("Y (cm)");
-  HistBeamSpot[3]->Draw("colz");
-
-  Can.cd(1+3);
-  HistBeamSpot[0]->ProjectionX()->Draw("ep");
-  Can.cd(2+3);
-  HistBeamSpot[1]->ProjectionX()->Draw("ep");
-  Can.cd(3+3);
-  HistBeamSpot[2]->ProjectionX()->Draw("ep");
-
-  Can.cd(1+6);
-  HistBeamSpot[0]->ProjectionY()->Draw("ep");
-  Can.cd(2+6);
-  HistBeamSpot[1]->ProjectionY()->Draw("ep");
-  Can.cd(3+6);
-  HistBeamSpot[2]->ProjectionY()->Draw("ep");
-  Can.SaveAs("plots/BeamSpot.gif");
-  
-  HistBeamSpot[0]->Write();
-  HistBeamSpot[1]->Write();
-  HistBeamSpot[2]->Write();
-  HistBeamSpot[3]->Write();
-
-  fprintf(textf, "%d\n", (int)MapSlopeY.size());
-
-  for (std::map<int, TH1F*>::iterator it = MapSlopeY.begin(); it != MapSlopeY.end(); ++it) {
-    it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
-  }
-
-  for (std::map<int, TH1F*>::iterator it = MapSlopeX.begin(); it != MapSlopeX.end(); ++it) {
-    it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
-  }
-
-  for (std::map<int, TH2F*>::iterator it = MapSlope2D.begin(); it != MapSlope2D.end(); ++it) {
-    it->second->Write();
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
-  }
-  for (std::map<int, TH1F*>::iterator it = MapResidualY.begin(); it != MapResidualY.end(); ++it) {
-    it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
-  }
-  for (std::map<int, TH1F*>::iterator it = MapResidualX.begin(); it != MapResidualX.end(); ++it) {
-    it->second->Write();
-    fprintf(textf, "%s %f %f\n", it->second->GetName(), it->second->GetMean(), it->second->GetRMS());
-    TCanvas Can;
-    Can.cd();
-    it->second->Draw("hist");
-    Can.SaveAs("plots/" + TString(it->second->GetName()) + ".gif");
-    delete it->second;
-  }
-  
-  f->Close();
-  fclose(textf);
-  FILE *outf = fopen("TrackLumiZC.txt", "w");
-  fprintf(outf, "%d %d\n", nSteps, nFilledBunches);
-
-  // Find averages over all valid telescopes
-  float allTripleTot;
-  float goodTripleTot;
-  float emptyEventsFilledBXTot;
-  float nonEmptyFilledBXTot;
-  float emptyEventsByBXTot;
-  float nFunctionalChannels = (float)functionalChannels.size();
-  for (int stepNum = 0; stepNum < nSteps; ++stepNum) {
-    for (int BXnum = 0; BXnum < NBX; ++BXnum) {
-      allTripleTot = 0.;
-      goodTripleTot = 0.;
-      emptyEventsFilledBXTot = 0.;
-      nonEmptyFilledBXTot = 0.;
-      for (std::vector<int>::iterator it = functionalChannels.begin(); it != functionalChannels.end(); ++it) {
-	int channel = *it;
-	allTripleTot += nAllTripleBX[stepNum][channel][BXnum];
-	goodTripleTot += nGoodTripleBX[stepNum][channel][BXnum];
-	emptyEventsFilledBXTot += nEmptyEventsFilledBXBX[stepNum][channel][BXnum];
-	nonEmptyFilledBXTot += nNonEmptyFilledBXBX[stepNum][channel][BXnum];
-      }
-      // For these we want the average 
-      nAllTriple[stepNum][BXnum] = allTripleTot/nFunctionalChannels;
-      nGoodTriple[stepNum][BXnum] = goodTripleTot/nFunctionalChannels;
-      nEmptyEventsFilledBX[stepNum][BXnum] = emptyEventsFilledBXTot/nFunctionalChannels;
-      nNonEmptyFilledBX[stepNum][BXnum] = nonEmptyFilledBXTot/nFunctionalChannels;
-    }
-  }
-
-
-  for (int i = 0; i < NBX; ++i) {
-    emptyEventsByBXTot = 0.;    
-    for (std::vector<int>::iterator it = functionalChannels.begin(); it != functionalChannels.end(); ++it) {
-      int channel = *it;
-      emptyEventsByBXTot += nEmptyEventsByBXByChannel[i][channel];
-    }
-    nEmptyEventsByBX[i] = emptyEventsByBXTot/nFunctionalChannels;
-  }
-
-  for (int BX = 0; BX < NBX; ++BX) {
-    if (triggers[BX] < 0) continue;
+  int nFilledChannels = filledChannels.size();
+  for (int iBX = 0; iBX < NBX; ++iBX) {
+    if (triggers[iBX] < 0) continue;
     std::stringstream buf;
-    buf << "TrackLumiZC" << std::setfill('0') << std::setw(4) << BX+1 << std::setw(0) << ".txt";
+    buf << "TrackLumiZC" << std::setfill('0') << std::setw(4) << iBX+1 << std::setw(0) << ".txt";
     std::string name = buf.str();
     FILE *outf = fopen(name.c_str(), "w");
     fprintf(outf, "%d %d\n", nSteps, nFilledBunches);
 
-    for (int i=0; i<nSteps; ++i) {
-    // Used if you don't want all the channel data
-      fprintf(outf, "%d %d %d %lf %lf %d %lf %lf\n", timestamps[i].first, timestamps[i].second, nEvents[i][BX], nAllTriple[i][BX], nGoodTriple[i][BX], nEventsFilledBX[i][BX], nEmptyEventsFilledBX[i][BX], nNonEmptyFilledBX[i][BX]);
+    for (int iStep=0; iStep<nSteps; ++iStep) {
+      // compute channel-averaged quantities
+      float allTripleTot = 0.;
+      float goodTripleTot = 0.;
+      float emptyEventsTot = 0.;
+      float nonEmptyEventsTot = 0.;
+      for (std::vector<int>::iterator it = filledChannels.begin(); it != filledChannels.end(); ++it) {
+	int iChan = *it;
+	allTripleTot += nAllTripleChBX[iStep][iChan][iBX];
+	goodTripleTot += nGoodTripleChBX[iStep][iChan][iBX];
+	emptyEventsTot += nEmptyEventsChBX[iStep][iChan][iBX];
+	nonEmptyEventsTot += nNonEmptyEventsChBX[iStep][iChan][iBX];
+      }
+
+      fprintf(outf, "%d %d %d %lf %lf %d %lf %lf", timestamps[iStep].first, timestamps[iStep].second, nEventsBX[iStep][iBX],
+	      allTripleTot/nFilledChannels, goodTripleTot/nFilledChannels, nEventsBX[iStep][iBX],
+	      emptyEventsTot/nFilledChannels, nonEmptyEventsTot/nFilledChannels);
+      for (auto ch: filledChannels) {
+	fprintf(outf, " %d", nNonEmptyEventsChBX[iStep][ch][iBX]);
+      }
+      fprintf(outf, "\n");
+
     }
     fclose(outf);
   }
-  /*
-  std::cout << "==Zero counting by BX==" << std::endl;
-  for (int index = 0; index < NBX; ++index) {
-    if (filledBunches[index] == 1)
-      std::cout << index+1 << " " << nEventsByBX[index] << " " << nEmptyEventsByBX[index] << std::endl;
-      }*/
   
 return 0;
 }
