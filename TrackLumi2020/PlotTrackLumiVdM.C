@@ -37,7 +37,7 @@ const std::string separationFileName = "VdMSteps_"+fillNumber+"_AllScans.txt";
 // title for the plot. You can also add a channel number as a 4th argument, or -1 (default) to plot the
 // all-channel average. Note that the "channel number" refers simply to the order that they appear in the
 // file, which may not be the real channel number. Some defaults are also provided in the utility functions at
-// the end. The function returns four float in a std::tuple: the fitted peak and its error, and the fitted
+// the end. The function returns four floats in a std::tuple: the fitted peak and its error, and the fitted
 // CapSigma and its error (which is just the width of the Gaussian).
 
 std::tuple<float, float, float, float> PlotTrackLumiVdM(const char *scanFileName, const char *outFileName, const char *plotTitle, int channelNum = -1) {
@@ -324,7 +324,7 @@ void PlotTrackLumiVdM(int whichPlot) {
 
       std::vector<int>::const_iterator targetBXIt = std::find(bunches.begin(), bunches.end(), 81);
       int targetBXIndex = std::distance(bunches.begin(), targetBXIt);
-      std::cout << "target index is " << targetBXIndex;
+      //std::cout << "target index is " << targetBXIndex;
       overallBunchProduct = beam1Intensity[targetBXIndex]*beam2Intensity[targetBXIndex];
     }
 

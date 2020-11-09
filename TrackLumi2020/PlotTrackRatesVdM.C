@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////
 //
 // PlotTrackRatesVdM -- plots the raw track rates (all tracks, good tracks, and bad tracks) for a single VdM
-// scan. Based (more or less) on PlotTrackRatesVdM, but way simpler.
+// scan. Based (more or less) on PlotTrackLumiVdM, but way simpler.
 //
 // Paul Lujan, October 25, 2020
 //
