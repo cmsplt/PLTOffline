@@ -311,7 +311,7 @@ void StabilityLinearity(void) {
   g_rtp->SetLineColor(kBlue);
   g_rtp->SetMarkerSize(1);
   if (constScaleFactor > 0) {
-    g_rtp->SetMaximum(1.3);
+    g_rtp->SetMaximum(1.7);
     g_rtp->SetMinimum(0.5);
   }
   else {
