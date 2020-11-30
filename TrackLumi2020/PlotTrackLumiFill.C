@@ -271,7 +271,7 @@ void PlotTrackLumiFill(int fillNumber_i) {
   g_lhf->GetYaxis()->SetTitle("Luminosity (Hz/nb)");
   g_lhf->GetYaxis()->SetTitleOffset(1.2);
   g_lhf->SetMarkerStyle(kFullCircle);
-  g_lhf->SetMarkerColor(kBlue);
+  g_lhf->SetMarkerColor(kRed);
   g_lhf->SetMarkerSize(1);
   g_lhf->GetXaxis()->SetTimeDisplay(1);
   g_lhf->GetXaxis()->SetTimeFormat("%H:%M");
@@ -279,7 +279,7 @@ void PlotTrackLumiFill(int fillNumber_i) {
 
   g_lpz->Draw("P same");
   g_lpz->SetMarkerStyle(kFullCircle);
-  g_lpz->SetMarkerColor(kRed);
+  g_lpz->SetMarkerColor(kBlue);
   g_lpz->SetMarkerSize(1);
 
   g_ltr->Draw("P same");
