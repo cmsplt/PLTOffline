@@ -63,6 +63,7 @@ PlotActiveBunches
 PlotADCForVCal
 PlotBXDistribution
 PlotBuckets
+PlotErrorRates
 PlotEvent
 PlotFedTime
 PlotPixelVsTimeMagTest

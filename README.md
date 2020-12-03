@@ -131,6 +131,7 @@ These are more special-purpose utilities, but they have been written or updated 
 * **OccupancyVsTime** (D) makes a plot of the occupancy in each telescope and plane as a function of time. Like **MeasureAccidentals**, it defaults to 5-minute increments but you can also give it a timestamp file to run in specified intervals. Produces plots/occupancy_vs_time.root, which contains the target plots.
 * **PlotActiveBunches** (D) makes a plot of the average number of hits vs. BX and uses this plot to determine the number of filled BXes in the fill.
 * **PlotBXDistribution** (D) simply looks at the BX value for each event and makes a plot of the resulting distribution. This can be used to determine if the random/cycling trigger actually is uniform, or conversely to see if the fast-or coincidence trigger is correctly triggering on filled bunches.
+* **PlotErrorRates** (D) makes a plot of the rates for each of the six basic types of errors per minute over the course of a fill.
 * **PLTGeometryExport** (A) sets up the PLT geometry using the given alignment file and exports it as a ROOT and XML file, for use in generating Monte Carlo.
 * **PLTHitDisplay** (DGA) produces a 3-D event display which shows the hits for a given event.
 * **RawADCValues** (D) is a utility for looking at the distribution of the raw ADC values for the pulse heights. It works similarly to **OccupancyPlots** but instead of plotting the occupancy simply plots the average ADC value for each pixel.
