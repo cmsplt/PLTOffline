@@ -107,8 +107,8 @@ int OccupancyPlots (std::string const DataFileName)
   std::map<int, TH2F*>    hMeanMap;
   std::map<int, TCanvas*> cMeanMap;
 
-
-
+  // Error histogram
+  TH1F *hErrors = new TH1F("Errors", "Errors", 6, -0.5, 5.5);
 
   // char buffer for writing names
   char BUFF[200];
@@ -276,6 +276,13 @@ int OccupancyPlots (std::string const DataFileName)
       if(phit==0x5) hCoincidenceMap[Tele->Channel()]->Fill(5); //Plane 0 and 2 in coincidence
       if(phit==0x7) hCoincidenceMap[Tele->Channel()]->Fill(6); //All planes in coincidence
     }
+
+    // Finally, fill the error histogram
+    const std::vector<PLTError>& errors = Event.GetErrors();
+    for (std::vector<PLTError>::const_iterator it = errors.begin(); it != errors.end(); ++it) {
+      hErrors->Fill(it->GetErrorType());
+    }
+
   }
 
   std::cout << "Done reading events.  Will make some plots now" << std::endl;
@@ -304,12 +311,12 @@ int OccupancyPlots (std::string const DataFileName)
     int const Channel = it->first / 10;
     int const ROC     = it->first % 10;
     int const id      = it->first;
-
+    
     printf("Drawing hist for Channel %2i ROC %i\n", Channel, ROC);
-
+    
     // Grab a 1-D hist from the 2D occupancy
     TH1F* hOccupancy1D = PLTU::HistFrom2D(it->second, "", 50);
-
+    
     // Draw the 2D and 1D distribution on occupancy canvas
     cOccupancyMap[Channel]->cd(ROC+1);
     it->second->Draw("colz");
@@ -362,7 +369,7 @@ int OccupancyPlots (std::string const DataFileName)
     hProjectionY->GetYaxis()->CenterTitle();
     hProjectionY->SetTitleOffset(2, "Y");
     hProjectionY->Draw("hist");
-
+    
 
 
    
@@ -405,14 +412,17 @@ int OccupancyPlots (std::string const DataFileName)
     hQuantileMap[id]->Draw("colz");
     cAllMap[Channel]->cd(ROC+6+1);
     hEfficiencyMap[id]->Draw("colz");
-
-  hOccupancyMap[id]->Write();
-  hQuantileMap[id]->Write();
-  hEfficiencyMap[id]->Write();
-  hEfficiency1DMap[id]->Write();
-  hCoincidenceMap[Channel]->Write();
+    
+    hOccupancyMap[id]->Write();
+    hQuantileMap[id]->Write();
+    hEfficiencyMap[id]->Write();
+    hEfficiency1DMap[id]->Write();
+    hCoincidenceMap[Channel]->Write();
+    
   }
-f->Write();
+  hErrors->Write();
+
+  f->Write();
 
   for (std::map<int, TH1F*>::iterator it = hCoincidenceMap.begin(); it != hCoincidenceMap.end(); ++it) {
     cCoincidenceMap[it->first]->cd();

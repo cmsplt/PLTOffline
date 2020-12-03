@@ -88,7 +88,6 @@ int main (int argc, const char* argv[]) {
       else nUnknownError[currentStep]++;
     }
 
-    //if (currentStep == 3) break;
   }
 
   TGraph *g_to = new TGraph(startTimes.size(), startTimes.data(), nTimeoutError.data());
