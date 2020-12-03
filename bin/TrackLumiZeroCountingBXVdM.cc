@@ -6,9 +6,9 @@
 //    functionality entirely (since if you have that in your scan
 //    you're already in trouble). It also doesn't need to check which
 //    bunches are filled (since that concept isn't necessary when
-//    you're going bunch by bunch), but it does currently have the
-//    triggered bunches hard-coded (although that's probably
-//    unnecessary when using the VdM trigger).
+//    you're going bunch by bunch), but will just write out for all
+//    bunches which are triggered (although if you want to select a
+//    particular subset you can do that below).
 //
 //  Paul Lujan, June 2016
 //  Edited by Daniel Gift, July 14 2016
@@ -37,15 +37,20 @@ const Int_t validChannels[nValidChannels] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14,
 					     16, 17, 19, 20, 22, 23};
 std::vector<int> filledChannels = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
 
-// Trigger Bunches
+// Number of filled bunches. Note: this doesn't actually get used for the per-BX analysis, but since the
+// things that read these files expect a number here, we need to at least put something.
 const int nFilledBunches = 32;
-const int numTriggers = 37;
-// This counting scheme starts at 1
-const int triggerInit[numTriggers] = {1, 41, 81, 110, 121, 161, 201, 241, 281, 591, 
-			      872, 912, 952, 992, 1032, 1072, 1112, 1151, 1152, 
-			      1682, 1783, 1823, 1863, 1903, 1943, 1983, 2023, 
-			      2063, 2654, 2655, 2694, 2734, 2774, 2814, 2854, 
-			      2894, 2934};
+// If true, will only read the bunches from the vector below. If false, will use all bunches with data.
+const bool useSpecificBX = false;
+// If true, will warn you if it finds a BX not in the list below. Obviously this shouldn't be true if you're
+// selecting only a subset of the triggered bunches.
+const bool warnUnexpectedBX = false;
+// If useSpecificBX is true, these are the bunches to use. Note: counting starts at 1 here
+const std::vector<int> selectedBX =  {1, 41, 81, 110, 121, 161, 201, 241, 281, 591,   // 2016 triggered bunches
+				      872, 912, 952, 992, 1032, 1072, 1112, 1151, 1152, 
+				      1682, 1783, 1823, 1863, 1903, 1943, 1983, 2023, 
+				      2063, 2654, 2655, 2694, 2734, 2774, 2814, 2854, 
+				      2894, 2934};
 
 int TrackLumiZeroCounting(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
 		       const std::string TrackDistributionFileName, const std::string TimestampFileName)
@@ -56,18 +61,6 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   std::cout << "TrackDistributionFileName: " << TrackDistributionFileName << std::endl;
   if (TimestampFileName != "")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
-
-  // Make a vector to indicate which BXs should be considered. A -1 indicates
-  // it is not a trigger, a 0 or higher indicates it is a trigger
-  std::vector<int> triggers(NBX); //The counting scheme here starts at 0
-  for (int bx = 0; bx < NBX; ++bx) {
-    for (int trig = 0; trig < numTriggers; ++trig) {
-      if (triggerInit[trig] == bx+1) triggers[bx] = 1;
-    }
-  }
-  for (int bx = 0; bx < NBX; ++bx){
-    triggers[bx]--;
-  }
 
   std::cout << "Total of " << nFilledBunches << " bunches filled" << std::endl;
   
@@ -190,11 +183,19 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       }
     }
     int BX = Event.BX();
-    if (triggers[BX] < 0) continue;
+    // Note -- Event.BX() is start-at-0 while selectedBX is start-at-1, so don't forget to adjust for that!
+    if (useSpecificBX && std::find(selectedBX.begin(), selectedBX.end(), BX+1) == selectedBX.end()) {
+      if (warnUnexpectedBX)
+	std::cout << "Warning: found data with unexpected BX " << BX+1 << std::endl;
+      continue;
+    }
     
     if (useTimestamps) {
       stepNumber = -1;
-      if (Event.Time() > timestamps[nSteps-1].second) break;
+      if (Event.Time() > timestamps[nSteps-1].second) {
+	std::cout << "Reached end of last step, ending..." << std::endl;
+	break;
+      }
       for (int iStep = 0; iStep < nSteps; ++iStep) {
 	if (Event.Time() >= timestamps[iStep].first && Event.Time() <= timestamps[iStep].second) {
 	  stepNumber = iStep;
@@ -205,7 +206,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
     } else {
       if (stepNumber == 0 && currentStepStart == 0) currentStepStart = Event.Time();
       if ((Event.Time() - currentStepStart) > stepLength) {
-	//This should never be needed with thsi file. Always run with time stamps
+	//This should never be needed with this file. Always run with time stamps
 	std::cout << "warning: not supported" << std::endl;
       }
     }
@@ -268,7 +269,10 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
 
   int nFilledChannels = filledChannels.size();
   for (int iBX = 0; iBX < NBX; ++iBX) {
-    if (triggers[iBX] < 0) continue;
+    // If we are using specific BXs, skip ones that aren't in the list. If we're not, skip ones that don't have any triggers.
+    if (useSpecificBX && std::find(selectedBX.begin(), selectedBX.end(), iBX+1) == selectedBX.end()) continue;
+    if (!useSpecificBX && nEventsBX[0][iBX] == 0) continue;
+
     std::stringstream buf;
     buf << "TrackLumiZC" << std::setfill('0') << std::setw(4) << iBX+1 << std::setw(0) << ".txt";
     std::string name = buf.str();
