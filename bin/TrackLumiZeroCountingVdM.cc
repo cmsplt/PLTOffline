@@ -125,6 +125,10 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
     for (int i=0; i<nSteps; ++i) {
       fscanf(tfile, "%d %d", &tBegin, &tEnd);
       timestamps.push_back(std::make_pair(tBegin, tEnd));
+      if (feof(tfile)) {
+	std::cerr << "Unexpected EOF in timestamp file!" << std::endl;
+	return(1);
+      }
     }
     fclose(tfile);
     useTimestamps = true;
