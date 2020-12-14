@@ -1,0 +1,545 @@
+DataFileName:      /localdata/2017/SLINK/Slink_20170728.191630.dat
+GainCalFileName:   ../GainCal/GainCalFits_20170518.143905.dat
+AlignmentFileName: ../ALIGNMENT/Trans_Alignment_2017MagnetOn_Prelim.dat
+TrackDistributionFileName: ../TrackDistributions/TrackDistributions_MagnetOn2017_5718.txt
+TimestampFileName: VdMSteps_6016_X4.txt
+WARNING: NoGainCal.  Using PLTPlane::kClustering_AllTouching for clustering
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTEvent::SetPlaneClustering setting clustering to 6
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 6
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+Processing event: 0 at 19:16:37.241 to determine active bunches
+Processing event: 50000 at 19:16:42.063 to determine active bunches
+Processing event: 100000 at 19:16:47.247 to determine active bunches
+Processing event: 150000 at 19:16:52.422 to determine active bunches
+Processing event: 200000 at 19:16:57.597 to determine active bunches
+Processing event: 250000 at 19:17:02.772 to determine active bunches
+Processing event: 300000 at 19:17:07.948 to determine active bunches
+Processing event: 350000 at 19:17:46.534 to determine active bunches
+Processing event: 400000 at 19:17:51.709 to determine active bunches
+Processing event: 450000 at 19:17:56.893 to determine active bunches
+Processing event: 500000 at 19:18:02.068 to determine active bunches
+Processing event: 550000 at 19:18:07.243 to determine active bunches
+Processing event: 600000 at 19:18:12.418 to determine active bunches
+Processing event: 650000 at 19:18:17.593 to determine active bunches
+Processing event: 700000 at 19:18:22.777 to determine active bunches
+Processing event: 750000 at 19:18:27.952 to determine active bunches
+Processing event: 800000 at 19:18:33.127 to determine active bunches
+Processing event: 850000 at 19:18:38.302 to determine active bunches
+Processing event: 900000 at 19:18:43.478 to determine active bunches
+Processing event: 950000 at 19:18:48.653 to determine active bunches
+Processing event: 1000000 at 19:18:53.836 to determine active bunches
+Processing event: 1050000 at 19:18:59.011 to determine active bunches
+Processing event: 1100000 at 19:19:04.187 to determine active bunches
+Processing event: 1150000 at 19:19:09.362 to determine active bunches
+Processing event: 1200000 at 19:19:14.537 to determine active bunches
+Processing event: 1250000 at 19:19:19.720 to determine active bunches
+Processing event: 1300000 at 19:19:24.896 to determine active bunches
+Processing event: 1350000 at 19:19:30.071 to determine active bunches
+Processing event: 1400000 at 19:19:35.246 to determine active bunches
+Processing event: 1450000 at 19:19:40.421 to determine active bunches
+Processing event: 1500000 at 19:19:45.597 to determine active bunches
+Processing event: 1550000 at 19:19:50.780 to determine active bunches
+Processing event: 1600000 at 19:19:55.955 to determine active bunches
+Processing event: 1650000 at 19:20:01.130 to determine active bunches
+Processing event: 1700000 at 19:20:06.306 to determine active bunches
+Processing event: 1750000 at 19:20:11.481 to determine active bunches
+Processing event: 1800000 at 19:20:16.664 to determine active bunches
+Processing event: 1850000 at 19:20:21.839 to determine active bunches
+Processing event: 1900000 at 19:20:27.015 to determine active bunches
+Processing event: 1950000 at 19:20:32.190 to determine active bunches
+Processing event: 2000000 at 19:20:37.365 to determine active bunches
+Processing event: 2050000 at 19:20:42.540 to determine active bunches
+Processing event: 2100000 at 19:20:47.724 to determine active bunches
+Processing event: 2150000 at 19:20:52.899 to determine active bunches
+Processing event: 2200000 at 19:20:58.074 to determine active bunches
+Processing event: 2250000 at 19:21:03.250 to determine active bunches
+Processing event: 2300000 at 19:21:08.425 to determine active bunches
+Processing event: 2350000 at 19:21:13.608 to determine active bunches
+Processing event: 2400000 at 19:21:18.784 to determine active bunches
+Processing event: 2450000 at 19:21:23.959 to determine active bunches
+Processing event: 2500000 at 19:21:29.134 to determine active bunches
+Processing event: 2550000 at 19:21:34.309 to determine active bunches
+Processing event: 2600000 at 19:21:39.492 to determine active bunches
+Processing event: 2650000 at 19:21:44.668 to determine active bunches
+Processing event: 2700000 at 19:21:49.843 to determine active bunches
+Processing event: 2750000 at 19:21:55.018 to determine active bunches
+Processing event: 2800000 at 19:22:00.193 to determine active bunches
+Processing event: 2850000 at 19:22:05.369 to determine active bunches
+Processing event: 2900000 at 19:22:10.552 to determine active bunches
+Processing event: 2950000 at 19:22:15.727 to determine active bunches
+Processing event: 3000000 at 19:22:20.902 to determine active bunches
+Processing event: 3050000 at 19:22:26.078 to determine active bunches
+Processing event: 3100000 at 19:22:31.253 to determine active bunches
+Processing event: 3150000 at 19:22:36.436 to determine active bunches
+Processing event: 3200000 at 19:22:41.611 to determine active bunches
+Processing event: 3250000 at 19:22:46.787 to determine active bunches
+Processing event: 3300000 at 19:22:51.962 to determine active bunches
+Processing event: 3350000 at 19:22:57.137 to determine active bunches
+Processing event: 3400000 at 19:23:02.313 to determine active bunches
+Processing event: 3450000 at 19:23:07.496 to determine active bunches
+Processing event: 3500000 at 19:23:12.671 to determine active bunches
+Processing event: 3550000 at 19:23:17.846 to determine active bunches
+Processing event: 3600000 at 19:23:23.022 to determine active bunches
+Processing event: 3650000 at 19:23:28.197 to determine active bunches
+Processing event: 3700000 at 19:23:33.380 to determine active bunches
+Processing event: 3750000 at 19:23:38.555 to determine active bunches
+Processing event: 3800000 at 19:23:43.731 to determine active bunches
+Processing event: 3850000 at 19:23:48.906 to determine active bunches
+Processing event: 3900000 at 19:23:54.081 to determine active bunches
+Processing event: 3950000 at 19:23:59.256 to determine active bunches
+Processing event: 4000000 at 19:24:04.439 to determine active bunches
+Processing event: 4050000 at 19:24:09.615 to determine active bunches
+Processing event: 4100000 at 19:24:14.790 to determine active bunches
+Processing event: 4150000 at 19:24:19.965 to determine active bunches
+Processing event: 4200000 at 19:24:25.140 to determine active bunches
+Processing event: 4250000 at 19:24:30.324 to determine active bunches
+Processing event: 4300000 at 19:24:35.499 to determine active bunches
+Processing event: 4350000 at 19:24:40.674 to determine active bunches
+Processing event: 4400000 at 19:24:45.849 to determine active bunches
+Processing event: 4450000 at 19:24:51.024 to determine active bunches
+Processing event: 4500000 at 19:24:56.208 to determine active bunches
+Processing event: 4550000 at 19:25:01.383 to determine active bunches
+Processing event: 4600000 at 19:25:06.558 to determine active bunches
+Processing event: 4650000 at 19:25:11.733 to determine active bunches
+Processing event: 4700000 at 19:25:16.909 to determine active bunches
+Processing event: 4750000 at 19:25:22.084 to determine active bunches
+Processing event: 4800000 at 19:25:27.267 to determine active bunches
+Processing event: 4850000 at 19:25:32.442 to determine active bunches
+Processing event: 4900000 at 19:25:37.617 to determine active bunches
+Processing event: 4950000 at 19:25:42.793 to determine active bunches
+Processing event: 5000000 at 19:25:47.968 to determine active bunches
+Processing event: 5050000 at 19:25:53.151 to determine active bunches
+Processing event: 5100000 at 19:25:58.326 to determine active bunches
+Processing event: 5150000 at 19:26:03.501 to determine active bunches
+Processing event: 5200000 at 19:26:08.677 to determine active bunches
+Processing event: 5250000 at 19:26:13.852 to determine active bunches
+Processing event: 5300000 at 19:26:19.027 to determine active bunches
+Processing event: 5350000 at 19:26:24.210 to determine active bunches
+Processing event: 5400000 at 19:26:29.386 to determine active bunches
+Processing event: 5450000 at 19:26:34.561 to determine active bunches
+Processing event: 5500000 at 19:26:39.736 to determine active bunches
+Processing event: 5550000 at 19:26:44.911 to determine active bunches
+Processing event: 5600000 at 19:26:50.095 to determine active bunches
+Processing event: 5650000 at 19:26:55.270 to determine active bunches
+Processing event: 5700000 at 19:27:00.445 to determine active bunches
+Processing event: 5750000 at 19:27:05.621 to determine active bunches
+Processing event: 5800000 at 19:27:10.796 to determine active bunches
+Processing event: 5850000 at 19:27:15.971 to determine active bunches
+Processing event: 5900000 at 19:27:21.154 to determine active bunches
+Processing event: 5950000 at 19:27:26.329 to determine active bunches
+Processing event: 6000000 at 19:27:31.505 to determine active bunches
+Processing event: 6050000 at 19:27:36.680 to determine active bunches
+Processing event: 6100000 at 19:27:41.855 to determine active bunches
+Processing event: 6150000 at 19:27:47.038 to determine active bunches
+Processing event: 6200000 at 19:27:52.214 to determine active bunches
+Processing event: 6250000 at 19:27:57.389 to determine active bunches
+Processing event: 6300000 at 19:28:02.564 to determine active bunches
+Processing event: 6350000 at 19:28:07.739 to determine active bunches
+Processing event: 6400000 at 19:28:12.923 to determine active bunches
+Processing event: 6450000 at 19:28:18.098 to determine active bunches
+Processing event: 6500000 at 19:28:23.273 to determine active bunches
+Processing event: 6550000 at 19:28:28.449 to determine active bunches
+Processing event: 6600000 at 19:28:33.624 to determine active bunches
+Processing event: 6650000 at 19:28:38.799 to determine active bunches
+Processing event: 6700000 at 19:28:43.982 to determine active bunches
+Processing event: 6750000 at 19:28:49.158 to determine active bunches
+Processing event: 6800000 at 19:28:54.333 to determine active bunches
+Processing event: 6850000 at 19:28:59.508 to determine active bunches
+Processing event: 6900000 at 19:29:04.683 to determine active bunches
+Processing event: 6950000 at 19:29:09.866 to determine active bunches
+Processing event: 7000000 at 19:29:15.042 to determine active bunches
+Processing event: 7050000 at 19:29:20.217 to determine active bunches
+Processing event: 7100000 at 19:29:25.392 to determine active bunches
+Processing event: 7150000 at 19:29:30.568 to determine active bunches
+Processing event: 7200000 at 19:29:35.743 to determine active bunches
+Processing event: 7250000 at 19:29:40.926 to determine active bunches
+Processing event: 7300000 at 19:29:46.101 to determine active bunches
+Processing event: 7350000 at 19:29:51.277 to determine active bunches
+Processing event: 7400000 at 19:29:56.452 to determine active bunches
+Processing event: 7450000 at 19:30:01.627 to determine active bunches
+Processing event: 7500000 at 19:30:06.810 to determine active bunches
+Processing event: 7550000 at 19:30:11.986 to determine active bunches
+Processing event: 7600000 at 19:30:17.161 to determine active bunches
+Processing event: 7650000 at 19:30:22.336 to determine active bunches
+Processing event: 7700000 at 19:30:27.511 to determine active bunches
+Processing event: 7750000 at 19:30:32.695 to determine active bunches
+Processing event: 7800000 at 19:30:37.870 to determine active bunches
+Processing event: 7850000 at 19:30:43.045 to determine active bunches
+Processing event: 7900000 at 19:30:48.220 to determine active bunches
+Processing event: 7950000 at 19:30:53.396 to determine active bunches
+Processing event: 8000000 at 19:30:58.571 to determine active bunches
+Processing event: 8050000 at 19:31:03.754 to determine active bunches
+Processing event: 8100000 at 19:31:08.929 to determine active bunches
+Processing event: 8150000 at 19:31:14.104 to determine active bunches
+Processing event: 8200000 at 19:31:19.280 to determine active bunches
+Processing event: 8250000 at 19:31:24.455 to determine active bunches
+Processing event: 8300000 at 19:31:29.638 to determine active bunches
+Processing event: 8350000 at 19:31:34.813 to determine active bunches
+Processing event: 8400000 at 19:31:39.989 to determine active bunches
+Processing event: 8450000 at 19:31:45.164 to determine active bunches
+Processing event: 8500000 at 19:31:50.339 to determine active bunches
+Processing event: 8550000 at 19:31:55.514 to determine active bunches
+Processing event: 8600000 at 19:32:00.698 to determine active bunches
+Processing event: 8650000 at 19:32:05.873 to determine active bunches
+Processing event: 8700000 at 19:32:11.048 to determine active bunches
+Processing event: 8750000 at 19:32:16.223 to determine active bunches
+Processing event: 8800000 at 19:32:21.399 to determine active bunches
+Processing event: 8850000 at 19:32:26.582 to determine active bunches
+Processing event: 8900000 at 19:32:31.757 to determine active bunches
+Processing event: 8950000 at 19:32:36.932 to determine active bunches
+Processing event: 9000000 at 19:32:42.108 to determine active bunches
+Processing event: 9050000 at 19:32:47.283 to determine active bunches
+Processing event: 9100000 at 19:32:52.458 to determine active bunches
+Processing event: 9150000 at 19:32:57.641 to determine active bunches
+Processing event: 9200000 at 19:33:02.817 to determine active bunches
+Processing event: 9250000 at 19:33:07.993 to determine active bunches
+Processing event: 9300000 at 19:33:13.168 to determine active bunches
+Processing event: 9350000 at 19:33:18.343 to determine active bunches
+Processing event: 9400000 at 19:33:23.526 to determine active bunches
+Processing event: 9450000 at 19:33:28.701 to determine active bunches
+Processing event: 9500000 at 19:33:33.877 to determine active bunches
+Processing event: 9550000 at 19:33:39.052 to determine active bunches
+Processing event: 9600000 at 19:33:44.227 to determine active bunches
+Processing event: 9650000 at 19:33:49.410 to determine active bunches
+Processing event: 9700000 at 19:33:54.586 to determine active bunches
+Processing event: 9750000 at 19:33:59.761 to determine active bunches
+Processing event: 9800000 at 19:34:04.936 to determine active bunches
+Processing event: 9850000 at 19:34:10.111 to determine active bunches
+Processing event: 9900000 at 19:34:15.286 to determine active bunches
+Processing event: 9950000 at 19:34:20.470 to determine active bunches
+Processing event: 10000000 at 19:34:25.645 to determine active bunches
+Total of 32 bunches filled
+PLTGainCal sees a parameter file with 5 params
+Adding ch 2 -> 8 1 13
+Adding ch 4 -> 8 1 21
+Adding ch 5 -> 8 1 29
+Adding ch 8 -> 8 2 13
+Adding ch 10 -> 8 2 21
+Adding ch 11 -> 8 2 29
+Adding ch 13 -> 7 1 5
+Adding ch 14 -> 7 1 13
+Adding ch 16 -> 7 1 21
+Adding ch 17 -> 7 1 29
+Adding ch 19 -> 7 2 5
+Adding ch 20 -> 7 2 13
+Adding ch 22 -> 7 2 21
+Adding ch 23 -> 7 2 29
+ERROR: over MAXCOLS 60
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+PLTBinaryFileReader::SetPlaneFiducialRegion setting region: 0
+PLTEvent::SetPlaneClustering setting clustering to 4
+PLTEvent::SetPlaneFiducialRegion setting fiducial region to 4
+Processing event: 0 at 69397241 (19:16:37.241)
+ERROR: over MAXCOLS: 63
+Processing event: 100000 at 69407247 (19:16:47.247)
+Processing event: 200000 at 69417597 (19:16:57.597)
+Processing event: 300000 at 69427948 (19:17:07.948)
+ERROR: over MAXROWS: 80
+ERROR: over MAXROWS: 80
+Processing event: 400000 at 69471709 (19:17:51.709)
+Processing event: 500000 at 69482068 (19:18:02.068)
+Processing event: 600000 at 69492418 (19:18:12.418)
+Processing event: 700000 at 69502777 (19:18:22.777)
+Processing event: 800000 at 69513127 (19:18:33.127)
+Processing event: 900000 at 69523478 (19:18:43.478)
+Processing event: 1000000 at 69533836 (19:18:53.836)
+Processing event: 1100000 at 69544187 (19:19:04.187)
+Processing event: 1200000 at 69554537 (19:19:14.537)
+Processing event: 1300000 at 69564896 (19:19:24.896)
+Processing event: 1400000 at 69575246 (19:19:35.246)
+Processing event: 1500000 at 69585597 (19:19:45.597)
+Processing event: 1600000 at 69595955 (19:19:55.955)
+Processing event: 1700000 at 69606306 (19:20:06.306)
+Processing event: 1800000 at 69616664 (19:20:16.664)
+Processing event: 1900000 at 69627015 (19:20:27.015)
+Processing event: 2000000 at 69637365 (19:20:37.365)
+Processing event: 2100000 at 69647724 (19:20:47.724)
+Processing event: 2200000 at 69658074 (19:20:58.074)
+Processing event: 2300000 at 69668425 (19:21:08.425)
+Processing event: 2400000 at 69678784 (19:21:18.784)
+Processing event: 2500000 at 69689134 (19:21:29.134)
+Processing event: 2600000 at 69699492 (19:21:39.492)
+Processing event: 2700000 at 69709843 (19:21:49.843)
+Processing event: 2800000 at 69720193 (19:22:00.193)
+Processing event: 2900000 at 69730552 (19:22:10.552)
+Processing event: 3000000 at 69740902 (19:22:20.902)
+Processing event: 3100000 at 69751253 (19:22:31.253)
+Processing event: 3200000 at 69761611 (19:22:41.611)
+Processing event: 3300000 at 69771962 (19:22:51.962)
+Processing event: 3400000 at 69782313 (19:23:02.313)
+Processing event: 3500000 at 69792671 (19:23:12.671)
+Processing event: 3600000 at 69803022 (19:23:23.022)
+Processing event: 3700000 at 69813380 (19:23:33.380)
+Processing event: 3800000 at 69823731 (19:23:43.731)
+Processing event: 3900000 at 69834081 (19:23:54.081)
+Processing event: 4000000 at 69844439 (19:24:04.439)
+Processing event: 4100000 at 69854790 (19:24:14.790)
+Processing event: 4200000 at 69865140 (19:24:25.140)
+Processing event: 4300000 at 69875499 (19:24:35.499)
+Processing event: 4400000 at 69885849 (19:24:45.849)
+Processing event: 4500000 at 69896208 (19:24:56.208)
+Processing event: 4600000 at 69906558 (19:25:06.558)
+Processing event: 4700000 at 69916909 (19:25:16.909)
+Processing event: 4800000 at 69927267 (19:25:27.267)
+Processing event: 4900000 at 69937617 (19:25:37.617)
+Processing event: 5000000 at 69947968 (19:25:47.968)
+Processing event: 5100000 at 69958326 (19:25:58.326)
+Processing event: 5200000 at 69968677 (19:26:08.677)
+Processing event: 5300000 at 69979027 (19:26:19.027)
+Processing event: 5400000 at 69989386 (19:26:29.386)
+Processing event: 5500000 at 69999736 (19:26:39.736)
+Processing event: 5600000 at 70010095 (19:26:50.095)
+Processing event: 5700000 at 70020445 (19:27:00.445)
+Processing event: 5800000 at 70030796 (19:27:10.796)
+Processing event: 5900000 at 70041154 (19:27:21.154)
+Processing event: 6000000 at 70051505 (19:27:31.505)
+Processing event: 6100000 at 70061855 (19:27:41.855)
+Processing event: 6200000 at 70072214 (19:27:52.214)
+Processing event: 6300000 at 70082564 (19:28:02.564)
+Processing event: 6400000 at 70092923 (19:28:12.923)
+Processing event: 6500000 at 70103273 (19:28:23.273)
+Processing event: 6600000 at 70113624 (19:28:33.624)
+Processing event: 6700000 at 70123982 (19:28:43.982)
+Processing event: 6800000 at 70134333 (19:28:54.333)
+Processing event: 6900000 at 70144683 (19:29:04.683)
+Processing event: 7000000 at 70155042 (19:29:15.042)
+Processing event: 7100000 at 70165392 (19:29:25.392)
+Processing event: 7200000 at 70175743 (19:29:35.743)
+Processing event: 7300000 at 70186101 (19:29:46.101)
+Processing event: 7400000 at 70196452 (19:29:56.452)
+Processing event: 7500000 at 70206810 (19:30:06.810)
+Processing event: 7600000 at 70217161 (19:30:17.161)
+Failure in Channel 1 at event 4666104 at approximately  19:30
+Failure in Channel 7 at event 4666104 at approximately  19:30
+Processing event: 7700000 at 70227511 (19:30:27.511)
+Processing event: 7800000 at 70237870 (19:30:37.870)
+Processing event: 7900000 at 70248220 (19:30:48.220)
+Processing event: 8000000 at 70258571 (19:30:58.571)
+Processing event: 8100000 at 70268929 (19:31:08.929)
+Processing event: 8200000 at 70279280 (19:31:19.280)
+Processing event: 8300000 at 70289638 (19:31:29.638)
+Processing event: 8400000 at 70299989 (19:31:39.989)
+Processing event: 8500000 at 70310339 (19:31:50.339)
+Processing event: 8600000 at 70320698 (19:32:00.698)
+Processing event: 8700000 at 70331048 (19:32:11.048)
+Processing event: 8800000 at 70341399 (19:32:21.399)
+Processing event: 8900000 at 70351757 (19:32:31.757)
+Processing event: 9000000 at 70362108 (19:32:42.108)
+Processing event: 9100000 at 70372458 (19:32:52.458)
+Processing event: 9200000 at 70382817 (19:33:02.817)
+Processing event: 9300000 at 70393168 (19:33:13.168)
+Processing event: 9400000 at 70403526 (19:33:23.526)
+Processing event: 9500000 at 70413877 (19:33:33.877)
+Processing event: 9600000 at 70424227 (19:33:44.227)
+Processing event: 9700000 at 70434586 (19:33:54.586)
+Processing event: 9800000 at 70444936 (19:34:04.936)
+Processing event: 9900000 at 70455286 (19:34:15.286)
+Processing event: 10000000 at 70465645 (19:34:25.645)
+Processing event: 10100000 at 70475995 (19:34:35.995)
+Processing event: 10200000 at 70486354 (19:34:46.354)
+Processing event: 10300000 at 70496704 (19:34:56.704)
+Processing event: 10400000 at 70507055 (19:35:07.055)
+Processing event: 10500000 at 70517413 (19:35:17.413)
+Processing event: 10600000 at 70527764 (19:35:27.764)
+Processing event: 10700000 at 70538114 (19:35:38.114)
+Processing event: 10800000 at 70548473 (19:35:48.473)
+Processing event: 10900000 at 70558823 (19:35:58.823)
+Processing event: 11000000 at 70569174 (19:36:09.174)
+Processing event: 11100000 at 70579532 (19:36:19.532)
+Processing event: 11200000 at 70589883 (19:36:29.883)
+Processing event: 11300000 at 70600241 (19:36:40.241)
+Processing event: 11400000 at 70610592 (19:36:50.592)
+Processing event: 11500000 at 70620942 (19:37:00.942)
+Processing event: 11600000 at 70631301 (19:37:11.301)
+Processing event: 11700000 at 70641651 (19:37:21.651)
+Processing event: 11800000 at 70652001 (19:37:32.001)
+Processing event: 11900000 at 70662360 (19:37:42.360)
+Processing event: 12000000 at 70672710 (19:37:52.710)
+Processing event: 12100000 at 70683069 (19:38:03.069)
+Processing event: 12200000 at 70693419 (19:38:13.419)
+Processing event: 12300000 at 70703770 (19:38:23.770)
+Processing event: 12400000 at 70714128 (19:38:34.128)
+Processing event: 12500000 at 70724479 (19:38:44.479)
+Processing event: 12600000 at 70734829 (19:38:54.829)
+Processing event: 12700000 at 70745188 (19:39:05.188)
+Processing event: 12800000 at 70755538 (19:39:15.538)
+Processing event: 12900000 at 70765889 (19:39:25.889)
+Processing event: 13000000 at 70776247 (19:39:36.247)
+Processing event: 13100000 at 70786598 (19:39:46.598)
+Processing event: 13200000 at 70796956 (19:39:56.956)
+Processing event: 13300000 at 70807307 (19:40:07.307)
+Processing event: 13400000 at 70817657 (19:40:17.657)
+Processing event: 13500000 at 70828016 (19:40:28.016)
+Processing event: 13600000 at 70838366 (19:40:38.366)
+Processing event: 13700000 at 70848717 (19:40:48.717)
+Processing event: 13800000 at 70859075 (19:40:59.075)
+Processing event: 13900000 at 70869425 (19:41:09.425)
+Processing event: 14000000 at 70879784 (19:41:19.784)
+Processing event: 14100000 at 70890134 (19:41:30.134)
+Error in channel 1 at event 4666104 at approximately 19:30
+	Failure lasted through the end of the fill
+Error in channel 7 at event 4666104 at approximately 19:30
+	Failure lasted through the end of the fill
+RootApp ERROR: cannot open image file "plots/BeamSpot.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch22.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeY_Ch23.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch22.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/SlopeX_Ch23.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch4.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch5.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch8.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch10.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch11.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch13.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch14.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch16.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch17.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch19.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch20.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch22.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/Slope2D_Ch23.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY20_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY22_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY22_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY22_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY23_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY23_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualY23_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX2_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX4_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX5_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX8_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX10_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX11_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX13_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX14_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX16_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX17_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX19_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX20_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX22_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX22_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX22_ROC2.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX23_ROC0.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX23_ROC1.gif" for writing. Please check permissions.
+RootApp ERROR: cannot open image file "plots/ResidualX23_ROC2.gif" for writing. Please check permissions.
+==Zero counting by BX==
+1 202706 202590
+41 202706 202564
+81 202705 202550
+121 202730 202592
+161 202706 202576
+201 202703 202548
+241 202707 202550
+281 202707 202566
+872 202699 202561
+912 202714 202555
+952 202704 202544
+992 202705 202569
+1032 202708 202580
+1072 202699 202552
+1112 202711 202563
+1152 202704 202548
+1783 202706 202571
+1823 202706 202559
+1863 202691 202538
+1903 202711 202570
+1943 202705 202566
+1983 202705 202554
+2023 202708 202552
+2063 202705 202563
+2654 202708 202565
+2694 202703 202546
+2734 202707 202561
+2774 202706 202559
+2814 202647 202499
+2854 202706 202554
+2894 202702 202550
+2934 202707 202556
