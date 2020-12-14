@@ -21,22 +21,44 @@
 #include "TROOT.h"
 #include "TCanvas.h"
 #include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TAxis.h"
 #include "TF1.h"
 #include "TStyle.h"
 #include "TLegend.h"
+#include "TLatex.h"
+#include "TLine.h"
 
-const int nPixelChannels = 13;
-
-const std::string fillNumber = "4945"; // actually a string
+const std::string fillNumber = "6016"; // actually a string
+const std::string scanPair = "4"; // select X1/Y1, X2/Y2, etc. here
+const int nPixelChannels = 14; // 13 for 2016, 14 for 2017-18
 
 // The main timestamp file, which contains the separations for each point.
 const std::string separationFileName = "VdMSteps_"+fillNumber+"_AllScans.txt";
 
+// A little helper function to convert the channel number (in the order found in the original file) to a
+// readout channel number.
+int convertToReadoutChannel(std::string fill, int i) {
+  if (fill == "4945" || fill == "4954") {
+    // For 2016 the active channels were readout channels 1-13, so we just need to add 1
+    return i+1;
+  } else if (fill == "6016") {
+    // For 2017-18 the active channels were 1-3 and 5-16, so it's a little more complicated
+    // (but not much more)
+    if (i <= 2)
+      return i+1;
+    return i+2;
+  } else {
+    std::cerr << "Error: don't know active channels for fill " << fillNumber << "; please add them to the script" << std::endl;
+    return i;
+  }
+}
+
 // To call directly, you need three arguments: the name of the scan file, the name of the output file, and the
 // title for the plot. You can also add a channel number as a 4th argument, or -1 (default) to plot the
 // all-channel average. Note that the "channel number" refers simply to the order that they appear in the
-// file, which may not be the real channel number. Some defaults are also provided in the utility functions at
+// file, which may not be the real channel number. (Converting that channel number to the actual readout
+// channel number is done by the function above.) Some defaults are also provided in the utility functions at
 // the end. The function returns four floats in a std::tuple: the fitted peak and its error, and the fitted
 // CapSigma and its error (which is just the width of the Gaussian).
 
@@ -245,8 +267,10 @@ std::tuple<float, float, float, float> PlotTrackLumiVdM(const char *scanFileName
 
 // If called with no arguments, then do the X and Y scans for all bunches
 void PlotTrackLumiVdM() {
-  PlotTrackLumiVdM(("TrackLumiZC_"+fillNumber+"_X1.txt").c_str(), ("TrackLumi_VdM_"+fillNumber+"_X1_All.png").c_str(), ("Fill "+fillNumber+", Scan X1, all bunches").c_str());
-  PlotTrackLumiVdM(("TrackLumiZC_"+fillNumber+"_Y1.txt").c_str(), ("TrackLumi_VdM_"+fillNumber+"_Y1_All.png").c_str(), ("Fill "+fillNumber+", Scan Y1, all bunches").c_str());
+  PlotTrackLumiVdM(("TrackLumiZC_"+fillNumber+"_X"+scanPair+".txt").c_str(), ("TrackLumi_VdM_"+fillNumber+"_X"+scanPair+"_All.png").c_str(),
+		   ("Fill "+fillNumber+", Scan X"+scanPair+", all bunches").c_str());
+  PlotTrackLumiVdM(("TrackLumiZC_"+fillNumber+"_Y"+scanPair+".txt").c_str(), ("TrackLumi_VdM_"+fillNumber+"_Y"+scanPair+"_All.png").c_str(),
+		   ("Fill "+fillNumber+", Scan Y"+scanPair+", all bunches").c_str());
 }
 
 // If called with one argument, then the argument works as follows:
@@ -255,10 +279,18 @@ void PlotTrackLumiVdM() {
 // 2 -- do the per-channel plots for all BXes
 // 3 -- do the per-channel plots for a single specific BX
 void PlotTrackLumiVdM(int whichPlot) {
-  const std::vector<int> bunches = {1, 41, 81, 110, 121, 161, 201, 241, 281, 591, 872,
-				    912, 952, 992, 1032, 1072, 1112, 1151, 1152, 1682, 1783,
-				    1823, 1863, 1903, 1943, 1983, 2023, 2063, 2654, 2655, 2694,
-				    2734, 2774, 2814, 2854, 2894, 2934};
+  std::vector<int> bunches;
+  if (fillNumber == "4954" || fillNumber == "4945") {
+    bunches = {1, 41, 81, 110, 121, 161, 201, 241, 281, 591, 872,
+	       912, 952, 992, 1032, 1072, 1112, 1151, 1152, 1682, 1783,
+	       1823, 1863, 1903, 1943, 1983, 2023, 2063, 2654, 2655, 2694,
+	       2734, 2774, 2814, 2854, 2894, 2934};
+  } else if (fillNumber == "6016") {
+    bunches = {1, 41, 81, 110, 121, 161, 201, 241, 281, 872,
+	       912, 952, 992, 1031, 1032, 1072, 1112, 1152, 1153, 1783,
+	       1823, 1863, 1903, 1943, 1983, 2023, 2063, 2064, 2654, 2694,
+	       2695, 2734, 2774, 2814, 2854, 2894, 2934};
+  }
 
   // Beam intensities as obtained from brilcalc beam via getBeamIntensities.py. In principle we should use the time-dependent intensity but since
   // a) we're only using the first scan and b) the intensities are pretty constant anyway, this shouldn't make a big difference.
@@ -269,8 +301,11 @@ void PlotTrackLumiVdM(int whichPlot) {
   } else if (fillNumber == "4945") {
     beam1Intensity = {8.6636e+10, 9.3628e+10, 8.4700e+10, 0.0, 8.7151e+10, 8.1655e+10, 9.2911e+10, 8.6121e+10, 8.2967e+10, 8.0893e+10, 8.0351e+10, 8.0912e+10, 8.1689e+10, 8.5672e+10, 8.5710e+10, 9.3638e+10, 8.6560e+10, 0.0, 8.7584e+10, 0.0000e+00, 8.6174e+10, 9.2788e+10, 8.7202e+10, 8.5001e+10, 8.3384e+10, 9.4195e+10, 8.4360e+10, 8.2543e+10, 8.5007e+10, 0.0, 9.2695e+10, 8.3441e+10, 8.6949e+10, 7.9753e+10, 8.0453e+10, 8.2468e+10, 8.1625e+10};
     beam2Intensity = {8.3183e+10, 8.7209e+10, 8.5625e+10, 0.0, 8.9035e+10, 8.4098e+10, 9.7680e+10, 8.2924e+10, 8.2968e+10, 0.0000e+00, 8.0406e+10, 9.5034e+10, 8.5700e+10, 8.0820e+10, 8.1693e+10, 8.9988e+10, 8.7191e+10, 0.0, 8.3523e+10, 8.5938e+10, 8.4521e+10, 9.2949e+10, 8.6067e+10, 8.2300e+10, 8.1893e+10, 8.9461e+10, 8.8270e+10, 8.4715e+10, 8.4349e+10, 0.0, 8.7887e+10, 8.5696e+10, 9.1298e+10, 9.0524e+10, 9.1492e+10, 8.7418e+10, 8.2189e+10};
+  } else if (fillNumber == "6016") {
+    beam1Intensity = {8.6622e+10, 8.8944e+10, 9.0191e+10, 0.0, 8.5749e+10, 8.2808e+10, 8.9887e+10, 8.9563e+10, 8.8437e+10, 8.3821e+10, 9.1255e+10, 8.9837e+10, 8.7577e+10, 0.0, 7.9491e+10, 8.8273e+10, 9.0202e+10, 8.7774e+10, 0.0, 8.2037e+10, 8.9936e+10, 9.0976e+10, 8.5698e+10, 8.4210e+10, 8.7275e+10, 9.4114e+10, 8.5834e+10, 0.0, 8.5183e+10, 8.8927e+10, 0.0, 8.6262e+10, 8.6495e+10, 8.5669e+10, 8.9498e+10, 8.8483e+10, 8.8214e+10};
+    beam2Intensity = {8.3864e+10, 8.7002e+10, 9.0804e+10, 0.0, 8.7052e+10, 8.1125e+10, 8.7541e+10, 9.0651e+10, 8.7450e+10, 8.4690e+10, 9.0548e+10, 9.3033e+10, 8.6274e+10, 0.0, 8.3622e+10, 8.9818e+10, 8.9241e+10, 9.1710e+10, 0.0, 8.4978e+10, 8.5863e+10, 9.0901e+10, 8.9705e+10, 8.6210e+10, 9.1836e+10, 8.8804e+10, 8.7562e+10, 0.0, 8.5498e+10, 9.3430e+10, 0.0, 8.7909e+10, 8.9778e+10, 8.6910e+10, 8.9558e+10, 8.8471e+10, 8.7141e+10};
   } else {
-    std::cerr << "Error: don't know bunch intensities for fill " << fillNumber << "; please add them to the script" << std::endl;
+      std::cerr << "Error: don't know bunch intensities for fill " << fillNumber << "; please add them to the script" << std::endl;
     return;
   }
 
@@ -293,17 +328,17 @@ void PlotTrackLumiVdM(int whichPlot) {
     if (whichPlot == 1) {
       nmax = bunches.size();
       xAxisTitle = "Bunch ID";
-      capSigmaPlotTitle = "Beam overlap size per bunch, fill "+fillNumber+", all channels";
-      capSigmaFileName = "TrackLumiVdM_"+fillNumber+"_CapSigmas_BX.png";
-      sigmaVisPlotTitle = "Visible cross section per bunch, fill "+fillNumber+", all channels";
-      sigmaVisFileName = "TrackLumiVdM_"+fillNumber+"_SigmaVis_BX.png";
+      capSigmaPlotTitle = "Beam overlap size per bunch, fill "+fillNumber+", scan pair "+scanPair+", all channels";
+      capSigmaFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_CapSigmas_BX.png";
+      sigmaVisPlotTitle = "Visible cross section per bunch, fill "+fillNumber+", scan pair "+scanPair+", all channels";
+      sigmaVisFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_SigmaVis_BX.png";
     } else if (whichPlot == 2) {
       nmax = nPixelChannels;
       xAxisTitle = "Readout channel number";
-      capSigmaPlotTitle = "Beam overlap size per channel, fill "+fillNumber+", all bunches";
-      capSigmaFileName = "TrackLumiVdM_"+fillNumber+"_CapSigmas_Chan.png";
-      sigmaVisPlotTitle = "Visible cross section per channel, fill "+fillNumber+", all bunches";
-      sigmaVisFileName = "TrackLumiVdM_"+fillNumber+"_SigmaVis_Chan.png";
+      capSigmaPlotTitle = "Beam overlap size per channel, fill "+fillNumber+", scan pair "+scanPair+", all bunches";
+      capSigmaFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_CapSigmas_Chan.png";
+      sigmaVisPlotTitle = "Visible cross section per channel, fill "+fillNumber+", scan pair "+scanPair+", all bunches";
+      sigmaVisFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_SigmaVis_Chan.png";
       
       int nSummedBunches = 0;
       float bunchProductSum = 0.0;
@@ -317,12 +352,12 @@ void PlotTrackLumiVdM(int whichPlot) {
     } else {
       nmax = nPixelChannels;
       xAxisTitle = "Readout channel number";
-      capSigmaPlotTitle = "Beam overlap size per channel, fill "+fillNumber+", BX 81";
-      capSigmaFileName = "TrackLumiVdM_"+fillNumber+"_CapSigmas_Chan_BX81.png";
-      sigmaVisPlotTitle = "Visible cross section per channel, fill "+fillNumber+", BX 81";
-      sigmaVisFileName = "TrackLumiVdM_"+fillNumber+"_SigmaVis_Chan_BX81.png";
+      capSigmaPlotTitle = "Beam overlap size per channel, fill "+fillNumber+", scan pair "+scanPair+", BX 81";
+      capSigmaFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_CapSigmas_Chan_BX81.png";
+      sigmaVisPlotTitle = "Visible cross section per channel, fill "+fillNumber+", scan pair "+scanPair+", BX 81";
+      sigmaVisFileName = "TrackLumi_VdM_"+fillNumber+"_"+scanPair+"_SigmaVis_Chan_BX81.png";
 
-      std::vector<int>::const_iterator targetBXIt = std::find(bunches.begin(), bunches.end(), 81);
+      std::vector<int>::iterator targetBXIt = std::find(bunches.begin(), bunches.end(), 81);
       int targetBXIndex = std::distance(bunches.begin(), targetBXIt);
       //std::cout << "target index is " << targetBXIndex;
       overallBunchProduct = beam1Intensity[targetBXIndex]*beam2Intensity[targetBXIndex];
@@ -341,13 +376,13 @@ void PlotTrackLumiVdM(int whichPlot) {
 	std::stringstream bxString;
 	bxString << bunches[i];
 	
-	fileStringX = "TrackLumi_"+fillNumber+"_X1_BX/TrackLumiZC"+bxStringPad.str()+".txt";
-	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X1_"+bxStringPad.str()+".png";
-	titleStringX = "Fill "+fillNumber+", Scan X1, bunch "+bxString.str();
+	fileStringX = "TrackLumi_"+fillNumber+"_X"+scanPair+"_BX/TrackLumiZC"+bxStringPad.str()+".txt";
+	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X"+scanPair+"_"+bxStringPad.str()+".png";
+	titleStringX = "Fill "+fillNumber+", Scan X"+scanPair+", bunch "+bxString.str();
 	
-	fileStringY = "TrackLumi_"+fillNumber+"_Y1_BX/TrackLumiZC"+bxStringPad.str()+".txt";
-	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y1_"+bxStringPad.str()+".png";
-	titleStringY = "Fill "+fillNumber+", Scan Y1, bunch "+bxString.str();
+	fileStringY = "TrackLumi_"+fillNumber+"_Y"+scanPair+"_BX/TrackLumiZC"+bxStringPad.str()+".txt";
+	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y"+scanPair+"_"+bxStringPad.str()+".png";
+	titleStringY = "Fill "+fillNumber+", Scan Y"+scanPair+", bunch "+bxString.str();
 
 	// For the summary plots, don't include noncolliding bunches.
 	if (beam1Intensity[i] > 1e8 && beam2Intensity[i] > 1e8) {
@@ -359,36 +394,36 @@ void PlotTrackLumiVdM(int whichPlot) {
 	beamIntensityProduct = beam1Intensity[i]*beam2Intensity[i];
       } else if (whichPlot == 2) {
 	targetChan = i;
+	int readoutChanNum = convertToReadoutChannel(fillNumber, i);
 	std::stringstream chanString;
-	// active channels in this fill were readout channels 1-13, so we just need to add 1
-	chanString << i+1;
-	fileStringX = "TrackLumiZC_"+fillNumber+"_X1.txt";
-	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X1_Ch"+chanString.str()+".png";
-	titleStringX = "Fill "+fillNumber+", Scan X1, all BX, channel "+chanString.str();
+	chanString << readoutChanNum;
+	fileStringX = "TrackLumiZC_"+fillNumber+"_X"+scanPair+".txt";
+	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X"+scanPair+"_Ch"+chanString.str()+".png";
+	titleStringX = "Fill "+fillNumber+", Scan X"+scanPair+", all BX, channel "+chanString.str();
 
-	fileStringY = "TrackLumiZC_"+fillNumber+"_Y1.txt";
-	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y1_Ch"+chanString.str()+".png";
-	titleStringY = "Fill "+fillNumber+", Scan Y1, all BX, channel "+chanString.str();
+	fileStringY = "TrackLumiZC_"+fillNumber+"_Y"+scanPair+".txt";
+	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y"+scanPair+"_Ch"+chanString.str()+".png";
+	titleStringY = "Fill "+fillNumber+", Scan Y"+scanPair+", all BX, channel "+chanString.str();
 
-	xVals.push_back(i+1);
+	xVals.push_back(readoutChanNum);
 	xErrs.push_back(0);
 	beamIntensityProduct = overallBunchProduct;
       } else if (whichPlot == 3) {
-	targetChan = i;
 	// Currently set to always use BX81
+	targetChan = i;
+	int readoutChanNum = convertToReadoutChannel(fillNumber, i);
 	std::stringstream chanString;
-	// active channels in this fill were readout channels 1-13, so we just need to add 1
-	chanString << i+1;
+	chanString << readoutChanNum;
 
-	fileStringX = "TrackLumi_"+fillNumber+"_X1_BX/TrackLumiZC0081.txt";
-	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X1_Ch"+chanString.str()+"_BX81.png";
-	titleStringX = "Fill "+fillNumber+", Scan X1, BX 81, channel "+chanString.str();
+	fileStringX = "TrackLumi_"+fillNumber+"_X"+scanPair+"_BX/TrackLumiZC0081.txt";
+	plotStringX = "TrackLumi_VdM_"+fillNumber+"_X"+scanPair+"_Ch"+chanString.str()+"_BX81.png";
+	titleStringX = "Fill "+fillNumber+", Scan X"+scanPair+", BX 81, channel "+chanString.str();
 
-	fileStringY = "TrackLumi_"+fillNumber+"_Y1_BX/TrackLumiZC0081.txt";
-	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y1_Ch"+chanString.str()+"_BX81.png";
-	titleStringY = "Fill "+fillNumber+", Scan Y1, BX 81, channel "+chanString.str();
+	fileStringY = "TrackLumi_"+fillNumber+"_Y"+scanPair+"_BX/TrackLumiZC0081.txt";
+	plotStringY = "TrackLumi_VdM_"+fillNumber+"_Y"+scanPair+"_Ch"+chanString.str()+"_BX81.png";
+	titleStringY = "Fill "+fillNumber+", Scan Y"+scanPair+", BX 81, channel "+chanString.str();
 
-	xVals.push_back(i+1);
+	xVals.push_back(readoutChanNum);
 	xErrs.push_back(0);
 	beamIntensityProduct = overallBunchProduct;
       }
