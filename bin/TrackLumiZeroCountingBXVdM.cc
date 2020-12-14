@@ -35,10 +35,11 @@ const Int_t consecutiveZeros = 3000000; // Number of events with no hits before 
 const Int_t nValidChannels = 16; // Channels that could in theory have hits.
 const Int_t validChannels[nValidChannels] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 
 					     16, 17, 19, 20, 22, 23};
+// channels to actually write in the output file; normally this should be the channels operational for the fill
 // for 2016
-// std::vector<int> filledChannels = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
+// std::vector<int> outputChannels = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
 // for 2017-2018
-std::vector<int> filledChannels = {2, 4, 5, 8, 10, 11, 13, 14, 16, 17, 19, 20, 22, 23};
+std::vector<int> outputChannels = {2, 4, 5, 8, 10, 11, 13, 14, 16, 17, 19, 20, 22, 23};
 
 // Number of filled bunches. Note: this doesn't actually get used for the per-BX analysis, but since the
 // things that read these files expect a number here, we need to at least put something.
@@ -274,7 +275,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
   // properly catch the last step
   timestamps.push_back(std::make_pair(currentStepStart, Event.Time()));
 
-  int nFilledChannels = filledChannels.size();
+  int nOutputChannels = outputChannels.size();
   for (int iBX = 0; iBX < NBX; ++iBX) {
     // If we are using specific BXs, skip ones that aren't in the list. If we're not, skip ones that don't have any triggers.
     if (useSpecificBX && std::find(selectedBX.begin(), selectedBX.end(), iBX+1) == selectedBX.end()) continue;
@@ -292,7 +293,7 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       float goodTripleTot = 0.;
       float emptyEventsTot = 0.;
       float nonEmptyEventsTot = 0.;
-      for (std::vector<int>::iterator it = filledChannels.begin(); it != filledChannels.end(); ++it) {
+      for (std::vector<int>::iterator it = outputChannels.begin(); it != outputChannels.end(); ++it) {
 	int iChan = *it;
 	allTripleTot += nAllTripleChBX[iStep][iChan][iBX];
 	goodTripleTot += nGoodTripleChBX[iStep][iChan][iBX];
@@ -301,9 +302,9 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
       }
 
       fprintf(outf, "%d %d %d %lf %lf %d %lf %lf", timestamps[iStep].first, timestamps[iStep].second, nEventsBX[iStep][iBX],
-	      allTripleTot/nFilledChannels, goodTripleTot/nFilledChannels, nEventsBX[iStep][iBX],
-	      emptyEventsTot/nFilledChannels, nonEmptyEventsTot/nFilledChannels);
-      for (auto ch: filledChannels) {
+	      allTripleTot/nOutputChannels, goodTripleTot/nOutputChannels, nEventsBX[iStep][iBX],
+	      emptyEventsTot/nOutputChannels, nonEmptyEventsTot/nOutputChannels);
+      for (auto ch: outputChannels) {
 	fprintf(outf, " %d", nNonEmptyEventsChBX[iStep][ch][iBX]);
       }
       fprintf(outf, "\n");

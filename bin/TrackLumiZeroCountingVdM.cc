@@ -30,6 +30,11 @@ const Int_t consecutiveZeros = 3000000; // Number of events with no hits before 
 const Int_t nValidChannels = 16; // Channels that could in theory have hits.
 const Int_t validChannels[nValidChannels] = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 
 					     16, 17, 19, 20, 22, 23};
+// channels to actually write in the output file; normally this should be the channels operational for the fill
+// for 2016
+// std::vector<int> outputChannels = {2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20};
+// for 2017-2018
+std::vector<int> outputChannels = {2, 4, 5, 8, 10, 11, 13, 14, 16, 17, 19, 20, 22, 23};
 
 int TrackLumiZeroCounting(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
 		       const std::string TrackDistributionFileName, const std::string TimestampFileName)
@@ -643,7 +648,11 @@ int TrackLumiZeroCounting(const std::string DataFileName, const std::string Gain
      //  fprintf(outf, "%d %d %d %lf %lf %d %lf %lf\n", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i], nEventsFilledBX[i], nEmptyEventsFilledBX[i], nNonEmptyFilledBX[i]);
   
     //Used for if you want all the channel data
-    fprintf(outf, "%d %d %d %lf %lf %d %lf %lf    %d %d %d %d %d %d %d %d %d %d %d %d %d\n", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i], nEventsFilledBX[i], nEmptyEventsFilledBX[i], nNonEmptyFilledBX[i], nNonEmptyFilledBXByChannel[i][2], nNonEmptyFilledBXByChannel[i][4], nNonEmptyFilledBXByChannel[i][5], nNonEmptyFilledBXByChannel[i][7], nNonEmptyFilledBXByChannel[i][8], nNonEmptyFilledBXByChannel[i][10], nNonEmptyFilledBXByChannel[i][11], nNonEmptyFilledBXByChannel[i][13], nNonEmptyFilledBXByChannel[i][14], nNonEmptyFilledBXByChannel[i][16], nNonEmptyFilledBXByChannel[i][17], nNonEmptyFilledBXByChannel[i][19], nNonEmptyFilledBXByChannel[i][20]);
+    fprintf(outf, "%d %d %d %lf %lf %d %lf %lf   ", timestamps[i].first, timestamps[i].second, nEvents[i], nAllTriple[i], nGoodTriple[i], nEventsFilledBX[i], nEmptyEventsFilledBX[i], nNonEmptyFilledBX[i]);
+    for (auto ch: outputChannels) {
+      fprintf(outf, " %d", nNonEmptyFilledBXByChannel[i][ch]);
+    }
+    fprintf(outf, "\n");
 }
   fclose(outf);
 
