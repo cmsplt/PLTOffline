@@ -37,7 +37,7 @@ rsyncTransfer(){
     local localDir="$2"
     shift; shift
     local remoteFiles="$@"
-    rsyncFlags="--archive ---verbose --human-readable --progress" # [https://explainshell.com/explain?cmd=rsync+--archive+--checksum+--verbose+--human-readable+--progress]
+    rsyncFlags="--archive --verbose --human-readable --progress" # [https://explainshell.com/explain?cmd=rsync+--archive+--checksum+--verbose+--human-readable+--progress]
     if [[ -n "$( find ${remoteFiles} 2>/dev/null )" ]]; then
         # Proceed with rsync command only if find can see the remote files. Discard stderr so that find returns an empty string if it sees nothing.
         printf "${INFFMT}\n" "${description}"
