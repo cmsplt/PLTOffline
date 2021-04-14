@@ -184,7 +184,7 @@ defineFunctions(){
             # -N Provides the new passphrase ('' sets an empty passphrase)
             # -C Provides a new comment
             # -f Specifies the filename of the key file
-        printf "\n${errFmt}\n\n" "Navigate to [${gitKeysURL}] to create a new key, and paste the following text under the 'Key' textbox:"
+        printf "\n${errFmt}\n\n" "Navigate to [${gitKeysURL}], create a new SSH key, and paste the following text under the 'Key' textbox ('Title' can be 'plt', for example):"
         cat "${HOME}/.ssh/id_rsa_${gitServ}.pub"
     }
 
