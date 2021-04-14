@@ -80,7 +80,7 @@ defineFunctions(){
         # Install/upgrade packages
         pipInstall pip
         pipInstall brilws # [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#Installation-of-brilws]
-        pipInstall pytimber # [https://github.com/rdemaria/pytimber]
+        # pipInstall pytimber # [https://github.com/rdemaria/pytimber]
         # pipInstall h5py
         # pipInstall matplotlib
         # pipInstall more-itertools
@@ -205,7 +205,7 @@ main(){
     activateVenv
     if [[ "${VIRTUAL_ENV##*/}" = "${wDir##*/}" ]]; then
         pipInstallPackages
-        gitClone "gitlab" "cmsoms" "oms-api-client"
+        # gitClone "gitlab" "cmsoms" "oms-api-client"
         gitClone "github" "cmsplt" "PLTOffline"
         # gitClone "gitlab" "bril"   "cmsplt"
     fi
