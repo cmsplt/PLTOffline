@@ -150,6 +150,10 @@ def main():
     #Plot
     #py.style.use('seaborn-white')
 
+	with open(dirToMove + '/iv.csv', 'w') as csv:
+        for v, i in zip(voltages, muAmperes):
+            csv.write(v + ',' + i + '\n')
+
     fig = py.figure(1)
     py.plot(voltages,muAmperes,label="", linestyle="", marker='o')
     py.xlabel('-V [V]',size=60)#, horizontalalignment='right', x=1.0)
