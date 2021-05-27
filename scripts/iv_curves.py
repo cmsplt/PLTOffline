@@ -150,7 +150,7 @@ def main():
     #Plot
     #py.style.use('seaborn-white')
 
-	with open(dirToMove + '/iv.csv', 'w') as csv:
+    with open(dirToMove + '/iv.csv', 'w') as csv:
         for v, i in zip(voltages, muAmperes):
             csv.write(v + ',' + i + '\n')
 
