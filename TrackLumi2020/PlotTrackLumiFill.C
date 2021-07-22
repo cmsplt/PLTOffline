@@ -254,7 +254,7 @@ void PlotTrackLumiFill(int fillNumber_i) {
 
   // graphs of luminosity for hfoc, pltzero, tracklumi
   TGraph *g_lhf = new TGraph(hfoc_lumis.size(), &(hfoc_timestamps[0]), &(hfoc_lumis[0]));
-  TGraph *g_lpz = new TGraph(hfoc_lumis.size(), &(hfoc_timestamps[0]), &(hfoc_lumis[0]));
+  TGraph *g_lpz = new TGraph(pltz_lumis.size(), &(pltz_timestamps[0]), &(pltz_lumis[0]));
   TGraph *g_ltr = new TGraph(trackTimestamps.size(), &(trackTimestamps[0]), &(trackLumiGood[0]));
   // graphs of ratios vs. time for pltzero and hfoc
   TGraph *g_rtp = new TGraph(nsteps, &(trackTimestamps[0]), &(ratio_pltz[0]));
@@ -288,9 +288,9 @@ void PlotTrackLumiFill(int fillNumber_i) {
   g_ltr->SetMarkerSize(1);
 
   TLegend *l = new TLegend(0.5, 0.73, 0.8, 0.88);
-  l->AddEntry(g_lhf, "HFOC lumi", "LP");
-  l->AddEntry(g_lpz, "PLTZ lumi", "LP");
-  l->AddEntry(g_ltr, "Track lumi, zero counting", "LP");
+  l->AddEntry(g_lhf, "HFOC lumi", "P");
+  l->AddEntry(g_lpz, "PLTZ lumi", "P");
+  l->AddEntry(g_ltr, "Track lumi, zero counting", "P");
   l->SetBorderSize(0);
   l->SetFillColor(0);
   l->Draw();
@@ -317,8 +317,8 @@ void PlotTrackLumiFill(int fillNumber_i) {
   g_rth->SetMarkerColor(kRed);
   g_rth->SetMarkerSize(1);
   TLegend *l2 = new TLegend(0.5, 0.73, 0.8, 0.88);
-  l2->AddEntry(g_rtp, "Track lumi/PLTZ", "LP");
-  l2->AddEntry(g_rth, "Track lumi/HFOC", "LP");
+  l2->AddEntry(g_rtp, "Track lumi/PLTZ", "P");
+  l2->AddEntry(g_rth, "Track lumi/HFOC", "P");
   l2->SetBorderSize(0);
   l2->SetFillColor(0);
   l2->Draw();
@@ -356,8 +356,8 @@ void PlotTrackLumiFill(int fillNumber_i) {
   std::stringstream legtextp, legtexth;
   legtextp << "#splitline{Track lumi/PLTZ}{slope=" << std::fixed << std::setprecision(1) << f_rp->GetParameter(1)*100 << "%/(Hz/#mub)}";
   legtexth << "#splitline{Track lumi/HFOC}{slope=" << std::fixed << std::setprecision(1) << f_rh->GetParameter(1)*100 << "%/(Hz/#mub)}";
-  l3->AddEntry(g_rlp, legtextp.str().c_str(), "LP");
-  l3->AddEntry(g_rlh, legtexth.str().c_str(), "LP");
+  l3->AddEntry(g_rlp, legtextp.str().c_str(), "P");
+  l3->AddEntry(g_rlh, legtexth.str().c_str(), "P");
   l3->SetBorderSize(0);
   l3->SetFillColor(0);
   l3->Draw();
