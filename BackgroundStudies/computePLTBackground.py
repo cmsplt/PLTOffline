@@ -89,7 +89,7 @@ for (i_file, input_file) in enumerate(input_files):
     # Next, get the BCM1F data and store it in our results, and write it out to a file.
     if i_file == 0:
         bcm1f_out = open(output_file_bcm1f, "w")
-        bcm1f_out.write("#time_sec,time_ms,run,ls,nb,bcm1f_minus,bcm1f_mplus\n")
+        bcm1f_out.write("#time_sec,time_ms,run,ls,nb,bcm1f_minus,bcm1f_plus\n")
     else:
         bcm1f_out = open(output_file_bcm1f, "a")
     for row in h5file.get_node("/bcm1fbkg").iterrows():
@@ -153,28 +153,38 @@ for (i_file, input_file) in enumerate(input_files):
             print "Warning: no beam data after requested time in", cur_run, cur_ls, cur_nb
             beam_i = len(beam_data)-1
 
+        # There are two ways to apply the normalization by beam intensity, either normalizing per-bunch and
+        # then averaging the results, or summing per-bunch and dividing by the total beam current for those
+        # bunches. I'm not sure which is inherently better, but as the BCM1F processor does the latter, I'll
+        # follow the same convention.
         bkgndA1 = 0
         bkgndA2 = 0
         bkgndB1 = 0
         bkgndB2 = 0
+        bcA1 = 0
+        bcA2 = 0
+        bcB1 = 0
+        bcB2 = 0
         for ibx in noncoll_bunches_1:
-            bkgndA1 += bxdata_minus[ibx] / (n_chan_minus*beam_data[beam_i]['beam1'][ibx])
+            bkgndA1 += bxdata_minus[ibx]
+            bcA1 += beam_data[beam_i]['beam1'][ibx]
         for ibx in noncoll_bunches_2:
-            bkgndA2 += bxdata_plus[ibx] / (n_chan_plus*beam_data[beam_i]['beam2'][ibx])
+            bkgndA2 += bxdata_plus[ibx]
+            bcA2 += beam_data[beam_i]['beam2'][ibx]
         # For precolliding bunches we want to normalize by the intensity of the NEXT bunch,
         # since that's what we are actually expecting the background to be from
         for ibx in precoll_bunches_1:
-            bkgndB1 += bxdata_plus[ibx] / (n_chan_plus*beam_data[beam_i]['beam1'][ibx+1])
+            bkgndB1 += bxdata_plus[ibx]
+            bcB1 += beam_data[beam_i]['beam1'][ibx+1]
         for ibx in precoll_bunches_2:
-            bkgndB2 += bxdata_minus[ibx] / (n_chan_minus*beam_data[beam_i]['beam2'][ibx+1])
+            bkgndB2 += bxdata_minus[ibx]
+            bcB2 += beam_data[beam_i]['beam2'][ibx+1]
 
-        # Normalize each background to the number of bunches used to make the measurement. What we should really do is
-        # scale them to the total number of filled bunches for the beam, since essentially we are using these bunches as
-        # a proxy for the total. But that's just going to be an overall constant anyway.
-        bkgndA1 /= len(noncoll_bunches_1)
-        bkgndA2 /= len(noncoll_bunches_2)
-        bkgndB1 /= len(precoll_bunches_1)
-        bkgndB2 /= len(precoll_bunches_2)
+        # Average over channels and divide by beam intensity.
+        bkgndA1 /= n_chan_minus*bcA1
+        bkgndA2 /= n_chan_plus*bcA2
+        bkgndB1 /= n_chan_minus*bcB1
+        bkgndB2 /= n_chan_minus*bcB2
 
         # overall_results[cur_run][cur_ls][cur_nb]["pltbkgndA1"] = bkgndA1
         # overall_results[cur_run][cur_ls][cur_nb]["pltbkgndA2"] = bkgndA2

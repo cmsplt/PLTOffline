@@ -135,6 +135,10 @@ void PlotPLTBackground(void) {
     pltz_bB1_sum += pltz_bkgndB1[i];
     pltz_bB2_sum += pltz_bkgndB2[i];
   }
+  std::cout << "Normalization factor, method A, beam 1: " << bcm1f_b1_sum/pltz_bA1_sum << std::endl;
+  std::cout << "Normalization factor, method A, beam 2: " << bcm1f_b2_sum/pltz_bA2_sum << std::endl;
+  std::cout << "Normalization factor, method B, beam 1: " << bcm1f_b1_sum/pltz_bB1_sum << std::endl;
+  std::cout << "Normalization factor, method B, beam 2: " << bcm1f_b2_sum/pltz_bB2_sum << std::endl;
   for (int i=0; i<pltz_timestamps.size(); ++i) {
     pltz_bkgndA1[i] *= bcm1f_b1_sum/pltz_bA1_sum;
     pltz_bkgndA2[i] *= bcm1f_b2_sum/pltz_bA2_sum;
@@ -172,7 +176,7 @@ void PlotPLTBackground(void) {
     //g_b2->SetTitle("Measured background rates");
     g_b2->SetTitle("");
     g_b2->GetXaxis()->SetTitle("CERN time");
-    g_b2->GetYaxis()->SetTitle("Background rate [Hz/cm^{2}/(10^{10} protons)^{2}]");
+    g_b2->GetYaxis()->SetTitle("Background rate [Hz/cm^{2}/(10^{11} protons)]");
     g_b2->GetYaxis()->SetTitleOffset(1.3);
     g_b2->SetLineColor(mycolors[1]);
     g_b2->GetXaxis()->SetTimeDisplay(1);
