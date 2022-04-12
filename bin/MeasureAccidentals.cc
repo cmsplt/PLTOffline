@@ -16,19 +16,22 @@
 #include "PLTU.h"
 #include "TFile.h"
 
-int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string, const std::string);
+int MeasureAccidentals(const std::string, const std::string, const std::string, const std::string, const std::string, const std::string);
 
 int MeasureAccidentals(const std::string DataFileName, const std::string GainCalFileName, const std::string AlignmentFileName,
-		       const std::string TrackDistributionFileName, const std::string FillNo, const std::string TimestampFileName)
+		       const std::string TrackDistributionFileName, const std::string FillNo, const std::string TimestampFileName,
+		       const std::string MaskFileName)
 {
   std::cout << "DataFileName:      " << DataFileName << std::endl;
   std::cout << "GainCalFileName:   " << GainCalFileName << std::endl;
   std::cout << "AlignmentFileName: " << AlignmentFileName << std::endl;
   std::cout << "TrackDistributionFileName: " << TrackDistributionFileName << std::endl;
   std::cout << "Fill Number: " << FillNo << std::endl;
-  if (TimestampFileName != "")
+  if (TimestampFileName != "" && TimestampFileName != "-")
     std::cout << "TimestampFileName: " << TimestampFileName << std::endl;
-
+  if (MaskFileName != "")
+    std::cout << "MaskFileName: " << MaskFileName << std::endl;
+  
   // Set some basic style for plots
   PLTU::SetStyle();
   gStyle->SetOptStat(1111);
@@ -94,7 +97,7 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
   bool useTimestamps = false;
   int nSteps = 1;
   std::vector<std::pair<uint32_t, uint32_t> > timestamps;
-  if (TimestampFileName != "") {
+  if (TimestampFileName != "" && TimestampFileName != "-") {
     FILE *tfile;
     tfile = fopen(TimestampFileName.c_str(), "r");
     if (tfile == NULL) {
@@ -117,6 +120,10 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
   // Grab the plt event reader
   PLTEvent Event(DataFileName, GainCalFileName, AlignmentFileName);
+
+  // apply mask if we're using it
+  if (MaskFileName != "")
+    Event.ReadOnlinePixelMask(MaskFileName);
 
   PLTPlane::FiducialRegion FidRegionHits  = PLTPlane::kFiducialRegion_All;
   //PLTPlane::FiducialRegion FidRegionTrack = PLTPlane::kFiducialRegion_All;
@@ -521,8 +528,9 @@ int MeasureAccidentals(const std::string DataFileName, const std::string GainCal
 
 int main (int argc, char* argv[])
 {
-  if (argc < 6 || argc > 7) {
-    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt FillNumber [TimestampFile.dat]" << std::endl;
+  if (argc < 6 || argc > 8) {
+    std::cerr << "Usage: " << argv[0] << " DataFile.dat GainCal.dat AlignmentFile.dat TrackDistributions.txt FillNumber [TimestampFile.dat] [MaskFileName.dat]" << std::endl;
+    std::cerr << "    Use - for the timestamp file name if you want a mask file but not a timestamp file." << std::endl;
     return 1;
   }
 
@@ -531,9 +539,10 @@ int main (int argc, char* argv[])
   const std::string AlignmentFileName = argv[3];
   const std::string TrackDistributionFileName = argv[4];
   const std::string fNo = argv[5];
-  const std::string TimestampFileName = (argc == 7) ? argv[6] : "";
+  const std::string TimestampFileName = (argc >= 7) ? argv[6] : "";
+  const std::string MaskFileName = (argc >= 8) ? argv[7] : "";
 
-  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, fNo, TimestampFileName);
+  MeasureAccidentals(DataFileName, GainCalFileName, AlignmentFileName, TrackDistributionFileName, fNo, TimestampFileName, MaskFileName);
 
   return 0;
 }
