@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>API - PLT Anomaly Detection Official Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "API";
+        var mkdocs_page_input_path = "API.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> PLT Anomaly Detection Official Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../quickstart/">Introduction</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Install Guide</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#mounting-tool">Mounting Tool</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mountdata">MountData</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#anomaly-detection-tool">Anomaly Detection Tool</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#anomalysearcher">AnomalySearcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#per-fill-analysis">Per Fill Analysis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#batched-analysis">Batched Analysis</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#further-details">Further details</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">PLT Anomaly Detection Official Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>API</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api-documentation">API Documentation</h1>
+<p>Here we present the API documentation of the project of the main two API modules.</p>
+<h3 id="mounting-tool">Mounting Tool</h3>
+<p>This tool is used to mount the data from the PLT-BRIL detector. It is a wrapper around the <code>sshfs</code> command, and it is used to mount the data from the detector in a given directory.
+The connection drop is automatically handled when the lxplus instance is closed.</p>
+<hr />
+<h5 id="mountdata">MountData</h5>
+<pre><code class="language-python">class MountData(user: str, password: str = None)
+</code></pre>
+<p>Utility class to mount the data from the PLT-BRIL detector. </p>
+<p>The entered user and password are used to authenticate the 
+connection to the cmsusr and brildata machines.</p>
+<p><strong>Args:</strong></p>
+<ul>
+<li><b><code>user</code></b>  (str): User to authenticate the connection.</li>
+<li><b><code>password</code></b>  (str, optional): Password to authenticate the connection. Defaults to None.</li>
+</ul>
+<p><strong>Returns:</strong>
+    None</p>
+<hr />
+<p>After the class is created, the user can use the <code>create_mount</code> method to mount the data in a given directory.</p>
+<pre><code class="language-python">def create_mount(mount_source: str, mount_target: str) -&gt; None:
+</code></pre>
+<p>This function creates a mount between a source and a target by  by performung a double ssh to the cmusr and brilmachine. </p>
+<p><strong>Args:</strong></p>
+<ul>
+<li><b><code>mount_source</code></b> (str, optional):  Machine where data is stored. </li>
+<li><b><code>mount_target</code></b> (str, optional):  Path to where the mount is going to be created. If it already exists, no exception is raised and if the path does not exist, it is created. </li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><code>None</code>:  Nothing is returned. </li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-python">&gt;&gt;&gt; mount_source = &quot;brildev1:/brildata/22&quot;
+&gt;&gt;&gt; mount_target = &quot;./Files/22&quot;
+&gt;&gt;&gt; m = MountData(&quot;YOUR USER&quot;, &quot;YOUR PASSWORD&quot;)
+&gt;&gt;&gt; m.create_mount(mount_source, mount_target)
+</code></pre>
+<hr />
+<h3 id="anomaly-detection-tool">Anomaly Detection Tool</h3>
+<p>This tool is used to detect anomalies in the data from the PLT-BRIL detector. It is a wrapper around the <code>python</code> command, and it is used to detect anomalies in the data from the detector in a given directory. The class used is:</p>
+<hr />
+<h5 id="anomalysearcher">AnomalySearcher</h5>
+<pre><code class="language-python">class AnomalySearcher(mount_path: str)
+</code></pre>
+<p>Constructor for the AnomalySearcher class</p>
+<p><strong>Args</strong>:</p>
+<ul>
+<li><b><code>mount_path</code></b> (str, optional): Path to where the data from BRILDATA is
+    mounted per year.</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><b><code>None</code></b>:  Nothing is returned. </li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-python">    &gt;&gt;&gt; searcher = AnomalySearcher(&quot;./Files/22&quot;)
+</code></pre>
+<hr />
+<h4 id="per-fill-analysis">Per Fill Analysis</h4>
+<p>The tool allows the user to run the analysis of a single fill.</p>
+<pre><code class="language-python">def AnomalySearcher(fill_number: int,
+                    save_path: str = None,
+                    subsample: int = 5,
+                    return_preprocessed: bool = False,
+                    verbose: bool = False,
+                    generate_plots: bool = False
+                    ) -&gt; Union[dict, Tuple[pd.DataFrame, dict]]:
+</code></pre>
+<p>Runs the pipeline for anomaly detection on a single fill</p>
+<p><strong>Args</strong>:</p>
+<ul>
+<li><b><code>fill_number</code></b> (int): Fill number to be analyzed. Must be a positive integer.
+ contained in the mount path.</li>
+<li><b><code>save_path</code></b> (str, optional): Where to save the output.
+        Defaults to None.</li>
+<li><b><code>subsample</code></b> (int, optional): Subsample rate, in seconds for the data,
+        A larger subsample rate will make the pipeline run faster,
+        but the results will be less granular.
+        Defaults to 5.</li>
+<li><b><code>return_preprocessed</code></b> (bool, optional): If True, returns the
+        preprocessed step for visualization. Defaults to False.</li>
+<li><b><code>verbose</code></b> (bool, optional): If True, prints the output
+        Defaults to False.</li>
+<li><b><code>generate_plots</code></b> (bool, optional): If True, generates plots for each
+        one of the channels and with preprocessing data.
+        Defaults to False.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><b><code>Union[dict, Tuple[pd.DataFrame, dict]]</code></b>: 
+    Output of the pipeline.
+     If return_preprocessed is True, returns a tuple with the preprocessed data and the output of the pipeline.
+     Otherwise, returns the output of the pipeline, which is a dictionary with each channel as a key 
+     and the anomalies information as a value for each one.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-python">    &gt;&gt;&gt; searcher = AnomalySearcher(&quot;./Files/22&quot;)
+    &gt;&gt;&gt; searcher.AnomalySearcher(fill_number=8080,
+                                save_path=&quot;./Results/22&quot;,
+                                generate_plots=True)
+</code></pre>
+<h4 id="batched-analysis">Batched Analysis</h4>
+<pre><code class="language-python">def run_scan(cls,
+             mount_path: str,
+             output_path: str,
+             *, # Any keyword arguments:
+             overwrite: bool = False,
+             make_anomalous_plots: bool = True,
+             make_normal_plots: bool = False,
+             verbose: bool = False,
+             progress_bar: bool = True
+             ) -&gt; None:
+</code></pre>
+<p>Runs the scan of the anomaly detection pipeline on a given mount path
+(Note that the mount path must be a directory at the brildata machine).
+Each one of the available fill files will be processed.</p>
+<p><strong>Args</strong>:</p>
+<ul>
+<li>
+<p><b><code>mount_path</code></b> (str): Path to mount containing the fill files that was mounted 
+    using the MountData class. </p>
+</li>
+<li>
+<p><b><code>output_path</code></b> (str): Where to save the output of the analysis. Here, the logs are saved, 
+    the plots are saved in the <code>/plots</code> folder and, and the results json are saved for each one of the fill files studied. As the iteration occurs, the internal <code>generate_fills_report</code> function is called to generate the report for all the fill files, reporting the anomalous channels where anomalies were found.</p>
+</li>
+</ul>
+<p><strong>Keyword Args</strong>:</p>
+<ul>
+<li>
+<p><b><code>overwrite</code></b> (bool, optional): A boolean indicating if the fills already reported in the output_path should be studied again. Defaults to False, meaning that the fills already reported in the output_path will not be analyzed again.</p>
+</li>
+<li>
+<p><b><code>make_anomalous_plots</code></b> (bool, optional): A boolean indicating if the plots for the anomalous channels should be generated. Defaults to True, meaning that the plots for the anomalous channels will be generated and saved by default in the plots folder. Turning this functionality off will save time when running the pipeline on a large number of fills.</p>
+</li>
+<li>
+<p><b><code>make_normal_plots</code></b> (bool, optional): A boolean indicating if the plots for the normal channels should be generated. Defaults to False, meaning that the plots for the normal channels will not be generated by default.</p>
+</li>
+<li>
+<p><b><code>verbose</code></b> (bool, optional): A boolean indicating if the output of the pipeline should be printed. Turn it on for debugging purposes and internal analysis. Also exceptions raised for incomplete fills will be printed. Defaults to False.</p>
+</li>
+<li>
+<p><b><code>progress_bar</code></b> (bool, optional): A boolean indicating if a progress bar should be shown. Defaults to True, meaning that a progress bar generated by tqdm will be shown. It is recommended to keep
+    this option on to have an estimate of the progress of the pipeline and the time to complete. </p>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><b><code>None</code></b>: Nothing is returned.  </li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-python">    &gt;&gt;&gt; searcher = AnomalySearcher(&quot;./Files/22&quot;)
+    &gt;&gt;&gt; searcher.run_scan(mount_path=&quot;./Files/22&quot;,
+                          output_path=&quot;./Results/22&quot;,
+                          make_anomalous_plots=True,
+                          make_normal_plots=True,
+                          verbose=True,
+                          progress_bar=True)
+</code></pre>
+<hr />
+<h5 id="further-details">Further details</h5>
+<p>Further documentation can be found in the <a href="https://github.com/munozariasjm/plt-anomaly-detector">source code</a>.</p>
+<p>If there is any question or problem, please contact <a href="https://munozariasjm.github.io/">Jose M Munoz</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../install/" class="btn btn-neutral float-left" title="Install Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
