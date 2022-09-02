@@ -1,0 +1,18 @@
+[project]
+name = "PltAnomalyDetector"
+version = "0.0.1"
+authors = [
+  { name="Jose M Munoz", email="munozariasjm@gmail.com" },
+]
+description = "Proof of concept for a Plt Anomaly Detector"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/munozariasjm/plt-anomaly-detector"
+"Bug Tracker" = "https://github.com/munozariasjm/plt-anomaly-detector/issues"

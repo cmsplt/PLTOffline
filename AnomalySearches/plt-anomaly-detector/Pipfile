@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+adtk = "*"
+pandas = "*"
+tables = "*"
+numpy = "*"
+numba = "*"
+matplotlib = "*"
+seaborn = "*"
+sphinxcontrib-napoleon = "*"
+click = "*"
+install = "*"
+rinohtype = "*"
+mkdocs = "*"
+markdown = "==3.3.4"
+
+[dev-packages]
+pipenv-setup = {extras = ["black"], version = "*"}
+
+[requires]
+python_version = "3.9"
