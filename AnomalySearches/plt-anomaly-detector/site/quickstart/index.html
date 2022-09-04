@@ -102,15 +102,15 @@ Now, the data is ready to be used. </p>
 searcher = AnomalySearcher(MOUNT_TARGET)
 
 # Fill to analyze:
-FILL_NUMBER = 1
-result = anm_searcher(FILL_N,
+FILL_N = 1
+result = searcher(FILL_N,
                       return_preprocessed=True,
                       generate_plots=True,
                       save_path = &quot;./Results/22&quot;,
                       )
 
 </code></pre>
-<p>This function will return a dictionary with the results of the analysis. The plots will be saved in the directory <code>./Results/22</code>. The plots are saved in the following format: <code>FILL_N.png</code>. The preprocessed data will be saved in the following format: <code>./Results/22/single_fill_reports/FILL_NUMBER.pkl</code>.</p>
+<p>This function will return a dictionary with the results of the analysis. The plots will be saved in the directory <code>./Results/22</code>. The plots are saved in the following format: <code>FILL_N.png</code>. The preprocessed data will be saved in the following format: <code>./Results/22/single_fill_reports/FILL_N.pkl</code>.</p>
 <p>The other way of running the algorithm is to run it over all the fills in a given directory:</p>
 <pre><code class="language-python">AnomalySearcher().run_scan(
     mount_path=MOUNT_TARGET,

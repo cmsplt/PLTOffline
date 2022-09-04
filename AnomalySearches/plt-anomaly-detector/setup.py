@@ -9,7 +9,7 @@ setup(
     description="A proof of concept for anomaly detection in the PLT detector",
     author="Jose M Munoz, PLT Team",
     author_email="foomail@foo.example",
-    install_requires=[],  # external packages as dependencies
+    install_requires=["adtk"],  # external packages as dependencies
     scripts=[
         "scripts/mount_fills.py",
     ],
