@@ -5,3 +5,7 @@ This directory contains utilities for searching for anomalies in the PLT data. N
 ### Tools
 * `plt-anomaly-detector` - An unsupervised anomaly detector that uses an unsupervised Gaussian Model to detect anomalies in the scan of the hd5 files of fills available. See project documentation for more details.
 * `KmeansAnalyzer` - A tool that uses Kmeans clustering to detect anomalies in the scan of Slink files.
+
+---
+### Usage
+The `src` contains the scripts necesary to setup and compile the tools.
