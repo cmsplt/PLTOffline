@@ -113,17 +113,19 @@ std::map<std::pair<unsigned, unsigned>, std::vector<int>> readMaskFile(std::stri
 // Add to ask for the Slink file as an argument
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
+    if (argc != 3)
     {
         std::cout << "No Slink .root was provided!" << std::endl;
-        std::cout << "Usage: ./main [slink file path]" << std::endl;
+        std::cout << "Usage: ./main [input folderpath] [slink filepath]" << std::endl;
         exit(1);
     }
     KmeansAnalyzer A;
 
-    std::string centroidsFile = "test_input/centroids_dummy.csv";
-    std::string normalizationFile = "test_input/normalization_dummy.csv";
-    std::string maskFilePath = "test_input/interface_conf_Mask_2018_24x36center_26x38outer.txt";
+    std::string inputFolderPath = argv[1];
+
+    std::string centroidsFile = inputFolderPath + "/centroids_dummy.csv";
+    std::string normalizationFile = inputFolderPath + "/normalization_dummy.csv";
+    std::string maskFilePath = inputFolderPath + "/interface_conf_Mask_2018_24x36center_26x38outer.txt";
 
     std::map<std::pair<unsigned, unsigned>, std::vector<int>> maskEdges = readMaskFile(maskFilePath);
     for (auto const &m : maskEdges)
@@ -132,7 +134,7 @@ int main(int argc, char *argv[])
     A.initKmeansAnalyzer(centroidsFile, normalizationFile, maskEdges);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    std::string slinkFileName = argv[1];
+    std::string slinkFileName = argv[2];
     TFile *f = new TFile(slinkFileName.c_str());
 
     if (!f->IsOpen())
