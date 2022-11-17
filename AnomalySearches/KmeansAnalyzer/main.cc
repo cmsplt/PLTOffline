@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
-        std::cout << "No Slink .root was provided!" << std::endl;
+        std::cout << "No Slink was provided!" << std::endl;
         std::cout << "Usage: ./main [input folderpath] [slink filepath]" << std::endl;
         exit(1);
     }
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 
     std::string centroidsFile = inputFolderPath + "/centroids_dummy.csv";
     std::string normalizationFile = inputFolderPath + "/normalization_dummy.csv";
-    std::string maskFilePath = inputFolderPath + "/interface_conf_Mask_2018_24x36center_26x38outer.txt";
+    std::string maskFilePath = inputFolderPath + "/interface_conf_Mask_2018_24x36center_26x38outer.txtt";
 
     std::map<std::pair<unsigned, unsigned>, std::vector<int>> maskEdges = readMaskFile(maskFilePath);
     for (auto const &m : maskEdges)
