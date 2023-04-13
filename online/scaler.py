@@ -66,7 +66,8 @@ def scaler(fill:int, start: pandas.Timestamp, end: pandas.Timestamp) -> pandas.D
 
 def doAllTheThings():
     fills = fillTimestamps()
-    fills = fills[fills['start'] > '2022-08-10'].reset_index(drop=True)
+    lastFill = int(max(pathlib.Path(f'/eos/home-{user[0]}/{user}/www/plt-scaler/').glob('*.pkl')).stem)
+    fills = fills[fills.fill >= lastFill] # fills[fills['start'] > '2022-11-01'].reset_index(drop=True)
     for fill in fills['fill']:
         try:
             start, end = fillStartEnd(fills, fill)
