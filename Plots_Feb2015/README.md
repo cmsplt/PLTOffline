@@ -1,0 +1,1 @@
+This contains a set of standard plots from the PLT shortly after installation at the start of Run 2 (February 3, 2015), so they can provide a reference for how things looked at the very beginning of Run 2. I believe this is before the trimming was run, which is presumably the reason for the cold or hot regions in some of the individual ROC occupancy plots.
