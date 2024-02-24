@@ -1,0 +1,12 @@
+export ROOTSYS=~/root
+export PATH=$ROOTSYS/bin:$PATH
+export LD_LIBRARY_PATH=/Users/grothe/root/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/brilconda/root/lib/:/opt/brilconda/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$PWD
+export PYTHONPATH=$PWD/fits:$PYTHONPATH
+export PYTHONPATH=/opt/brilconda/root/lib/:$PYTHONPATH
+export PYTHONPATH=$PWD/corrections:$PYTHONPATH
+export PYTHONPATH=$ROOTSYS/lib:$PYTHONPATH
+export PYTHONPATH=/usr/lib/python2.7:$PYTHONPATH
+export VDMPATH=$PWD
+source ~brilpro/plt/daq/bril/scripts/brilcondaOn.sh

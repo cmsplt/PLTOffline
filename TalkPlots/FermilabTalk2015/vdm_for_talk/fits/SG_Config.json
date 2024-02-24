@@ -1,0 +1,6 @@
+{
+"StartSigma" : 1.0,
+"LimitsSigma" : [0.0, -1.0],
+"StartPeak" : 1.0,
+"LimitsPeak" : [0.0, -1.0]
+}

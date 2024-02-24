@@ -1,0 +1,22 @@
+{
+"StartSigmaX" : 1.0,
+"LimitsSigmaX" : [0.0, -1.0],
+"StartSX" : 1.5,
+"LimitsSX" : [0.1, 10.0],
+"StartSigmaY" : 1.0,
+"LimitsSigmaY" : [0.0, -1.0],
+"StartSY" : 1.5,
+"LimitsSY" : [0.1, 10.0],
+"StartMeanX1" : 0.0,
+"LimitsMeanX1" : [-0.01, 0.01],
+"StartMeanX2" : 0.0,
+"LimitsMeanX2" : [-0.01, 0.01],
+"StartMeanY1" : 0.0,
+"LimitsMeanY1" : [-0.01, 0.01],
+"StartMeanY2" : 0.0,
+"LimitsMeanY2" : [0.0, -1.0],
+"StartFraction" : 0.99,
+"LimitsFraction" : [0.0, 1.0],
+"StartAmp" : 1.0,
+"LimitsAmp" : [0.0, -1.0]
+}

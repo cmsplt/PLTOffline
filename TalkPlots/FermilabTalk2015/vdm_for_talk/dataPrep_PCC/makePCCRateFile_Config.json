@@ -1,0 +1,12 @@
+{
+"Fill": "3503",
+"InputPCCFiles": ["/Users/grothe/lumi/framework/prototype/forTmpStorage/PCC_Fill3503/pixellumitupler_VdM_Run210986.root"],
+"Comment": "BCIDs on which trigger read out PCC values",
+"PCC_BCID": [1,233,892,1124,1356],
+"AnalysisDir": "../Fill3503_Jan282013",
+"Comment": "The following directories are relative to <AnalysisDir>",
+"InputScanFile" : "cond/Scan_3503.pkl",
+"PCCTreeName": "pixel_lumi_tupler_zb/treePixelLumi",
+"OutputSubDir" : "LuminometerData",
+"addScanInfo": false
+}

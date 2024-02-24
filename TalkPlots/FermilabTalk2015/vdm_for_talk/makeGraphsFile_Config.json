@@ -1,0 +1,16 @@
+{
+"Fill": "3563",
+"AnalysisDir": "Fill3563_Feb142013",
+"Corr_notnow" : ["LengthScale", "Ghosts", "Satellites"],
+"Corr_notnow" : ["noCorr"],
+"Corr" : ["BeamBeam"],
+"Luminometer": "HF",
+"Comment": "Input scan info file is <AnalysisDir>/<InputScanFile>",
+"InputScanFile" : "cond/Scan_3563.pkl",
+"Comment": "Input beam currents file is <AnalysisDir>/<InputBeamCurrentFile>",
+"InputBeamCurrentFile" : "cond/BeamCurrents_3563.pkl",
+"Comment": "Input luminometer data in <AnalysisDir>/<InputLuminometerData>",
+"InputLuminometerData" : "LuminometerData/Rates_HF_3563.pkl",
+"Comment": "Output goes to <AnalysisDir>/<Luminometer>/graphs", 
+"OutputSubDir" : "graphs"
+}

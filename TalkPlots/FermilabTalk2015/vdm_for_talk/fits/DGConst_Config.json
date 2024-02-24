@@ -1,0 +1,13 @@
+{
+"Comment": "If no limits should be applied, set upper limit smaller than lower limit",
+"StartSigma" : 1.0,
+"LimitsSigma" : [0.0, -1.0],
+"StartPeak" : 1.0,
+"LimitsPeak" : [0.2, 5.0],
+"StartRatio" : 1.0,
+"LimitsRatio" : [0.1, 10.0],
+"StartFrac" : 0.99,
+"LimitsFrac" : [0.0, 1.0],
+"StartConst" : 0.0,
+"LimitsConst" : [0.0, 0.01]
+}

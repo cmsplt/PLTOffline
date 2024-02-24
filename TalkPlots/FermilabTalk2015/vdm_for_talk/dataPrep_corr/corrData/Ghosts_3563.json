@@ -1,0 +1,5 @@
+{
+"Comment" : "Correction factors for ghost currents in B1 and B2",
+"GhostsFraction_B1" : "0.0073",
+"GhostsFraction_B2" : "0.0053"
+}

@@ -12,4 +12,6 @@ This directory contains the plots and scripts from my [Fermilab Talk of the Week
 
 * `ScanXPlane`, `ScanYPlane` are the plots of the vdM scan analysis in PS, EPS, PDF, PNG, and ROOT format.
 
+* The actual code for creating the vdM plots is in `vdm_for_talk`. This is a version of the old 2015 vdM framework with some changes to `vdmUtilities.py` for the necessary style updates and `env.sh` to run on the BRIL online machines, and adding `vdm_runII_plt.py` as the overall driver file (and `vdm_runII_test.py` as a test file). Note that the plot output names are `1_X_1.*` and `1_Y_1.*` but I renamed them as above. (I was planning to propagate the style changes back into the main framework, but this never happened before it became obsolete anyway.)
+
 Also included are `tdrstyle.C` for providing the standard CMS plot style and `CMS_lumi.C` for providing the standard CMS lumi designation on plots.
