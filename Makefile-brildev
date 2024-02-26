@@ -1,0 +1,45 @@
+CC = g++
+LD = g++
+CFLAGS = -O3 -W -Wall `root-config --cflags`
+LIBS = `root-config --libs` -Llib -lMinuit -lSpectrum
+INCLUDE = -Iinterface
+OBJS  = $(patsubst src/%.cc,lib/%.o,$(wildcard src/*.cc))
+EXECS = $(patsubst bin/%.cc,%,$(wildcard bin/*.cc))
+SCRIPTS = $(patsubst scripts/%.cc,%,$(wildcard scripts/*.cc))
+EXEOBJS  = $(patsubst bin/%.cc,lib/%.o,$(wildcard bin/*.cc))
+
+# Exclude TestBufferReader from compilation since most systems that
+# you'll compile this on don't have zmq installed.
+EXEOBJS := $(filter-out lib/TestBufferReader.o,$(EXEOBJS))
+EXECS := $(filter-out TestBufferReader,$(EXECS))
+
+# Can't compile these on brildev1 since it doesn't have the
+# geometry libraries installed.
+EXEOBJS := $(filter-out lib/PLTEventDisplay.o lib/PLTGeometryExport.o lib/PLTHitDisplay.o,$(EXEOBJS))
+EXECS := $(filter-out PLTEventDisplay PLTGeometryExport PLTHitDisplay,$(EXECS))
+
+print-%:
+	@echo $*=$($*)
+
+all: $(OBJS) $(EXEOBJS) $(SCRIPTS) $(EXECS)
+
+lib/%.o : src/%.cc
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+lib/%.o : bin/%.cc
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+lib/%.o : scripts/%.cc
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+% : $(OBJS) lib/%.o
+	$(LD) $(LIBS) $(OBJS) $(LINKDEFOBJ) lib/$@.o -o $@
+
+
+
+
+
+clean:
+	rm -f $(EXECS) $(SCRIPTS) lib/*.o
+cleanimg:
+	rm -f *.eps *.gif *.jpg plots/*.*
