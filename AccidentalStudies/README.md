@@ -1,6 +1,6 @@
 # AccidentalStudies
 
-This directory contains all the results from measuring the accidentals for the 2015 and 2016 runs and the scripts used to plot these results. (The 2016 study for optimizing the mask size with respect to accidental rates is in the `MaskStudies/` directory; see that directory for documentation of that study.) Here's a quick rundown of the basic procedure.
+This directory contains all the results from measuring the accidentals for the 2015 and 2016 runs and the scripts used to plot these results. (The 2016 study for optimizing the mask size with respect to accidental rates is in the `MaskStudies/` directory; see that directory for documentation of that study.) My work (covering 2015 and the start of 2016, up to fill 5013) is in this directory, and Joe's updates covering the rest of 2016 are in the `JoeResults/` subdirectory here. Here's a quick rundown of the basic procedure.
 
 1) Run `MeasureAccidentals`. You need at least five arguments: the slink file, the gain cal fits file, the alignment file, the track distributions file, and the fill number.
 

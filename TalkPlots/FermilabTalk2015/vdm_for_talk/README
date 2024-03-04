@@ -1,0 +1,30 @@
+Date: Wed, 9 Apr 2014 14:38:46 +0200
+From: Olga Driga <olga.mipt@gmail.com>
+To: Monika Grothe <grothe@mail.cern.ch>, Daniel Marlow <marlow@Princeton.EDU>
+Subject: Re: VdM Meeting today?
+
+Hi Dan, Monika,
+
+A short update from my side.
+
+1. Now we have an svn for the VdM code:
+
+svn co svn+ssh://<username>@svn.cern.ch/reps/VdMframework
+
+I created a standard structure inside the folder, which contains work, tags and trunk folders.
+
+trunk - the latest version of the code
+tags - for tagging particular versions of the analysis
+work - developer's folder
+
+Folder work/ contains working spaces for each one of us: Dan/, Monika/ and Olga/.
+
+I have committed my files to work/Olga. Feel free to have a look and comment.
+
+Please, try to commit anything in your working space and let me know if it works.
+
+2. I have updated the corresponding parts of the VdM document.
+I updated the satellite file part, all the rest corresponds to the code.
+
+Cheers,
+Olga

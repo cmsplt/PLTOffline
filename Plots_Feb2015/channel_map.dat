@@ -1,0 +1,1136 @@
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 1 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 1 AHOB= 15 ThisAOHG= 0 Baseline=   251.290 +/-     1.853
+FEDID= 0  FEDchannel= 1 AHOB= 16 ThisAOHG= 0 Baseline=    54.116 +/-   103.905
+FEDID= 0  FEDchannel= 1 AHOB= 17 ThisAOHG= 0 Baseline=   346.312 +/-    46.413
+FEDID= 0  FEDchannel= 1 AHOB= 18 ThisAOHG= 0 Baseline=   407.347 +/-     2.141
+FEDID= 0  FEDchannel= 1 AHOB= 19 ThisAOHG= 0 Baseline=   461.336 +/-     2.154
+FEDID= 0  FEDchannel= 1 AHOB= 20 ThisAOHG= 0 Baseline=   517.520 +/-     2.248
+FEDID= 0  FEDchannel= 1 AHOB= 21 ThisAOHG= 0 Baseline=   573.051 +/-     2.157
+FEDID= 0  FEDchannel= 1 AHOB= 22 ThisAOHG= 0 Baseline=   631.712 +/-     2.298
+FEDID= 0  FEDchannel= 1 AHOB= 23 ThisAOHG= 0 Baseline=   688.714 +/-     2.319
+FEDID= 0  FEDchannel= 1 AHOB= 24 ThisAOHG= 0 Baseline=   745.930 +/-     2.405
+FEDID= 0  FEDchannel= 1 AHOB= 25 ThisAOHG= 0 Baseline=   804.132 +/-     2.455
+FEDID= 0  FEDchannel= 1 AHOB= 26 ThisAOHG= 0 Baseline=   864.730 +/-     2.439
+FEDID= 0  FEDchannel= 1 AHOB= 27 ThisAOHG= 0 Baseline=   923.523 +/-     2.455
+FEDID= 0  FEDchannel= 1 AHOB= 28 ThisAOHG= 0 Baseline=   983.447 +/-     2.487
+FEDID= 0  FEDchannel= 1 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 1 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 1 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 1 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   615.709 +/-     1.077
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   337.682 +/-     1.775
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   392.324 +/-     1.121
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   442.212 +/-     1.437
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   492.091 +/-     1.044
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   543.405 +/-     1.098
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   596.699 +/-     1.148
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   646.888 +/-     1.234
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   701.840 +/-     1.171
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   755.576 +/-     1.226
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   811.036 +/-     1.197
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   866.905 +/-     1.293
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   922.621 +/-     1.331
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   976.660 +/-     1.362
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 1 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 1 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 2 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   284.957 +/-     0.863
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   339.967 +/-     1.038
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   394.348 +/-     0.827
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   451.030 +/-     1.035
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   507.416 +/-     1.181
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   567.412 +/-     1.721
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   627.383 +/-     1.971
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   689.875 +/-     1.237
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   749.269 +/-     1.292
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   810.901 +/-     1.224
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   870.706 +/-     1.211
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   932.407 +/-     1.153
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   992.581 +/-     1.149
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 2 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 1 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 3 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   476.634 +/-     1.035
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   540.696 +/-     1.044
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   604.696 +/-     1.064
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   670.549 +/-     0.923
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   735.463 +/-     1.015
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   801.615 +/-     1.056
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   867.172 +/-     1.030
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   933.295 +/-     1.077
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   998.387 +/-     0.750
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 3 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 2 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 2 AHOB= 15 ThisAOHG= 0 Baseline=   181.427 +/-    46.465
+FEDID= 0  FEDchannel= 2 AHOB= 16 ThisAOHG= 0 Baseline=   217.497 +/-     1.874
+FEDID= 0  FEDchannel= 2 AHOB= 17 ThisAOHG= 0 Baseline=   261.316 +/-     1.950
+FEDID= 0  FEDchannel= 2 AHOB= 18 ThisAOHG= 0 Baseline=   306.791 +/-     2.011
+FEDID= 0  FEDchannel= 2 AHOB= 19 ThisAOHG= 0 Baseline=   354.097 +/-     2.068
+FEDID= 0  FEDchannel= 2 AHOB= 20 ThisAOHG= 0 Baseline=   402.620 +/-     2.147
+FEDID= 0  FEDchannel= 2 AHOB= 21 ThisAOHG= 0 Baseline=   452.625 +/-     2.232
+FEDID= 0  FEDchannel= 2 AHOB= 22 ThisAOHG= 0 Baseline=   502.769 +/-     2.225
+FEDID= 0  FEDchannel= 2 AHOB= 23 ThisAOHG= 0 Baseline=   554.246 +/-     2.325
+FEDID= 0  FEDchannel= 2 AHOB= 24 ThisAOHG= 0 Baseline=   605.368 +/-     2.278
+FEDID= 0  FEDchannel= 2 AHOB= 25 ThisAOHG= 0 Baseline=   658.330 +/-     2.320
+FEDID= 0  FEDchannel= 2 AHOB= 26 ThisAOHG= 0 Baseline=   711.199 +/-     2.239
+FEDID= 0  FEDchannel= 2 AHOB= 27 ThisAOHG= 0 Baseline=   764.592 +/-     2.351
+FEDID= 0  FEDchannel= 2 AHOB= 28 ThisAOHG= 0 Baseline=   817.796 +/-     2.353
+FEDID= 0  FEDchannel= 2 AHOB= 29 ThisAOHG= 0 Baseline=   871.904 +/-     2.425
+FEDID= 0  FEDchannel= 2 AHOB= 30 ThisAOHG= 0 Baseline=   926.067 +/-     2.627
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 2 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 4 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   173.838 +/-     0.644
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   122.495 +/-     0.598
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   131.406 +/-     0.623
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   140.417 +/-     0.603
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   149.281 +/-     0.620
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   158.635 +/-     0.595
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   167.990 +/-     0.614
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   177.509 +/-     0.636
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   187.384 +/-     0.676
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   197.355 +/-     0.666
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   207.585 +/-     0.629
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   218.045 +/-     0.635
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   228.461 +/-     0.651
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   239.191 +/-     0.682
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=   249.928 +/-     0.721
+PltFEDID= 0  pltFEDchannel= 4 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=   260.980 +/-     0.746
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 2 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 5 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   243.205 +/-     0.844
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   294.479 +/-     0.920
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   346.790 +/-     0.869
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   400.621 +/-     0.889
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   455.617 +/-     0.880
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   511.277 +/-     0.886
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   567.665 +/-     0.933
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   623.915 +/-     0.888
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   681.167 +/-     1.060
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   739.084 +/-     0.968
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   796.946 +/-     1.049
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   854.946 +/-     1.190
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   912.802 +/-     1.265
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   969.974 +/-     1.687
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 5 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 2 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 6 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   458.696 +/-     1.004
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   519.032 +/-     0.982
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   579.685 +/-     0.960
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   641.124 +/-     0.936
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   703.541 +/-     1.007
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   765.920 +/-     0.973
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   828.386 +/-     0.968
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   892.874 +/-     0.951
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   955.975 +/-     0.990
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 6 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 4 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 4 AHOB= 15 ThisAOHG= 0 Baseline=   267.706 +/-    33.424
+FEDID= 0  FEDchannel= 4 AHOB= 16 ThisAOHG= 0 Baseline=   309.855 +/-     1.626
+FEDID= 0  FEDchannel= 4 AHOB= 17 ThisAOHG= 0 Baseline=   359.076 +/-     1.738
+FEDID= 0  FEDchannel= 4 AHOB= 18 ThisAOHG= 0 Baseline=   409.884 +/-     1.862
+FEDID= 0  FEDchannel= 4 AHOB= 19 ThisAOHG= 0 Baseline=   461.454 +/-     1.829
+FEDID= 0  FEDchannel= 4 AHOB= 20 ThisAOHG= 0 Baseline=   514.814 +/-     1.839
+FEDID= 0  FEDchannel= 4 AHOB= 21 ThisAOHG= 0 Baseline=   568.148 +/-     1.862
+FEDID= 0  FEDchannel= 4 AHOB= 22 ThisAOHG= 0 Baseline=   622.717 +/-     1.842
+FEDID= 0  FEDchannel= 4 AHOB= 23 ThisAOHG= 0 Baseline=   677.526 +/-     1.932
+FEDID= 0  FEDchannel= 4 AHOB= 24 ThisAOHG= 0 Baseline=   732.157 +/-     1.994
+FEDID= 0  FEDchannel= 4 AHOB= 25 ThisAOHG= 0 Baseline=   788.015 +/-     2.033
+FEDID= 0  FEDchannel= 4 AHOB= 26 ThisAOHG= 0 Baseline=   844.241 +/-     2.088
+FEDID= 0  FEDchannel= 4 AHOB= 27 ThisAOHG= 0 Baseline=   900.136 +/-     2.100
+FEDID= 0  FEDchannel= 4 AHOB= 28 ThisAOHG= 0 Baseline=   958.000 +/-     2.117
+FEDID= 0  FEDchannel= 4 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 4 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 4 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 10 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   590.757 +/-     0.780
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   252.991 +/-     1.138
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   311.165 +/-     1.440
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   369.103 +/-     1.253
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   427.301 +/-     1.175
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   484.936 +/-     0.981
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   545.740 +/-     0.955
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   606.200 +/-     0.997
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   668.700 +/-     0.910
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   730.315 +/-     0.957
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   793.631 +/-     1.000
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   855.649 +/-     0.979
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   919.335 +/-     1.033
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   981.561 +/-     1.057
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 10 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 4 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 11 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   274.847 +/-     0.895
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   332.693 +/-     0.938
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   394.159 +/-     1.012
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   456.668 +/-     0.969
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   521.190 +/-     1.042
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   584.109 +/-     0.965
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   650.445 +/-     1.035
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   717.611 +/-     1.084
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   784.591 +/-     1.001
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   849.421 +/-     1.140
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   917.020 +/-     1.155
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   984.155 +/-     1.042
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 11 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 4 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 12 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   344.158 +/-     0.834
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   396.869 +/-     0.930
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   449.943 +/-     0.867
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   503.302 +/-     0.885
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   558.116 +/-     0.889
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   613.578 +/-     0.964
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   669.765 +/-     0.981
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   727.875 +/-     1.015
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   784.585 +/-     0.984
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   841.378 +/-     0.962
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   898.107 +/-     0.958
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=   954.559 +/-     0.972
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 12 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 5 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 5 AHOB= 15 ThisAOHG= 0 Baseline=   223.429 +/-    40.437
+FEDID= 0  FEDchannel= 5 AHOB= 16 ThisAOHG= 0 Baseline=   259.475 +/-     1.873
+FEDID= 0  FEDchannel= 5 AHOB= 17 ThisAOHG= 0 Baseline=   305.681 +/-     1.976
+FEDID= 0  FEDchannel= 5 AHOB= 18 ThisAOHG= 0 Baseline=   355.643 +/-     2.058
+FEDID= 0  FEDchannel= 5 AHOB= 19 ThisAOHG= 0 Baseline=   405.331 +/-     2.069
+FEDID= 0  FEDchannel= 5 AHOB= 20 ThisAOHG= 0 Baseline=   456.499 +/-     2.013
+FEDID= 0  FEDchannel= 5 AHOB= 21 ThisAOHG= 0 Baseline=   508.336 +/-     2.145
+FEDID= 0  FEDchannel= 5 AHOB= 22 ThisAOHG= 0 Baseline=   563.224 +/-     2.166
+FEDID= 0  FEDchannel= 5 AHOB= 23 ThisAOHG= 0 Baseline=   615.783 +/-     2.212
+FEDID= 0  FEDchannel= 5 AHOB= 24 ThisAOHG= 0 Baseline=   668.649 +/-     2.244
+FEDID= 0  FEDchannel= 5 AHOB= 25 ThisAOHG= 0 Baseline=   723.266 +/-     2.273
+FEDID= 0  FEDchannel= 5 AHOB= 26 ThisAOHG= 0 Baseline=   779.887 +/-     2.255
+FEDID= 0  FEDchannel= 5 AHOB= 27 ThisAOHG= 0 Baseline=   834.608 +/-     2.279
+FEDID= 0  FEDchannel= 5 AHOB= 28 ThisAOHG= 0 Baseline=   890.646 +/-     2.312
+FEDID= 0  FEDchannel= 5 AHOB= 29 ThisAOHG= 0 Baseline=   946.176 +/-     2.344
+FEDID= 0  FEDchannel= 5 AHOB= 30 ThisAOHG= 0 Baseline=   998.470 +/-     0.782
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 5 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 13 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   664.153 +/-     1.698
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   343.404 +/-     1.169
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   399.834 +/-     1.400
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   457.404 +/-     1.472
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   514.019 +/-     1.557
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   572.172 +/-     1.616
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   631.551 +/-     1.681
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   692.716 +/-     1.790
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   753.614 +/-     1.733
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   814.008 +/-     1.714
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   875.260 +/-     1.758
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   936.964 +/-     1.693
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   997.726 +/-     1.214
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 13 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 5 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 14 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   278.358 +/-     0.851
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   343.080 +/-     0.993
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   410.624 +/-     1.000
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   478.826 +/-     1.096
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   549.125 +/-     1.141
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   621.420 +/-     1.309
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   694.482 +/-     1.516
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   770.005 +/-     1.385
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   844.290 +/-     1.370
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   918.552 +/-     1.199
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   992.975 +/-     1.117
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 14 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 5 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 15 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   342.003 +/-     0.785
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   386.465 +/-     0.845
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   430.464 +/-     0.848
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   474.914 +/-     0.964
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   520.035 +/-     0.919
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   566.649 +/-     0.963
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   612.536 +/-     0.933
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   660.700 +/-     0.995
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   706.914 +/-     0.978
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   755.214 +/-     0.995
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   802.030 +/-     1.007
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=   848.816 +/-     1.057
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=   896.013 +/-     1.066
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=   944.398 +/-     1.078
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=   991.624 +/-     1.055
+PltFEDID= 0  pltFEDchannel= 15 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 7 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 7 AHOB= 15 ThisAOHG= 0 Baseline=   295.206 +/-    31.438
+FEDID= 0  FEDchannel= 7 AHOB= 16 ThisAOHG= 0 Baseline=   343.923 +/-     2.202
+FEDID= 0  FEDchannel= 7 AHOB= 17 ThisAOHG= 0 Baseline=   398.763 +/-     2.275
+FEDID= 0  FEDchannel= 7 AHOB= 18 ThisAOHG= 0 Baseline=   455.286 +/-     2.379
+FEDID= 0  FEDchannel= 7 AHOB= 19 ThisAOHG= 0 Baseline=   512.926 +/-     2.357
+FEDID= 0  FEDchannel= 7 AHOB= 20 ThisAOHG= 0 Baseline=   570.714 +/-     2.402
+FEDID= 0  FEDchannel= 7 AHOB= 21 ThisAOHG= 0 Baseline=   629.749 +/-     2.404
+FEDID= 0  FEDchannel= 7 AHOB= 22 ThisAOHG= 0 Baseline=   690.786 +/-     2.608
+FEDID= 0  FEDchannel= 7 AHOB= 23 ThisAOHG= 0 Baseline=   751.759 +/-     3.120
+FEDID= 0  FEDchannel= 7 AHOB= 24 ThisAOHG= 0 Baseline=   813.710 +/-     3.476
+FEDID= 0  FEDchannel= 7 AHOB= 25 ThisAOHG= 0 Baseline=   876.134 +/-     3.571
+FEDID= 0  FEDchannel= 7 AHOB= 26 ThisAOHG= 0 Baseline=   938.505 +/-     3.553
+FEDID= 0  FEDchannel= 7 AHOB= 27 ThisAOHG= 0 Baseline=   996.891 +/-     1.978
+FEDID= 0  FEDchannel= 7 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 7 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 7 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 7 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 19 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   538.659 +/-     0.859
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   296.045 +/-     0.819
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   340.089 +/-     1.363
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   383.346 +/-     1.070
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   424.395 +/-     1.035
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   466.666 +/-     1.002
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   510.828 +/-     0.895
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   556.204 +/-     0.964
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   601.106 +/-     0.919
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   646.753 +/-     0.928
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   692.508 +/-     0.999
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   738.747 +/-     0.971
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   785.090 +/-     0.977
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   831.261 +/-     0.924
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=   878.110 +/-     1.014
+PltFEDID= 0  pltFEDchannel= 19 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=   926.226 +/-     0.961
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 7 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 20 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   298.620 +/-     1.024
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   358.779 +/-     0.997
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   420.962 +/-     0.993
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   484.647 +/-     0.999
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   548.786 +/-     1.080
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   614.193 +/-     1.032
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   679.831 +/-     1.079
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   746.685 +/-     1.156
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   813.708 +/-     1.026
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   880.927 +/-     1.086
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   948.362 +/-     1.110
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 20 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 7 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 21 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   315.543 +/-     0.800
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   358.506 +/-     0.896
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   402.445 +/-     0.913
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   448.047 +/-     0.885
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   492.945 +/-     0.922
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   538.586 +/-     0.918
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   585.023 +/-     1.139
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   632.285 +/-     1.286
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   679.508 +/-     1.192
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   727.404 +/-     1.138
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   775.054 +/-     1.157
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=   823.286 +/-     1.162
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=   871.329 +/-     1.101
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=   919.424 +/-     1.243
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=   967.566 +/-     1.070
+PltFEDID= 0  pltFEDchannel= 21 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 8 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 8 AHOB= 15 ThisAOHG= 0 Baseline=   426.802 +/-    11.345
+FEDID= 0  FEDchannel= 8 AHOB= 16 ThisAOHG= 0 Baseline=   490.635 +/-     2.747
+FEDID= 0  FEDchannel= 8 AHOB= 17 ThisAOHG= 0 Baseline=   555.215 +/-     2.820
+FEDID= 0  FEDchannel= 8 AHOB= 18 ThisAOHG= 0 Baseline=   619.291 +/-     2.891
+FEDID= 0  FEDchannel= 8 AHOB= 19 ThisAOHG= 0 Baseline=   684.884 +/-     2.877
+FEDID= 0  FEDchannel= 8 AHOB= 20 ThisAOHG= 0 Baseline=   749.764 +/-     2.991
+FEDID= 0  FEDchannel= 8 AHOB= 21 ThisAOHG= 0 Baseline=   815.844 +/-     3.094
+FEDID= 0  FEDchannel= 8 AHOB= 22 ThisAOHG= 0 Baseline=   881.740 +/-     2.920
+FEDID= 0  FEDchannel= 8 AHOB= 23 ThisAOHG= 0 Baseline=   948.299 +/-     2.939
+FEDID= 0  FEDchannel= 8 AHOB= 24 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 25 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 8 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 8 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 22 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   896.865 +/-     0.944
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   532.796 +/-     1.642
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   608.268 +/-     1.410
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   681.330 +/-     1.595
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   750.449 +/-     1.352
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   820.680 +/-     1.157
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   893.578 +/-     1.193
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   964.888 +/-     1.178
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 22 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 8 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 23 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   301.786 +/-     0.915
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   344.061 +/-     0.899
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   387.946 +/-     0.926
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   433.256 +/-     0.882
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   478.495 +/-     0.990
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   523.818 +/-     0.932
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   570.024 +/-     0.983
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   615.279 +/-     1.052
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   662.657 +/-     1.150
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   710.075 +/-     1.464
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   758.229 +/-     1.659
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   807.705 +/-     1.609
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   856.105 +/-     1.822
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   904.590 +/-     2.095
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=   953.807 +/-     2.467
+PltFEDID= 0  pltFEDchannel= 23 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=   998.412 +/-     0.796
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 8 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 24 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   518.574 +/-     0.899
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   579.040 +/-     0.953
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   640.093 +/-     0.873
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   702.128 +/-     0.903
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   764.201 +/-     0.917
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   827.280 +/-     1.032
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   889.709 +/-     0.970
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   952.639 +/-     1.055
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 24 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 10 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 10 AHOB= 15 ThisAOHG= 0 Baseline=   390.491 +/-    17.116
+FEDID= 0  FEDchannel= 10 AHOB= 16 ThisAOHG= 0 Baseline=   439.911 +/-     2.118
+FEDID= 0  FEDchannel= 10 AHOB= 17 ThisAOHG= 0 Baseline=   495.461 +/-     2.072
+FEDID= 0  FEDchannel= 10 AHOB= 18 ThisAOHG= 0 Baseline=   551.199 +/-     2.055
+FEDID= 0  FEDchannel= 10 AHOB= 19 ThisAOHG= 0 Baseline=   608.841 +/-     2.177
+FEDID= 0  FEDchannel= 10 AHOB= 20 ThisAOHG= 0 Baseline=   665.388 +/-     2.221
+FEDID= 0  FEDchannel= 10 AHOB= 21 ThisAOHG= 0 Baseline=   723.258 +/-     2.276
+FEDID= 0  FEDchannel= 10 AHOB= 22 ThisAOHG= 0 Baseline=   782.714 +/-     2.277
+FEDID= 0  FEDchannel= 10 AHOB= 23 ThisAOHG= 0 Baseline=   842.083 +/-     2.332
+FEDID= 0  FEDchannel= 10 AHOB= 24 ThisAOHG= 0 Baseline=   901.008 +/-     2.338
+FEDID= 0  FEDchannel= 10 AHOB= 25 ThisAOHG= 0 Baseline=   960.383 +/-     2.360
+FEDID= 0  FEDchannel= 10 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 10 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 10 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 10 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 10 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 10 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 28 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   853.043 +/-     0.907
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   454.444 +/-     2.016
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   533.528 +/-     1.590
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   602.170 +/-     2.261
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   670.838 +/-     1.398
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   741.530 +/-     1.136
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   815.894 +/-     1.070
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   893.776 +/-     1.163
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   968.812 +/-     1.064
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 28 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 10 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 29 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=    86.061 +/-     0.678
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=    95.785 +/-     0.624
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   105.739 +/-     0.709
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   115.954 +/-     0.618
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   126.771 +/-     0.774
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   137.916 +/-     0.779
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   149.152 +/-     0.707
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   160.735 +/-     0.740
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   172.601 +/-     0.748
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   184.973 +/-     0.833
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   197.255 +/-     0.856
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   209.750 +/-     0.778
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   222.300 +/-     0.820
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   235.310 +/-     0.764
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=   247.981 +/-     0.730
+PltFEDID= 0  pltFEDchannel= 29 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=   261.212 +/-     0.787
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 10 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 30 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   482.197 +/-     1.644
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   542.646 +/-     1.908
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   603.143 +/-     2.159
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   668.460 +/-     1.797
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   729.276 +/-     1.808
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   791.974 +/-     1.852
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   853.213 +/-     1.780
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   915.333 +/-     1.695
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   976.878 +/-     1.819
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 30 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 11 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 11 AHOB= 15 ThisAOHG= 0 Baseline=   368.871 +/-    18.953
+FEDID= 0  FEDchannel= 11 AHOB= 16 ThisAOHG= 0 Baseline=   419.794 +/-     2.280
+FEDID= 0  FEDchannel= 11 AHOB= 17 ThisAOHG= 0 Baseline=   475.208 +/-     2.291
+FEDID= 0  FEDchannel= 11 AHOB= 18 ThisAOHG= 0 Baseline=   531.082 +/-     2.302
+FEDID= 0  FEDchannel= 11 AHOB= 19 ThisAOHG= 0 Baseline=   588.170 +/-     2.336
+FEDID= 0  FEDchannel= 11 AHOB= 20 ThisAOHG= 0 Baseline=   644.962 +/-     2.356
+FEDID= 0  FEDchannel= 11 AHOB= 21 ThisAOHG= 0 Baseline=   702.866 +/-     2.353
+FEDID= 0  FEDchannel= 11 AHOB= 22 ThisAOHG= 0 Baseline=   761.158 +/-     2.386
+FEDID= 0  FEDchannel= 11 AHOB= 23 ThisAOHG= 0 Baseline=   820.445 +/-     2.346
+FEDID= 0  FEDchannel= 11 AHOB= 24 ThisAOHG= 0 Baseline=   876.774 +/-     2.457
+FEDID= 0  FEDchannel= 11 AHOB= 25 ThisAOHG= 0 Baseline=   936.345 +/-     2.420
+FEDID= 0  FEDchannel= 11 AHOB= 26 ThisAOHG= 0 Baseline=   994.897 +/-     2.454
+FEDID= 0  FEDchannel= 11 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 11 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 11 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 11 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 11 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 0 pltFedChannel= 31 pltSlowHubAddress= 0
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   813.570 +/-     0.852
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   444.421 +/-     1.173
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   515.684 +/-     1.883
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   581.963 +/-     1.625
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   645.931 +/-     1.399
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   711.782 +/-     1.045
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   780.390 +/-     0.979
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   845.984 +/-     1.025
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   915.573 +/-     0.945
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   984.746 +/-     1.037
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 31 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 11 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 0 pltFedChannel= 32 pltSlowHubAddress= 1
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   387.664 +/-     0.893
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   446.175 +/-     0.888
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   506.033 +/-     0.955
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   564.064 +/-     0.943
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   625.891 +/-     1.005
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   688.251 +/-     0.954
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   751.179 +/-     1.006
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   814.554 +/-     1.066
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   878.450 +/-     1.034
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   942.330 +/-     1.074
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 32 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 11 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 0 pltFedChannel= 33 pltSlowHubAddress= 2
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   586.879 +/-     1.059
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   657.708 +/-     1.110
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   731.360 +/-     1.086
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   803.811 +/-     1.155
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   878.135 +/-     1.072
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   951.199 +/-     1.158
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 0  pltFEDchannel= 33 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 13 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 13 AHOB= 15 ThisAOHG= 0 Baseline=   330.729 +/-    25.320
+FEDID= 0  FEDchannel= 13 AHOB= 16 ThisAOHG= 0 Baseline=   380.590 +/-     2.092
+FEDID= 0  FEDchannel= 13 AHOB= 17 ThisAOHG= 0 Baseline=   436.604 +/-     2.153
+FEDID= 0  FEDchannel= 13 AHOB= 18 ThisAOHG= 0 Baseline=   493.772 +/-     2.180
+FEDID= 0  FEDchannel= 13 AHOB= 19 ThisAOHG= 0 Baseline=   551.568 +/-     2.222
+FEDID= 0  FEDchannel= 13 AHOB= 20 ThisAOHG= 0 Baseline=   610.680 +/-     2.248
+FEDID= 0  FEDchannel= 13 AHOB= 21 ThisAOHG= 0 Baseline=   669.966 +/-     2.265
+FEDID= 0  FEDchannel= 13 AHOB= 22 ThisAOHG= 0 Baseline=   730.074 +/-     2.276
+FEDID= 0  FEDchannel= 13 AHOB= 23 ThisAOHG= 0 Baseline=   790.341 +/-     2.281
+FEDID= 0  FEDchannel= 13 AHOB= 24 ThisAOHG= 0 Baseline=   850.057 +/-     2.331
+FEDID= 0  FEDchannel= 13 AHOB= 25 ThisAOHG= 0 Baseline=   910.278 +/-     2.497
+FEDID= 0  FEDchannel= 13 AHOB= 26 ThisAOHG= 0 Baseline=   969.631 +/-     3.231
+FEDID= 0  FEDchannel= 13 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 13 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 13 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 13 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 13 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 1 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   603.541 +/-     0.979
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   358.480 +/-     0.761
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   402.601 +/-     1.085
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   444.967 +/-     1.004
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   487.140 +/-     0.965
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   530.264 +/-     1.036
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   574.900 +/-     0.986
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   619.035 +/-     1.046
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   664.927 +/-     1.227
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   710.545 +/-     1.176
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   757.005 +/-     1.247
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   803.270 +/-     1.213
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   849.785 +/-     1.221
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   896.485 +/-     1.308
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=   943.640 +/-     1.136
+PltFEDID= 1  pltFEDchannel= 1 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=   991.646 +/-     1.286
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 13 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 2 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   312.155 +/-    74.558
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   340.810 +/-     0.835
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   390.179 +/-     0.904
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   443.096 +/-     1.091
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   495.103 +/-     0.983
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   546.520 +/-     0.927
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   599.376 +/-     0.997
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   654.015 +/-     0.896
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   707.872 +/-     1.020
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   761.424 +/-     0.940
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   816.736 +/-     0.969
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   874.006 +/-     1.110
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   929.778 +/-     1.310
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   984.316 +/-     1.371
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 2 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 13 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 3 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   525.085 +/-    46.761
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   566.500 +/-     1.744
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   618.165 +/-     1.770
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   671.899 +/-     1.818
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   725.188 +/-     1.832
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   779.112 +/-     1.812
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   832.912 +/-     1.873
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   889.028 +/-     1.893
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   943.159 +/-     1.927
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   997.818 +/-     1.867
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 3 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 14 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 14 AHOB= 15 ThisAOHG= 0 Baseline=   391.925 +/-    16.679
+FEDID= 0  FEDchannel= 14 AHOB= 16 ThisAOHG= 0 Baseline=   443.223 +/-     2.189
+FEDID= 0  FEDchannel= 14 AHOB= 17 ThisAOHG= 0 Baseline=   501.533 +/-     2.324
+FEDID= 0  FEDchannel= 14 AHOB= 18 ThisAOHG= 0 Baseline=   559.721 +/-     2.230
+FEDID= 0  FEDchannel= 14 AHOB= 19 ThisAOHG= 0 Baseline=   619.509 +/-     2.372
+FEDID= 0  FEDchannel= 14 AHOB= 20 ThisAOHG= 0 Baseline=   678.507 +/-     2.352
+FEDID= 0  FEDchannel= 14 AHOB= 21 ThisAOHG= 0 Baseline=   739.411 +/-     2.342
+FEDID= 0  FEDchannel= 14 AHOB= 22 ThisAOHG= 0 Baseline=   800.476 +/-     2.422
+FEDID= 0  FEDchannel= 14 AHOB= 23 ThisAOHG= 0 Baseline=   862.312 +/-     2.433
+FEDID= 0  FEDchannel= 14 AHOB= 24 ThisAOHG= 0 Baseline=   924.358 +/-     2.568
+FEDID= 0  FEDchannel= 14 AHOB= 25 ThisAOHG= 0 Baseline=   987.092 +/-     2.619
+FEDID= 0  FEDchannel= 14 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 14 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 14 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 14 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 14 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 14 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 4 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   628.959 +/-    11.735
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   345.036 +/-     0.795
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   398.134 +/-     1.239
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   452.640 +/-     1.022
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   503.765 +/-     1.161
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   556.011 +/-     1.176
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   609.676 +/-     1.242
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   663.604 +/-     1.551
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   717.715 +/-     1.250
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   773.396 +/-     1.006
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   829.260 +/-     0.994
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   885.736 +/-     1.007
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   942.230 +/-     1.007
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   998.570 +/-     0.611
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 4 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 14 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 5 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   312.100 +/-    58.041
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   347.099 +/-     0.867
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   395.587 +/-     0.892
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   445.990 +/-     0.894
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   496.575 +/-     0.926
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   548.333 +/-     1.013
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   600.140 +/-     1.011
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   653.584 +/-     0.999
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   706.536 +/-     1.014
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   760.756 +/-     1.052
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   814.279 +/-     1.029
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   868.986 +/-     1.042
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   923.271 +/-     1.045
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   977.686 +/-     1.038
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 5 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 14 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 6 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   347.511 +/-    31.953
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   380.469 +/-     0.703
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   422.266 +/-     0.899
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   465.471 +/-     0.761
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   508.609 +/-     0.735
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   551.898 +/-     0.873
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   595.235 +/-     1.036
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   641.216 +/-     1.600
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   684.046 +/-     2.179
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   726.645 +/-     1.794
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   770.949 +/-     1.548
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=   816.912 +/-     1.288
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=   861.443 +/-     1.260
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=   905.561 +/-     1.127
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=   950.514 +/-     1.163
+PltFEDID= 1  pltFEDchannel= 6 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=   995.426 +/-     1.089
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 16 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 16 AHOB= 15 ThisAOHG= 0 Baseline=   321.484 +/-    26.956
+FEDID= 0  FEDchannel= 16 AHOB= 16 ThisAOHG= 0 Baseline=   374.669 +/-     1.905
+FEDID= 0  FEDchannel= 16 AHOB= 17 ThisAOHG= 0 Baseline=   432.171 +/-     1.899
+FEDID= 0  FEDchannel= 16 AHOB= 18 ThisAOHG= 0 Baseline=   490.528 +/-     1.991
+FEDID= 0  FEDchannel= 16 AHOB= 19 ThisAOHG= 0 Baseline=   550.365 +/-     2.113
+FEDID= 0  FEDchannel= 16 AHOB= 20 ThisAOHG= 0 Baseline=   612.611 +/-     2.160
+FEDID= 0  FEDchannel= 16 AHOB= 21 ThisAOHG= 0 Baseline=   674.169 +/-     1.988
+FEDID= 0  FEDchannel= 16 AHOB= 22 ThisAOHG= 0 Baseline=   736.271 +/-     2.180
+FEDID= 0  FEDchannel= 16 AHOB= 23 ThisAOHG= 0 Baseline=   799.255 +/-     2.197
+FEDID= 0  FEDchannel= 16 AHOB= 24 ThisAOHG= 0 Baseline=   861.251 +/-     2.123
+FEDID= 0  FEDchannel= 16 AHOB= 25 ThisAOHG= 0 Baseline=   924.707 +/-     2.161
+FEDID= 0  FEDchannel= 16 AHOB= 26 ThisAOHG= 0 Baseline=   988.112 +/-     2.099
+FEDID= 0  FEDchannel= 16 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 16 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 16 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 16 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 16 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 10 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   594.353 +/-     9.904
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   361.717 +/-     0.888
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   406.675 +/-     1.112
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   450.862 +/-     0.947
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   494.329 +/-     1.079
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   538.198 +/-     0.943
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   583.180 +/-     0.850
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   632.029 +/-     0.886
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   678.555 +/-     0.887
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   725.247 +/-     0.949
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   772.524 +/-     0.983
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   819.016 +/-     0.856
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=   866.839 +/-     0.940
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=   914.270 +/-     0.981
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=   962.181 +/-     0.993
+PltFEDID= 1  pltFEDchannel= 10 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 16 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 11 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   321.648 +/-    68.844
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   353.552 +/-     0.889
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   402.324 +/-     1.047
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   452.791 +/-     1.146
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   503.098 +/-     1.153
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   554.794 +/-     1.004
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   606.667 +/-     0.977
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   662.148 +/-     1.027
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   715.215 +/-     1.086
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   768.864 +/-     1.130
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   822.274 +/-     1.203
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   877.084 +/-     1.248
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   930.890 +/-     1.424
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   984.910 +/-     1.497
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 11 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 16 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 12 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   361.945 +/-    35.446
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   392.425 +/-     0.750
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   429.871 +/-     0.845
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   467.595 +/-     0.878
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   506.314 +/-     0.892
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   546.550 +/-     0.851
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   585.814 +/-     0.838
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   626.773 +/-     0.952
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   666.776 +/-     0.944
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   708.150 +/-     0.923
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   748.444 +/-     0.874
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=   788.412 +/-     0.954
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=   828.907 +/-     0.997
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=   870.660 +/-     1.103
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=   911.405 +/-     1.198
+PltFEDID= 1  pltFEDchannel= 12 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=   952.852 +/-     1.392
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 17 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 17 AHOB= 15 ThisAOHG= 0 Baseline=   365.322 +/-    20.341
+FEDID= 0  FEDchannel= 17 AHOB= 16 ThisAOHG= 0 Baseline=   423.973 +/-     2.289
+FEDID= 0  FEDchannel= 17 AHOB= 17 ThisAOHG= 0 Baseline=   488.892 +/-     2.344
+FEDID= 0  FEDchannel= 17 AHOB= 18 ThisAOHG= 0 Baseline=   553.881 +/-     2.368
+FEDID= 0  FEDchannel= 17 AHOB= 19 ThisAOHG= 0 Baseline=   621.311 +/-     2.446
+FEDID= 0  FEDchannel= 17 AHOB= 20 ThisAOHG= 0 Baseline=   691.105 +/-     2.493
+FEDID= 0  FEDchannel= 17 AHOB= 21 ThisAOHG= 0 Baseline=   759.892 +/-     2.512
+FEDID= 0  FEDchannel= 17 AHOB= 22 ThisAOHG= 0 Baseline=   828.130 +/-     2.599
+FEDID= 0  FEDchannel= 17 AHOB= 23 ThisAOHG= 0 Baseline=   896.177 +/-     2.753
+FEDID= 0  FEDchannel= 17 AHOB= 24 ThisAOHG= 0 Baseline=   965.285 +/-     2.590
+FEDID= 0  FEDchannel= 17 AHOB= 25 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 17 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 17 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 17 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 17 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 17 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 17 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 13 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   798.622 +/-    30.935
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   431.610 +/-     1.379
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   504.473 +/-     1.921
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   573.354 +/-     1.570
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   640.061 +/-     1.729
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   706.776 +/-     1.283
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   777.925 +/-     1.243
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   845.107 +/-     1.227
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   918.020 +/-     1.148
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   989.144 +/-     1.312
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 13 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 17 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 14 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   345.283 +/-    87.189
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   383.935 +/-     1.002
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   443.759 +/-     0.998
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   505.788 +/-     0.966
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   568.222 +/-     0.965
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   631.091 +/-     1.044
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   695.410 +/-     1.058
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   757.095 +/-     0.979
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   822.104 +/-     1.078
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   886.916 +/-     1.085
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   952.497 +/-     1.062
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 14 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 1 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 17 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 15 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   414.442 +/-    38.544
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   458.341 +/-     0.882
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   511.836 +/-     0.991
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   567.101 +/-     0.995
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   623.232 +/-     2.377
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   683.302 +/-     3.268
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   742.057 +/-     1.617
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   800.340 +/-     1.234
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   857.959 +/-     1.102
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   915.581 +/-     1.142
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   973.621 +/-     1.016
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 15 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 19 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 19 AHOB= 15 ThisAOHG= 0 Baseline=   283.550 +/-    31.805
+FEDID= 0  FEDchannel= 19 AHOB= 16 ThisAOHG= 0 Baseline=   333.716 +/-     2.304
+FEDID= 0  FEDchannel= 19 AHOB= 17 ThisAOHG= 0 Baseline=   390.164 +/-     2.432
+FEDID= 0  FEDchannel= 19 AHOB= 18 ThisAOHG= 0 Baseline=   448.821 +/-     2.489
+FEDID= 0  FEDchannel= 19 AHOB= 19 ThisAOHG= 0 Baseline=   507.411 +/-     2.545
+FEDID= 0  FEDchannel= 19 AHOB= 20 ThisAOHG= 0 Baseline=   566.503 +/-     2.603
+FEDID= 0  FEDchannel= 19 AHOB= 21 ThisAOHG= 0 Baseline=   627.126 +/-     2.543
+FEDID= 0  FEDchannel= 19 AHOB= 22 ThisAOHG= 0 Baseline=   688.656 +/-     2.552
+FEDID= 0  FEDchannel= 19 AHOB= 23 ThisAOHG= 0 Baseline=   750.428 +/-     2.645
+FEDID= 0  FEDchannel= 19 AHOB= 24 ThisAOHG= 0 Baseline=   811.495 +/-     2.700
+FEDID= 0  FEDchannel= 19 AHOB= 25 ThisAOHG= 0 Baseline=   873.864 +/-     2.999
+FEDID= 0  FEDchannel= 19 AHOB= 26 ThisAOHG= 0 Baseline=   938.699 +/-     3.849
+FEDID= 0  FEDchannel= 19 AHOB= 27 ThisAOHG= 0 Baseline=   997.604 +/-     1.529
+FEDID= 0  FEDchannel= 19 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 19 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 19 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 19 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 19 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   673.211 +/-    18.729
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   345.700 +/-     3.144
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   409.150 +/-     3.571
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   467.520 +/-     4.318
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   523.394 +/-     1.812
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   586.734 +/-     3.484
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   645.911 +/-     1.668
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   709.541 +/-     1.422
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   773.460 +/-     1.547
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   837.801 +/-     2.711
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   901.846 +/-     1.794
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   968.101 +/-     3.254
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 19 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 19 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 20 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   316.260 +/-    79.571
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   346.175 +/-     2.775
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   394.082 +/-     2.774
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   443.306 +/-     1.548
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   492.844 +/-     1.313
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   553.487 +/-    13.434
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   594.621 +/-     2.478
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   646.384 +/-     1.982
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   698.311 +/-     1.607
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   750.871 +/-     3.635
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   803.597 +/-     5.351
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=   857.883 +/-     2.276
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=   910.093 +/-     2.889
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=   962.602 +/-     1.319
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 20 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 5 pixelFedId= 0 pixelFedChannel= 19 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 1 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 21 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   542.504 +/-    78.298
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   571.157 +/-     6.305
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   629.579 +/-     6.499
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   681.944 +/-     5.678
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   738.646 +/-    10.231
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   792.824 +/-     3.355
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   849.076 +/-     5.155
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   907.680 +/-     9.910
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   965.466 +/-     9.508
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 21 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 20 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 20 AHOB= 15 ThisAOHG= 0 Baseline=   211.714 +/-    42.407
+FEDID= 0  FEDchannel= 20 AHOB= 16 ThisAOHG= 0 Baseline=   252.416 +/-     2.016
+FEDID= 0  FEDchannel= 20 AHOB= 17 ThisAOHG= 0 Baseline=   326.627 +/-    53.061
+FEDID= 0  FEDchannel= 20 AHOB= 18 ThisAOHG= 0 Baseline=   355.395 +/-    16.600
+FEDID= 0  FEDchannel= 20 AHOB= 19 ThisAOHG= 0 Baseline=   407.445 +/-     2.236
+FEDID= 0  FEDchannel= 20 AHOB= 20 ThisAOHG= 0 Baseline=   462.748 +/-     2.344
+FEDID= 0  FEDchannel= 20 AHOB= 21 ThisAOHG= 0 Baseline=   518.098 +/-     2.514
+FEDID= 0  FEDchannel= 20 AHOB= 22 ThisAOHG= 0 Baseline=   575.001 +/-     2.578
+FEDID= 0  FEDchannel= 20 AHOB= 23 ThisAOHG= 0 Baseline=   631.953 +/-     2.606
+FEDID= 0  FEDchannel= 20 AHOB= 24 ThisAOHG= 0 Baseline=   691.722 +/-     2.630
+FEDID= 0  FEDchannel= 20 AHOB= 25 ThisAOHG= 0 Baseline=   749.352 +/-     2.665
+FEDID= 0  FEDchannel= 20 AHOB= 26 ThisAOHG= 0 Baseline=   808.272 +/-     2.708
+FEDID= 0  FEDchannel= 20 AHOB= 27 ThisAOHG= 0 Baseline=   866.611 +/-     2.774
+FEDID= 0  FEDchannel= 20 AHOB= 28 ThisAOHG= 0 Baseline=   926.261 +/-     2.861
+FEDID= 0  FEDchannel= 20 AHOB= 29 ThisAOHG= 0 Baseline=   984.863 +/-     2.959
+FEDID= 0  FEDchannel= 20 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 20 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 22 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   713.170 +/-    23.077
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   403.016 +/-     1.704
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   466.378 +/-     5.676
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   519.106 +/-     2.921
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   572.000 +/-     1.720
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   628.496 +/-     1.789
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   685.574 +/-     1.590
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=   741.370 +/-     1.199
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=   808.574 +/-    13.068
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=   859.659 +/-     1.568
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=   918.860 +/-     2.067
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=   978.605 +/-     3.245
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 22 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 20 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 23 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   367.240 +/-    96.748
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   404.641 +/-     1.826
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   470.041 +/-     7.260
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   525.794 +/-     1.694
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   588.904 +/-     1.800
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   651.106 +/-     1.377
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   714.852 +/-     1.372
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   778.334 +/-     2.195
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   842.279 +/-     1.650
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   906.800 +/-     1.382
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   973.105 +/-     1.709
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 23 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 13 pixelFedId= 0 pixelFedChannel= 20 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 2 pltSlowHubPort= 3 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 24 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   471.798 +/-    61.921
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   506.324 +/-     0.998
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   556.536 +/-     1.407
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   611.084 +/-     6.560
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   660.651 +/-     1.430
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   714.650 +/-     3.027
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   764.727 +/-     1.382
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   820.514 +/-     1.556
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   873.871 +/-     2.221
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=   926.300 +/-     2.324
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=   978.771 +/-     0.992
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 24 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 22 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+FEDID= 0  FEDchannel= 22 AHOB= 15 ThisAOHG= 0 Baseline=   346.669 +/-    22.997
+FEDID= 0  FEDchannel= 22 AHOB= 16 ThisAOHG= 0 Baseline=   403.823 +/-     2.251
+FEDID= 0  FEDchannel= 22 AHOB= 17 ThisAOHG= 0 Baseline=   464.679 +/-     2.284
+FEDID= 0  FEDchannel= 22 AHOB= 18 ThisAOHG= 0 Baseline=   524.672 +/-     2.370
+FEDID= 0  FEDchannel= 22 AHOB= 19 ThisAOHG= 0 Baseline=   587.175 +/-     2.400
+FEDID= 0  FEDchannel= 22 AHOB= 20 ThisAOHG= 0 Baseline=   650.746 +/-     2.448
+FEDID= 0  FEDchannel= 22 AHOB= 21 ThisAOHG= 0 Baseline=   715.127 +/-     2.476
+FEDID= 0  FEDchannel= 22 AHOB= 22 ThisAOHG= 0 Baseline=   779.068 +/-     2.540
+FEDID= 0  FEDchannel= 22 AHOB= 23 ThisAOHG= 0 Baseline=   844.896 +/-     2.556
+FEDID= 0  FEDchannel= 22 AHOB= 24 ThisAOHG= 0 Baseline=   908.742 +/-     2.555
+FEDID= 0  FEDchannel= 22 AHOB= 25 ThisAOHG= 0 Baseline=   974.382 +/-     2.613
+FEDID= 0  FEDchannel= 22 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 22 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 22 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 22 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 22 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 22 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 28 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   954.164 +/-     1.454
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   647.001 +/-     2.256
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   710.050 +/-     1.810
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   779.684 +/-    43.816
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   832.151 +/-    11.266
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   893.590 +/-     1.360
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   955.186 +/-     1.584
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 28 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 22 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 29 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   469.460 +/-    76.444
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   498.984 +/-     4.092
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   548.756 +/-     8.387
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   594.684 +/-     2.479
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   644.636 +/-     7.280
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   693.559 +/-     1.230
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   743.525 +/-     2.611
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   799.568 +/-     6.003
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   851.455 +/-     4.745
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   900.839 +/-     1.675
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=   953.529 +/-     3.578
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 29 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 21 pixelFedId= 0 pixelFedChannel= 22 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 4 pixelSlowHubAddress= 0 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 30 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   578.021 +/-    66.863
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   615.416 +/-     7.767
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   662.466 +/-     2.206
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   715.005 +/-     4.305
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=   764.170 +/-     1.706
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=   819.916 +/-     7.105
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=   870.292 +/-     8.487
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=   921.911 +/-     3.595
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=   973.065 +/-     1.648
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 30 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 23 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+FEDID= 0  FEDchannel= 23 AHOB= 15 ThisAOHG= 0 Baseline=   441.821 +/-    10.159
+FEDID= 0  FEDchannel= 23 AHOB= 16 ThisAOHG= 0 Baseline=   516.341 +/-     2.303
+FEDID= 0  FEDchannel= 23 AHOB= 17 ThisAOHG= 0 Baseline=   593.785 +/-     2.352
+FEDID= 0  FEDchannel= 23 AHOB= 18 ThisAOHG= 0 Baseline=   673.022 +/-     2.430
+FEDID= 0  FEDchannel= 23 AHOB= 19 ThisAOHG= 0 Baseline=   752.804 +/-     2.431
+FEDID= 0  FEDchannel= 23 AHOB= 20 ThisAOHG= 0 Baseline=   832.910 +/-     2.428
+FEDID= 0  FEDchannel= 23 AHOB= 21 ThisAOHG= 0 Baseline=   913.710 +/-     2.479
+FEDID= 0  FEDchannel= 23 AHOB= 22 ThisAOHG= 0 Baseline=   994.609 +/-     2.322
+FEDID= 0  FEDchannel= 23 AHOB= 23 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 24 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 25 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 26 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 27 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 28 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+FEDID= 0  FEDchannel= 23 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 23 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 1 portAddress= 0 pltFedId= 1 pltFedChannel= 31 pltSlowHubAddress= 0
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 25 ThisAOHG= 0 Baseline=   954.020 +/-     3.921
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 26 ThisAOHG= 0 Baseline=   621.246 +/-     1.241
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 27 ThisAOHG= 0 Baseline=   691.469 +/-     6.018
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 28 ThisAOHG= 0 Baseline=   755.190 +/-     1.644
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 29 ThisAOHG= 0 Baseline=   821.110 +/-     1.447
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 30 ThisAOHG= 0 Baseline=   885.870 +/-     1.897
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 31 ThisAOHG= 0 Baseline=   954.539 +/-     3.221
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 32 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 31 rocid= 0 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 23 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 2 portAddress= 1 pltFedId= 1 pltFedChannel= 32 pltSlowHubAddress= 1
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 25 ThisAOHG= 0 Baseline=   470.378 +/-    97.072
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 26 ThisAOHG= 0 Baseline=   501.253 +/-     1.178
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 27 ThisAOHG= 0 Baseline=   557.349 +/-     1.160
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 28 ThisAOHG= 0 Baseline=   617.966 +/-     2.243
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 29 ThisAOHG= 0 Baseline=   675.675 +/-     1.583
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 30 ThisAOHG= 0 Baseline=   736.784 +/-     7.232
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 31 ThisAOHG= 0 Baseline=   794.675 +/-     1.218
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 32 ThisAOHG= 0 Baseline=   858.665 +/-     1.176
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 33 ThisAOHG= 0 Baseline=   920.607 +/-     3.124
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 34 ThisAOHG= 0 Baseline=   979.524 +/-     1.551
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 32 rocid= 1 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+mFecChannel= 2 hubAddress= 29 pixelFedId= 0 pixelFedChannel= 23 rocCount= 3 globalRocId= 5 globalPortAddress= 6 pixelSlowHubPort= 5 pltSlowHubPort= 0 pixelSlowHubAddress= 1 
+id= 3 portAddress= 2 pltFedId= 1 pltFedChannel= 33 pltSlowHubAddress= 2
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 25 ThisAOHG= 0 Baseline=   746.132 +/-     1.849
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 26 ThisAOHG= 0 Baseline=   816.510 +/-     4.624
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 27 ThisAOHG= 0 Baseline=   885.532 +/-     1.305
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 28 ThisAOHG= 0 Baseline=   957.316 +/-     1.169
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 29 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 30 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 31 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 32 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 33 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 34 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 35 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 36 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 37 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 38 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 39 ThisAOHG= 0 Baseline=     0.000 +/-     0.000
+PltFEDID= 1  pltFEDchannel= 33 rocid= 2 AHOB= 40 ThisAOHG= 0 Baseline=     0.000 +/-     0.000

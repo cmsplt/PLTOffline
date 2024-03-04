@@ -1,0 +1,14 @@
+{
+"Fill": "3563",
+"AnalysisDir": "../Fill3563_Feb142013",
+"Luminometer": "HF",
+"Comment": "Input scan info file is <AnalysisDir>/<InputScanFile>",
+"InputScanFile" : "cond/Scan_3563.pkl",
+"Comment": "Input beam currents file is <AnalysisDir>/<InputBeamCurrentFile>",
+"InputBeamCurrentFile" : "cond/BeamCurrents_3563.pkl",
+"Comment": "Input CapSigmas in <AnalysisDir>/<Luminometer>/results",
+"InputCapSigmaFile" : "noCorr/DGConst_FitResults.pkl",
+"Scanpairs" : [[1,2],[4,3]],
+"Comment": "This is relative to <AnalysisDir>",
+"OutputSubDir": "corr"
+}

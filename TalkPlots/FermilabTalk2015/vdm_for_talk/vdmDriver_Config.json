@@ -1,0 +1,123 @@
+{
+"Fill": "3563",
+"Date": "Feb142013",
+"Luminometer": "HF",
+"AnalysisDir": "Fill3563_Feb142013",
+"CorrLater" : ["LengthScale", "Ghosts", "Satellites"],
+"Corr" : ["noCorr"],
+"Comment": "Output of following step goes to <AnalysisDir>/cond", 
+"makeScanFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/LuminometerData",
+"makeHFRateFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/cond", 
+"makeBeamCurrentFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/corr",
+"makeBeamBeamFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/corr",
+"makeGhostsFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/corr",
+"makeSatellitesFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/<Luminometer>/graphs", 
+"makeLengthScaleFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/corr",
+"makeGraphsFile": false,
+"Comment": "Output of following step goes to <AnalysisDir>/corr",
+"makeGraphs2D": false,
+"Comment": "Output of following step goes to <AnalysisDir>/<Luminometer>/results/<Corr>", 
+"runVdmFitter": true,
+"makeScanFileConfig":
+	{
+	"Run" : "211821",
+	"InputDIPFile" : "forTmpStorage/HFLumi_Fill3563/211821vdmdip.root",
+	"ScanNames" : ["X1","Y1","Y2","X2"],
+	"Comment" : "Since X,Y scans are automatically differentiated, a time window can include an X and a Y scan, timestamp in UTC", 
+	"ScanTimeWindows" :[[1360796960, 1360799300],[1360796960, 1360799300],[1360799350, 1360801210],[1360799350, 1360801210]],
+	"Comment" : "A few parameters that are not in our current DIP file, but should be available eventually",
+	"Comment" : "betaStar in cm, angle in microrad",
+	"BetaStar" : 1100,
+	"Angle" : 170,
+	"Offset" : [0.0,0.0,0.0,0.0],	
+	"ParticleTypeB1" : "proton",
+	"ParticleTypeB2" : "proton",
+	"Comment": "Beam energies in MeV", 
+	"EnergyB1" : 1380,
+	"EnergyB2" : 1380,
+	"OutputSubDir" : "cond"
+	},
+"makeHFRateFileConfig":
+	{	
+	"HLXFileDir": "/Users/grothe/lumi/framework/prototype/forTmpStorage/HFLumi_Fill3563",
+	"Comment": "The following directories are relative to <AnalysisDir>",
+	"InputScanFile": "cond/Scan_3563.pkl",
+	"OutputSubDir": "LuminometerData",
+	"Comment": "new PU correction for 2012 as used in lumiCalc: alpha1 = 5.57*0.063, alpha2 = -5.57*5.57*0.0037)",
+	"PUCorr": ["5.57*0.063","-5.57*5.57*0.0037"]
+	},
+"makeBeamCurrentFileConfig":
+	{
+	"InputDIPFile" : "forTmpStorage/HFLumi_Fill3563/211821vdmdip.root",
+	"Comment": "Input scan file in <AnalysisDir>/<InputScanFile>",
+	"InputScanFile" : "cond/Scan_3563.pkl",
+	"OutputSubDir" : "cond",
+	"CalibrateFBCTtoDCCT" : false
+	},
+"makeBeamBeamFileConfig":
+	{
+	"Comment": "Input scan info file is <AnalysisDir>/<InputScanFile>",
+	"InputScanFile" : "cond/Scan_3563.pkl",
+	"Comment": "Input beam currents file is <AnalysisDir>/<InputBeamCurrentFile>",
+	"InputBeamCurrentFile" : "cond/BeamCurrents_3563.pkl",
+	"Comment": "Input CapSigmas in <AnalysisDir>/<Luminometer>/results",
+	"InputCapSigmaFile" : "noCorr/DGConst_FitResults.pkl",
+	"Scanpairs" : [[1,2],[4,3]],
+	"Comment": "This is relative to <AnalysisDir>",
+	"OutputSubDir": "corr"
+	},
+"makeGhostsFileConfig":
+	{
+	"Comment" : "Where to find the correction factors in json format",
+	"InputDataDir" : "dataPrep_corr/corrData",
+	"Comment": "This is relative to <AnalysisDir>",
+	"OutputSubDir": "corr"
+	},
+"makeSatellitesFileConfig":
+	{
+	"Comment" : "Where to find the correction factors in json format",
+	"InputDataDir" : "dataPrep_corr/corrData",
+	"Comment": "This is relative to <AnalysisDir>",
+	"OutputSubDir": "corr"
+	},
+"makeLengthScaleFileConfig":
+	{
+	"Comment": "Length scale scan fill",
+	"FillLS": "3563",	
+	"Comment" : "Where to find the correction factors in json format",
+	"InputDataDir" : "dataPrep_corr/corrData",
+	"Comment": "This is relative to <AnalysisDir>",
+	"OutputSubDir": "corr"
+	},
+"makeGraphsFileConfig":
+	{
+	"Comment": "Input scan file in <AnalysisDir>/<InputScanFile>",
+	"InputScanFile" : "cond/Scan_3563.pkl",
+	"Comment": "Input beam currents file in <AnalysisDir>/<InputBeamCurrentFile>",
+	"InputBeamCurrentFile" : "cond/BeamCurrents_3563.pkl",
+	"Comment": "Input luminometer data in <AnalysisDir>/<InputLuminometerData>",
+	"InputLuminometerData" : "LuminometerData/Rates_HF_3563.pkl",
+	"OutputSubDir" : "graphs"       
+	},
+"makeGraphs2DConfig":
+	{
+	"Comment": "Defines each X/Y pair for which to make 2D graphs", 
+	"Scanpairs" : [[1,2],[4,3]],
+	"Comment": "Input/output directory is <AnalysisDir>/<Luminometer>/graphs",
+	"InOutSubDir": "graphs"
+	},
+"vdmFitterConfig":
+	 {
+	 "Comment": "Input graphs file in <AnalysisDir>/<Luminometer>/graphs", 
+	 "InputGraphsFile" : "graphs/graphs2D_3563_noCorr.pkl",
+	 "FitName" : "DG_2D",
+	 "FitConfigFile" : "fits/DG_2D_Config.json"
+	 }
+}

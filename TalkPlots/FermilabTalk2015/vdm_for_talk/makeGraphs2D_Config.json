@@ -1,0 +1,11 @@
+{
+"Fill": "3563",
+"Comment": "Defines each X/Y pair for which to make 2D graphs", 
+"Scanpairs" : [[1,2],[4,3]],
+"Luminometer": "HF",
+"AnalysisDir": "Fill3563_Feb142013",
+"Comment": "Input/output directory is <AnalysisDir>/<Luminometer>/graphs",
+"InOutSubDir": "graphs",
+"Corr_notnow" : ["LengthScale", "Ghosts", "Satellites"],
+"Corr":["noCorr"]
+}

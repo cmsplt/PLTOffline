@@ -1,6 +1,6 @@
 The PulseHeight directory contrains all the necessary scripts to produce a number of different plots which
-correspond to the pulse height study.
-
+correspond to the pulse height study. (Also, the plots from Paul's pulse height studies in 2016 are in the
+Plots2016/ directory.)
 
 1) Produce the gain calibration files which are required to run the PulsHeight code. 
    Just run the following bash script

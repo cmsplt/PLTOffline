@@ -1,0 +1,9 @@
+{
+"AnalysisDir": "Fill3563_Feb142013",
+"InputDIPFile" : "forTmpStorage/HFLumi_Fill3563/211821vdmdip.root",
+"Comment": "Input scan info file is <AnalysisDir>/<InputScanFile>",
+"InputScanFile" : "cond/Scan_3563.pkl",
+"Comment": "Output goes to <AnalysisDir>/cond", 
+"OutputSubDir" : "cond",
+"CalibrateFBCTtoDCCT" : "False"
+}

@@ -1,0 +1,11 @@
+{
+"Fill" : "3503",
+"AnalysisDir" : "Fill3503_Jan282013",
+"Luminometer": "HF",
+"Corr" : ["noCorr"],
+"Comment": "Input graphs file in <AnalysisDir>/<Luminometer>/graphs", 
+"InputGraphsFile" : "graphs/graphs_3503_noCorr.pkl",
+"FitName" : "GSupGConst",
+"Comment": "Fit config file in fits/<FitName>_Config.json",
+"FitConfigFile" : "fits/GSupGConst_Config.json"
+}
