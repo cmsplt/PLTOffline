@@ -103,6 +103,7 @@ TestBXPattern
 TestDACs
 TestGainCal
 TestTextFileReader
+TestTimestampReader
 TrackDiagnostics
 TrackingEfficiency
 TrackLumiZeroCounting
