@@ -8,7 +8,7 @@ This directory contains all the results from measuring the accidentals for the 2
 
    For the 2016 accidental analysis, the files used are `GainCal/GainCalFits_20160501.155303.dat`, `ALIGNMENT/Trans_Alignment_4892.dat`, and `TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt`.
 
-   If this is a regular fill, you don't need a sixth argument; it will measure the accidental rate in five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the sixth argument, so that it will measure the accidental rate for each step of the scan. You can make this timestamp file from a VdM csv file by using `scripts/extractVDMTimestamps.py` on the online machines (although you'll need to edit to remove the separation column, which is included for reference), or just make it by hand (fun).
+   If this is a regular fill, you don't need a sixth argument; it will measure the accidental rate in five-minute steps. If this is a VdM or other special fill, specify a timestamp file as the sixth argument, so that it will measure the accidental rate for each step of the scan. You can make this timestamp file from a VdM csv file by using `scripts/extractVDMTimestamps.py` on the online machines, or just make it by hand (fun).
 
    Sample invocation for a regular 2016 fill (4990 in this example):
    `./MeasureAccidentals /raid/PLT/SlinkData_2016/Slink_20160514.200310.dat GainCal/GainCalFits_20160501.155303.dat ALIGNMENT/Trans_Alignment_4892.dat TrackDistributions/TrackDistributions_MagnetOn2016_4892.txt 4990`
