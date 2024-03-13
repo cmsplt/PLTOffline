@@ -16,6 +16,7 @@
 #include "PLTEvent.h"
 #include "PLTU.h"
 #include "TFile.h"
+#include "PLTTimestampReader.h"
 
 int MeasureAccidentalsTele(const std::string, const std::string, const std::string, const std::string);
 
@@ -92,26 +93,13 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
   // Read timestamp file, if it exists.
   bool useTimestamps = false;
   int nSteps = 1;
+  PLTTimestampReader *tsReader = nullptr;
   std::vector<std::pair<uint32_t, uint32_t> > timestamps;
   if (TimestampFileName != "") {
-    FILE *tfile;
-    tfile = fopen(TimestampFileName.c_str(), "r");
-    if (tfile == NULL) {
-      std::cerr << "Couldn't open timestamp file " << TimestampFileName << "!" << std::endl;
-      return(1);
-    }
-    int tBegin, tEnd;
-    fscanf(tfile, "%d", &nSteps);
-    for (int i=0; i<nSteps; ++i) {
-      fscanf(tfile, "%d %d", &tBegin, &tEnd);
-      timestamps.push_back(std::make_pair(tBegin, tEnd));
-    }
-    fclose(tfile);
+    tsReader = new PLTTimestampReader(TimestampFileName);
+    timestamps = tsReader->getTimestamps();
+    nSteps = tsReader->getSize();
     useTimestamps = true;
-    std::cout << nSteps << " timestamps" << std::endl;
-    // for (unsigned int i=0; i<timestamps.size(); ++i) {
-    //   std::cout << "start: " << timestamps[i].first << " end: " << timestamps[i].second << std::endl;
-    // }
   }
 
   // Grab the plt event reader
@@ -213,14 +201,8 @@ int MeasureAccidentalsTele(const std::string DataFileName, const std::string Gai
     //if (ientry>=20000000){break;}
 
     if (useTimestamps) {
-      stepNumber = -1;
-      if (Event.Time() > timestamps[nSteps-1].second) break;
-      for (int iStep = 0; iStep < nSteps; ++iStep) {
-	if (Event.Time() >= timestamps[iStep].first && Event.Time() <= timestamps[iStep].second) {
-	  stepNumber = iStep;
-	  break;
-	}
-      }
+      if (Event.Time() > tsReader->lastTime()) break;
+      stepNumber = tsReader->findTimestamp(Event.Time());
       if (stepNumber == -1) continue;
     } else {
       if (stepNumber == 0 && currentStepStart == 0) currentStepStart = Event.Time();
