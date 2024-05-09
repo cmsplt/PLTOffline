@@ -3,10 +3,9 @@
 '''
 read HV bias scan logs into a pandas dataframe, merge with HF or BCM1f data from brilcalc,
 group together and cleanup scan data (i.e. drop non-uniform values of per-channel-iMon and per-channel-rates),
-and plot
+and plot per-channel normalized rates vs HV
 '''
 
-from __future__ import annotations
 import functools
 import pathlib
 import subprocess
@@ -113,7 +112,6 @@ def vmonVsRate(v_mon: pandas.Series, rate: pandas.Series, v_set: pandas.Series, 
     vmon_vs_rate = pandas.concat([vmon_vs_rate_median, vmon_vs_rate_std], axis=1).rename(columns={0: 'median', 1: 'std'})
     vmon_vs_rate.index = vmon_vs_rate.index.categories.mid
     return vmon_vs_rate
-    # return pandas.Series({x.mid: vmon_vs_rate[x] for x in vmon_vs_rate.index if (x.length == 4)})
 
 @timer
 def plotVmonVsRate(vmon_vs_rate: pandas.Series, log_file: pathlib.Path, ch: int, v_thr: int = 2):
@@ -148,52 +146,8 @@ def iv():
 if __name__ == "__main__":
     main()
 
-
 # ##########################################
-# 
-# @timer
-# def mergeDF(logData: pandas.DataFrame, luminometer: str = "hfet") -> pandas.DataFrame:
-#     # merge logData and brilcalcDF based on closest timestamps and add new PLT/HF rate column to logData
-#     # [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]
-#     beginTS = logData.timestamp.iloc[0] # .strftime("%m/%d/%y %H:%M:%S")
-#     endTS = logData.timestamp.iloc[-1] # .strftime("%m/%d/%y %H:%M:%S")
-#     brilcalcDF = brilcalc(beginTS, endTS, luminometer)
-#     if brilcalcDF.empty:
-#         raise f"no data from brilcalc!"
-#         # brilcalcDF = brilcalc(beginTS, endTS, "bcm1f")
-#     if (brilcalcDF.avgpu == 0).all():
-#         raise f"data from brilcalc is all zeros!"
-#     mergedDF = pandas.merge_asof(left=logData, right=brilcalcDF, left_on="timestamp", right_on="dt")
-#     # lol this worked? join dataframes using nearest timestamp
-#     # [https://www.reddit.com/r/learnpython/comments/6wbc7t/help_joining_two_pandas_dataframes/]
-#     # [https://towardsdatascience.com/5-lesser-known-pandas-tricks-e8ab1dd21431]
-#     for ch in range(16):
-#         logData[f"rateN{ch}"] = mergedDF[f"rate{ch}"] / mergedDF["avgpu"]
-#         # logData[f"rateN{ch}"] = mergedDF[f"rate{ch}"] / mergedDF["delivered(/ub)"]
-#     return logData.dropna()
-# 
-# def processChannel(logData: pandas.DataFrame, ch: int) -> pandas.DataFrame:
-#     # determine scanpoints for ch, filter logData for each ch and scanpoint based on uniformity of vMon and rateN values, and return median/std for rateCh & rateNCh
-#     vMonGroup = (logData[f"vMon{ch}"].groupby(logData[f"vMon{ch}"].round(decimals=0)).count() > 4)
-#     # group all integer-rounded vMon values and mark 'true' if vMon group size > 4
-#     scanSteps = vMonGroup[vMonGroup.values].index.to_list()
-#     logDataCh = logData[["timestamp", f"vMon{ch}", f"rate{ch}", f"rateN{ch}"]]
-#     medianRate, medianRateN, stdevRate, stdevRateN = [], [], [], []
-#     for i, _ in enumerate(scanSteps):
-#         # filter per-channel data into each HV scanstep \pm 2, select values within 5% of the last element in rateN{ch},
-#         # and calculate median and stdev
-#         logDataChStep = logDataCh[(logDataCh[f"vMon{ch}"] <= scanSteps[i] + 2) & (logDataCh[f"vMon{ch}"] >= scanSteps[i] - 2)]
-#         logDataChStep = logDataChStep[logDataChStep[f"rateN{ch}"].apply(lambda x: 1 - x / logDataChStep[f"rateN{ch}"].iloc[-1]).abs() < 0.05]
-#         medianRate.append(logDataChStep[f"rate{ch}"].median())
-#         stdevRate.append(logDataChStep[f"rate{ch}"].std())
-#         medianRateN.append(logDataChStep[f"rateN{ch}"].median())
-#         stdevRateN.append(logDataChStep[f"rateN{ch}"].std())
-#     data = list(zip(medianRate, stdevRate, medianRateN, stdevRateN))
-#     cols = [f"medianRate{ch}", f"stdevRate{ch}", f"medianRateN{ch}", f"stdevRateN{ch}"]
-#     scanDataCh = pandas.DataFrame(data, index=scanSteps, columns=cols)
-#     return scanDataCh
-# 
-# 
+
 # def calculateDeplVolt(scanDataCh: pandas.DataFrame, ch: int, thr1: float, thr2: float) -> int:
 #     # calculate depletion voltage based on percent change:
 #     # pick first value (highest to lowest HV setpoints) which is within 'thr1' of the previous value and within 'thr2' of next-to-previous value
@@ -210,55 +164,7 @@ if __name__ == "__main__":
 #         print(f"\tUnable to estimate depletion voltage for Ch{ch}")  #:\n{scanDataCh}')
 #         deplVoltCh = 0
 #     return deplVoltCh
-# 
-# 
-# def plotChannel(dateTime: str, ch: int, scanDataCh: pandas.DataFrame, deplVoltCh: float, dataDir: str,):
-#     # plot rate (raw and normalized) vs HV
-#     import os, matplotlib.pyplot
-#     scale = (scanDataCh[f"medianRateN{ch}"].iloc[-1] / scanDataCh[f"medianRate{ch}"].iloc[-1])
-#     fig, ax = matplotlib.pyplot.subplots()
-#     matplotlib.pyplot.style.use("seaborn-white")
-#     ax.set(title=f"Channel {ch} rate vs HV ({dateTime})", xlabel="", ylabel="")
-#     ax.set_ylabel("Raw inst. lumi rate", fontsize=12)
-#     ax.set_xlabel("HV setpoint (V)", fontsize=12)
-#     ax.errorbar(scanDataCh.index, scanDataCh[f"medianRateN{ch}"], yerr=scanDataCh[f"stdevRateN{ch}"], ls="", marker="o", markersize="4", label="PLT normalized",)
-#     ax.errorbar(scanDataCh.index, scanDataCh[f"medianRate{ch}"] * scale, yerr=scanDataCh[f"stdevRate{ch}"] * scale, ls="", marker="o", markersize="4", label="PLT",)
-#     ax.legend(loc="lower right", borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4,)
-#     ax.axvline(deplVoltCh, color="red")
-#     fig.tight_layout()
-#     os.makedirs(f"{dataDir}/{dateTime[:4]}/{dateTime}/", exist_ok=True)
-#     fig.savefig(f"{dataDir}/{dateTime[:4]}/{dateTime}/{dateTime}.ch{ch}.png", dpi=300)
-#     matplotlib.pyplot.close("all")
-# 
-# 
-# def loadDepletionVoltageJSON(dataDir: str) -> pandas.DataFrame:
-#     import json
-#     with open(f"depletionVoltage.{dataDir}.json", "r") as deplVoltFile:
-#         deplVolt = json.load(deplVoltFile)
-#     deplVolt = pandas.DataFrame.from_dict(deplVolt).T
-#     deplVolt.index = [fname.split("/")[1].lstrip("Scan_").rstrip(".txt") for fname in deplVolt.index.to_list()]
-#     deplVolt.index = pandas.to_datetime(deplVolt.index, format="%Y_%m_%d_%H_%M_%S")
-#     return deplVolt
-# 
-# 
-# def plotAxVline(intLumi: str, label: str, position: str):
-#     # add vertical line at the specified intLumi (given by lumiByDay)
-#     import matplotlib.pyplot
-#     matplotlib.pyplot.axvline(x=intLumi, color="grey", linestyle="--", alpha=0.4, label=label)
-#     matplotlib.pyplot.text(x=intLumi + 1, y=10, s=label, rotation=90, verticalalignment=position)
-# 
-# 
-# def lumiByDay() -> pandas.DataFrame:
-#     # return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index
-#     import os
-#     file = ("lumiByDay.csv" if os.path.exists("lumiByDay.csv") else "https://cern.ch/cmslumi/publicplots/lumiByDay.csv")
-#     lumiByDay = pandas.read_csv(file)
-#     lumiByDayRun2 = lumiByDay[lumiByDay.Date >= "2015"]  # LHC Run2
-#     date = pandas.to_datetime(lumiByDayRun2.Date, format="%Y-%m-%d")
-#     cumulativeIntLumi = (lumiByDayRun2["Delivered(/ub)"].cumsum().divide(10**9).rename("Delivered(/fb)"))
-#     return pandas.concat([date, cumulativeIntLumi], axis=1).set_index("Date")["Delivered(/fb)"]
-# 
-# 
+
 # def plotDeplVolt(ch: int, dataDir: str):
 #     # plot depletion voltage vs time for channel 'ch'
 #     # to do: plot deplVolt vs intLumi
@@ -292,43 +198,3 @@ if __name__ == "__main__":
 #     # matplotlib.pyplot.show()
 #     matplotlib.pyplot.savefig(f"{dataDir}/ch{ch}DepletionVoltage.png", dpi=300)
 #     matplotlib.pyplot.close("all")
-# 
-# 
-# def processScanLog(log_file: str, DataDir: str):
-#     dataDir = "AutoScanLogs"
-#     print(f"\nprocessing {log_file}...")
-#     deplVolt = []
-#     logData = parseLogFile(log_file)
-#     logData = mergeDF(logData, "bcm1f")
-#     dateTime = logData.timestamp.iloc[0].strftime("%Y%m%d.%H%M%S")
-#     for ch in range(16):
-#         scanDataCh = processChannel(logData, ch)
-#         deplVoltCh = calculateDeplVolt(scanDataCh, ch, 0.01, 0.02)
-#         deplVolt.append(deplVoltCh)
-#         plotChannel(dateTime, ch, scanDataCh, deplVoltCh, dataDir)
-#     return deplVolt
-# 
-# def _main():
-#     import json, pathlib
-#     dataDir = "AutoScanLogs"
-#     deplVolt = {}
-#     for log_file in sorted(pathlib.Path('AutoScanLogs/').glob('Scan_2022*.txt')):
-#         deplVolt[f'{log_file}'] = processScanLog(log_file, DataDir)
-#         # print(f"\nprocessing {log_file}...")
-#         # deplVolt[f'{log_file}'] = []
-#         # logData = parseLogFile(log_file)
-#         # logData = mergeDF(logData, "bcm1f")
-#         # dateTime = logData.timestamp.iloc[0].strftime("%Y%m%d.%H%M%S")
-#         # for ch in range(16):
-#         #     scanDataCh = processChannel(logData, ch)
-#         #     deplVoltCh = calculateDeplVolt(scanDataCh, ch, 0.01, 0.02)
-#         #     deplVolt[f'{log_file}'].append(deplVoltCh)
-#         #     plotChannel(dateTime, ch, scanDataCh, deplVoltCh, dataDir)
-#     with open(f"depletionVoltage.{dataDir}.json", "w") as deplVoltFile:
-#         json.dump(obj=deplVolt, fp=deplVoltFile)
-#     # _ = [ plotDeplVolt( ch, dataDir ) for ch in range(16) ]
-#     return deplVolt
-# 
-# 
-# if __name__ == "__main__":
-#     main()
