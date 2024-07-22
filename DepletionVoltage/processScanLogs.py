@@ -114,13 +114,14 @@ def vmonVsRate(v_mon: pandas.Series, rate: pandas.Series, v_set: pandas.Series, 
     return vmon_vs_rate
 
 @timer
-def plotVmonVsRate(vmon_vs_rate: pandas.Series, log_file: pathlib.Path, ch: int, v_thr: int = 2):
+def plotVmonVsRate(vmon_vs_rate: pandas.Series, log_file: pathlib.Path, ch: int, v_thr: int = 2, v_relative: tuple[int, int] = (700, 800)):
     matplotlib.pyplot.errorbar(x=vmon_vs_rate.index, y=vmon_vs_rate['median'], xerr=v_thr, yerr=vmon_vs_rate['std'], fmt='o')
-    relative_change = (vmon_vs_rate.loc[800, 'median'] - vmon_vs_rate.loc[500, 'median'])/vmon_vs_rate.loc[500, 'median']*100
-    matplotlib.pyplot.title(f'PLT{ch:02}/HFET vs HV (Δ(800, 500) ≈ {relative_change:.2}%)')
+    relative_change = (vmon_vs_rate.loc[v_relative[1], 'median'] - vmon_vs_rate.loc[v_relative[0], 'median'])/vmon_vs_rate.loc[v_relative[0], 'median']*100
+    year = log_file.stem[5:9]
+    matplotlib.pyplot.title(f'PLT{ch:02}/HFET vs HV (Δ({v_relative[1]}, {v_relative[0]}) ≈ {relative_change:.2}%)')
     matplotlib.pyplot.xlabel('HV setpoint (V)')
     matplotlib.pyplot.ylabel(f'PLT ch{ch:02} rate/HFET rate')
-    matplotlib.pyplot.savefig(f'AutoScanLogs/2024/{log_file.stem}_ch{ch:02d}.png', dpi=400)
+    matplotlib.pyplot.savefig(f'AutoScanLogs/{year}/{log_file.stem}_ch{ch:02d}.png', dpi=400)
     matplotlib.pyplot.close()
 
 def main(log_file: str):
