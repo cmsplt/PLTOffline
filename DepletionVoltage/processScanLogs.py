@@ -110,7 +110,7 @@ def vmonVsRate(v_mon: pandas.Series, rate: pandas.Series, v_set: pandas.Series, 
     vmon_vs_rate_median  = rate.groupby(pandas.cut(x=v_mon, bins=v_bins)).median().dropna() # [Pandas Groupby Range of Values](https://stackoverflow.com/a/21441621)
     vmon_vs_rate_std  = rate.groupby(pandas.cut(x=v_mon, bins=v_bins)).std().dropna()
     vmon_vs_rate = pandas.concat([vmon_vs_rate_median, vmon_vs_rate_std], axis=1).rename(columns={0: 'median', 1: 'std'})
-    vmon_vs_rate.index = vmon_vs_rate.index.categories.mid
+    vmon_vs_rate.index = vmon_vs_rate.index.remove_unused_categories().categories.mid
     return vmon_vs_rate
 
 @timer
@@ -123,7 +123,8 @@ def plotVmonVsRate(vmon_vs_rate: pandas.Series, log_file: pathlib.Path, ch: int,
     matplotlib.pyplot.savefig(f'AutoScanLogs/2024/{log_file.stem}_ch{ch:02d}.png', dpi=400)
     matplotlib.pyplot.close()
 
-def main(log_file: str = 'AutoScanLogs/Scan_2024_5_7_18_28_5.txt'):
+def main(log_file: str):
+    print(log_file)
     program, data = merge(log_file=pathlib.Path(log_file))
     for ch in range(16):
         if ch in (6, 8, 9, 13):
@@ -144,7 +145,7 @@ def iv():
             matplotlib.pyplot.savefig(f'iv_plots/{scan_data.timestamp.iloc[0].date()}-{ch:02d}.png', dpi=600)
 
 if __name__ == "__main__":
-    main()
+    main(log_file='AutoScanLogs/Scan_2024_7_15_11_1_9.txt')
 
 # ##########################################
 
