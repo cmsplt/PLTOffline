@@ -1,0 +1,29 @@
+#File extensions
+*.root
+*.h5
+*.hd5
+*.hdf5
+*.png
+*.csv
+*.txt 
+!requirements.txt
+*.json
+*.pyc
+*_cc*
+*.pcm
+*.swp
+*.swx
+*.__afs*
+
+#Specific folders
+./laf/brildata
+./laf/results
+bin
+include
+lib
+share
+
+#Specific files
+lib64
+pyvenv.cfg
+*temp*
