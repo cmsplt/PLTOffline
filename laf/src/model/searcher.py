@@ -133,7 +133,7 @@ class AnomalySearcher:
         available_files = self.data_getter.get_available_files(fill_number)
         dfs = []
         for i in range(len(available_files)):
-            #if(available_files[i] != "./brildata/22/8010/8010_355805_2207181340_2207181356.hd5"): continue #fr 
+            #if(available_files[i] != "/eos/cms/store/group/dpg_bril/comm_bril/2022/physics/8010/8010_355805_2207181340_2207181356.hd5"): continue #fr 
             try:
                 df = self.data_getter.get_single_dataframe(available_files[i],verbose)
                 df = df.pivot_table(index=["date_time"], columns="channelid", values="data").dropna()
@@ -151,7 +151,8 @@ class AnomalySearcher:
         #return int_df
 
     def _resample_and_interpolate(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Resamples the dataframe and interpolates the missing values
+        """
+        Resamples the dataframe and interpolates the missing values
 
         Args:
             data (pd.DataFrame): Dataframe with the data
@@ -162,7 +163,8 @@ class AnomalySearcher:
         return data.resample("1S").mean().interpolate(method="linear")
 
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Studies the fill in the dataframe
+        """
+        Studies the fill in the dataframe
 
         Args:
             data (pd.DataFrame): Dataframe with the data
@@ -175,7 +177,9 @@ class AnomalySearcher:
     def study_shannel(
         self, data: pd.DataFrame, studied_channel: int, name="x"
     ) -> pd.DataFrame:
-        """Studies the channel in the dataframe
+        """
+        Studies the channel in the dataframe
+        It first add the column "m_agg" to the dataframe, defined as the average of the channels that are not constant (i.e. those channels which less than 90% consecutive equal values)
 
         Args:
             data (pd.DataFrame): Dataframe with the data
@@ -184,19 +188,20 @@ class AnomalySearcher:
         """
         df = data.copy()
         df["m_agg"] = df[
-            (
+            (   #c is a given channel and the for loop returns the list of channels that are not constant. The mean is calculated only from the colums corresponding to these channels.
                 c
                 for c in self.list_nonconstant_channels(df, studied_channel)
                 if c != studied_channel
             )
         ].mean(axis=1)
-        X = self.preprocessor(df, ["m_agg", studied_channel])
+        X = self.preprocessor(df, ["m_agg", studied_channel]) # ["m_agg", studied_channel] is the list of columns to preprocess
         return self.preprocessor.build_dataframe(df, X, name=name)
 
     def list_nonconstant_channels(
         self, data: pd.DataFrame, exclude: int = None
     ) -> list:
-        """Lists the non-constant channels in the dataframe
+        """
+        Lists the non-constant channels in the dataframe
 
         Args:
             data (pd.DataFrame): Dataframe with the data
@@ -217,7 +222,8 @@ class AnomalySearcher:
         return [ch for ch, c in zip(data.columns, are_constant) if not c]
 
     def _is_constant(self, channel: int, data: pd.DataFrame) -> bool:
-        """Checks if the channel is non-constant in the dataframe
+        """
+        Checks if the channel is non-constant in the dataframe
 
         Args:
             channel (int): Channel to be checked

@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore")
 
-
 class DifferencePreprocessor:
     def __init__(self) -> None:
-        """Initializes the preprocessor for anomaly detection in fill data
+        """
+        Initializes the preprocessor for anomaly detection in fill data
         It is especially useful for the difference between two columns and to
         ignore fast dropouts in the data.
         """
@@ -28,7 +28,8 @@ class DifferencePreprocessor:
         downsample_perc: float = None,
         **kwargs,
     ) -> Tuple[torch.Tensor]:
-        """Prepares the data for the model, scaling the data and converting it
+        """
+        Prepares the data for the model, scaling the data and converting it
         to a tensor.
         Args:
             df (_type_): Readed data from the .pkl files... containing
@@ -51,7 +52,7 @@ class DifferencePreprocessor:
         else:
             scaled = torch.FloatTensor(foo_df[target_cols].values)
         log_diff = self._delta_cols(scaled)
-        convolved = self.roll_convolution(log_diff, **kwargs)
+        convolved = self.roll_convolution(log_diff, **kwargs) #if applying a 'mean' kernel, this seems to me like a moving average over a period corresponding to 2.5% of the time series len
         if downsample_perc is not None:
             sampled = self.downsample(convolved, downsample_perc)
         else:
@@ -65,7 +66,7 @@ class DifferencePreprocessor:
         return torch.FloatTensor(ndf[target_cols].values)
 
     def _delta_cols(self, scaled_tensor: pd.DataFrame):
-        diff = torch.diff(scaled_tensor, dim=1).abs()
+        diff = torch.diff(scaled_tensor, dim=1).abs() #here is where you pass from 2 cols to 1 
         log_diff = torch.log(diff + 1)
         return log_diff
 
@@ -82,20 +83,17 @@ class DifferencePreprocessor:
                 * 1
                 / int(conv_size * len(series))
             )
-        elif aggregation == "gaussian":
+        elif aggregation == "random":
             kernel = torch.rand(1, 1, int(conv_size * len(series)))
         else:
             raise ValueError("Aggregation method not supported")
         kernel_tensor = torch.Tensor(kernel).reshape(1, 1, -1)
         return F.conv1d(ts_tensor, kernel_tensor).reshape(-1, 1)
 
-    def differentiate(self, series: torch.Tensor):
-        diff = ((series[1:] - series[:-1]).abs() + 1).log()
-        return self.roll_convolution(diff, aggregation="mean")
-
     @staticmethod
     def downsample(tensor: torch.Tensor, frac: float = 0.01) -> pd.DataFrame:
-        """Donwsample the df by frac
+        """
+        Donwsample the df by frac
         Notice that this reduces the number of samples in the df
         but makes possible to speedup analysis
         """
@@ -104,36 +102,6 @@ class DifferencePreprocessor:
         mask = indices % folding_size == 0
         sampled = tensor[mask]
         return sampled
-
-    @classmethod
-    def plot_process(cls, df, target_cols, ax=[], **kwargs):
-        processor = cls()
-        X = processor(df, target_cols=target_cols)
-        if len(ax) == 0:
-            fig, ax = plt.subplots(2, 1, figsize=(10, 10))
-        sns.lineplot(
-            data=df.reset_index(),
-            x="dt",
-            y=target_cols[0],
-            ax=ax[0],
-            label=target_cols[0],
-        )
-        ax[0].set(xlabel="")
-        sns.lineplot(
-            data=df.reset_index(),
-            x="dt",
-            y=target_cols[1],
-            ax=ax[0],
-            label=target_cols[1],
-        )
-        sns.lineplot(
-            np.arange(0, len(X)),
-            X.squeeze().numpy(),
-            label="_".join([str(t) for t in target_cols]),
-            ax=ax[1],
-        )
-        ax[0].set_title("Raw data")
-        ax[1].set_title("Convolved Kernel")
 
     @staticmethod
     def build_dataframe(
@@ -146,3 +114,37 @@ class DifferencePreprocessor:
         tdelta = [step * i + dt_min for i in range(number_s)]
         return pd.DataFrame({"index": tdelta,
                              name: X.squeeze().numpy()}).set_index("index")
+
+    #@classmethod
+    #def plot_process(cls, df, target_cols, ax=[], **kwargs):
+    #    processor = cls()
+    #    X = processor(df, target_cols=target_cols)
+    #    if len(ax) == 0:
+    #        fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+    #    sns.lineplot(
+    #        data=df.reset_index(),
+    #        x="dt",
+    #        y=target_cols[0],
+    #        ax=ax[0],
+    #        label=target_cols[0],
+    #    )
+    #    ax[0].set(xlabel="")
+    #    sns.lineplot(
+    #        data=df.reset_index(),
+    #        x="dt",
+    #        y=target_cols[1],
+    #        ax=ax[0],
+    #        label=target_cols[1],
+    #    )
+    #    sns.lineplot(
+    #        np.arange(0, len(X)),
+    #        X.squeeze().numpy(),
+    #        label="_".join([str(t) for t in target_cols]),
+    #        ax=ax[1],
+    #    )
+    #    ax[0].set_title("Raw data")
+    #    ax[1].set_title("Convolved Kernel")
+
+    #def differentiate(self, series: torch.Tensor):
+    #    diff = ((series[1:] - series[:-1]).abs() + 1).log()
+    #    return self.roll_convolution(diff, aggregation="mean")
