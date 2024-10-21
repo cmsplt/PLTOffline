@@ -84,12 +84,14 @@ class AnomalySearcher:
                                                              "")):
                 os.makedirs(single_output_path.replace(f"{fill_number}", ""))
             self.save_output(output, single_output_path)
+
             if generate_plots:
                 base_path = single_output_path.split("reports")[0]
                 plot_path = os.path.join(base_path,
                                          "plots")
                 if not os.path.exists(plot_path):
                     os.makedirs(plot_path)
+
             if isinstance(output, tuple):
                 preprocessed_data = output[0]
                 if generate_plots:
@@ -238,6 +240,39 @@ class AnomalySearcher:
             return True
         return False
 
+    def search_anomalies(self, x_processed, threshold=0.1):
+        report_dict = {}
+        for channel in range(16):
+            report_dict[channel] = self.search_in_channel(channel,
+                                                          x_processed,
+                                                          th=threshold)
+        return report_dict
+
+    def search_in_channel(self,
+                          channel: int,
+                          data: pd.DataFrame, *,
+                          th=0.01) -> dict:
+        """
+        Searches for anomalies in a given channel
+
+        Args:
+            channel (int): Channel to be searched
+            data (pd.DataFrame): Dataframe with the data
+        """
+        logging_dict = {}
+        to_search = False
+        values = data[channel].values
+        passes_threshold = values > th
+        other_cols = [c for c in data.columns if c != channel]
+        if len(other_cols) > 0:
+            if any(passes_threshold):
+                to_search = True
+                logging_dict["WARNING"] = f"Channel {channel} Anomalous"
+            if to_search:
+                anomaly_dict = self.detecting_machine.detect(data[channel])
+                logging_dict["ANOMALIES"] = anomaly_dict
+        return logging_dict
+
     def generate_plots(self,
                        fill_number: int,
                        preprocessed: pd.DataFrame,
@@ -261,37 +296,6 @@ class AnomalySearcher:
                 os.makedirs(save_path)
             plt.savefig(os.path.join(save_path,
                                      f"fill_{fill_number}.png"))
-
-    def search_in_channel(self,
-                          channel: int,
-                          data: pd.DataFrame, *,
-                          th=0.01) -> dict:
-        """Searches for anomalies in a given channel
-        Args:
-            channel (int): Channel to be searched
-            data (pd.DataFrame): Dataframe with the data
-        """
-        logging_dict = {}
-        to_search = False
-        values = data[channel].values
-        passes_threshold = values > th
-        other_cols = [c for c in data.columns if c != channel]
-        if len(other_cols) > 0:
-            if any(passes_threshold):
-                to_search = True
-                logging_dict["WARNING"] = f"Channel {channel} Anomalous"
-            if to_search:
-                anomaly_dict = self.detecting_machine.detect(data[channel])
-                logging_dict["ANOMALIES"] = anomaly_dict
-        return logging_dict
-
-    def search_anomalies(self, x_processed, threshold=0.1):
-        report_dict = {}
-        for channel in range(16):
-            report_dict[channel] = self.search_in_channel(channel,
-                                                          x_processed,
-                                                          th=threshold)
-        return report_dict
 
     @staticmethod
     def save_output(output, path):
@@ -465,4 +469,3 @@ class AnomalySearcher:
         _ = searcher.generate_reports(per_fill_path,
                                            output_path)
         return None
-

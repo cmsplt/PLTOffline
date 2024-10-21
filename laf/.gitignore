@@ -27,3 +27,4 @@ share
 lib64
 pyvenv.cfg
 *temp*
+.gitignore
